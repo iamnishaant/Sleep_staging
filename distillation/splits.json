@@ -1,0 +1,706 @@
+{
+  "seed": 42,
+  "granularity": "subject",
+  "subject_key": "recording_id[:5]",
+  "stratified_by": "cohort (SC/ST)",
+  "fractions": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "splits": {
+    "train": [
+      "SC400",
+      "SC403",
+      "SC404",
+      "SC405",
+      "SC406",
+      "SC407",
+      "SC409",
+      "SC410",
+      "SC412",
+      "SC415",
+      "SC416",
+      "SC418",
+      "SC419",
+      "SC422",
+      "SC424",
+      "SC425",
+      "SC426",
+      "SC427",
+      "SC428",
+      "SC430",
+      "SC431",
+      "SC433",
+      "SC436",
+      "SC438",
+      "SC440",
+      "SC441",
+      "SC442",
+      "SC443",
+      "SC445",
+      "SC447",
+      "SC448",
+      "SC449",
+      "SC450",
+      "SC451",
+      "SC454",
+      "SC455",
+      "SC457",
+      "SC459",
+      "SC460",
+      "SC462",
+      "SC463",
+      "SC464",
+      "SC465",
+      "SC466",
+      "SC470",
+      "SC471",
+      "SC472",
+      "SC473",
+      "SC475",
+      "SC476",
+      "SC477",
+      "SC480",
+      "SC481",
+      "SC482",
+      "ST701",
+      "ST702",
+      "ST704",
+      "ST705",
+      "ST706",
+      "ST707",
+      "ST709",
+      "ST711",
+      "ST712",
+      "ST717",
+      "ST718",
+      "ST719",
+      "ST721",
+      "ST722",
+      "ST724"
+    ],
+    "val": [
+      "SC408",
+      "SC411",
+      "SC413",
+      "SC417",
+      "SC432",
+      "SC434",
+      "SC435",
+      "SC444",
+      "SC446",
+      "SC456",
+      "SC458",
+      "SC467",
+      "ST708",
+      "ST713",
+      "ST715",
+      "ST720"
+    ],
+    "test": [
+      "SC401",
+      "SC402",
+      "SC414",
+      "SC420",
+      "SC421",
+      "SC423",
+      "SC429",
+      "SC437",
+      "SC452",
+      "SC453",
+      "SC461",
+      "SC474",
+      "ST710",
+      "ST714",
+      "ST716"
+    ]
+  },
+  "recordings_by_subject": {
+    "SC400": [
+      "SC4001E0-PSG",
+      "SC4002E0-PSG"
+    ],
+    "SC401": [
+      "SC4011E0-PSG",
+      "SC4012E0-PSG"
+    ],
+    "SC402": [
+      "SC4021E0-PSG",
+      "SC4022E0-PSG"
+    ],
+    "SC403": [
+      "SC4031E0-PSG",
+      "SC4032E0-PSG"
+    ],
+    "SC404": [
+      "SC4041E0-PSG",
+      "SC4042E0-PSG"
+    ],
+    "SC405": [
+      "SC4051E0-PSG",
+      "SC4052E0-PSG"
+    ],
+    "SC406": [
+      "SC4061E0-PSG",
+      "SC4062E0-PSG"
+    ],
+    "SC407": [
+      "SC4071E0-PSG",
+      "SC4072E0-PSG"
+    ],
+    "SC408": [
+      "SC4081E0-PSG",
+      "SC4082E0-PSG"
+    ],
+    "SC409": [
+      "SC4091E0-PSG",
+      "SC4092E0-PSG"
+    ],
+    "SC410": [
+      "SC4101E0-PSG",
+      "SC4102E0-PSG"
+    ],
+    "SC411": [
+      "SC4111E0-PSG",
+      "SC4112E0-PSG"
+    ],
+    "SC412": [
+      "SC4121E0-PSG",
+      "SC4122E0-PSG"
+    ],
+    "SC413": [
+      "SC4131E0-PSG"
+    ],
+    "SC414": [
+      "SC4141E0-PSG",
+      "SC4142E0-PSG"
+    ],
+    "SC415": [
+      "SC4151E0-PSG",
+      "SC4152E0-PSG"
+    ],
+    "SC416": [
+      "SC4161E0-PSG",
+      "SC4162E0-PSG"
+    ],
+    "SC417": [
+      "SC4171E0-PSG",
+      "SC4172E0-PSG"
+    ],
+    "SC418": [
+      "SC4181E0-PSG",
+      "SC4182E0-PSG"
+    ],
+    "SC419": [
+      "SC4191E0-PSG",
+      "SC4192E0-PSG"
+    ],
+    "SC420": [
+      "SC4201E0-PSG",
+      "SC4202E0-PSG"
+    ],
+    "SC421": [
+      "SC4211E0-PSG",
+      "SC4212E0-PSG"
+    ],
+    "SC422": [
+      "SC4221E0-PSG",
+      "SC4222E0-PSG"
+    ],
+    "SC423": [
+      "SC4231E0-PSG",
+      "SC4232E0-PSG"
+    ],
+    "SC424": [
+      "SC4241E0-PSG",
+      "SC4242E0-PSG"
+    ],
+    "SC425": [
+      "SC4251E0-PSG",
+      "SC4252E0-PSG"
+    ],
+    "SC426": [
+      "SC4261F0-PSG",
+      "SC4262F0-PSG"
+    ],
+    "SC427": [
+      "SC4271F0-PSG",
+      "SC4272F0-PSG"
+    ],
+    "SC428": [
+      "SC4281G0-PSG",
+      "SC4282G0-PSG"
+    ],
+    "SC429": [
+      "SC4291G0-PSG",
+      "SC4292G0-PSG"
+    ],
+    "SC430": [
+      "SC4301E0-PSG",
+      "SC4302E0-PSG"
+    ],
+    "SC431": [
+      "SC4311E0-PSG",
+      "SC4312E0-PSG"
+    ],
+    "SC432": [
+      "SC4321E0-PSG",
+      "SC4322E0-PSG"
+    ],
+    "SC433": [
+      "SC4331F0-PSG",
+      "SC4332F0-PSG"
+    ],
+    "SC434": [
+      "SC4341F0-PSG",
+      "SC4342F0-PSG"
+    ],
+    "SC435": [
+      "SC4351F0-PSG",
+      "SC4352F0-PSG"
+    ],
+    "SC436": [
+      "SC4362F0-PSG"
+    ],
+    "SC437": [
+      "SC4371F0-PSG",
+      "SC4372F0-PSG"
+    ],
+    "SC438": [
+      "SC4381F0-PSG",
+      "SC4382F0-PSG"
+    ],
+    "SC440": [
+      "SC4401E0-PSG",
+      "SC4402E0-PSG"
+    ],
+    "SC441": [
+      "SC4411E0-PSG",
+      "SC4412E0-PSG"
+    ],
+    "SC442": [
+      "SC4421E0-PSG",
+      "SC4422E0-PSG"
+    ],
+    "SC443": [
+      "SC4431E0-PSG",
+      "SC4432E0-PSG"
+    ],
+    "SC444": [
+      "SC4441E0-PSG",
+      "SC4442E0-PSG"
+    ],
+    "SC445": [
+      "SC4451F0-PSG",
+      "SC4452F0-PSG"
+    ],
+    "SC446": [
+      "SC4461F0-PSG",
+      "SC4462F0-PSG"
+    ],
+    "SC447": [
+      "SC4471F0-PSG",
+      "SC4472F0-PSG"
+    ],
+    "SC448": [
+      "SC4481F0-PSG",
+      "SC4482F0-PSG"
+    ],
+    "SC449": [
+      "SC4491G0-PSG",
+      "SC4492G0-PSG"
+    ],
+    "SC450": [
+      "SC4501E0-PSG",
+      "SC4502E0-PSG"
+    ],
+    "SC451": [
+      "SC4511E0-PSG",
+      "SC4512E0-PSG"
+    ],
+    "SC452": [
+      "SC4522E0-PSG"
+    ],
+    "SC453": [
+      "SC4531E0-PSG",
+      "SC4532E0-PSG"
+    ],
+    "SC454": [
+      "SC4541F0-PSG",
+      "SC4542F0-PSG"
+    ],
+    "SC455": [
+      "SC4551F0-PSG",
+      "SC4552F0-PSG"
+    ],
+    "SC456": [
+      "SC4561F0-PSG",
+      "SC4562F0-PSG"
+    ],
+    "SC457": [
+      "SC4571F0-PSG",
+      "SC4572F0-PSG"
+    ],
+    "SC458": [
+      "SC4581G0-PSG",
+      "SC4582G0-PSG"
+    ],
+    "SC459": [
+      "SC4591G0-PSG",
+      "SC4592G0-PSG"
+    ],
+    "SC460": [
+      "SC4601E0-PSG",
+      "SC4602E0-PSG"
+    ],
+    "SC461": [
+      "SC4611E0-PSG",
+      "SC4612E0-PSG"
+    ],
+    "SC462": [
+      "SC4621E0-PSG",
+      "SC4622E0-PSG"
+    ],
+    "SC463": [
+      "SC4631E0-PSG",
+      "SC4632E0-PSG"
+    ],
+    "SC464": [
+      "SC4641E0-PSG",
+      "SC4642E0-PSG"
+    ],
+    "SC465": [
+      "SC4651E0-PSG",
+      "SC4652E0-PSG"
+    ],
+    "SC466": [
+      "SC4661E0-PSG",
+      "SC4662E0-PSG"
+    ],
+    "SC467": [
+      "SC4671G0-PSG",
+      "SC4672G0-PSG"
+    ],
+    "SC470": [
+      "SC4701E0-PSG",
+      "SC4702E0-PSG"
+    ],
+    "SC471": [
+      "SC4711E0-PSG",
+      "SC4712E0-PSG"
+    ],
+    "SC472": [
+      "SC4721E0-PSG",
+      "SC4722E0-PSG"
+    ],
+    "SC473": [
+      "SC4731E0-PSG",
+      "SC4732E0-PSG"
+    ],
+    "SC474": [
+      "SC4741E0-PSG",
+      "SC4742E0-PSG"
+    ],
+    "SC475": [
+      "SC4751E0-PSG",
+      "SC4752E0-PSG"
+    ],
+    "SC476": [
+      "SC4761E0-PSG",
+      "SC4762E0-PSG"
+    ],
+    "SC477": [
+      "SC4771G0-PSG",
+      "SC4772G0-PSG"
+    ],
+    "SC480": [
+      "SC4801G0-PSG",
+      "SC4802G0-PSG"
+    ],
+    "SC481": [
+      "SC4811G0-PSG",
+      "SC4812G0-PSG"
+    ],
+    "SC482": [
+      "SC4821G0-PSG",
+      "SC4822G0-PSG"
+    ],
+    "ST701": [
+      "ST7011J0-PSG",
+      "ST7012J0-PSG"
+    ],
+    "ST702": [
+      "ST7021J0-PSG",
+      "ST7022J0-PSG"
+    ],
+    "ST704": [
+      "ST7041J0-PSG",
+      "ST7042J0-PSG"
+    ],
+    "ST705": [
+      "ST7051J0-PSG",
+      "ST7052J0-PSG"
+    ],
+    "ST706": [
+      "ST7061J0-PSG",
+      "ST7062J0-PSG"
+    ],
+    "ST707": [
+      "ST7071J0-PSG",
+      "ST7072J0-PSG"
+    ],
+    "ST708": [
+      "ST7081J0-PSG",
+      "ST7082J0-PSG"
+    ],
+    "ST709": [
+      "ST7091J0-PSG",
+      "ST7092J0-PSG"
+    ],
+    "ST710": [
+      "ST7101J0-PSG",
+      "ST7102J0-PSG"
+    ],
+    "ST711": [
+      "ST7111J0-PSG",
+      "ST7112J0-PSG"
+    ],
+    "ST712": [
+      "ST7121J0-PSG",
+      "ST7122J0-PSG"
+    ],
+    "ST713": [
+      "ST7131J0-PSG",
+      "ST7132J0-PSG"
+    ],
+    "ST714": [
+      "ST7141J0-PSG",
+      "ST7142J0-PSG"
+    ],
+    "ST715": [
+      "ST7151J0-PSG",
+      "ST7152J0-PSG"
+    ],
+    "ST716": [
+      "ST7161J0-PSG",
+      "ST7162J0-PSG"
+    ],
+    "ST717": [
+      "ST7171J0-PSG",
+      "ST7172J0-PSG"
+    ],
+    "ST718": [
+      "ST7181J0-PSG",
+      "ST7182J0-PSG"
+    ],
+    "ST719": [
+      "ST7191J0-PSG",
+      "ST7192J0-PSG"
+    ],
+    "ST720": [
+      "ST7201J0-PSG",
+      "ST7202J0-PSG"
+    ],
+    "ST721": [
+      "ST7211J0-PSG",
+      "ST7212J0-PSG"
+    ],
+    "ST722": [
+      "ST7221J0-PSG",
+      "ST7222J0-PSG"
+    ],
+    "ST724": [
+      "ST7241J0-PSG",
+      "ST7242J0-PSG"
+    ]
+  },
+  "summary": {
+    "train": {
+      "n_subjects": 69,
+      "n_recordings": 137,
+      "n_epochs": 169909,
+      "cohorts": {
+        "SC": 107,
+        "ST": 30
+      },
+      "class_counts": {
+        "W": 52836,
+        "N1": 17580,
+        "N2": 62008,
+        "N3": 13590,
+        "REM": 23895
+      },
+      "class_fractions": {
+        "W": 0.31097,
+        "N1": 0.10347,
+        "N2": 0.36495,
+        "N3": 0.07998,
+        "REM": 0.14063
+      },
+      "subjects_unseen_by_teacher": 3
+    },
+    "val": {
+      "n_subjects": 16,
+      "n_recordings": 31,
+      "n_epochs": 34610,
+      "cohorts": {
+        "SC": 23,
+        "ST": 8
+      },
+      "class_counts": {
+        "W": 8421,
+        "N1": 4092,
+        "N2": 14197,
+        "N3": 3113,
+        "REM": 4787
+      },
+      "class_fractions": {
+        "W": 0.24331,
+        "N1": 0.11823,
+        "N2": 0.4102,
+        "N3": 0.08995,
+        "REM": 0.13831
+      },
+      "subjects_unseen_by_teacher": 1
+    },
+    "test": {
+      "n_subjects": 15,
+      "n_recordings": 29,
+      "n_epochs": 33431,
+      "cohorts": {
+        "SC": 23,
+        "ST": 6
+      },
+      "class_counts": {
+        "W": 8897,
+        "N1": 3503,
+        "N2": 12778,
+        "N3": 2751,
+        "REM": 5502
+      },
+      "class_fractions": {
+        "W": 0.26613,
+        "N1": 0.10478,
+        "N2": 0.38222,
+        "N3": 0.08229,
+        "REM": 0.16458
+      },
+      "subjects_unseen_by_teacher": 1
+    }
+  },
+  "teacher_provenance": {
+    "teacher_split": "train_test_split(range(197), test_size=0.2, random_state=42)",
+    "teacher_split_granularity": "recording (LEAKY - see README_V2.md s4)",
+    "subject_seen_by_teacher": {
+      "SC400": true,
+      "SC401": true,
+      "SC402": true,
+      "SC403": true,
+      "SC404": true,
+      "SC405": true,
+      "SC406": true,
+      "SC407": true,
+      "SC408": true,
+      "SC409": false,
+      "SC410": true,
+      "SC411": true,
+      "SC412": true,
+      "SC413": true,
+      "SC414": true,
+      "SC415": true,
+      "SC416": true,
+      "SC417": true,
+      "SC418": true,
+      "SC419": true,
+      "SC420": true,
+      "SC421": true,
+      "SC422": true,
+      "SC423": true,
+      "SC424": true,
+      "SC425": true,
+      "SC426": true,
+      "SC427": true,
+      "SC428": false,
+      "SC429": true,
+      "SC430": true,
+      "SC431": true,
+      "SC432": true,
+      "SC433": true,
+      "SC434": false,
+      "SC435": true,
+      "SC436": true,
+      "SC437": true,
+      "SC438": true,
+      "SC440": true,
+      "SC441": true,
+      "SC442": true,
+      "SC443": true,
+      "SC444": true,
+      "SC445": true,
+      "SC446": true,
+      "SC447": true,
+      "SC448": true,
+      "SC449": true,
+      "SC450": true,
+      "SC451": true,
+      "SC452": true,
+      "SC453": true,
+      "SC454": true,
+      "SC455": true,
+      "SC456": true,
+      "SC457": true,
+      "SC458": true,
+      "SC459": false,
+      "SC460": true,
+      "SC461": true,
+      "SC462": true,
+      "SC463": true,
+      "SC464": true,
+      "SC465": true,
+      "SC466": true,
+      "SC467": true,
+      "SC470": true,
+      "SC471": true,
+      "SC472": true,
+      "SC473": true,
+      "SC474": false,
+      "SC475": true,
+      "SC476": true,
+      "SC477": true,
+      "SC480": true,
+      "SC481": true,
+      "SC482": true,
+      "ST701": true,
+      "ST702": true,
+      "ST704": true,
+      "ST705": true,
+      "ST706": true,
+      "ST707": true,
+      "ST708": true,
+      "ST709": true,
+      "ST710": true,
+      "ST711": true,
+      "ST712": true,
+      "ST713": true,
+      "ST714": true,
+      "ST715": true,
+      "ST716": true,
+      "ST717": true,
+      "ST718": true,
+      "ST719": true,
+      "ST720": true,
+      "ST721": true,
+      "ST722": true,
+      "ST724": true
+    },
+    "subjects_never_seen_by_teacher": [
+      "SC409",
+      "SC428",
+      "SC434",
+      "SC459",
+      "SC474"
+    ],
+    "n_recordings_never_seen": 10
+  }
+}

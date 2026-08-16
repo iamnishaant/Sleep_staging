@@ -1,0 +1,75 @@
+MODEL     : inherited
+CHECKPOINT: results\sleep staging\temporal spectral fusion\concat\best_model_fusion.pt
+            649,229 params, loaded strict
+GROUPS    : test_heldout=29, train_sample=30, val_leaked=30, val_clean=10
+Evaluating 29 recordings
+
+  [  1/29] SC4011E0-PSG n= 1103 kappa=0.8077 H=0.907 (0.3 min)
+  [  2/29] SC4012E0-PSG n= 1186 kappa=0.7555 H=0.906 (0.6 min)
+  [  3/29] SC4021E0-PSG n= 1025 kappa=0.8118 H=0.953 (1.0 min)
+  [  4/29] SC4022E0-PSG n= 1009 kappa=0.7509 H=1.015 (1.4 min)
+  [  5/29] SC4141E0-PSG n= 1004 kappa=0.8713 H=0.692 (1.8 min)
+  [  6/29] SC4142E0-PSG n=  952 kappa=0.8311 H=0.790 (2.1 min)
+  [  7/29] SC4201E0-PSG n= 1022 kappa=0.6634 H=1.000 (2.5 min)
+  [  8/29] SC4202E0-PSG n= 1021 kappa=0.5625 H=1.128 (2.9 min)
+  [  9/29] SC4211E0-PSG n= 1578 kappa=0.7832 H=0.545 (3.5 min)
+  [ 10/29] SC4212E0-PSG n=  808 kappa=0.6751 H=0.788 (3.8 min)
+  [ 11/29] SC4231E0-PSG n=  904 kappa=0.5630 H=1.022 (4.1 min)
+  [ 12/29] SC4232E0-PSG n= 1729 kappa=0.5696 H=0.874 (4.7 min)
+  [ 13/29] SC4291G0-PSG n= 1131 kappa=0.6843 H=1.009 (5.1 min)
+  [ 14/29] SC4292G0-PSG n= 1605 kappa=0.7870 H=0.754 (5.7 min)
+  [ 15/29] SC4371F0-PSG n=  918 kappa=0.6126 H=0.914 (6.1 min)
+  [ 16/29] SC4372F0-PSG n= 1509 kappa=0.6398 H=0.705 (6.6 min)
+  [ 17/29] SC4522E0-PSG n=  997 kappa=0.6760 H=0.964 (6.9 min)
+  [ 18/29] SC4531E0-PSG n= 1096 kappa=0.5395 H=1.081 (7.3 min)
+  [ 19/29] SC4532E0-PSG n= 1056 kappa=0.6412 H=0.905 (7.7 min)
+  [ 20/29] SC4611E0-PSG n= 1652 kappa=0.6009 H=0.941 (8.3 min)
+  [ 21/29] SC4612E0-PSG n= 1062 kappa=0.5770 H=1.154 (8.7 min)
+  [ 22/29] SC4741E0-PSG n= 2210 kappa=0.5500 H=0.665 (9.5 min)
+  [ 23/29] SC4742E0-PSG n= 1063 kappa=0.3954 H=1.040 (9.9 min)
+  [ 24/29] ST7101J0-PSG n= 1042 kappa=0.6236 H=1.061 (10.3 min)
+  [ 25/29] ST7102J0-PSG n=  980 kappa=0.7340 H=0.913 (10.6 min)
+  [ 26/29] ST7141J0-PSG n=  858 kappa=0.6839 H=1.054 (11.0 min)
+  [ 27/29] ST7142J0-PSG n=  873 kappa=0.6504 H=0.979 (11.3 min)
+  [ 28/29] ST7161J0-PSG n= 1050 kappa=0.3762 H=1.093 (11.7 min)
+  [ 29/29] ST7162J0-PSG n=  988 kappa=0.6433 H=1.097 (12.0 min)
+
+==============================================================================
+INHERITED  |  group                           n_ep     acc   kappa     mF1      H
+------------------------------------------------------------------------------
+            train_sample                   6,279  0.8665  0.8058  0.8036  0.879
+            val_leaked                     3,393  0.7607  0.6797  0.7173  0.849
+            val_clean                      3,273  0.6630  0.5066  0.4107  0.786
+            test_heldout                  33,431  0.7657  0.6782  0.7080  0.907
+==============================================================================
+
+HELD-OUT TEST (33,431 epochs, 15 subjects)
+  accuracy 0.7657 | kappa 0.6782 | macro-F1 0.7080 | mean entropy 0.907 nats
+  per-class F1 (UNSEEN subjects only):
+     W     f1=0.8886  prec=0.8983  rec=0.8792  n=8,897
+     N1    f1=0.3568  prec=0.3992  rec=0.3226  n=3,503
+     N2    f1=0.7992  prec=0.7627  rec=0.8395  n=12,778
+     N3    f1=0.7790  prec=0.8583  rec=0.7132  n=2,751
+     REM   f1=0.7165  prec=0.7140  rec=0.7190  n=5,502
+
+  per-subject (test):
+     subj      coh  epochs   kappa     acc      H
+     SC414      SC   1,956  0.8515  0.8931  0.740
+     SC401      SC   2,289  0.7816  0.8598  0.906
+     SC402      SC   2,034  0.7806  0.8486  0.984
+     SC421      SC   2,386  0.7540  0.8328  0.627
+     SC429      SC   2,736  0.7503  0.8187  0.859
+     ST710      ST   2,022  0.6773  0.7606  0.989
+     SC452      SC     997  0.6760  0.7884  0.964
+     ST714      ST   1,731  0.6674  0.7776  1.017
+     SC437      SC   2,427  0.6463  0.7610  0.784
+     SC461      SC   2,714  0.6118  0.7181  1.024
+     SC420      SC   2,043  0.6110  0.7450  1.064
+     SC423      SC   2,633  0.6007  0.7129  0.925
+     SC453      SC   2,152  0.5886  0.7203  0.994
+     ST716      ST   2,038  0.5086  0.6595  1.095
+     SC474      SC   3,273  0.5066  0.6630  0.786
+     mean=0.6675 sd=0.1010 min=0.5066 max=0.8515
+     SC mean=0.6799 (n=12)   ST mean=0.6178 (n=3)
+
+Wrote distillation\results\eval_final_inherited.json

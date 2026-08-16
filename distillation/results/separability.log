@@ -1,0 +1,136 @@
+
+========================================================================
+RETRAINED  |  29 held-out test recordings
+========================================================================
+  [ 1/29] SC4011E0-PSG n= 1103 (0.1 min)
+  [ 2/29] SC4012E0-PSG n= 1186 (0.1 min)
+  [ 3/29] SC4021E0-PSG n= 1025 (0.1 min)
+  [ 4/29] SC4022E0-PSG n= 1009 (0.2 min)
+  [ 5/29] SC4141E0-PSG n= 1004 (0.2 min)
+  [ 6/29] SC4142E0-PSG n=  952 (0.3 min)
+  [ 7/29] SC4201E0-PSG n= 1022 (0.3 min)
+  [ 8/29] SC4202E0-PSG n= 1021 (0.3 min)
+  [ 9/29] SC4211E0-PSG n= 1578 (0.4 min)
+  [10/29] SC4212E0-PSG n=  808 (0.4 min)
+  [11/29] SC4231E0-PSG n=  904 (0.5 min)
+  [12/29] SC4232E0-PSG n= 1729 (0.5 min)
+  [13/29] SC4291G0-PSG n= 1131 (0.6 min)
+  [14/29] SC4292G0-PSG n= 1605 (0.6 min)
+  [15/29] SC4371F0-PSG n=  918 (0.7 min)
+  [16/29] SC4372F0-PSG n= 1509 (0.7 min)
+  [17/29] SC4522E0-PSG n=  997 (0.7 min)
+  [18/29] SC4531E0-PSG n= 1096 (0.8 min)
+  [19/29] SC4532E0-PSG n= 1056 (0.8 min)
+  [20/29] SC4611E0-PSG n= 1652 (0.9 min)
+  [21/29] SC4612E0-PSG n= 1062 (0.9 min)
+  [22/29] SC4741E0-PSG n= 2210 (1.0 min)
+  [23/29] SC4742E0-PSG n= 1063 (1.0 min)
+  [24/29] ST7101J0-PSG n= 1042 (1.1 min)
+  [25/29] ST7102J0-PSG n=  980 (1.1 min)
+  [26/29] ST7141J0-PSG n=  858 (1.2 min)
+  [27/29] ST7142J0-PSG n=  873 (1.2 min)
+  [28/29] ST7161J0-PSG n= 1050 (1.2 min)
+  [29/29] ST7162J0-PSG n=  988 (1.3 min)
+  33,431 epochs
+
+  ONE-VS-REST           AUC      AP  prevalence
+  W                0.9449  0.9047      0.2661
+  N1               0.7658  0.2699      0.1048
+  N2               0.8797  0.8164      0.3822
+  N3               0.9515  0.7361      0.0823
+  REM              0.8968  0.6739      0.1646
+
+  PAIRWISE (score = p_A / (p_A + p_B), epochs with y in {A,B})
+  pair               AUC     n_A     n_B
+  W_vs_N1         0.9181   8,897   3,503
+  W_vs_N2         0.9640   8,897  12,778
+  W_vs_N3         0.9893   8,897   2,751
+  W_vs_REM        0.9463   8,897   5,502
+  N1_vs_N2        0.7716   3,503  12,778   <-- dominant confusion
+  N1_vs_N3        0.9720   3,503   2,751
+  N1_vs_REM       0.8203   3,503   5,502
+  N2_vs_N3        0.9294  12,778   2,751
+  N2_vs_REM       0.9019  12,778   5,502
+  N3_vs_REM       0.9721   2,751   5,502
+
+  MEAN PREDICTED PROBABILITY, by true class (rows) x class (cols)
+  true           W       N1       N2       N3      REM
+  W          0.733    0.176    0.040    0.020    0.032
+  N1         0.130    0.485    0.225    0.035    0.124
+  N2         0.061    0.306    0.457    0.118    0.059
+  N3         0.045    0.057    0.187    0.674    0.036
+  REM        0.091    0.253    0.146    0.019    0.492
+
+========================================================================
+INHERITED  |  29 held-out test recordings
+========================================================================
+  [ 1/29] SC4011E0-PSG n= 1103 (0.1 min)
+  [ 2/29] SC4012E0-PSG n= 1186 (0.2 min)
+  [ 3/29] SC4021E0-PSG n= 1025 (0.4 min)
+  [ 4/29] SC4022E0-PSG n= 1009 (0.5 min)
+  [ 5/29] SC4141E0-PSG n= 1004 (0.6 min)
+  [ 6/29] SC4142E0-PSG n=  952 (0.7 min)
+  [ 7/29] SC4201E0-PSG n= 1022 (0.9 min)
+  [ 8/29] SC4202E0-PSG n= 1021 (1.3 min)
+  [ 9/29] SC4211E0-PSG n= 1578 (1.9 min)
+  [10/29] SC4212E0-PSG n=  808 (2.2 min)
+  [11/29] SC4231E0-PSG n=  904 (2.5 min)
+  [12/29] SC4232E0-PSG n= 1729 (3.2 min)
+  [13/29] SC4291G0-PSG n= 1131 (3.6 min)
+  [14/29] SC4292G0-PSG n= 1605 (4.2 min)
+  [15/29] SC4371F0-PSG n=  918 (4.5 min)
+  [16/29] SC4372F0-PSG n= 1509 (5.1 min)
+  [17/29] SC4522E0-PSG n=  997 (5.5 min)
+  [18/29] SC4531E0-PSG n= 1096 (5.9 min)
+  [19/29] SC4532E0-PSG n= 1056 (6.3 min)
+  [20/29] SC4611E0-PSG n= 1652 (6.9 min)
+  [21/29] SC4612E0-PSG n= 1062 (7.3 min)
+  [22/29] SC4741E0-PSG n= 2210 (8.1 min)
+  [23/29] SC4742E0-PSG n= 1063 (8.5 min)
+  [24/29] ST7101J0-PSG n= 1042 (8.9 min)
+  [25/29] ST7102J0-PSG n=  980 (9.2 min)
+  [26/29] ST7141J0-PSG n=  858 (9.5 min)
+  [27/29] ST7142J0-PSG n=  873 (9.9 min)
+  [28/29] ST7161J0-PSG n= 1050 (10.3 min)
+  [29/29] ST7162J0-PSG n=  988 (10.6 min)
+  33,431 epochs
+
+  ONE-VS-REST           AUC      AP  prevalence
+  W                0.9788  0.9614      0.2661
+  N1               0.8415  0.3568      0.1048
+  N2               0.9163  0.8740      0.3822
+  N3               0.9839  0.8767      0.0823
+  REM              0.9431  0.7829      0.1646
+
+  PAIRWISE (score = p_A / (p_A + p_B), epochs with y in {A,B})
+  pair               AUC     n_A     n_B
+  W_vs_N1         0.9476   8,897   3,503
+  W_vs_N2         0.9877   8,897  12,778
+  W_vs_N3         0.9981   8,897   2,751
+  W_vs_REM        0.9857   8,897   5,502
+  N1_vs_N2        0.8561   3,503  12,778   <-- dominant confusion
+  N1_vs_N3        0.9937   3,503   2,751
+  N1_vs_REM       0.9029   3,503   5,502
+  N2_vs_N3        0.9711  12,778   2,751
+  N2_vs_REM       0.9413  12,778   5,502
+  N3_vs_REM       0.9978   2,751   5,502
+
+  MEAN PREDICTED PROBABILITY, by true class (rows) x class (cols)
+  true           W       N1       N2       N3      REM
+  W          0.768    0.124    0.062    0.011    0.035
+  N1         0.185    0.317    0.314    0.021    0.163
+  N2         0.056    0.174    0.570    0.074    0.125
+  N3         0.036    0.039    0.362    0.523    0.039
+  REM        0.087    0.150    0.260    0.015    0.488
+
+========================================================================
+VERDICT
+========================================================================
+  retrained   N1 one-vs-rest AUC=0.7658 AP=0.2699 | N1-vs-N2 AUC=0.7716 | N1-vs-N3 AUC=0.9720
+  inherited   N1 one-vs-rest AUC=0.8415 AP=0.3568 | N1-vs-N2 AUC=0.8561 | N1-vs-N3 AUC=0.9937
+
+  Interpretation:
+    N1-vs-N2 AUC near 0.5-0.7  -> representation limit; sampling (E2) cannot help
+    N1-vs-N2 AUC above ~0.85   -> ranking is fine, operating point is wrong; E2 may help
+
+Wrote distillation\results\separability_diagnostic.json

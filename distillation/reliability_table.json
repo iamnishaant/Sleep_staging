@@ -1,0 +1,350 @@
+{
+  "model": "student_baseline_E0",
+  "checkpoint": "distillation/results/students/student_baseline_E0/student_best.pt",
+  "commit": "b00a428",
+  "n_parameters": 121099,
+  "compression_vs_teacher": 5.36,
+  "evaluated_on": "held-out test split, 15 subjects never seen in training or selection",
+  "n_test_epochs": 33431,
+  "calibration_temperature": 1.3347,
+  "temperature_fitted_on": "validation split only",
+  "ece_bins": 15,
+  "ece_before": 0.0454,
+  "ece_after": 0.0242,
+  "ece_validation_before": 0.0549,
+  "ece_validation_after": 0.0187,
+  "argmax_unchanged_by_scaling": true,
+  "overall": {
+    "accuracy": 0.736,
+    "kappa": 0.6449,
+    "macro_f1": 0.6915
+  },
+  "per_class": {
+    "W": {
+      "f1": 0.8447,
+      "precision": 0.8687,
+      "recall": 0.822,
+      "support": 8897,
+      "mean_confidence_calibrated": 0.8838,
+      "prediction_ratio": 0.9462,
+      "reliability": "high"
+    },
+    "N1": {
+      "f1": 0.3886,
+      "precision": 0.3694,
+      "recall": 0.4099,
+      "support": 3503,
+      "mean_confidence_calibrated": 0.5196,
+      "prediction_ratio": 1.1096,
+      "reliability": "low"
+    },
+    "N2": {
+      "f1": 0.7735,
+      "precision": 0.7889,
+      "recall": 0.7586,
+      "support": 12778,
+      "mean_confidence_calibrated": 0.6867,
+      "prediction_ratio": 0.9617,
+      "reliability": "high"
+    },
+    "N3": {
+      "f1": 0.737,
+      "precision": 0.7438,
+      "recall": 0.7303,
+      "support": 2751,
+      "mean_confidence_calibrated": 0.7252,
+      "prediction_ratio": 0.9818,
+      "reliability": "medium"
+    },
+    "REM": {
+      "f1": 0.7135,
+      "precision": 0.6766,
+      "recall": 0.7546,
+      "support": 5502,
+      "mean_confidence_calibrated": 0.6969,
+      "prediction_ratio": 1.1154,
+      "reliability": "medium"
+    }
+  },
+  "reliability_diagram_test": {
+    "before": [
+      {
+        "bin": [
+          0.0,
+          0.06666666666666667
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.06666666666666667,
+          0.13333333333333333
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.13333333333333333,
+          0.2
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.2,
+          0.26666666666666666
+        ],
+        "n": 2,
+        "confidence": 0.24606390297412872,
+        "accuracy": 1.0
+      },
+      {
+        "bin": [
+          0.26666666666666666,
+          0.3333333333333333
+        ],
+        "n": 98,
+        "confidence": 0.3153037130832672,
+        "accuracy": 0.23469387755102042
+      },
+      {
+        "bin": [
+          0.3333333333333333,
+          0.4
+        ],
+        "n": 787,
+        "confidence": 0.37450551986694336,
+        "accuracy": 0.3278271918678526
+      },
+      {
+        "bin": [
+          0.4,
+          0.4666666666666667
+        ],
+        "n": 1703,
+        "confidence": 0.4373246133327484,
+        "accuracy": 0.3769817968291251
+      },
+      {
+        "bin": [
+          0.4666666666666667,
+          0.5333333333333333
+        ],
+        "n": 2726,
+        "confidence": 0.5013090968132019,
+        "accuracy": 0.4482758620689655
+      },
+      {
+        "bin": [
+          0.5333333333333333,
+          0.6
+        ],
+        "n": 2682,
+        "confidence": 0.5669858455657959,
+        "accuracy": 0.48210290827740493
+      },
+      {
+        "bin": [
+          0.6,
+          0.6666666666666666
+        ],
+        "n": 2530,
+        "confidence": 0.6334013342857361,
+        "accuracy": 0.5407114624505929
+      },
+      {
+        "bin": [
+          0.6666666666666666,
+          0.7333333333333333
+        ],
+        "n": 2473,
+        "confidence": 0.6995095610618591,
+        "accuracy": 0.6227254346947028
+      },
+      {
+        "bin": [
+          0.7333333333333333,
+          0.8
+        ],
+        "n": 2553,
+        "confidence": 0.7665766477584839,
+        "accuracy": 0.7027027027027027
+      },
+      {
+        "bin": [
+          0.8,
+          0.8666666666666667
+        ],
+        "n": 2783,
+        "confidence": 0.8340098261833191,
+        "accuracy": 0.7714696370822853
+      },
+      {
+        "bin": [
+          0.8666666666666667,
+          0.9333333333333333
+        ],
+        "n": 3518,
+        "confidence": 0.9027158617973328,
+        "accuracy": 0.8598635588402501
+      },
+      {
+        "bin": [
+          0.9333333333333333,
+          1.0
+        ],
+        "n": 11576,
+        "confidence": 0.9826903939247131,
+        "accuracy": 0.9752937111264686
+      }
+    ],
+    "after": [
+      {
+        "bin": [
+          0.0,
+          0.06666666666666667
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.06666666666666667,
+          0.13333333333333333
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.13333333333333333,
+          0.2
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.2,
+          0.26666666666666666
+        ],
+        "n": 6,
+        "confidence": 0.2508847713470459,
+        "accuracy": 0.3333333333333333
+      },
+      {
+        "bin": [
+          0.26666666666666666,
+          0.3333333333333333
+        ],
+        "n": 276,
+        "confidence": 0.3136647045612335,
+        "accuracy": 0.26811594202898553
+      },
+      {
+        "bin": [
+          0.3333333333333333,
+          0.4
+        ],
+        "n": 1532,
+        "confidence": 0.37198227643966675,
+        "accuracy": 0.35900783289817234
+      },
+      {
+        "bin": [
+          0.4,
+          0.4666666666666667
+        ],
+        "n": 2831,
+        "confidence": 0.43565553426742554,
+        "accuracy": 0.42493818438714237
+      },
+      {
+        "bin": [
+          0.4666666666666667,
+          0.5333333333333333
+        ],
+        "n": 3509,
+        "confidence": 0.4998050630092621,
+        "accuracy": 0.48076375035622687
+      },
+      {
+        "bin": [
+          0.5333333333333333,
+          0.6
+        ],
+        "n": 3207,
+        "confidence": 0.565719723701477,
+        "accuracy": 0.5534767695665731
+      },
+      {
+        "bin": [
+          0.6,
+          0.6666666666666666
+        ],
+        "n": 2867,
+        "confidence": 0.6327213644981384,
+        "accuracy": 0.65364492500872
+      },
+      {
+        "bin": [
+          0.6666666666666666,
+          0.7333333333333333
+        ],
+        "n": 2653,
+        "confidence": 0.699476957321167,
+        "accuracy": 0.7387862796833773
+      },
+      {
+        "bin": [
+          0.7333333333333333,
+          0.8
+        ],
+        "n": 2577,
+        "confidence": 0.7663072347640991,
+        "accuracy": 0.810244470314319
+      },
+      {
+        "bin": [
+          0.8,
+          0.8666666666666667
+        ],
+        "n": 2881,
+        "confidence": 0.8341670632362366,
+        "accuracy": 0.8812912183269698
+      },
+      {
+        "bin": [
+          0.8666666666666667,
+          0.9333333333333333
+        ],
+        "n": 3238,
+        "confidence": 0.9004037976264954,
+        "accuracy": 0.9447189623224213
+      },
+      {
+        "bin": [
+          0.9333333333333333,
+          1.0
+        ],
+        "n": 7854,
+        "confidence": 0.9818281531333923,
+        "accuracy": 0.9922332569391393
+      }
+    ]
+  },
+  "notes": [
+    "Temperature scaling changes confidence, not decisions - accuracy, kappa and F1 are identical before and after.",
+    "Reliability labels are driven by per-class F1 on unseen subjects. A class can be well calibrated and still unreliable if it cannot be identified at all.",
+    "This calibration temperature is unrelated to the KD temperature (T=3.0) used during distillation."
+  ]
+}

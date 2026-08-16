@@ -1,0 +1,72 @@
+{
+  "question": "Is N1 limited by the operating point (fixable by rebalancing) or by representation?",
+  "answer": "REPRESENTATION. E2 (class-balanced sampling) should be skipped.",
+  "evidence": {
+    "pairwise_auc_retrained": {
+      "N1_vs_N2": 0.7716,
+      "N1_vs_N3": 0.972,
+      "N1_vs_REM": 0.8203,
+      "note": "N1 separates well from N3 (0.972) and poorly from N2 (0.772). One-vs-rest (0.766) averages these and hides the specificity - the pairwise measurement was necessary."
+    },
+    "threshold_sweep_retrained": {
+      "current_N1_f1": 0.339,
+      "best_achievable_any_threshold": 0.3476,
+      "headroom": 0.0086,
+      "conclusion": "No decision rule on these probabilities beats N1 F1 0.348. Rebalancing moves the operating point; the operating point is worth +0.009 on N1."
+    },
+    "n1_average_precision": {
+      "retrained": 0.2699,
+      "inherited": 0.3568,
+      "random_baseline": 0.1048
+    },
+    "leakage_confound_resolved": {
+      "metric": "N1-vs-N2 ROC-AUC",
+      "inherited_on_subjects_it_trained_on": 0.8693,
+      "inherited_on_SC474_unseen_by_both": 0.8197,
+      "retrained_on_SC474": 0.7851,
+      "honest_ranking_gap": 0.0346,
+      "note": "Inherited apparent advantage of +0.084 aggregate shrinks to +0.035 on honest ground; roughly 60% of it was leakage, but a real residual gap remains (more training data: 157 vs 137 recordings)."
+    }
+  },
+  "post_hoc_prior_correction": {
+    "method": "divide softmax probabilities by the focal alpha used in training, then argmax",
+    "as_trained": {
+      "acc": 0.616,
+      "kappa": 0.5122,
+      "macro_f1": 0.6063,
+      "N1_f1": 0.339,
+      "N2_f1": 0.622,
+      "N1_pred_ratio": 2.61
+    },
+    "divide_by_alpha": {
+      "acc": 0.6901,
+      "kappa": 0.5676,
+      "macro_f1": 0.6093,
+      "N1_f1": 0.264,
+      "N2_f1": 0.748,
+      "N1_pred_ratio": 0.73
+    },
+    "divide_by_sqrt_alpha": {
+      "acc": 0.6734,
+      "kappa": 0.565,
+      "macro_f1": 0.6335,
+      "N1_f1": 0.337,
+      "N2_f1": 0.725,
+      "N1_pred_ratio": 1.6
+    },
+    "oracle_exponent_0p55": {
+      "acc": 0.6773,
+      "kappa": 0.5681,
+      "macro_f1": 0.6342,
+      "WARNING": "exponent tuned on TEST - reported only as an upper bound, never to be used"
+    },
+    "conclusion": "sqrt(alpha) (a principled, untuned choice) reaches macro-F1 0.6335 vs the test-tuned oracle 0.6342. The sqrt-alpha proposal is validated. Most of E1b benefit is available POST-HOC without retraining; it comes from N2 recovery (0.622 -> 0.725), not from N1 (immovable at ~0.34)."
+  },
+  "recommendations": {
+    "E2_class_balanced_sampling": "SKIP - threshold headroom is +0.009 on N1",
+    "E1a_overlap_192": "RUN FIRST - now the higher priority. It is the only training-side lever that could improve the representation itself, which is what binds N1.",
+    "E1b_sqrt_alpha_focal_fix": "RUN - expected kappa ~0.57, but note much is post-hoc achievable; its unique value is whether softer weighting learns better features",
+    "E3_EOG": "STRONGLY JUSTIFIED - N1-vs-N2 ranking at AUC 0.79 is the binding constraint and no decision-rule change helps",
+    "methodology_warning": "Any prior-correction exponent must be fitted on VALIDATION, never test. The g=0.55 oracle above is an upper bound only."
+  }
+}

@@ -1,0 +1,78 @@
+
+========================================================================
+E1B  |  29 held-out test recordings
+========================================================================
+  33,431 epochs
+
+  ONE-VS-REST           AUC      AP  prevalence
+  W                0.9617  0.9153      0.2661
+  N1               0.8103  0.3316      0.1048
+  N2               0.8899  0.8369      0.3822
+  N3               0.9575  0.7408      0.0823
+  REM              0.9020  0.7204      0.1646
+
+  PAIRWISE (score = p_A / (p_A + p_B), epochs with y in {A,B})
+  pair               AUC     n_A     n_B
+  W_vs_N1         0.9313   8,897   3,503
+  W_vs_N2         0.9788   8,897  12,778
+  W_vs_N3         0.9897   8,897   2,751
+  W_vs_REM        0.9631   8,897   5,502
+  N1_vs_N2        0.8089   3,503  12,778   <-- dominant confusion
+  N1_vs_N3        0.9742   3,503   2,751
+  N1_vs_REM       0.8636   3,503   5,502
+  N2_vs_N3        0.9494  12,778   2,751
+  N2_vs_REM       0.8914  12,778   5,502
+  N3_vs_REM       0.9787   2,751   5,502
+
+  MEAN PREDICTED PROBABILITY, by true class (rows) x class (cols)
+  true           W       N1       N2       N3      REM
+  W          0.784    0.142    0.033    0.010    0.032
+  N1         0.173    0.378    0.309    0.031    0.109
+  N2         0.061    0.178    0.605    0.087    0.069
+  N3         0.079    0.029    0.295    0.575    0.022
+  REM        0.087    0.166    0.231    0.016    0.500
+
+========================================================================
+E1A  |  29 held-out test recordings
+========================================================================
+  33,431 epochs
+
+  ONE-VS-REST           AUC      AP  prevalence
+  W                0.9622  0.9295      0.2661
+  N1               0.8026  0.3202      0.1048
+  N2               0.9037  0.8555      0.3822
+  N3               0.9553  0.7681      0.0823
+  REM              0.9233  0.7533      0.1646
+
+  PAIRWISE (score = p_A / (p_A + p_B), epochs with y in {A,B})
+  pair               AUC     n_A     n_B
+  W_vs_N1         0.9280   8,897   3,503
+  W_vs_N2         0.9792   8,897  12,778
+  W_vs_N3         0.9870   8,897   2,751
+  W_vs_REM        0.9695   8,897   5,502
+  N1_vs_N2        0.8142   3,503  12,778   <-- dominant confusion
+  N1_vs_N3        0.9700   3,503   2,751
+  N1_vs_REM       0.8681   3,503   5,502
+  N2_vs_N3        0.9373  12,778   2,751
+  N2_vs_REM       0.9128  12,778   5,502
+  N3_vs_REM       0.9920   2,751   5,502
+
+  MEAN PREDICTED PROBABILITY, by true class (rows) x class (cols)
+  true           W       N1       N2       N3      REM
+  W          0.706    0.224    0.029    0.013    0.027
+  N1         0.123    0.509    0.217    0.035    0.117
+  N2         0.051    0.298    0.457    0.128    0.067
+  N3         0.059    0.055    0.178    0.694    0.015
+  REM        0.053    0.226    0.151    0.014    0.556
+
+========================================================================
+VERDICT
+========================================================================
+  E1b         N1 one-vs-rest AUC=0.8103 AP=0.3316 | N1-vs-N2 AUC=0.8089 | N1-vs-N3 AUC=0.9742
+  E1a         N1 one-vs-rest AUC=0.8026 AP=0.3202 | N1-vs-N2 AUC=0.8142 | N1-vs-N3 AUC=0.9700
+
+  Interpretation:
+    N1-vs-N2 AUC near 0.5-0.7  -> representation limit; sampling (E2) cannot help
+    N1-vs-N2 AUC above ~0.85   -> ranking is fine, operating point is wrong; E2 may help
+
+Wrote distillation\results\separability_diagnostic_E1b_E1a.json

@@ -1,0 +1,55 @@
+{
+  "question": "Did fixing the split flatten the exposure gradient?",
+  "answer": "NO. The gap widened. See interpretation.",
+  "before_inherited": {
+    "source": "distillation/results/exposure_gradient.json (Phase 2, 5 clean subjects, 13861 epochs)",
+    "train": 0.7412,
+    "same_subject_other_night": 0.6855,
+    "unseen_subject": 0.6151,
+    "delta_train_minus_unseen": 0.1261
+  },
+  "after_retrained": {
+    "source": "distillation/results/eval_final_retrained.json (15 held-out subjects, 33431 epochs)",
+    "train": 0.7527412639814723,
+    "unseen_subject_val": 0.48535325230703774,
+    "unseen_subject_test": 0.5122410620625771,
+    "delta_train_minus_unseen": 0.2405
+  },
+  "interpretation": [
+    "The exposure gradient measures OVERFITTING, not leakage. Repairing the split does not reduce overfitting; it makes it honestly visible.",
+    "The inherited gradient understated the gap because its unseen estimate rested on 5 SC-only subjects with kappa spread 0.435-0.724 - a small, favourable draw.",
+    "The retrained gradient rests on 15 held-out subjects including 3 ST, a broader and harder sample.",
+    "The retrained model also saw less data (137 vs 157 recordings) and trained to a lower loss (0.05), so it does overfit somewhat harder."
+  ],
+  "head_to_head_on_test_split": {
+    "note": "The inherited teacher trained on 14 of these 15 subjects, so its aggregate is contaminated.",
+    "inherited_aggregate": 0.6781553205146211,
+    "retrained_aggregate": 0.5122410620625771,
+    "inherited_on_14_subjects_it_trained_on": 0.679,
+    "inherited_on_1_subject_it_never_saw": 0.5066,
+    "leak_size_within_test_split": 0.1724
+  },
+  "only_valid_head_to_head": {
+    "subject": "SC474",
+    "why": "the only subject unseen by BOTH models",
+    "inherited_kappa": 0.5066,
+    "retrained_kappa": 0.48907639678951276,
+    "difference": 0.0175,
+    "conclusion": "Statistically indistinguishable at n=1. The inherited teacher was never better; it was better measured."
+  },
+  "entropy": {
+    "inherited_test_mean_nats": 0.9070947766304016,
+    "retrained_test_mean_nats": 0.6551160216331482,
+    "max_possible_nats": 1.6094,
+    "kappa_entropy_pearson_r_per_recording": -0.633,
+    "kappa_entropy_pearson_r_per_subject": -0.588,
+    "note": "Retrained is MORE confident (lower entropy) while being LESS accurate on this split - i.e. worse calibrated. Relevant to Phase 7."
+  },
+  "cohort": {
+    "retrained_SC_mean_kappa": 0.5003,
+    "retrained_ST_mean_kappa": 0.4332,
+    "inherited_SC_mean_kappa": 0.6799,
+    "inherited_ST_mean_kappa": 0.6178,
+    "note": "ST is harder for both. This is the first clean ST measurement in the project."
+  }
+}

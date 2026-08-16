@@ -1,0 +1,59 @@
+{
+  "experiment": "E1a",
+  "config": {
+    "OVERLAP": 192,
+    "ALPHA_POWER": 1.0,
+    "FIX_FOCAL_PT": false,
+    "EPOCH_TOKENS": 1,
+    "EPOCHS": 75
+  },
+  "train_windows": 2721,
+  "optimizer_steps_per_epoch": 171,
+  "total_steps": 12825,
+  "wall_clock_minutes": 335.5,
+  "hardware": "single T4 (MULTI_GPU=off)",
+  "trainable_parameters": 649229,
+  "best_epoch": 53,
+  "validation_best": {
+    "epoch": 53,
+    "macro_f1": 0.6259,
+    "kappa": 0.5289,
+    "accuracy": 0.6204,
+    "per_class_f1": {
+      "W": 0.819,
+      "N1": 0.453,
+      "N2": 0.554,
+      "N3": 0.583,
+      "REM": 0.721
+    },
+    "n1_prediction_ratio": 2.41
+  },
+  "e0_validation_best": {
+    "epoch": 118,
+    "macro_f1": 0.5862,
+    "kappa": 0.4853,
+    "accuracy": 0.5909,
+    "per_class_f1": {
+      "W": 0.806,
+      "N1": 0.382,
+      "N2": 0.575,
+      "N3": 0.571,
+      "REM": 0.598
+    }
+  },
+  "deltas_validation": {
+    "accuracy": 0.0295,
+    "kappa": 0.0436,
+    "macro_f1": 0.0397
+  },
+  "per_class_delta": {
+    "W": 0.013,
+    "N1": 0.071,
+    "N2": -0.021,
+    "N3": 0.012,
+    "REM": 0.123
+  },
+  "note": "VALIDATION only - this is the split selection ran on, so it is optimistic. Held-out test evaluation pending (needs teacher_best.pt).",
+  "convergence": "plateaued from ~ep60; best ep53; early stopping (patience 25) did not fire",
+  "final_train_loss": 0.0665
+}

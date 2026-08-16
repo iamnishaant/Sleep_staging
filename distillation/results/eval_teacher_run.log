@@ -1,0 +1,141 @@
+Teacher : best_model_fusion.pt
+          649,229 trainable parameters
+Groups  : clean=10 leaked_val=30 train=157 new_test=29
+Clean subjects (never seen): ['SC409', 'SC428', 'SC434', 'SC459', 'SC474']
+Evaluating 110 recordings in priority order
+
+  [  3/110] SC4281G0-PSG  n= 1127  kappa=0.7290  (0.4 min elapsed)
+  [  4/110] SC4282G0-PSG  n= 1070  kappa=0.7140  (0.8 min elapsed)
+  [  5/110] SC4341F0-PSG  n= 1501  kappa=0.5883  (1.4 min elapsed)
+  [  6/110] SC4342F0-PSG  n= 1582  kappa=0.8608  (1.9 min elapsed)
+  [  7/110] SC4591G0-PSG  n= 1840  kappa=0.4745  (2.6 min elapsed)
+  [  8/110] SC4592G0-PSG  n= 1231  kappa=0.3768  (3.1 min elapsed)
+  [  9/110] SC4741E0-PSG  n= 2210  kappa=0.5500  (3.9 min elapsed)
+  [ 10/110] SC4742E0-PSG  n= 1063  kappa=0.3954  (4.3 min elapsed)
+  [ 11/110] SC4001E0-PSG  n=  841  kappa=0.8178  (4.6 min elapsed)
+  [ 12/110] SC4002E0-PSG  n= 1127  kappa=0.8104  (5.1 min elapsed)
+  [ 13/110] SC4011E0-PSG  n= 1103  kappa=0.8077  (5.5 min elapsed)
+  [ 14/110] SC4012E0-PSG  n= 1186  kappa=0.7555  (5.9 min elapsed)
+  [ 15/110] SC4021E0-PSG  n= 1025  kappa=0.8118  (6.2 min elapsed)
+  [ 16/110] SC4022E0-PSG  n= 1009  kappa=0.7509  (6.4 min elapsed)
+  [ 17/110] SC4031E0-PSG  n=  952  kappa=0.8505  (6.7 min elapsed)
+  [ 18/110] SC4032E0-PSG  n=  911  kappa=0.8055  (6.9 min elapsed)
+  [ 19/110] SC4041E0-PSG  n= 1235  kappa=0.7275  (7.2 min elapsed)
+  [ 20/110] SC4051E0-PSG  n=  672  kappa=0.8453  (7.3 min elapsed)
+  [ 21/110] SC4052E0-PSG  n= 1246  kappa=0.7510  (7.6 min elapsed)
+  [ 22/110] SC4061E0-PSG  n=  843  kappa=0.7967  (7.8 min elapsed)
+  [ 23/110] SC4062E0-PSG  n= 1016  kappa=0.8496  (8.1 min elapsed)
+  [ 24/110] SC4071E0-PSG  n=  976  kappa=0.8310  (8.5 min elapsed)
+  [ 25/110] SC4082E0-PSG  n= 1054  kappa=0.7343  (8.9 min elapsed)
+  [ 26/110] SC4101E0-PSG  n= 1104  kappa=0.7503  (9.3 min elapsed)
+  [ 27/110] SC4102E0-PSG  n= 1092  kappa=0.7787  (9.7 min elapsed)
+  [ 28/110] SC4111E0-PSG  n=  928  kappa=0.5866  (10.1 min elapsed)
+  [ 29/110] SC4112E0-PSG  n=  802  kappa=0.8223  (10.4 min elapsed)
+  [ 30/110] SC4122E0-PSG  n=  977  kappa=0.7266  (10.7 min elapsed)
+  [ 31/110] SC4131E0-PSG  n= 1028  kappa=0.8396  (11.1 min elapsed)
+  [ 32/110] SC4141E0-PSG  n= 1004  kappa=0.8713  (11.5 min elapsed)
+  [ 33/110] SC4142E0-PSG  n=  952  kappa=0.8311  (11.8 min elapsed)
+  [ 34/110] SC4151E0-PSG  n=  952  kappa=0.7861  (12.2 min elapsed)
+  [ 35/110] SC4161E0-PSG  n= 1144  kappa=0.7734  (12.6 min elapsed)
+  [ 36/110] SC4162E0-PSG  n= 1003  kappa=0.7364  (13.0 min elapsed)
+  [ 37/110] SC4171E0-PSG  n= 1002  kappa=0.6935  (13.4 min elapsed)
+  [ 38/110] SC4172E0-PSG  n= 1773  kappa=0.7512  (14.0 min elapsed)
+  [ 39/110] SC4181E0-PSG  n=  964  kappa=0.6972  (14.4 min elapsed)
+  [ 40/110] SC4182E0-PSG  n=  920  kappa=0.7343  (14.7 min elapsed)
+  [ 41/110] SC4042E0-PSG  n= 1200  kappa=0.6500  (15.2 min elapsed)
+  [ 42/110] SC4072E0-PSG  n= 1273  kappa=0.8551  (15.7 min elapsed)
+  [ 43/110] SC4081E0-PSG  n= 1134  kappa=0.7565  (16.0 min elapsed)
+  [ 44/110] SC4121E0-PSG  n= 1052  kappa=0.7775  (16.2 min elapsed)
+  [ 45/110] SC4152E0-PSG  n= 1762  kappa=0.8444  (16.6 min elapsed)
+  [ 46/110] SC4231E0-PSG  n=  904  kappa=0.5630  (16.9 min elapsed)
+  [ 47/110] SC4302E0-PSG  n=  854  kappa=0.6449  (17.1 min elapsed)
+  [ 48/110] SC4351F0-PSG  n=  976  kappa=0.7517  (17.3 min elapsed)
+  [ 49/110] SC4372F0-PSG  n= 1509  kappa=0.6398  (17.7 min elapsed)
+  [ 50/110] SC4382F0-PSG  n= 1871  kappa=0.7604  (18.3 min elapsed)
+  [ 51/110] SC4401E0-PSG  n= 1064  kappa=0.4137  (18.7 min elapsed)
+  [ 52/110] SC4431E0-PSG  n=  699  kappa=0.7353  (19.0 min elapsed)
+  [ 53/110] SC4442E0-PSG  n= 1092  kappa=0.6922  (19.4 min elapsed)
+  [ 54/110] SC4482F0-PSG  n= 1910  kappa=0.8319  (20.1 min elapsed)
+  [ 55/110] SC4492G0-PSG  n= 1040  kappa=0.6751  (20.4 min elapsed)
+  [ 56/110] SC4582G0-PSG  n= 1175  kappa=0.5338  (20.7 min elapsed)
+  [ 57/110] SC4601E0-PSG  n= 1349  kappa=0.7383  (21.2 min elapsed)
+  [ 58/110] SC4621E0-PSG  n= 1445  kappa=0.4938  (21.6 min elapsed)
+  [ 59/110] SC4632E0-PSG  n= 1107  kappa=0.6741  (21.9 min elapsed)
+  [ 60/110] SC4702E0-PSG  n= 1515  kappa=0.7392  (22.3 min elapsed)
+  [ 61/110] SC4772G0-PSG  n= 1324  kappa=0.6087  (22.7 min elapsed)
+  [ 62/110] SC4801G0-PSG  n= 1241  kappa=0.6817  (22.9 min elapsed)
+  [ 63/110] ST7021J0-PSG  n=  920  kappa=0.7266  (23.2 min elapsed)
+  [ 64/110] ST7062J0-PSG  n=  952  kappa=0.7385  (23.4 min elapsed)
+  [ 65/110] ST7102J0-PSG  n=  980  kappa=0.7340  (23.6 min elapsed)
+  [ 66/110] ST7122J0-PSG  n=  945  kappa=0.6685  (23.8 min elapsed)
+  [ 67/110] ST7131J0-PSG  n=  859  kappa=0.6310  (24.0 min elapsed)
+  [ 68/110] ST7172J0-PSG  n= 1005  kappa=0.6650  (24.3 min elapsed)
+  [ 69/110] ST7182J0-PSG  n=  967  kappa=-0.0337  (24.5 min elapsed)
+  [ 70/110] ST7202J0-PSG  n=  898  kappa=0.1501  (24.9 min elapsed)
+  [ 71/110] SC4201E0-PSG  n= 1022  kappa=0.6634  (25.3 min elapsed)
+  [ 72/110] SC4202E0-PSG  n= 1021  kappa=0.5625  (25.6 min elapsed)
+  [ 73/110] SC4211E0-PSG  n= 1578  kappa=0.7832  (26.2 min elapsed)
+  [ 74/110] SC4212E0-PSG  n=  808  kappa=0.6751  (26.3 min elapsed)
+  [ 75/110] SC4232E0-PSG  n= 1729  kappa=0.5696  (26.7 min elapsed)
+  [ 76/110] SC4291G0-PSG  n= 1131  kappa=0.6843  (27.0 min elapsed)
+  [ 77/110] SC4292G0-PSG  n= 1605  kappa=0.7870  (27.4 min elapsed)
+  [ 78/110] SC4371F0-PSG  n=  918  kappa=0.6126  (27.6 min elapsed)
+  [ 79/110] SC4522E0-PSG  n=  997  kappa=0.6760  (27.8 min elapsed)
+  [ 80/110] SC4531E0-PSG  n= 1096  kappa=0.5395  (28.1 min elapsed)
+  [ 81/110] SC4532E0-PSG  n= 1056  kappa=0.6412  (28.3 min elapsed)
+  [ 82/110] SC4611E0-PSG  n= 1652  kappa=0.6009  (28.7 min elapsed)
+  [ 83/110] SC4612E0-PSG  n= 1062  kappa=0.5770  (29.1 min elapsed)
+  [ 84/110] ST7101J0-PSG  n= 1042  kappa=0.6236  (29.4 min elapsed)
+  [ 85/110] ST7141J0-PSG  n=  858  kappa=0.6839  (29.6 min elapsed)
+  [ 86/110] ST7142J0-PSG  n=  873  kappa=0.6504  (29.8 min elapsed)
+  [ 87/110] ST7161J0-PSG  n= 1050  kappa=0.3762  (30.1 min elapsed)
+  [ 88/110] ST7162J0-PSG  n=  988  kappa=0.6433  (30.3 min elapsed)
+  [ 89/110] SC4191E0-PSG  n= 1535  kappa=0.7810  (30.6 min elapsed)
+  [ 90/110] SC4192E0-PSG  n= 1274  kappa=0.7611  (30.9 min elapsed)
+  [ 91/110] SC4221E0-PSG  n= 1099  kappa=0.6106  (31.2 min elapsed)
+  [ 92/110] SC4222E0-PSG  n= 1108  kappa=0.7170  (31.4 min elapsed)
+  [ 93/110] SC4241E0-PSG  n= 1673  kappa=0.8410  (32.0 min elapsed)
+  [ 94/110] SC4242E0-PSG  n= 1775  kappa=0.8792  (32.7 min elapsed)
+  [ 95/110] SC4251E0-PSG  n=  972  kappa=0.7755  (33.0 min elapsed)
+  [ 96/110] SC4252E0-PSG  n= 1020  kappa=0.6574  (33.4 min elapsed)
+  [ 97/110] SC4261F0-PSG  n= 1597  kappa=0.7266  (34.0 min elapsed)
+  [ 98/110] SC4262F0-PSG  n=  980  kappa=0.7336  (34.2 min elapsed)
+  [ 99/110] SC4271F0-PSG  n= 1052  kappa=0.7308  (34.4 min elapsed)
+  [100/110] SC4272F0-PSG  n= 1090  kappa=0.6609  (34.7 min elapsed)
+  [101/110] SC4301E0-PSG  n=  929  kappa=0.6545  (34.9 min elapsed)
+  [102/110] SC4311E0-PSG  n= 1054  kappa=0.7489  (35.1 min elapsed)
+  [103/110] SC4312E0-PSG  n= 1181  kappa=0.7112  (35.6 min elapsed)
+  [104/110] SC4321E0-PSG  n= 1560  kappa=0.7757  (36.2 min elapsed)
+  [105/110] SC4322E0-PSG  n= 1021  kappa=0.7071  (36.4 min elapsed)
+  [106/110] SC4331F0-PSG  n= 1888  kappa=0.7570  (37.1 min elapsed)
+  [107/110] SC4332F0-PSG  n= 1312  kappa=0.7679  (37.6 min elapsed)
+  [108/110] SC4352F0-PSG  n=  963  kappa=0.6173  (38.0 min elapsed)
+  [109/110] SC4362F0-PSG  n=  824  kappa=0.6209  (38.2 min elapsed)
+  [110/110] SC4381F0-PSG  n= 1776  kappa=0.8233  (38.9 min elapsed)
+
+==========================================================================
+group                   n_epochs      acc    kappa   macroF1
+--------------------------------------------------------------------------
+teacher_train             79,010   0.8127   0.7412    0.7459
+teacher_val_leaked        35,022   0.7725   0.6855    0.6953
+teacher_val_clean         13,861   0.7191   0.6151    0.6398
+new_test_split            33,431   0.7657   0.6782    0.7080
+--------------------------------------------------------------------------
+reported (val, leaky)          -   0.7575   0.6663    0.6814
+==========================================================================
+
+PER-SUBJECT, teacher-clean cohort (never seen in training)
+  subject     cohort   epochs    kappa      acc   macroF1
+  SC409           SC    2,237   0.6735   0.7823    0.6755
+  SC428           SC    2,197   0.7217   0.7929    0.7593
+  SC434           SC    3,083   0.7241   0.8138    0.5594
+  SC459           SC    3,071   0.4351   0.5848    0.4756
+  SC474           SC    3,273   0.5066   0.6630    0.4107
+
+  mean=0.6122  sd=0.1330  min=0.4351  max=0.7241
+  all 5 below reported 0.6663? False
+  straddle 0.6663?             True
+
+  clean cohorts represented: ['SC']  -> ZERO ST subjects are teacher-clean.
+
+Wrote distillation\results\eval_teacher.json

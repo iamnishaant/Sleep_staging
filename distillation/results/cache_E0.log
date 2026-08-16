@@ -1,0 +1,28 @@
+teacher    : E0  (teacher_best.pt)
+             649,229 params
+caching    : 137 recordings (train split) -> distillation\results\teacher_logits_E0
+             0 already cached, 137 to do
+
+  [ 10/137] SC4062E0-PSG  n= 1016  (0.6 min elapsed, ~7.2 min left)
+  [ 20/137] SC4152E0-PSG  n= 1762  (1.2 min elapsed, ~6.8 min left)
+  [ 30/137] SC4242E0-PSG  n= 1775  (1.7 min elapsed, ~6.2 min left)
+  [ 40/137] SC4302E0-PSG  n=  854  (2.4 min elapsed, ~5.7 min left)
+  [ 50/137] SC4411E0-PSG  n= 1078  (3.0 min elapsed, ~5.2 min left)
+  [ 60/137] SC4481F0-PSG  n= 2027  (3.5 min elapsed, ~4.5 min left)
+  [ 70/137] SC4551F0-PSG  n= 1047  (4.0 min elapsed, ~3.8 min left)
+  [ 80/137] SC4631E0-PSG  n= 1063  (4.6 min elapsed, ~3.3 min left)
+  [ 90/137] SC4711E0-PSG  n= 1413  (5.3 min elapsed, ~2.8 min left)
+  [100/137] SC4771G0-PSG  n= 1325  (6.0 min elapsed, ~2.2 min left)
+  [110/137] ST7021J0-PSG  n=  920  (6.6 min elapsed, ~1.6 min left)
+  [120/137] ST7091J0-PSG  n=  943  (7.0 min elapsed, ~1.0 min left)
+  [130/137] ST7191J0-PSG  n=  955  (7.5 min elapsed, ~0.4 min left)
+  [137/137] ST7242J0-PSG  n=  939  (7.8 min elapsed, ~0.0 min left)
+
+cached 137 recordings, 169,909 epochs, 1.6 MB
+logit range [-16.22, 14.03] (fp16 max 65504 - safe)
+
+VERIFY: cache vs live teacher forward
+  SC4001E0-PSG: argmax agreement 1.00000, max |softmax diff| 1.30e-03  OK
+  SC4002E0-PSG: argmax agreement 1.00000, max |softmax diff| 9.08e-04  OK
+  SC4031E0-PSG: argmax agreement 0.99895, max |softmax diff| 1.33e-03  MISMATCH
+  verification: FAILED

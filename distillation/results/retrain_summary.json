@@ -1,0 +1,54 @@
+{
+  "run": "teacher retrain under honest protocol",
+  "date": "2026-08-07",
+  "platform": "Kaggle, 2x T4, AMP, DataParallel",
+  "wall_clock_minutes": 97.9,
+  "script": "distillation/kaggle_train_teacher.py",
+  "data_root_discovered": "/kaggle/input/datasets/nishaantshah/sleepedf-dataset",
+  "config": {
+    "architecture": "FusedSleepStagingModel concat, embed=128, heads=4, layers=3, dropout=0.2, Linear(34,128) spectral, no aux heads",
+    "trainable_parameters": 649229,
+    "loss": "FocalLoss(gamma=2.0), inverse-frequency alpha, inherited pt bug preserved",
+    "focal_alpha_train_split": {"W": 0.4563, "N1": 1.3715, "N2": 0.3888, "N3": 1.7742, "REM": 1.0091},
+    "optimizer": "AdamW lr=3e-4 wd=1e-2",
+    "schedule": "OneCycleLR max_lr=3e-4 pct_start=0.05",
+    "batch_size": 16,
+    "window_size": 256,
+    "overlap": 0,
+    "epochs": 150,
+    "seed": 42
+  },
+  "protocol_changes_vs_inherited": [
+    "subject-level splits (was recording-level, 86% subject leakage)",
+    "checkpoint selection on macro-F1 (was weighted-F1)",
+    "test split never loaded during training",
+    "focal alpha from train split only (was full-dataset counts incl. test)"
+  ],
+  "data": {
+    "train": {"recordings": 137, "subjects": 69, "windows": 729},
+    "val": {"recordings": 31, "subjects": 16, "windows": 149},
+    "test": {"subjects": 15, "status": "HELD OUT - never loaded during training"}
+  },
+  "best_epoch": {
+    "epoch": 118,
+    "selected_on": "macro_f1",
+    "macro_f1": 0.5862,
+    "kappa": 0.4853,
+    "accuracy": 0.5909,
+    "train_loss": 0.0524,
+    "per_class_f1": {"W": 0.806, "N1": 0.382, "N2": 0.575, "N3": 0.571, "REM": 0.598},
+    "split": "validation (subject-level, unseen subjects)"
+  },
+  "convergence": {
+    "train_loss_final": 0.0504,
+    "plateau_from_epoch": 118,
+    "note": "val macro-F1 flat at 0.580-0.586 from ep118 to ep149 as OneCycleLR annealed; converged, not truncated"
+  },
+  "comparison_note": "Val here (16 subjects, 12 SC + 4 ST) and the inherited teacher's clean subset (5 subjects, all SC) are DIFFERENT subject sets, so these figures are not directly comparable. The decisive comparison is both teachers on the held-out 15-subject test split, which neither has been evaluated on yet.",
+  "pending": [
+    "download teacher_best.pt from Kaggle to evaluate on the test split",
+    "evaluate both teachers on test split",
+    "exposure-gradient before/after comparison",
+    "per-recording mean prediction entropy"
+  ]
+}

@@ -1,0 +1,639 @@
+{
+  "model": "retrained",
+  "checkpoint": "distillation\\results\\retrained\\teacher_best.pt",
+  "commit": "b00a428",
+  "window_size": 256,
+  "groups": {
+    "test_heldout": {
+      "n_epochs": 33431,
+      "accuracy": 0.6160150758278244,
+      "kappa": 0.5122410620625771,
+      "macro_f1": 0.6062846543161751,
+      "weighted_f1": 0.642326434665718,
+      "per_class": {
+        "W": {
+          "precision": 0.863822700486805,
+          "recall": 0.7578959199730246,
+          "f1": 0.8073998682871341,
+          "support": 8897
+        },
+        "N1": {
+          "precision": 0.2344006119549776,
+          "recall": 0.6123322866114759,
+          "f1": 0.33902323376007587,
+          "support": 3503
+        },
+        "N2": {
+          "precision": 0.8240082698023,
+          "recall": 0.4990608858976366,
+          "f1": 0.6216308427157966,
+          "support": 12778
+        },
+        "N3": {
+          "precision": 0.5565867491621552,
+          "recall": 0.7848055252635405,
+          "f1": 0.6512820512820513,
+          "support": 2751
+        },
+        "REM": {
+          "precision": 0.6528006589785832,
+          "recall": 0.5761541257724464,
+          "f1": 0.6120872755358178,
+          "support": 5502
+        }
+      },
+      "confusion_matrix": [
+        [
+          6743,
+          1523,
+          167,
+          184,
+          280
+        ],
+        [
+          211,
+          2145,
+          532,
+          124,
+          491
+        ],
+        [
+          403,
+          3883,
+          6377,
+          1316,
+          799
+        ],
+        [
+          99,
+          150,
+          227,
+          2159,
+          116
+        ],
+        [
+          350,
+          1450,
+          436,
+          96,
+          3170
+        ]
+      ],
+      "mean_entropy_nats": 0.6551160216331482,
+      "max_possible_entropy_nats": 1.6094379124341003
+    },
+    "val": {
+      "n_epochs": 34610,
+      "accuracy": 0.5910430511412886,
+      "kappa": 0.48535325230703774,
+      "macro_f1": 0.5862368315124913,
+      "weighted_f1": 0.6110864709952191,
+      "per_class": {
+        "W": {
+          "precision": 0.862288422477996,
+          "recall": 0.7562047262795393,
+          "f1": 0.8057699607743894,
+          "support": 8421
+        },
+        "N1": {
+          "precision": 0.26950568811033926,
+          "recall": 0.6542033235581622,
+          "f1": 0.38174688057041,
+          "support": 4092
+        },
+        "N2": {
+          "precision": 0.8392591591185615,
+          "recall": 0.43727548073536665,
+          "f1": 0.5749745299620265,
+          "support": 14197
+        },
+        "N3": {
+          "precision": 0.44654202214558,
+          "recall": 0.7902345004818503,
+          "f1": 0.5706332637439109,
+          "support": 3113
+        },
+        "REM": {
+          "precision": 0.6253989968080256,
+          "recall": 0.573010236055985,
+          "f1": 0.5980595225117191,
+          "support": 4787
+        }
+      },
+      "confusion_matrix": [
+        [
+          6368,
+          1690,
+          85,
+          114,
+          164
+        ],
+        [
+          489,
+          2677,
+          402,
+          85,
+          439
+        ],
+        [
+          225,
+          4092,
+          6208,
+          2742,
+          930
+        ],
+        [
+          109,
+          221,
+          213,
+          2460,
+          110
+        ],
+        [
+          194,
+          1253,
+          489,
+          108,
+          2743
+        ]
+      ],
+      "mean_entropy_nats": 0.6515567302703857,
+      "max_possible_entropy_nats": 1.6094379124341003
+    },
+    "train_sample": {
+      "n_epochs": 33963,
+      "accuracy": 0.806495303712864,
+      "kappa": 0.7527412639814723,
+      "macro_f1": 0.7911231438882348,
+      "weighted_f1": 0.8168360557354791,
+      "per_class": {
+        "W": {
+          "precision": 0.9959635222006279,
+          "recall": 0.8611685625646329,
+          "f1": 0.9236741767764298,
+          "support": 7736
+        },
+        "N1": {
+          "precision": 0.39624591010848975,
+          "recall": 0.9207683073229291,
+          "f1": 0.5540573079701421,
+          "support": 2499
+        },
+        "N2": {
+          "precision": 0.9884028016993914,
+          "recall": 0.6207543087906541,
+          "f1": 0.7625797306874557,
+          "support": 13867
+        },
+        "N3": {
+          "precision": 0.6353489921705814,
+          "recall": 0.999737876802097,
+          "f1": 0.7769403137095131,
+          "support": 3815
+        },
+        "REM": {
+          "precision": 0.8891191709844559,
+          "recall": 0.9933840555739332,
+          "f1": 0.938364190297633,
+          "support": 6046
+        }
+      },
+      "confusion_matrix": [
+        [
+          6662,
+          962,
+          39,
+          9,
+          64
+        ],
+        [
+          16,
+          2301,
+          60,
+          3,
+          119
+        ],
+        [
+          11,
+          2505,
+          8608,
+          2177,
+          566
+        ],
+        [
+          0,
+          0,
+          1,
+          3814,
+          0
+        ],
+        [
+          0,
+          39,
+          1,
+          0,
+          6006
+        ]
+      ],
+      "mean_entropy_nats": 0.5400721430778503,
+      "max_possible_entropy_nats": 1.6094379124341003
+    }
+  },
+  "exposure_order": [
+    "train_sample",
+    "val",
+    "test_heldout"
+  ],
+  "exposure_labels": {
+    "train_sample": "same recording (trained on)",
+    "val": "unseen subject (selection split)",
+    "test_heldout": "unseen subject (held out)"
+  },
+  "per_recording_test": {
+    "SC4011E0-PSG": {
+      "subject": "SC401",
+      "n_epochs": 1103,
+      "kappa": 0.5796343411222453,
+      "accuracy": 0.700815956482321,
+      "mean_entropy_nats": 0.7338148951530457
+    },
+    "SC4012E0-PSG": {
+      "subject": "SC401",
+      "n_epochs": 1186,
+      "kappa": 0.5961404770950715,
+      "accuracy": 0.7158516020236088,
+      "mean_entropy_nats": 0.6972213387489319
+    },
+    "SC4021E0-PSG": {
+      "subject": "SC402",
+      "n_epochs": 1025,
+      "kappa": 0.6161350813728497,
+      "accuracy": 0.7307317073170732,
+      "mean_entropy_nats": 0.7594869136810303
+    },
+    "SC4022E0-PSG": {
+      "subject": "SC402",
+      "n_epochs": 1009,
+      "kappa": 0.4298371194374807,
+      "accuracy": 0.5708622398414271,
+      "mean_entropy_nats": 0.8829680681228638
+    },
+    "SC4141E0-PSG": {
+      "subject": "SC414",
+      "n_epochs": 1004,
+      "kappa": 0.7657031906539287,
+      "accuracy": 0.8227091633466136,
+      "mean_entropy_nats": 0.5507485270500183
+    },
+    "SC4142E0-PSG": {
+      "subject": "SC414",
+      "n_epochs": 952,
+      "kappa": 0.6656825303772428,
+      "accuracy": 0.7394957983193278,
+      "mean_entropy_nats": 0.5743169784545898
+    },
+    "SC4201E0-PSG": {
+      "subject": "SC420",
+      "n_epochs": 1022,
+      "kappa": 0.39253477608050924,
+      "accuracy": 0.5313111545988258,
+      "mean_entropy_nats": 0.6838467121124268
+    },
+    "SC4202E0-PSG": {
+      "subject": "SC420",
+      "n_epochs": 1021,
+      "kappa": 0.24243926864131726,
+      "accuracy": 0.4005876591576885,
+      "mean_entropy_nats": 0.8147329092025757
+    },
+    "SC4211E0-PSG": {
+      "subject": "SC421",
+      "n_epochs": 1578,
+      "kappa": 0.7268307517757042,
+      "accuracy": 0.8124207858048162,
+      "mean_entropy_nats": 0.4150635898113251
+    },
+    "SC4212E0-PSG": {
+      "subject": "SC421",
+      "n_epochs": 808,
+      "kappa": 0.5693068504256182,
+      "accuracy": 0.6745049504950495,
+      "mean_entropy_nats": 0.5674417614936829
+    },
+    "SC4231E0-PSG": {
+      "subject": "SC423",
+      "n_epochs": 904,
+      "kappa": 0.3976524341271589,
+      "accuracy": 0.504424778761062,
+      "mean_entropy_nats": 0.6954289078712463
+    },
+    "SC4232E0-PSG": {
+      "subject": "SC423",
+      "n_epochs": 1729,
+      "kappa": 0.4825222130839584,
+      "accuracy": 0.6466165413533834,
+      "mean_entropy_nats": 0.5732036232948303
+    },
+    "SC4291G0-PSG": {
+      "subject": "SC429",
+      "n_epochs": 1131,
+      "kappa": 0.5253022545263585,
+      "accuracy": 0.6268788682581786,
+      "mean_entropy_nats": 0.7514867782592773
+    },
+    "SC4292G0-PSG": {
+      "subject": "SC429",
+      "n_epochs": 1605,
+      "kappa": 0.6717423512793774,
+      "accuracy": 0.7601246105919003,
+      "mean_entropy_nats": 0.5254245400428772
+    },
+    "SC4371F0-PSG": {
+      "subject": "SC437",
+      "n_epochs": 918,
+      "kappa": 0.5443613484860796,
+      "accuracy": 0.6938997821350763,
+      "mean_entropy_nats": 0.7107319235801697
+    },
+    "SC4372F0-PSG": {
+      "subject": "SC437",
+      "n_epochs": 1509,
+      "kappa": 0.574062237532829,
+      "accuracy": 0.7017892644135189,
+      "mean_entropy_nats": 0.5479919910430908
+    },
+    "SC4522E0-PSG": {
+      "subject": "SC452",
+      "n_epochs": 997,
+      "kappa": 0.3623885562040733,
+      "accuracy": 0.49247743229689067,
+      "mean_entropy_nats": 0.6247239112854004
+    },
+    "SC4531E0-PSG": {
+      "subject": "SC453",
+      "n_epochs": 1096,
+      "kappa": 0.23161822438759494,
+      "accuracy": 0.3686131386861314,
+      "mean_entropy_nats": 0.7491431832313538
+    },
+    "SC4532E0-PSG": {
+      "subject": "SC453",
+      "n_epochs": 1056,
+      "kappa": 0.4632091040239986,
+      "accuracy": 0.5965909090909091,
+      "mean_entropy_nats": 0.6797983646392822
+    },
+    "SC4611E0-PSG": {
+      "subject": "SC461",
+      "n_epochs": 1652,
+      "kappa": 0.3104645874391875,
+      "accuracy": 0.48668280871670705,
+      "mean_entropy_nats": 0.6606757044792175
+    },
+    "SC4612E0-PSG": {
+      "subject": "SC461",
+      "n_epochs": 1062,
+      "kappa": 0.2637298806423205,
+      "accuracy": 0.4077212806026365,
+      "mean_entropy_nats": 0.8267385363578796
+    },
+    "SC4741E0-PSG": {
+      "subject": "SC474",
+      "n_epochs": 2210,
+      "kappa": 0.5748845999517987,
+      "accuracy": 0.7262443438914027,
+      "mean_entropy_nats": 0.44501757621765137
+    },
+    "SC4742E0-PSG": {
+      "subject": "SC474",
+      "n_epochs": 1063,
+      "kappa": 0.27699453364830473,
+      "accuracy": 0.4393226716839135,
+      "mean_entropy_nats": 0.7286677360534668
+    },
+    "ST7101J0-PSG": {
+      "subject": "ST710",
+      "n_epochs": 1042,
+      "kappa": 0.48426227307808456,
+      "accuracy": 0.6036468330134357,
+      "mean_entropy_nats": 0.7489579319953918
+    },
+    "ST7102J0-PSG": {
+      "subject": "ST710",
+      "n_epochs": 980,
+      "kappa": 0.6070153551398226,
+      "accuracy": 0.7061224489795919,
+      "mean_entropy_nats": 0.5979781746864319
+    },
+    "ST7141J0-PSG": {
+      "subject": "ST714",
+      "n_epochs": 858,
+      "kappa": 0.36215987963606944,
+      "accuracy": 0.5116550116550117,
+      "mean_entropy_nats": 0.8265966176986694
+    },
+    "ST7142J0-PSG": {
+      "subject": "ST714",
+      "n_epochs": 873,
+      "kappa": 0.3800882360535761,
+      "accuracy": 0.5589919816723941,
+      "mean_entropy_nats": 0.6623051166534424
+    },
+    "ST7161J0-PSG": {
+      "subject": "ST716",
+      "n_epochs": 1050,
+      "kappa": 0.27017479679443934,
+      "accuracy": 0.42095238095238097,
+      "mean_entropy_nats": 0.7547163963317871
+    },
+    "ST7162J0-PSG": {
+      "subject": "ST716",
+      "n_epochs": 988,
+      "kappa": 0.5073919808369913,
+      "accuracy": 0.6224696356275303,
+      "mean_entropy_nats": 0.7324672937393188
+    }
+  },
+  "per_subject_test": {
+    "SC401": {
+      "recordings": [
+        "SC4011E0-PSG",
+        "SC4012E0-PSG"
+      ],
+      "n_epochs": 2289,
+      "kappa": 0.5880216301980878,
+      "accuracy": 0.7086063783311489,
+      "macro_f1": 0.645575896628675,
+      "mean_entropy_nats": 0.7148546576499939,
+      "cohort": "SC"
+    },
+    "SC402": {
+      "recordings": [
+        "SC4021E0-PSG",
+        "SC4022E0-PSG"
+      ],
+      "n_epochs": 2034,
+      "kappa": 0.5229280405395347,
+      "accuracy": 0.6514257620452311,
+      "macro_f1": 0.6203926102797201,
+      "mean_entropy_nats": 0.8207417726516724,
+      "cohort": "SC"
+    },
+    "SC414": {
+      "recordings": [
+        "SC4141E0-PSG",
+        "SC4142E0-PSG"
+      ],
+      "n_epochs": 1956,
+      "kappa": 0.7162413979109796,
+      "accuracy": 0.7822085889570553,
+      "macro_f1": 0.7144232093127264,
+      "mean_entropy_nats": 0.5622195601463318,
+      "cohort": "SC"
+    },
+    "SC420": {
+      "recordings": [
+        "SC4201E0-PSG",
+        "SC4202E0-PSG"
+      ],
+      "n_epochs": 2043,
+      "kappa": 0.31895588715187173,
+      "accuracy": 0.46598139990210474,
+      "macro_f1": 0.3760417530403148,
+      "mean_entropy_nats": 0.7492578029632568,
+      "cohort": "SC"
+    },
+    "SC421": {
+      "recordings": [
+        "SC4211E0-PSG",
+        "SC4212E0-PSG"
+      ],
+      "n_epochs": 2386,
+      "kappa": 0.6785071914266914,
+      "accuracy": 0.7657166806370495,
+      "macro_f1": 0.6703523671905259,
+      "mean_entropy_nats": 0.46666523814201355,
+      "cohort": "SC"
+    },
+    "SC423": {
+      "recordings": [
+        "SC4231E0-PSG",
+        "SC4232E0-PSG"
+      ],
+      "n_epochs": 2633,
+      "kappa": 0.46608736312532106,
+      "accuracy": 0.5977971895176605,
+      "macro_f1": 0.4790139968498444,
+      "mean_entropy_nats": 0.6151677966117859,
+      "cohort": "SC"
+    },
+    "SC429": {
+      "recordings": [
+        "SC4291G0-PSG",
+        "SC4292G0-PSG"
+      ],
+      "n_epochs": 2736,
+      "kappa": 0.6205355240092119,
+      "accuracy": 0.7050438596491229,
+      "macro_f1": 0.6788367264749656,
+      "mean_entropy_nats": 0.6188735365867615,
+      "cohort": "SC"
+    },
+    "SC437": {
+      "recordings": [
+        "SC4371F0-PSG",
+        "SC4372F0-PSG"
+      ],
+      "n_epochs": 2427,
+      "kappa": 0.5839888403189204,
+      "accuracy": 0.6988051091882983,
+      "macro_f1": 0.5716401932318553,
+      "mean_entropy_nats": 0.60954749584198,
+      "cohort": "SC"
+    },
+    "SC452": {
+      "recordings": [
+        "SC4522E0-PSG"
+      ],
+      "n_epochs": 997,
+      "kappa": 0.3623885562040733,
+      "accuracy": 0.49247743229689067,
+      "macro_f1": 0.49975967667496046,
+      "mean_entropy_nats": 0.6247239112854004,
+      "cohort": "SC"
+    },
+    "SC453": {
+      "recordings": [
+        "SC4531E0-PSG",
+        "SC4532E0-PSG"
+      ],
+      "n_epochs": 2152,
+      "kappa": 0.3473464968854363,
+      "accuracy": 0.4804832713754647,
+      "macro_f1": 0.4483140534227753,
+      "mean_entropy_nats": 0.7151152491569519,
+      "cohort": "SC"
+    },
+    "SC461": {
+      "recordings": [
+        "SC4611E0-PSG",
+        "SC4612E0-PSG"
+      ],
+      "n_epochs": 2714,
+      "kappa": 0.309722876821381,
+      "accuracy": 0.4557848194546794,
+      "macro_f1": 0.40887006971149475,
+      "mean_entropy_nats": 0.7256568074226379,
+      "cohort": "SC"
+    },
+    "SC474": {
+      "recordings": [
+        "SC4741E0-PSG",
+        "SC4742E0-PSG"
+      ],
+      "n_epochs": 3273,
+      "kappa": 0.48907639678951276,
+      "accuracy": 0.6330583562480905,
+      "macro_f1": 0.40976656587785387,
+      "mean_entropy_nats": 0.5371410846710205,
+      "cohort": "SC"
+    },
+    "ST710": {
+      "recordings": [
+        "ST7101J0-PSG",
+        "ST7102J0-PSG"
+      ],
+      "n_epochs": 2022,
+      "kappa": 0.5429592013421456,
+      "accuracy": 0.6533135509396637,
+      "macro_f1": 0.5693741322767567,
+      "mean_entropy_nats": 0.6757827401161194,
+      "cohort": "ST"
+    },
+    "ST714": {
+      "recordings": [
+        "ST7141J0-PSG",
+        "ST7142J0-PSG"
+      ],
+      "n_epochs": 1731,
+      "kappa": 0.37328954496390965,
+      "accuracy": 0.5355285961871751,
+      "macro_f1": 0.41943227135529126,
+      "mean_entropy_nats": 0.7437390089035034,
+      "cohort": "ST"
+    },
+    "ST716": {
+      "recordings": [
+        "ST7161J0-PSG",
+        "ST7162J0-PSG"
+      ],
+      "n_epochs": 2038,
+      "kappa": 0.3833897375653419,
+      "accuracy": 0.5186457311089303,
+      "macro_f1": 0.4964032109482982,
+      "mean_entropy_nats": 0.7439302802085876,
+      "cohort": "ST"
+    }
+  },
+  "convention": "per-class F1 headline is groups.test_heldout (unseen subjects only)"
+}

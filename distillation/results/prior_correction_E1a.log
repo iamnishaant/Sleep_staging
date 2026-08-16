@@ -1,0 +1,69 @@
+checkpoint : teacher_best.pt (epoch 53)
+focal alpha: W=0.4563, N1=1.3715, N2=0.3888, N3=1.7742, REM=1.0091
+
+collecting VALIDATION probabilities (31 recordings)
+    [ 1/31] SC4081E0-PSG (0.1 min)
+    [ 2/31] SC4082E0-PSG (0.3 min)
+    [ 3/31] SC4111E0-PSG (0.3 min)
+    [ 4/31] SC4112E0-PSG (0.4 min)
+    [ 5/31] SC4131E0-PSG (0.5 min)
+    [ 6/31] SC4171E0-PSG (0.6 min)
+    [ 7/31] SC4172E0-PSG (0.7 min)
+    [ 8/31] SC4321E0-PSG (0.8 min)
+    [ 9/31] SC4322E0-PSG (0.9 min)
+    [10/31] SC4341F0-PSG (1.0 min)
+    [11/31] SC4342F0-PSG (1.2 min)
+    [12/31] SC4351F0-PSG (1.2 min)
+    [13/31] SC4352F0-PSG (1.3 min)
+    [14/31] SC4441E0-PSG (1.4 min)
+    [15/31] SC4442E0-PSG (1.5 min)
+    [16/31] SC4461F0-PSG (1.6 min)
+    [17/31] SC4462F0-PSG (1.7 min)
+    [18/31] SC4561F0-PSG (1.8 min)
+    [19/31] SC4562F0-PSG (1.9 min)
+    [20/31] SC4581G0-PSG (1.9 min)
+    [21/31] SC4582G0-PSG (2.0 min)
+    [22/31] SC4671G0-PSG (2.2 min)
+    [23/31] SC4672G0-PSG (2.3 min)
+    [24/31] ST7081J0-PSG (2.3 min)
+    [25/31] ST7082J0-PSG (2.4 min)
+    [26/31] ST7131J0-PSG (2.5 min)
+    [27/31] ST7132J0-PSG (2.6 min)
+    [28/31] ST7151J0-PSG (2.6 min)
+    [29/31] ST7152J0-PSG (2.7 min)
+    [30/31] ST7201J0-PSG (2.8 min)
+    [31/31] ST7202J0-PSG (2.8 min)
+  34,610 epochs
+collecting TEST probabilities (29 recordings)
+  33,431 epochs
+
+fitted on VALIDATION, selecting on macro_f1
+  best g = 0.775   (val macro_f1 = 0.6900)
+  note: g=0.5 is the principled sqrt-alpha choice; val macro_f1 there = 0.6831
+
+==============================================================================
+setting                                acc   kappa     mF1   N1 F1   N2 F1  N1 ratio
+------------------------------------------------------------------------------
+as-trained (g=0)                    0.6506  0.5592  0.6458  0.3858  0.6396     2.61x
+sqrt-alpha (g=0.5, principled)      0.7195  0.6261  0.6810  0.3844  0.7615     1.45x
+val-fitted (g=0.775)                0.7319  0.6318  0.6706  0.3436  0.7776     0.88x
+==============================================================================
+
+DELTA from validation-fitted correction (test split, honest):
+  accuracy     0.6506 -> 0.7319   (+0.0813)
+  kappa        0.5592 -> 0.6318   (+0.0726)
+  macro_f1     0.6458 -> 0.6706   (+0.0248)
+  per-class F1:
+    W     0.8180 -> 0.8355   (+0.0174)
+    N1    0.3858 -> 0.3436   (-0.0422)
+    N2    0.6396 -> 0.7776   (+0.1380)
+    N3    0.6740 -> 0.6987   (+0.0247)
+    REM   0.7116 -> 0.6974   (-0.0142)
+  prediction ratio (1.00x = calibrated frequency):
+    W     0.83x -> 1.03x
+    N1    2.61x -> 0.88x
+    N2    0.56x -> 1.09x
+    N3    1.51x -> 0.80x
+    REM   1.00x -> 0.92x
+
+Wrote distillation\results\prior_correction_E1a.json

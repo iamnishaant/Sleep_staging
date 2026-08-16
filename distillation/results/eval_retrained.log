@@ -1,0 +1,135 @@
+MODEL     : retrained
+CHECKPOINT: distillation\results\retrained\teacher_best.pt
+            649,229 params, loaded strict
+GROUPS    : test_heldout=29, val=31, train_sample=30
+Evaluating 90 recordings
+
+  [  1/90] SC4011E0-PSG n= 1103 kappa=0.5796 H=0.734 (0.1 min)
+  [  2/90] SC4012E0-PSG n= 1186 kappa=0.5961 H=0.697 (0.1 min)
+  [  3/90] SC4021E0-PSG n= 1025 kappa=0.6161 H=0.759 (0.2 min)
+  [  4/90] SC4022E0-PSG n= 1009 kappa=0.4298 H=0.883 (0.2 min)
+  [  5/90] SC4141E0-PSG n= 1004 kappa=0.7657 H=0.551 (0.2 min)
+  [  6/90] SC4142E0-PSG n=  952 kappa=0.6657 H=0.574 (0.3 min)
+  [  7/90] SC4201E0-PSG n= 1022 kappa=0.3925 H=0.684 (0.3 min)
+  [  8/90] SC4202E0-PSG n= 1021 kappa=0.2424 H=0.815 (0.4 min)
+  [  9/90] SC4211E0-PSG n= 1578 kappa=0.7268 H=0.415 (0.4 min)
+  [ 10/90] SC4212E0-PSG n=  808 kappa=0.5693 H=0.567 (0.5 min)
+  [ 11/90] SC4231E0-PSG n=  904 kappa=0.3977 H=0.695 (0.5 min)
+  [ 12/90] SC4232E0-PSG n= 1729 kappa=0.4825 H=0.573 (0.6 min)
+  [ 13/90] SC4291G0-PSG n= 1131 kappa=0.5253 H=0.751 (0.6 min)
+  [ 14/90] SC4292G0-PSG n= 1605 kappa=0.6717 H=0.525 (0.7 min)
+  [ 15/90] SC4371F0-PSG n=  918 kappa=0.5444 H=0.711 (0.7 min)
+  [ 16/90] SC4372F0-PSG n= 1509 kappa=0.5741 H=0.548 (0.8 min)
+  [ 17/90] SC4522E0-PSG n=  997 kappa=0.3624 H=0.625 (0.8 min)
+  [ 18/90] SC4531E0-PSG n= 1096 kappa=0.2316 H=0.749 (0.8 min)
+  [ 19/90] SC4532E0-PSG n= 1056 kappa=0.4632 H=0.680 (0.9 min)
+  [ 20/90] SC4611E0-PSG n= 1652 kappa=0.3105 H=0.661 (1.0 min)
+  [ 21/90] SC4612E0-PSG n= 1062 kappa=0.2637 H=0.827 (1.0 min)
+  [ 22/90] SC4741E0-PSG n= 2210 kappa=0.5749 H=0.445 (1.1 min)
+  [ 23/90] SC4742E0-PSG n= 1063 kappa=0.2770 H=0.729 (1.1 min)
+  [ 24/90] ST7101J0-PSG n= 1042 kappa=0.4843 H=0.749 (1.2 min)
+  [ 25/90] ST7102J0-PSG n=  980 kappa=0.6070 H=0.598 (1.2 min)
+  [ 26/90] ST7141J0-PSG n=  858 kappa=0.3622 H=0.827 (1.2 min)
+  [ 27/90] ST7142J0-PSG n=  873 kappa=0.3801 H=0.662 (1.3 min)
+  [ 28/90] ST7161J0-PSG n= 1050 kappa=0.2702 H=0.755 (1.3 min)
+  [ 29/90] ST7162J0-PSG n=  988 kappa=0.5074 H=0.732 (1.4 min)
+  [ 30/90] SC4001E0-PSG n=  841 kappa=0.7803 H=0.476 (1.4 min)
+  [ 31/90] SC4002E0-PSG n= 1127 kappa=0.7475 H=0.549 (1.4 min)
+  [ 32/90] SC4031E0-PSG n=  952 kappa=0.7632 H=0.571 (1.5 min)
+  [ 33/90] SC4032E0-PSG n=  911 kappa=0.6959 H=0.600 (1.5 min)
+  [ 34/90] SC4041E0-PSG n= 1235 kappa=0.6879 H=0.635 (1.6 min)
+  [ 35/90] SC4042E0-PSG n= 1200 kappa=0.7128 H=0.621 (1.7 min)
+  [ 36/90] SC4051E0-PSG n=  672 kappa=0.8073 H=0.527 (1.7 min)
+  [ 37/90] SC4052E0-PSG n= 1246 kappa=0.6680 H=0.643 (1.7 min)
+  [ 38/90] SC4061E0-PSG n=  843 kappa=0.7309 H=0.566 (1.8 min)
+  [ 39/90] SC4062E0-PSG n= 1016 kappa=0.7387 H=0.539 (1.8 min)
+  [ 40/90] SC4071E0-PSG n=  976 kappa=0.7764 H=0.530 (1.9 min)
+  [ 41/90] SC4072E0-PSG n= 1273 kappa=0.8228 H=0.502 (1.9 min)
+  [ 42/90] SC4091E0-PSG n= 1132 kappa=0.6783 H=0.586 (2.0 min)
+  [ 43/90] SC4092E0-PSG n= 1105 kappa=0.7147 H=0.635 (2.0 min)
+  [ 44/90] SC4101E0-PSG n= 1104 kappa=0.7018 H=0.582 (2.0 min)
+  [ 45/90] SC4102E0-PSG n= 1092 kappa=0.6833 H=0.579 (2.1 min)
+  [ 46/90] SC4121E0-PSG n= 1052 kappa=0.7277 H=0.560 (2.1 min)
+  [ 47/90] SC4122E0-PSG n=  977 kappa=0.7344 H=0.547 (2.2 min)
+  [ 48/90] SC4151E0-PSG n=  952 kappa=0.7655 H=0.454 (2.2 min)
+  [ 49/90] SC4152E0-PSG n= 1762 kappa=0.8765 H=0.386 (2.3 min)
+  [ 50/90] SC4161E0-PSG n= 1144 kappa=0.6831 H=0.548 (2.3 min)
+  [ 51/90] SC4162E0-PSG n= 1003 kappa=0.6645 H=0.573 (2.4 min)
+  [ 52/90] SC4181E0-PSG n=  964 kappa=0.7508 H=0.482 (2.4 min)
+  [ 53/90] SC4182E0-PSG n=  920 kappa=0.8041 H=0.526 (2.4 min)
+  [ 54/90] SC4191E0-PSG n= 1535 kappa=0.7523 H=0.609 (2.5 min)
+  [ 55/90] SC4192E0-PSG n= 1274 kappa=0.7869 H=0.561 (2.6 min)
+  [ 56/90] SC4221E0-PSG n= 1099 kappa=0.6005 H=0.585 (2.6 min)
+  [ 57/90] SC4222E0-PSG n= 1108 kappa=0.6721 H=0.575 (2.6 min)
+  [ 58/90] SC4241E0-PSG n= 1673 kappa=0.7826 H=0.398 (2.7 min)
+  [ 59/90] SC4242E0-PSG n= 1775 kappa=0.8527 H=0.420 (2.8 min)
+  [ 60/90] SC4081E0-PSG n= 1134 kappa=0.6567 H=0.658 (2.8 min)
+  [ 61/90] SC4082E0-PSG n= 1054 kappa=0.5448 H=0.662 (2.9 min)
+  [ 62/90] SC4111E0-PSG n=  928 kappa=0.1972 H=0.703 (2.9 min)
+  [ 63/90] SC4112E0-PSG n=  802 kappa=0.5924 H=0.608 (2.9 min)
+  [ 64/90] SC4131E0-PSG n= 1028 kappa=0.6347 H=0.579 (3.0 min)
+  [ 65/90] SC4171E0-PSG n= 1002 kappa=0.4109 H=0.647 (3.0 min)
+  [ 66/90] SC4172E0-PSG n= 1773 kappa=0.6426 H=0.589 (3.1 min)
+  [ 67/90] SC4321E0-PSG n= 1560 kappa=0.6866 H=0.501 (3.2 min)
+  [ 68/90] SC4322E0-PSG n= 1021 kappa=0.5774 H=0.687 (3.2 min)
+  [ 69/90] SC4341F0-PSG n= 1501 kappa=0.4856 H=0.556 (3.3 min)
+  [ 70/90] SC4342F0-PSG n= 1582 kappa=0.6637 H=0.523 (3.3 min)
+  [ 71/90] SC4351F0-PSG n=  976 kappa=0.4902 H=0.685 (3.4 min)
+  [ 72/90] SC4352F0-PSG n=  963 kappa=0.4128 H=0.688 (3.4 min)
+  [ 73/90] SC4441E0-PSG n= 1195 kappa=0.4288 H=0.718 (3.4 min)
+  [ 74/90] SC4442E0-PSG n= 1092 kappa=0.3954 H=0.689 (3.5 min)
+  [ 75/90] SC4461F0-PSG n=  983 kappa=0.5600 H=0.618 (3.5 min)
+  [ 76/90] SC4462F0-PSG n= 1022 kappa=0.4437 H=0.631 (3.6 min)
+  [ 77/90] SC4561F0-PSG n= 1237 kappa=0.4020 H=0.679 (3.6 min)
+  [ 78/90] SC4562F0-PSG n= 1148 kappa=0.4730 H=0.655 (3.7 min)
+  [ 79/90] SC4581G0-PSG n= 1095 kappa=0.3808 H=0.737 (3.7 min)
+  [ 80/90] SC4582G0-PSG n= 1175 kappa=0.3394 H=0.751 (3.8 min)
+  [ 81/90] SC4671G0-PSG n= 1968 kappa=0.5391 H=0.573 (3.8 min)
+  [ 82/90] SC4672G0-PSG n= 1021 kappa=0.4526 H=0.675 (3.9 min)
+  [ 83/90] ST7081J0-PSG n=  947 kappa=0.4045 H=0.841 (3.9 min)
+  [ 84/90] ST7082J0-PSG n=  931 kappa=0.4348 H=0.773 (3.9 min)
+  [ 85/90] ST7131J0-PSG n=  859 kappa=0.3925 H=0.581 (4.0 min)
+  [ 86/90] ST7132J0-PSG n=  852 kappa=0.3081 H=0.717 (4.0 min)
+  [ 87/90] ST7151J0-PSG n=  897 kappa=0.1379 H=0.790 (4.1 min)
+  [ 88/90] ST7152J0-PSG n= 1045 kappa=0.5457 H=0.711 (4.1 min)
+  [ 89/90] ST7201J0-PSG n=  921 kappa=0.0409 H=0.656 (4.1 min)
+  [ 90/90] ST7202J0-PSG n=  898 kappa=0.0738 H=0.620 (4.2 min)
+
+==============================================================================
+RETRAINED  |  group                           n_ep     acc   kappa     mF1      H
+------------------------------------------------------------------------------
+            train_sample                  33,963  0.8065  0.7527  0.7911  0.540
+            val                           34,610  0.5910  0.4854  0.5862  0.652
+            test_heldout                  33,431  0.6160  0.5122  0.6063  0.655
+==============================================================================
+
+HELD-OUT TEST (33,431 epochs, 15 subjects)
+  accuracy 0.6160 | kappa 0.5122 | macro-F1 0.6063 | mean entropy 0.655 nats
+  per-class F1 (UNSEEN subjects only):
+     W     f1=0.8074  prec=0.8638  rec=0.7579  n=8,897
+     N1    f1=0.3390  prec=0.2344  rec=0.6123  n=3,503
+     N2    f1=0.6216  prec=0.8240  rec=0.4991  n=12,778
+     N3    f1=0.6513  prec=0.5566  rec=0.7848  n=2,751
+     REM   f1=0.6121  prec=0.6528  rec=0.5762  n=5,502
+
+  per-subject (test):
+     subj      coh  epochs   kappa     acc      H
+     SC414      SC   1,956  0.7162  0.7822  0.562
+     SC421      SC   2,386  0.6785  0.7657  0.467
+     SC429      SC   2,736  0.6205  0.7050  0.619
+     SC401      SC   2,289  0.5880  0.7086  0.715
+     SC437      SC   2,427  0.5840  0.6988  0.610
+     ST710      ST   2,022  0.5430  0.6533  0.676
+     SC402      SC   2,034  0.5229  0.6514  0.821
+     SC474      SC   3,273  0.4891  0.6331  0.537
+     SC423      SC   2,633  0.4661  0.5978  0.615
+     ST716      ST   2,038  0.3834  0.5186  0.744
+     ST714      ST   1,731  0.3733  0.5355  0.744
+     SC452      SC     997  0.3624  0.4925  0.625
+     SC453      SC   2,152  0.3473  0.4805  0.715
+     SC420      SC   2,043  0.3190  0.4660  0.749
+     SC461      SC   2,714  0.3097  0.4558  0.726
+     mean=0.4869 sd=0.1336 min=0.3097 max=0.7162
+     SC mean=0.5003 (n=12)   ST mean=0.4332 (n=3)
+
+Wrote distillation\results\eval_final_retrained.json

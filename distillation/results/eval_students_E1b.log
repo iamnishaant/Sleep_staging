@@ -1,0 +1,58 @@
+
+==========================================================================
+student_distilled_E1b
+==========================================================================
+  epoch 42 | alpha=0.5 T=3.0 cw=0.5 spectral=True
+  121,099 params (teacher 649,229 -> 5.36x)
+
+  reproducing validation (31 recordings)...
+    [10/31] (0.3 min)
+    [20/31] (0.6 min)
+    [30/31] (0.8 min)
+  logged in training : macro-F1 0.6809
+  recomputed locally : macro-F1 0.6806   (delta -0.0003)  MATCH
+
+  held-out test (29 recordings)...
+    [10/29] (0.2 min)
+    [20/29] (0.5 min)
+  acc 0.7123 | kappa 0.6134 | macro-F1 0.6708 | entropy 0.627 nats
+  per-class F1 (UNSEEN subjects only):
+     W     f1=0.8258  prec=0.8286  rec=0.8230  n=8,897  ratio=0.99x
+     N1    f1=0.3683  prec=0.3208  rec=0.4322  n=3,503  ratio=1.35x
+     N2    f1=0.7607  prec=0.7852  rec=0.7376  n=12,778  ratio=0.94x
+     N3    f1=0.7284  prec=0.8248  rec=0.6521  n=2,751  ratio=0.79x
+     REM   f1=0.6711  prec=0.6596  rec=0.6830  n=5,502  ratio=1.04x
+
+==========================================================================
+student_baseline_E0
+==========================================================================
+  epoch 64 | alpha=1.0 T=3.0 cw=0.5 spectral=True
+  121,099 params (teacher 649,229 -> 5.36x)
+
+  reproducing validation (31 recordings)...
+  logged in training : macro-F1 0.6881
+  recomputed locally : macro-F1 0.6881   (delta +0.0000)  MATCH
+
+  held-out test (29 recordings)...
+  acc 0.7360 | kappa 0.6449 | macro-F1 0.6915 | entropy 0.555 nats
+  per-class F1 (UNSEEN subjects only):
+     W     f1=0.8447  prec=0.8687  rec=0.8220  n=8,897  ratio=0.95x
+     N1    f1=0.3886  prec=0.3694  rec=0.4099  n=3,503  ratio=1.11x
+     N2    f1=0.7735  prec=0.7889  rec=0.7586  n=12,778  ratio=0.96x
+     N3    f1=0.7370  prec=0.7438  rec=0.7303  n=2,751  ratio=0.98x
+     REM   f1=0.7135  prec=0.6766  rec=0.7546  n=5,502  ratio=1.12x
+
+==========================================================================
+HELD-OUT TEST COMPARISON
+==========================================================================
+  metric             student_distilled_E1b       student_baseline_E0
+  accuracy                          0.7123                    0.7360
+  kappa                             0.6134                    0.6449
+  macro_f1                          0.6708                    0.6915
+
+  distillation gain (distilled - baseline):
+     accuracy   -0.0237
+     kappa      -0.0314
+     macro_f1   -0.0206
+
+Wrote distillation\results\eval_students.json

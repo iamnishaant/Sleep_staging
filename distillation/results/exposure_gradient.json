@@ -1,0 +1,123 @@
+{
+  "source_eval": "distillation\\results\\eval_teacher.json",
+  "checkpoint": "results\\sleep staging\\temporal spectral fusion\\concat\\best_model_fusion.pt",
+  "commit": "b00a428",
+  "exposure_gradient": [
+    {
+      "group": "teacher_train",
+      "exposure": "same recording (trained on)",
+      "n_epochs": 79010,
+      "accuracy": 0.8127,
+      "kappa": 0.7412,
+      "macro_f1": 0.7459
+    },
+    {
+      "group": "teacher_val_leaked",
+      "exposure": "same subject, different night",
+      "n_epochs": 35022,
+      "accuracy": 0.7725,
+      "kappa": 0.6855,
+      "macro_f1": 0.6953
+    },
+    {
+      "group": "teacher_val_clean",
+      "exposure": "unseen subject",
+      "n_epochs": 13861,
+      "accuracy": 0.7191,
+      "kappa": 0.6151,
+      "macro_f1": 0.6398
+    }
+  ],
+  "monotonic_decline": true,
+  "delta_train_minus_clean": 0.1261,
+  "reconstruction_check": {
+    "method": "epoch-weighted blend of measured val subgroups",
+    "leaked": {
+      "n_epochs": 35022,
+      "kappa": 0.6855
+    },
+    "clean": {
+      "n_epochs": 13861,
+      "kappa": 0.6151
+    },
+    "blended_kappa": 0.6655,
+    "originally_reported_kappa": 0.6663,
+    "absolute_agreement": 0.0008,
+    "interpretation": "Agreement to this tolerance confirms the reconstructed split (train_test_split(range(197), test_size=0.2, random_state=42)) is exact, and that the reported figure is a blend of mostly-leaked measurement."
+  },
+  "per_class_f1_by_exposure": {
+    "W": {
+      "teacher_train": 0.8984,
+      "teacher_val_leaked": 0.8942,
+      "teacher_val_clean": 0.8922,
+      "train_minus_clean": 0.0062
+    },
+    "N1": {
+      "teacher_train": 0.374,
+      "teacher_val_leaked": 0.3183,
+      "teacher_val_clean": 0.3311,
+      "train_minus_clean": 0.0429
+    },
+    "N2": {
+      "teacher_train": 0.8422,
+      "teacher_val_leaked": 0.8024,
+      "teacher_val_clean": 0.7419,
+      "train_minus_clean": 0.1003
+    },
+    "N3": {
+      "teacher_train": 0.818,
+      "teacher_val_leaked": 0.7612,
+      "teacher_val_clean": 0.6753,
+      "train_minus_clean": 0.1427
+    },
+    "REM": {
+      "teacher_train": 0.7968,
+      "teacher_val_leaked": 0.7004,
+      "teacher_val_clean": 0.5586,
+      "train_minus_clean": 0.2382
+    }
+  },
+  "per_subject_clean": {
+    "n_subjects": 5,
+    "per_subject": {
+      "SC409": {
+        "kappa": 0.6735,
+        "n_epochs": 2237,
+        "macro_f1": 0.6755
+      },
+      "SC428": {
+        "kappa": 0.7217,
+        "n_epochs": 2197,
+        "macro_f1": 0.7593
+      },
+      "SC434": {
+        "kappa": 0.7241,
+        "n_epochs": 3083,
+        "macro_f1": 0.5594
+      },
+      "SC459": {
+        "kappa": 0.4351,
+        "n_epochs": 3071,
+        "macro_f1": 0.4756
+      },
+      "SC474": {
+        "kappa": 0.5066,
+        "n_epochs": 3273,
+        "macro_f1": 0.4107
+      }
+    },
+    "mean": 0.6122,
+    "sd": 0.133,
+    "min": 0.4351,
+    "max": 0.7241,
+    "ci95_t_df4": [
+      0.4471,
+      0.7774
+    ]
+  },
+  "clean_cohorts_represented": [
+    "SC"
+  ],
+  "st_subjects_clean": 0,
+  "caveat": "All clean-cohort figures are SC-only; no ST subject was ever held out by the original teacher, so ST generalisation is unmeasured."
+}

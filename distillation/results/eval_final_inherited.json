@@ -1,0 +1,717 @@
+{
+  "model": "inherited",
+  "checkpoint": "results\\sleep staging\\temporal spectral fusion\\concat\\best_model_fusion.pt",
+  "commit": "b00a428",
+  "window_size": 256,
+  "groups": {
+    "test_heldout": {
+      "n_epochs": 33431,
+      "accuracy": 0.7656665968711674,
+      "kappa": 0.6781553205146211,
+      "macro_f1": 0.7080325750770168,
+      "weighted_f1": 0.7613802636915785,
+      "per_class": {
+        "W": {
+          "precision": 0.8982544786403307,
+          "recall": 0.8791727548611892,
+          "f1": 0.8886111900028401,
+          "support": 8897
+        },
+        "N1": {
+          "precision": 0.39915224302366653,
+          "recall": 0.3225806451612903,
+          "f1": 0.35680454688980107,
+          "support": 3503
+        },
+        "N2": {
+          "precision": 0.7626733025239958,
+          "recall": 0.8394897480043826,
+          "f1": 0.799240025332489,
+          "support": 12778
+        },
+        "N3": {
+          "precision": 0.8582677165354331,
+          "recall": 0.7131952017448201,
+          "f1": 0.7790351399642644,
+          "support": 2751
+        },
+        "REM": {
+          "precision": 0.7139505504421585,
+          "recall": 0.7190112686295892,
+          "f1": 0.7164719731956896,
+          "support": 5502
+        }
+      },
+      "confusion_matrix": [
+        [
+          7822,
+          538,
+          321,
+          41,
+          175
+        ],
+        [
+          465,
+          1130,
+          1332,
+          26,
+          550
+        ],
+        [
+          194,
+          750,
+          10727,
+          250,
+          857
+        ],
+        [
+          8,
+          0,
+          778,
+          1962,
+          3
+        ],
+        [
+          219,
+          413,
+          907,
+          7,
+          3956
+        ]
+      ],
+      "mean_entropy_nats": 0.9070947766304016,
+      "max_possible_entropy_nats": 1.6094379124341003
+    },
+    "train_sample": {
+      "n_epochs": 6279,
+      "accuracy": 0.8665392578436056,
+      "kappa": 0.8057580257125954,
+      "macro_f1": 0.8035624650278261,
+      "weighted_f1": 0.8581519334511967,
+      "per_class": {
+        "W": {
+          "precision": 0.9379391100702577,
+          "recall": 0.8521276595744681,
+          "f1": 0.8929765886287625,
+          "support": 940
+        },
+        "N1": {
+          "precision": 0.6363636363636364,
+          "recall": 0.3532710280373832,
+          "f1": 0.4543269230769231,
+          "support": 535
+        },
+        "N2": {
+          "precision": 0.8721075672295184,
+          "recall": 0.942548158161541,
+          "f1": 0.9059606951437388,
+          "support": 2959
+        },
+        "N3": {
+          "precision": 0.9280245022970903,
+          "recall": 0.8523206751054853,
+          "f1": 0.8885630498533724,
+          "support": 711
+        },
+        "REM": {
+          "precision": 0.826938136256852,
+          "recall": 0.9312169312169312,
+          "f1": 0.8759850684363335,
+          "support": 1134
+        }
+      },
+      "confusion_matrix": [
+        [
+          801,
+          86,
+          33,
+          5,
+          15
+        ],
+        [
+          27,
+          189,
+          205,
+          7,
+          107
+        ],
+        [
+          17,
+          19,
+          2789,
+          35,
+          99
+        ],
+        [
+          1,
+          0,
+          104,
+          606,
+          0
+        ],
+        [
+          8,
+          3,
+          67,
+          0,
+          1056
+        ]
+      ],
+      "mean_entropy_nats": 0.8794992566108704,
+      "max_possible_entropy_nats": 1.6094379124341003
+    },
+    "val_leaked": {
+      "n_epochs": 3393,
+      "accuracy": 0.7606837606837606,
+      "kappa": 0.6796723889922627,
+      "macro_f1": 0.7172595313583716,
+      "weighted_f1": 0.7458002358891493,
+      "per_class": {
+        "W": {
+          "precision": 0.8807241746538871,
+          "recall": 0.9571759259259259,
+          "f1": 0.9173599556295063,
+          "support": 864
+        },
+        "N1": {
+          "precision": 0.4752851711026616,
+          "recall": 0.2771618625277162,
+          "f1": 0.35014005602240894,
+          "support": 451
+        },
+        "N2": {
+          "precision": 0.6728650137741047,
+          "recall": 0.8841628959276018,
+          "f1": 0.7641767696519358,
+          "support": 1105
+        },
+        "N3": {
+          "precision": 0.8275862068965517,
+          "recall": 0.8461538461538461,
+          "f1": 0.8367670364500792,
+          "support": 312
+        },
+        "REM": {
+          "precision": 0.9238095238095239,
+          "recall": 0.5869894099848714,
+          "f1": 0.7178538390379279,
+          "support": 661
+        }
+      },
+      "confusion_matrix": [
+        [
+          827,
+          30,
+          7,
+          0,
+          0
+        ],
+        [
+          65,
+          125,
+          240,
+          1,
+          20
+        ],
+        [
+          22,
+          45,
+          977,
+          49,
+          12
+        ],
+        [
+          2,
+          0,
+          46,
+          264,
+          0
+        ],
+        [
+          23,
+          63,
+          182,
+          5,
+          388
+        ]
+      ],
+      "mean_entropy_nats": 0.8491113185882568,
+      "max_possible_entropy_nats": 1.6094379124341003
+    },
+    "val_clean": {
+      "n_epochs": 3273,
+      "accuracy": 0.6630003055300947,
+      "kappa": 0.5066223853215022,
+      "macro_f1": 0.4107421614363574,
+      "weighted_f1": 0.6748726766055411,
+      "per_class": {
+        "W": {
+          "precision": 0.9071072319201995,
+          "recall": 0.9466493168510085,
+          "f1": 0.9264565425023877,
+          "support": 1537
+        },
+        "N1": {
+          "precision": 0.2334152334152334,
+          "recall": 0.5205479452054794,
+          "f1": 0.32230703986429177,
+          "support": 365
+        },
+        "N2": {
+          "precision": 0.8817829457364341,
+          "recall": 0.4789473684210526,
+          "f1": 0.6207366984993179,
+          "support": 950
+        },
+        "N3": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0
+        },
+        "REM": {
+          "precision": 0.20648967551622419,
+          "recall": 0.166270783847981,
+          "f1": 0.18421052631578946,
+          "support": 421
+        }
+      },
+      "confusion_matrix": [
+        [
+          1455,
+          69,
+          0,
+          0,
+          13
+        ],
+        [
+          74,
+          190,
+          29,
+          0,
+          72
+        ],
+        [
+          11,
+          300,
+          455,
+          0,
+          184
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          64,
+          255,
+          32,
+          0,
+          70
+        ]
+      ],
+      "mean_entropy_nats": 0.7863340377807617,
+      "max_possible_entropy_nats": 1.6094379124341003
+    }
+  },
+  "exposure_order": [
+    "train_sample",
+    "val_leaked",
+    "val_clean"
+  ],
+  "exposure_labels": {
+    "train_sample": "same recording (trained on)",
+    "val_leaked": "same subject, different night",
+    "val_clean": "unseen subject"
+  },
+  "per_recording_test": {
+    "SC4011E0-PSG": {
+      "subject": "SC401",
+      "n_epochs": 1103,
+      "kappa": 0.8077289428827211,
+      "accuracy": 0.8730734360834089,
+      "mean_entropy_nats": 0.9072574973106384
+    },
+    "SC4012E0-PSG": {
+      "subject": "SC401",
+      "n_epochs": 1186,
+      "kappa": 0.7554789589750133,
+      "accuracy": 0.8473861720067454,
+      "mean_entropy_nats": 0.9055297374725342
+    },
+    "SC4021E0-PSG": {
+      "subject": "SC402",
+      "n_epochs": 1025,
+      "kappa": 0.8117635824053124,
+      "accuracy": 0.8780487804878049,
+      "mean_entropy_nats": 0.9529551863670349
+    },
+    "SC4022E0-PSG": {
+      "subject": "SC402",
+      "n_epochs": 1009,
+      "kappa": 0.7508840286612818,
+      "accuracy": 0.8186323092170465,
+      "mean_entropy_nats": 1.0152941942214966
+    },
+    "SC4141E0-PSG": {
+      "subject": "SC414",
+      "n_epochs": 1004,
+      "kappa": 0.8713385289344839,
+      "accuracy": 0.9083665338645418,
+      "mean_entropy_nats": 0.6918929219245911
+    },
+    "SC4142E0-PSG": {
+      "subject": "SC414",
+      "n_epochs": 952,
+      "kappa": 0.8311196826898585,
+      "accuracy": 0.8771008403361344,
+      "mean_entropy_nats": 0.7897489666938782
+    },
+    "SC4201E0-PSG": {
+      "subject": "SC420",
+      "n_epochs": 1022,
+      "kappa": 0.6633703390401473,
+      "accuracy": 0.7847358121330724,
+      "mean_entropy_nats": 1.0004916191101074
+    },
+    "SC4202E0-PSG": {
+      "subject": "SC420",
+      "n_epochs": 1021,
+      "kappa": 0.5624850517636073,
+      "accuracy": 0.7051909892262488,
+      "mean_entropy_nats": 1.1280944347381592
+    },
+    "SC4211E0-PSG": {
+      "subject": "SC421",
+      "n_epochs": 1578,
+      "kappa": 0.7831955373112338,
+      "accuracy": 0.8599493029150824,
+      "mean_entropy_nats": 0.5447154641151428
+    },
+    "SC4212E0-PSG": {
+      "subject": "SC421",
+      "n_epochs": 808,
+      "kappa": 0.675105437574405,
+      "accuracy": 0.7797029702970297,
+      "mean_entropy_nats": 0.787756085395813
+    },
+    "SC4231E0-PSG": {
+      "subject": "SC423",
+      "n_epochs": 904,
+      "kappa": 0.5629967135286458,
+      "accuracy": 0.7035398230088495,
+      "mean_entropy_nats": 1.0216983556747437
+    },
+    "SC4232E0-PSG": {
+      "subject": "SC423",
+      "n_epochs": 1729,
+      "kappa": 0.5696258316721994,
+      "accuracy": 0.7177559282822441,
+      "mean_entropy_nats": 0.8738072514533997
+    },
+    "SC4291G0-PSG": {
+      "subject": "SC429",
+      "n_epochs": 1131,
+      "kappa": 0.6843410482763617,
+      "accuracy": 0.7683465959328029,
+      "mean_entropy_nats": 1.0089609622955322
+    },
+    "SC4292G0-PSG": {
+      "subject": "SC429",
+      "n_epochs": 1605,
+      "kappa": 0.7869897995354918,
+      "accuracy": 0.8542056074766355,
+      "mean_entropy_nats": 0.7538161873817444
+    },
+    "SC4371F0-PSG": {
+      "subject": "SC437",
+      "n_epochs": 918,
+      "kappa": 0.6126248115167928,
+      "accuracy": 0.7549019607843137,
+      "mean_entropy_nats": 0.9135066270828247
+    },
+    "SC4372F0-PSG": {
+      "subject": "SC437",
+      "n_epochs": 1509,
+      "kappa": 0.6397902062635533,
+      "accuracy": 0.7647448641484427,
+      "mean_entropy_nats": 0.7045057415962219
+    },
+    "SC4522E0-PSG": {
+      "subject": "SC452",
+      "n_epochs": 997,
+      "kappa": 0.6759885900520286,
+      "accuracy": 0.7883650952858575,
+      "mean_entropy_nats": 0.9635939598083496
+    },
+    "SC4531E0-PSG": {
+      "subject": "SC453",
+      "n_epochs": 1096,
+      "kappa": 0.5394833322936736,
+      "accuracy": 0.6742700729927007,
+      "mean_entropy_nats": 1.0805729627609253
+    },
+    "SC4532E0-PSG": {
+      "subject": "SC453",
+      "n_epochs": 1056,
+      "kappa": 0.6411690300246322,
+      "accuracy": 0.7679924242424242,
+      "mean_entropy_nats": 0.905146062374115
+    },
+    "SC4611E0-PSG": {
+      "subject": "SC461",
+      "n_epochs": 1652,
+      "kappa": 0.6009466141743787,
+      "accuracy": 0.7197336561743342,
+      "mean_entropy_nats": 0.9413558840751648
+    },
+    "SC4612E0-PSG": {
+      "subject": "SC461",
+      "n_epochs": 1062,
+      "kappa": 0.5770241185035134,
+      "accuracy": 0.7156308851224106,
+      "mean_entropy_nats": 1.1537442207336426
+    },
+    "SC4741E0-PSG": {
+      "subject": "SC474",
+      "n_epochs": 2210,
+      "kappa": 0.5500263802252253,
+      "accuracy": 0.7199095022624434,
+      "mean_entropy_nats": 0.6645129919052124
+    },
+    "SC4742E0-PSG": {
+      "subject": "SC474",
+      "n_epochs": 1063,
+      "kappa": 0.3953533741451668,
+      "accuracy": 0.5446848541862653,
+      "mean_entropy_nats": 1.0396028757095337
+    },
+    "ST7101J0-PSG": {
+      "subject": "ST710",
+      "n_epochs": 1042,
+      "kappa": 0.6235950171861282,
+      "accuracy": 0.716890595009597,
+      "mean_entropy_nats": 1.0606352090835571
+    },
+    "ST7102J0-PSG": {
+      "subject": "ST710",
+      "n_epochs": 980,
+      "kappa": 0.7340470593978798,
+      "accuracy": 0.8071428571428572,
+      "mean_entropy_nats": 0.9125714302062988
+    },
+    "ST7141J0-PSG": {
+      "subject": "ST714",
+      "n_epochs": 858,
+      "kappa": 0.6838996563437751,
+      "accuracy": 0.7832167832167832,
+      "mean_entropy_nats": 1.0543248653411865
+    },
+    "ST7142J0-PSG": {
+      "subject": "ST714",
+      "n_epochs": 873,
+      "kappa": 0.6503741240586522,
+      "accuracy": 0.7720504009163803,
+      "mean_entropy_nats": 0.9794687032699585
+    },
+    "ST7161J0-PSG": {
+      "subject": "ST716",
+      "n_epochs": 1050,
+      "kappa": 0.37616020997985233,
+      "accuracy": 0.5714285714285714,
+      "mean_entropy_nats": 1.0929464101791382
+    },
+    "ST7162J0-PSG": {
+      "subject": "ST716",
+      "n_epochs": 988,
+      "kappa": 0.6433445180227363,
+      "accuracy": 0.7530364372469636,
+      "mean_entropy_nats": 1.0966839790344238
+    }
+  },
+  "per_subject_test": {
+    "SC401": {
+      "recordings": [
+        "SC4011E0-PSG",
+        "SC4012E0-PSG"
+      ],
+      "n_epochs": 2289,
+      "kappa": 0.7815591649428695,
+      "accuracy": 0.8597640891218873,
+      "macro_f1": 0.7838833500788274,
+      "mean_entropy_nats": 0.9063621759414673,
+      "cohort": "SC"
+    },
+    "SC402": {
+      "recordings": [
+        "SC4021E0-PSG",
+        "SC4022E0-PSG"
+      ],
+      "n_epochs": 2034,
+      "kappa": 0.7805609274508657,
+      "accuracy": 0.8485742379547689,
+      "macro_f1": 0.80998401569561,
+      "mean_entropy_nats": 0.9838795065879822,
+      "cohort": "SC"
+    },
+    "SC414": {
+      "recordings": [
+        "SC4141E0-PSG",
+        "SC4142E0-PSG"
+      ],
+      "n_epochs": 1956,
+      "kappa": 0.8515328502145271,
+      "accuracy": 0.8931492842535788,
+      "macro_f1": 0.7883957657795138,
+      "mean_entropy_nats": 0.7395201921463013,
+      "cohort": "SC"
+    },
+    "SC420": {
+      "recordings": [
+        "SC4201E0-PSG",
+        "SC4202E0-PSG"
+      ],
+      "n_epochs": 2043,
+      "kappa": 0.611012581390564,
+      "accuracy": 0.744982868330886,
+      "macro_f1": 0.5613126051516744,
+      "mean_entropy_nats": 1.0642616748809814,
+      "cohort": "SC"
+    },
+    "SC421": {
+      "recordings": [
+        "SC4211E0-PSG",
+        "SC4212E0-PSG"
+      ],
+      "n_epochs": 2386,
+      "kappa": 0.7539889002044291,
+      "accuracy": 0.8327745180217938,
+      "macro_f1": 0.6894622595695628,
+      "mean_entropy_nats": 0.6270192861557007,
+      "cohort": "SC"
+    },
+    "SC423": {
+      "recordings": [
+        "SC4231E0-PSG",
+        "SC4232E0-PSG"
+      ],
+      "n_epochs": 2633,
+      "kappa": 0.6006559476654234,
+      "accuracy": 0.7128750474743638,
+      "macro_f1": 0.5769278148185585,
+      "mean_entropy_nats": 0.9245832562446594,
+      "cohort": "SC"
+    },
+    "SC429": {
+      "recordings": [
+        "SC4291G0-PSG",
+        "SC4292G0-PSG"
+      ],
+      "n_epochs": 2736,
+      "kappa": 0.7503018058672054,
+      "accuracy": 0.8187134502923976,
+      "macro_f1": 0.7208681331371448,
+      "mean_entropy_nats": 0.8592872023582458,
+      "cohort": "SC"
+    },
+    "SC437": {
+      "recordings": [
+        "SC4371F0-PSG",
+        "SC4372F0-PSG"
+      ],
+      "n_epochs": 2427,
+      "kappa": 0.6463212927064037,
+      "accuracy": 0.7610218376596621,
+      "macro_f1": 0.5205832812268217,
+      "mean_entropy_nats": 0.7835592031478882,
+      "cohort": "SC"
+    },
+    "SC452": {
+      "recordings": [
+        "SC4522E0-PSG"
+      ],
+      "n_epochs": 997,
+      "kappa": 0.6759885900520286,
+      "accuracy": 0.7883650952858575,
+      "macro_f1": 0.5558049522053875,
+      "mean_entropy_nats": 0.9635939598083496,
+      "cohort": "SC"
+    },
+    "SC453": {
+      "recordings": [
+        "SC4531E0-PSG",
+        "SC4532E0-PSG"
+      ],
+      "n_epochs": 2152,
+      "kappa": 0.5886382587147772,
+      "accuracy": 0.7202602230483272,
+      "macro_f1": 0.5686664585872692,
+      "mean_entropy_nats": 0.9944897890090942,
+      "cohort": "SC"
+    },
+    "SC461": {
+      "recordings": [
+        "SC4611E0-PSG",
+        "SC4612E0-PSG"
+      ],
+      "n_epochs": 2714,
+      "kappa": 0.6117611749955356,
+      "accuracy": 0.7181282240235815,
+      "macro_f1": 0.6151216840761187,
+      "mean_entropy_nats": 1.0244642496109009,
+      "cohort": "SC"
+    },
+    "SC474": {
+      "recordings": [
+        "SC4741E0-PSG",
+        "SC4742E0-PSG"
+      ],
+      "n_epochs": 3273,
+      "kappa": 0.5066223853215022,
+      "accuracy": 0.6630003055300947,
+      "macro_f1": 0.4107421614363574,
+      "mean_entropy_nats": 0.7863340377807617,
+      "cohort": "SC"
+    },
+    "ST710": {
+      "recordings": [
+        "ST7101J0-PSG",
+        "ST7102J0-PSG"
+      ],
+      "n_epochs": 2022,
+      "kappa": 0.6772959877651519,
+      "accuracy": 0.7606330365974283,
+      "macro_f1": 0.6960148800058448,
+      "mean_entropy_nats": 0.9888733625411987,
+      "cohort": "ST"
+    },
+    "ST714": {
+      "recordings": [
+        "ST7141J0-PSG",
+        "ST7142J0-PSG"
+      ],
+      "n_epochs": 1731,
+      "kappa": 0.6674436220793063,
+      "accuracy": 0.7775852108607741,
+      "macro_f1": 0.6037327127808434,
+      "mean_entropy_nats": 1.01657235622406,
+      "cohort": "ST"
+    },
+    "ST716": {
+      "recordings": [
+        "ST7161J0-PSG",
+        "ST7162J0-PSG"
+      ],
+      "n_epochs": 2038,
+      "kappa": 0.5085815779763472,
+      "accuracy": 0.6594700686947988,
+      "macro_f1": 0.5994135967502683,
+      "mean_entropy_nats": 1.09475839138031,
+      "cohort": "ST"
+    }
+  },
+  "convention": "per-class F1 headline is groups.test_heldout (unseen subjects only)"
+}

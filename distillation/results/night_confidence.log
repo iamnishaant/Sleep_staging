@@ -1,0 +1,29 @@
+model      : student_baseline_E0
+validation : 31 recordings | test: 29 recordings
+
+ENTROPY vs KAPPA, per recording
+  validation  n= 31  Pearson r=-0.4975 (p=4.41e-03)  Spearman rho=-0.5899 (p=4.78e-04)  R2=0.247
+  TEST        n= 29  Pearson r=-0.6531 (p=1.23e-04)  Spearman rho=-0.7502 (p=2.78e-06)  R2=0.426
+
+IS IT A PROXY FOR STAGE COMPOSITION?  (test split, partial correlations)
+  controlling for n1_fraction      r=-0.6357 (p=0.0002)  SURVIVES   composition accounts for +5% of the R2
+  controlling for n1_rem_fraction  r=-0.6205 (p=0.0003)  SURVIVES   composition accounts for +10% of the R2
+  controlling for both             r=-0.6203 (p=0.0003)  SURVIVES   composition accounts for +10% of the R2
+
+TIER BOUNDARIES, fitted on VALIDATION entropy tertiles
+  high confidence : entropy <= 0.5081
+  medium          : 0.5081 < entropy <= 0.6234
+  low             : entropy >  0.6234
+
+APPLIED UNCHANGED TO TEST
+  tier      nights  mean kappa      min      max
+  high          11      0.7253   0.5812   0.8534
+  medium         6      0.6674   0.5827   0.7167
+  low           12      0.4995   0.1208   0.6419
+  tiers ordered correctly on test (high >= medium >= low): True
+
+TRIAGE: flag the 10 highest-entropy nights for review
+  catches 6/10 of the genuinely worst-kappa nights
+  flagged mean kappa 0.5258  vs  unflagged 0.6694  (gap +0.1436)
+
+Wrote distillation\results\night_confidence.json

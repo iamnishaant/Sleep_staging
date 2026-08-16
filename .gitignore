@@ -43,9 +43,11 @@ processed_sleepedf/spectral/
 !distillation/results/**/student_best.pt
 
 # ── Regenerable intermediate caches ──────────────────────────────────────────
-# Rebuilt in minutes by evaluate_student.py / cache_teacher_logits.py.
+# Cached per-recording predictions and teacher soft targets. Rebuilt in minutes
+# by evaluate_student.py / eval_final.py / cache_teacher_logits.py.
 distillation/results/probs_*/
 distillation/results/preds_*/
+distillation/results/teacher_preds/
 distillation/results/teacher_logits_*/
 
 # ── Python ───────────────────────────────────────────────────────────────────
