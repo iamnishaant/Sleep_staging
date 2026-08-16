@@ -1,0 +1,234 @@
+import json
+import torch
+import numpy as np
+from torch.utils.data import DataLoader, Subset, random_split
+from sklearn.model_selection import train_test_split
+
+from dataset import SleepEDFSequenceDataset
+from model import SleepStagingModel
+from losses import FocalLoss
+from utils import set_seed, compute_metrics
+import time
+
+def logger(msg):
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}")
+
+
+def evaluate(model, loader, device):
+    logger("[EVAL] Starting evaluation...")
+    model.eval()
+    y_true, y_pred, y_prob = [], [], []
+    batch_count = 0
+
+    use_amp = device.type == "cuda"
+
+    with torch.no_grad():
+        for x, y, padding_mask in loader:
+            batch_count += 1
+            if batch_count % 10 == 0:
+                print(f"[EVAL] Processed {batch_count}/{len(loader)} batches")
+            x = x.to(device)
+            y = y.to(device)
+            padding_mask = padding_mask.to(device)
+
+            with torch.amp.autocast(device_type='cuda', enabled=use_amp):
+                logits = model(x, padding_mask) # [1, T, C]
+            probs = torch.softmax(logits, dim=-1)
+            preds = probs.argmax(dim=-1)
+
+            valid = ~padding_mask
+
+            y_true.extend(y[valid].cpu().numpy())
+            y_pred.extend(preds[valid].cpu().numpy())
+            y_prob.extend(probs[valid].cpu().numpy())
+    logger(f"[EVAL] Finished forward passes.")
+    logger(f"[EVAL] Total valid samples: {len(y_true)}")
+
+    logger("[EVAL] Computing metrics...")
+
+    return compute_metrics(
+        np.array(y_true),
+        np.array(y_pred),
+        np.array(y_prob)
+    )
+
+
+def sleep_collate_fn(batch):
+
+    lengths = [sample[0][0].shape[0] if isinstance(sample[0], tuple)
+               else sample[0].shape[0] for sample in batch]
+
+    max_len = max(lengths)
+    batch_size = len(batch)
+
+    is_fusion = isinstance(batch[0][0], tuple)
+
+    if is_fusion:
+        temporal_dim = batch[0][0][0].shape[1]
+        spectral_dim = batch[0][0][1].shape[1]
+
+        x_temp = torch.zeros(batch_size, max_len, temporal_dim)
+        x_spec = torch.zeros(batch_size, max_len, spectral_dim)
+    else:
+        feature_dim = batch[0][0].shape[1]
+        x_padded = torch.zeros(batch_size, max_len, feature_dim)
+
+    y_padded = torch.full((batch_size, max_len), -100)
+    padding_mask = torch.ones(batch_size, max_len, dtype=torch.bool)
+
+    for i, sample in enumerate(batch):
+
+        if is_fusion:
+            (x_t, x_s), y = sample
+            T = x_t.shape[0]
+
+            x_temp[i, :T] = x_t
+            x_spec[i, :T] = x_s
+        else:
+            x, y = sample
+            T = x.shape[0]
+            x_padded[i, :T] = x
+
+        y_padded[i, :T] = y
+        padding_mask[i, :T] = False
+
+    if is_fusion:
+        return (x_temp, x_spec), y_padded, padding_mask
+    else:
+        return x_padded, y_padded, padding_mask
+
+
+
+def train_model(train_dataset, val_dataset, device):
+    logger(f"[DEBUG] Starting training, train samples: {len(train_dataset)}, val samples: {len(val_dataset)}")
+
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=8,
+        shuffle=True,
+        num_workers=2,
+        collate_fn=sleep_collate_fn,
+        pin_memory=True,
+        persistent_workers=True,
+        feature='fusion'
+    )
+
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=8,
+        shuffle=False,
+        num_workers=2,
+        collate_fn=sleep_collate_fn,
+        pin_memory=True,
+        persistent_workers=True,
+        feature='fusion'
+    )
+
+
+    model = SleepStagingModel().to(device)
+
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    logger(f"Model initialized on {device}")
+    logger(f"Total parameters: {total_params:,}")
+    logger(f"Trainable parameters: {trainable_params:,}")
+
+
+    optimizer = torch.optim.Adam(
+        model.parameters(),
+        lr=1e-3,
+        weight_decay=1e-3
+    )
+
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode="max", patience=5, factor=0.5
+    )
+
+    criterion = FocalLoss(gamma=2)
+    scaler = torch.amp.GradScaler() # AMP scaler
+    best_f1 = -1
+
+    logger(f"[DEBUG] Optimizer, scheduler, criterion initialized.")
+    for epoch in range(50):
+        model.train()
+        logger(f"[DEBUG] Epoch {epoch} training started.")
+        total_loss = 0
+
+        for batch_idx, (x, y, padding_mask) in enumerate(train_loader):
+            x = x.to(device)
+            y = y.to(device)
+            padding_mask = padding_mask.to(device)
+
+            optimizer.zero_grad()
+
+            with torch.amp.autocast(device_type='cuda'):
+                logits = model(x, padding_mask)
+                loss = criterion(
+                    logits.view(-1, logits.size(-1)),
+                    y.view(-1)
+                )
+
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+            if device.type == "cuda" and batch_idx % 50 == 0:
+                mem_alloc = torch.cuda.memory_allocated() / 1024**2
+                mem_reserved = torch.cuda.memory_reserved() / 1024**2
+                print(f"GPU Memory | Allocated: {mem_alloc:.1f} MB | Reserved: {mem_reserved:.1f} MB")
+            total_loss += loss.item()
+            if batch_idx % 10 == 0:
+                logger(f"Epoch {epoch} | Batch {batch_idx}/{len(train_loader)} | Loss: {loss.item():.4f}")
+
+
+        metrics = evaluate(model, val_loader, device)
+        logger(f"Validation Results | F1: {metrics['f1_weighted']:.4f} | Acc: {metrics['accuracy']:.4f}")
+        scheduler.step(metrics["f1_weighted"])
+        log = {
+            "epoch": epoch,
+            "train_loss": total_loss / len(train_loader),
+            **metrics
+        }
+        with open("training_metrics.jsonl", "a") as f:
+            f.write(json.dumps(log) + "\n")
+
+        if metrics["f1_weighted"] > best_f1:
+            best_f1 = metrics["f1_weighted"]
+            torch.save(model.state_dict(), "best_model.pt")
+        current_lr = optimizer.param_groups[0]["lr"]
+
+        logger(
+            f"Epoch {epoch} Completed | "
+            f"Loss: {total_loss / len(train_loader):.4f} | "
+            f"F1: {metrics['f1_weighted']:.4f} | "
+            f"Acc: {metrics['accuracy']:.4f} | "
+            f"LR: {current_lr:.6f}"
+        )
+
+
+
+    logger("Training completed")
+
+def main():
+    set_seed(42)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # Load full dataset to get file indices
+    full_dataset = SleepEDFSequenceDataset("processed_sleepedf/index.csv")
+    num_files = len(full_dataset.df)
+    print(f"Total files: {num_files}")
+
+    # Split at file level
+    indices = list(range(num_files))
+    train_indices, val_indices = train_test_split(indices, test_size=0.2, random_state=42)
+
+    train_dataset = SleepEDFSequenceDataset("processed_sleepedf/index.csv", file_indices=train_indices, feature='spectral')
+    val_dataset = SleepEDFSequenceDataset("processed_sleepedf/index.csv", file_indices=val_indices, feature='spectral')
+
+    print(f"Train files: {len(train_indices)}, Val files: {len(val_indices)}")
+
+    print("Starting training...")
+    train_model(train_dataset, val_dataset, device)
+
+if __name__ == "__main__":
+    main()

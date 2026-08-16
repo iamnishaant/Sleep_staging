@@ -1,0 +1,86 @@
+# =============================================================================
+# .gitignore
+#
+# NOTE: git requires FORWARD slashes. The previous version used backslashes
+# ("cfs_preprocessed\"), which git treats as an escape rather than a path
+# separator - which is why 730 files under cfs_preprocessed/ ended up tracked
+# despite appearing to be ignored.
+# =============================================================================
+
+# ── Bulk datasets ────────────────────────────────────────────────────────────
+# Re-downloadable from PhysioNet / NSRR; ~2 GB and not meaningful in diffs.
+data/
+cfs_preprocessed/
+csv-docs/
+unsorted/
+sleep-edf-database-expanded-1.0.0/
+processed_sleepedf/tensors/
+processed_sleepedf/spectral/
+
+# ── Raw recordings and archives ──────────────────────────────────────────────
+*.edf
+*.rec
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# ── Large model binaries ─────────────────────────────────────────────────────
+*.pth
+*.onnx
+*.h5
+*.ckpt
+*.safetensors
+
+# Senior's checkpoints (large, regenerable by re-running their notebooks)
+/results/**/*.pt
+
+# Resume-only checkpoints: redundant with the matching *_best.pt
+*_last.pt
+
+# ...but DO keep the trained models this project delivers.
+!distillation/results/**/teacher_best.pt
+!distillation/results/**/student_best.pt
+
+# ── Regenerable intermediate caches ──────────────────────────────────────────
+# Rebuilt in minutes by evaluate_student.py / cache_teacher_logits.py.
+distillation/results/probs_*/
+distillation/results/preds_*/
+distillation/results/teacher_logits_*/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# ── OS / editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# ── Secrets ──────────────────────────────────────────────────────────────────
+# A hardcoded Groq key was found in a notebook during this repo's setup.
+# Keep credentials in environment variables, never in tracked files.
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+credentials.json
+
+# =============================================================================
+# Deliberately NOT ignored - these are project deliverables:
+#   ABSTRACT.md  PROJECT_REPORT.md  README_V2.md  CODEBASE_AUDIT.md  update.md
+#   distillation/            full pipeline source
+#   distillation/results/*.json      evidence artefacts
+#   distillation/figures/            report figures
+#   processed_sleepedf/index.csv     small, required to load the dataset
+# =============================================================================
