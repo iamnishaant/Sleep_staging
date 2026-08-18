@@ -23,6 +23,20 @@ The result on the first says nothing about the second.
 
 ---
 
+## 0b. Late finding (2026-08-17): the models never used the raw EEG
+
+Found while smoke-testing the attribution pipeline. Zeroing the **entire** raw EEG input changes **zero predictions** in every trained model — agreement exactly 1.00000 for the 121K student and both 649K teachers. Cause: the preprocessed tensors are in volts (~2e-5) against spectral features at ~7, a ~450,000× scale mismatch that leaves the temporal branch numerically inert.
+
+Normalising it (scale 15849.46, fitted on the training split only) **did** revive the branch — deleting the EEG then costs 0.2366 κ in the student and 0.4306 κ in the teacher — but **accuracy did not improve**: −0.0060 and −0.0069 val macro-F1 respectively.
+
+**Why:** the 34 spectral features are computed *from* the same EEG. They are a lossy summary of identical data, not a second modality, so the raw trace adds no independent information.
+
+**M0 unchanged.** `student_baseline_E0` remains the deliverable. Full figures: `distillation/results/eeg_normalization_ablation.json`; narrative in `PROJECT_REPORT.md` §8.4b.
+
+*Correction:* an earlier note in commit `4b8b82f` said the inert branch held "most of the parameters". It does not — 2.5% of the teacher, 8.4% of the student. The transformer is 82–92% of both.
+
+---
+
 ## 1. Executive Summary
 
 We set out to build a compact distilled student from Group 48's inherited sleep-staging teacher. Before distilling we audited the inherited evidence, and that audit changed the project.
