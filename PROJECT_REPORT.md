@@ -572,6 +572,79 @@ A system that abstains on N1 is not covering for a model that could be tuned har
 
 Written the other way round, a reviewer reasonably asks "why didn't you fix N1?" Written this way, the answer is already in the evidence: because it is not fixable at this operating point with this input, and the system says so rather than guessing.
 
+### 8.4b The model never used the EEG — and giving it the EEG changed nothing
+
+This was found late, while smoke-testing the attribution pipeline, and it is the second-most consequential discovery in the project after the leakage.
+
+#### Every model was ignoring the raw signal entirely
+
+The preprocessed temporal tensors are in **volts** — MNE returns volts by default and the preprocessing never converted them. Stored values sit around 2 × 10⁻⁵ while the 34 spectral features sit around 7: a scale mismatch of roughly **450,000×**.
+
+The consequence was established by ablation, not inferred. Replacing the **entire** raw EEG input with zeros and re-running each trained model unchanged:
+
+| Model | Prediction agreement, EEG zeroed | κ before → after |
+|---|---:|---|
+| Student (121K) | **1.00000** | 0.7712 → 0.7712 |
+| E1b teacher (649K) | **1.00000** | 0.6695 → 0.6695 |
+| E0 teacher (649K) | **1.00000** | 0.5554 → 0.5554 |
+
+Not one epoch changes. **Every result reported above was produced from 34 numbers per epoch and nothing else.** "Temporal–spectral fusion" describes the architecture, not the computation.
+
+#### Fixing it made the fusion real
+
+A normalisation constant was fitted on the **training split only** — 1/σ with σ = 6.309 × 10⁻⁵ V (63.09 µV), scale 15849.46 — and applied on the fly at load time. Both the student and the E1b teacher were retrained as **one-variable A/B tests**: identical architecture, data, splits, schedule, class weighting and seed 42, with only the EEG scale changed. Global scaling was chosen over per-epoch z-scoring because the latter equalises amplitude across epochs, and N3 is *defined* by high-amplitude delta.
+
+The branch came alive decisively:
+
+| | Agreement, EEG zeroed | κ cost of deleting the EEG |
+|---|---:|---:|
+| Stored student | 1.00000 | 0.0000 |
+| **Normalised student** | **0.74879** | **0.2366** |
+| Stored teacher | 1.00000 | 0.0000 |
+| **Normalised teacher** | **0.58015** | **0.4306** |
+
+Deleting the EEG now changes **25.1%** of student predictions and **42.0%** of teacher predictions.
+
+#### And accuracy did not improve
+
+| | Normalised | Stored | Δ |
+|---|---:|---:|---:|
+| Student, best val macro-F1 | 0.6821 | **0.6881** | −0.0060 |
+| Student, val κ | 0.6323 | **0.6389** | −0.0066 |
+| Teacher, best val macro-F1 | 0.6907 | **0.6976** | −0.0069 |
+| Teacher, val κ | 0.6392 | **0.6469** | −0.0077 |
+
+No class moved by more than 0.021. Both runs converged (last-10-epoch macro-F1 range 0.006), both early-stopped, and both peaked **earlier** than their stored counterparts — epoch 43 against 64, and 40 against 51.
+
+#### Why: the two inputs are not independent
+
+**The 34 spectral features are computed from the same single-channel EEG.** They are not a second modality; they are a lossy summary of identical data from one electrode.
+
+So the model went from using the summary, to using the summary *and* the raw trace it was derived from. It re-derives information it already had. There is no independent signal to gain, and a −0.006 delta is exactly what that looks like. The slight cost, and the earlier peak, are consistent with spending fixed capacity on redundant reconstruction.
+
+**Conclusion: the raw EEG carries no predictive information beyond what the precomputed spectral features already encode.** Establishing that required two experiments rather than an assumption, and it disposes of the obvious "your fusion model isn't really fusing" objection with a measurement.
+
+It also sharpens §5's finding. Removing the spectral branch did not remove one of two inputs — it removed the *only* usable encoding of the signal, which is why N3 and REM went to exactly 0.000.
+
+#### What this does and does not imply for compression
+
+An earlier reading of this finding — that the dead branch meant most of the model was wasted — was wrong, and the parameter counts say so:
+
+| | Teacher (649,229) | Student (121,099) |
+|---|---:|---:|
+| Cross-epoch transformer | **91.7%** | **82.6%** |
+| Fusion layer | 5.1% | 6.9% |
+| **Temporal encoder** | **2.5%** | **8.4%** |
+| Spectral encoder | 0.7% | 1.8% |
+
+The inert branch was a dead **input pathway**, not a large block of idle capacity. Dropping the temporal encoder and the fusion layer gives a spectral-only student of **102,533 parameters** — 6.3× compression against the teacher rather than the current 5.36×. Worth doing, but modest.
+
+The real compression target is the **transformer**, which is 82–92% of both models and was never examined.
+
+**M0 is unchanged.** `student_baseline_E0` remains the deliverable: better on validation, better on held-out test, and its dead branch is now known to cost nothing. Full figures in `distillation/results/eeg_normalization_ablation.json`.
+
+---
+
 ### 8.5 The remaining bottleneck moved
 
 Initially the limit was the loss function. After E1b it is **overfitting**: E1b reaches κ 0.8541 on training subjects against 0.6055 on unseen ones, a gap of +0.2486 — wider than E1a's +0.1590. E1b improved largely by fitting its training subjects harder, and only part of that transferred.
@@ -583,6 +656,8 @@ Any further work on the teacher should attack regularisation, not another α var
 ## 9. Limitations
 
 Stated plainly, because a reviewer will find them anyway:
+
+0. **Every headline figure was produced from 34 spectral features, not from the raw EEG.** The temporal branch was numerically inert in all models (§8.4b). Normalising it to make it live did not improve accuracy, because the spectral features are derived from the same signal. This does not invalidate any κ — the models genuinely achieve them — but "temporal–spectral fusion" describes the architecture rather than the computation, and any write-up should say so.
 
 1. **The break-even estimate rests on two points.** κ ≈ 0.75 is a direction, not a prediction with an interval. A third teacher would be needed to state it properly.
 
