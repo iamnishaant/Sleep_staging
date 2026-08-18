@@ -1,0 +1,34 @@
+{
+  "purpose": "Make the temporal branch numerically live. Verified inert by ablation.",
+  "problem": {
+    "stored_units": "volts (MNE default, never converted)",
+    "eeg_abs_mean": 1.6e-05,
+    "spectral_abs_mean": 6.8928,
+    "scale_mismatch": "~450000x",
+    "ablation": "zeroing the entire EEG input changes 0 predictions; agreement 1.00000 for the 121K student and both 649K teachers"
+  },
+  "statistics_fitted_on": "training split only",
+  "statistics": {
+    "n_samples": 49320000,
+    "n_recordings": 137,
+    "epochs_sampled_per_recording": 120,
+    "mean_volts": -1.2530533037881464e-06,
+    "std_volts": 6.309361708858279e-05,
+    "min_volts": -0.0029179637786000967,
+    "max_volts": 0.0026117926463484764,
+    "scale_factor": 15849.463799103645
+  },
+  "default_mode": "global",
+  "modes": {
+    "global": "x / std_train - unit variance, PRESERVES inter-epoch amplitude",
+    "microvolt": "x * 1e6 - volts to microvolts, no fitted constant",
+    "per_epoch": "(x - mu_t)/sigma_t - rejected as default: destroys the amplitude difference that defines N3",
+    "none": "reproduces the existing (broken) behaviour"
+  },
+  "does_not_modify": [
+    "processed_sleepedf/ tensors",
+    "existing training scripts",
+    "existing checkpoints",
+    "any published result"
+  ]
+}
