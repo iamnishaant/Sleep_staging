@@ -18,7 +18,27 @@ This is a stronger test than a deletion/perturbation check alone. Deletion tells
 
 **Evaluation data:** the held-out test split — 15 subjects, 29 recordings, 33,431 epochs. Never used for training or selection.
 
-**Attribution method:** Integrated Gradients, implemented directly (Captum is not installed in this environment, and a direct implementation gives control over the baseline, which matters — see §5).
+**Attribution method:** Integrated Gradients, implemented directly (Captum is not installed in this environment, and a direct implementation gives control over the baseline, which matters — see below and §5).
+
+### The IG baseline, registered before running
+
+Integrated Gradients measures attribution **relative to a reference input**. The choice of reference is not a detail — it silently determines the answer, and picking it after seeing results would make any outcome arguable. It is therefore fixed here:
+
+> **Baseline = the per-feature mean of the 34 spectral features, computed over the TRAINING split only.**
+> For the raw temporal branch (used only for the §4 branch-split measurement), the baseline is the per-recording mean of the 3000-sample trace.
+
+Rationale, and what was rejected:
+
+| Candidate baseline | Verdict |
+|---|---|
+| **Training-set per-feature mean** | **Registered.** Represents "an average epoch" — a valid, in-distribution input. Attribution then reads as *"what about this epoch differs from a typical one, and how much did that drive the call?"*, which is the question a clinician asks. |
+| All-zeros | Rejected. These are band powers, DWT energies and ratios; zero power is physically impossible and far outside the data manifold. IG paths would traverse nonsense inputs. |
+| Per-recording mean | Rejected as the primary. It would make attribution relative to *that night's* average, which conflates within-night deviation with between-subject differences. Retained only for the temporal branch, where a per-recording reference is the sensible analogue. |
+| Gaussian noise / random | Rejected. Introduces variance unrelated to the model and would need averaging over many draws to stabilise. |
+
+**Computed on the training split only**, so the reference is not fitted on the data the gate is evaluated against. Path steps: **64**, straight-line interpolation, fixed before running.
+
+Completeness check to be reported: IG satisfies the axiom that attributions sum to `f(x) − f(baseline)`. The mean absolute convergence error will be recorded in `attribution_quality.json`. **If that error exceeds 5% of `|f(x) − f(baseline)|`, the attributions are numerically unreliable and the gate is void regardless of the per-stage outcomes** — this is a third failure mode, independent of §5's two criteria.
 
 ---
 
@@ -73,7 +93,21 @@ Attribution is computed per epoch over the 34 features, then aggregated per true
 | **N3** | `rel_delta`, `ratio_delta/beta`, or `ratio_(d+t)/(a+b)` appears in the **top 3** attributed features | N3 is *defined* by delta-band power. This is the strongest known answer available. |
 | **REM** | `rel_theta` is attributed **above** `rel_delta` | Observable-only prediction. Classic REM is theta + EMG atonia + eye movements; on Fpz–Cz alone **only theta is observable**. Predicting the full signature would fail for reasons unrelated to attribution quality. |
 | **W** | A high-frequency feature (`rel_gamma`, `rel_beta`, `cD1_*`, `cD2_*`) appears in the top 3 | Wake shows muscle/movement artefact and eye blinks concentrated at high frequency. |
-| **N2** | Attribution is **more dispersed** for N2 than for N3 — specifically, N2's top-1 attribution share is **lower** than N3's | Replaces the withdrawn spindle prediction. N2 has no dominant discriminative feature (max z = +0.85), so a faithful attribution should show no dominant driver. |
+| **N2** | Attribution is **more dispersed** for N2 than for N3 — specifically, N2's top-1 attribution share is **lower** than N3's. **Conditional on N3 passing — see below.** | Replaces the withdrawn spindle prediction. N2 has no dominant discriminative feature (max z = +0.85), so a faithful attribution should show no dominant driver. |
+
+### ⚠ The N2 prediction is conditional on N3 — stated explicitly
+
+Dispersion is ambiguous on its own: **noise is also dispersed.** "N2 more dispersed than N3" is consistent with two entirely different worlds, and the prediction is worthless unless they are separated in advance.
+
+**N3 is the anchor that makes the N2 result readable.** The interpretation is fixed now:
+
+| N3 attribution | N2 attribution | Reading |
+|---|---|---|
+| **Concentrated** on delta-family features | Dispersed | **Prediction met.** The method demonstrably concentrates when a dominant driver exists, so N2's dispersion reflects a genuinely diffuse spectral signature. |
+| **Concentrated** on delta-family features | Also concentrated | Prediction failed — N2 has a dominant driver the train-split profile did not anticipate. Informative. |
+| **Dispersed** | Dispersed | **The N2 result carries no information.** The method is producing noise; it failed to concentrate even where a known dominant driver exists. Report as uninterpretable, not as "N2 is diffuse". |
+
+Because a dispersed N3 already fails the §5 pass criterion, this row cannot be used to rescue a failed gate — it only prevents a *passing* gate's N2 number from being over-read.
 | **N1** | Attribution is **incoherent** — no feature consistently in the top 3 across recordings, and the highest cross-recording variance of any stage | **Expected failure, registered as such.** N1 is representation-bound: pairwise N1-vs-N2 AUC ≈ 0.81, unmoved across the entire E1 ladder, with threshold-sweep headroom of +0.0086. If attribution for N1 is *also* incoherent, that corroborates representation-boundedness through an independent method. |
 
 ### ⚠ The N1 prediction is the weakest of the five — registered as such
@@ -98,6 +132,12 @@ This decides whether Gate 3c (raw-signal attribution + attention rollout) is wor
 - **Roughly split** → 3c matters and proceeds.
 
 Registering it here means the decision is made by the measurement, not after seeing how much work 3c looks like.
+
+**A >80% spectral result is a finding about the model, not only a scheduling decision.** The temporal branch holds the large majority of the student's 121,099 parameters — the atrous pyramid, its squeeze-excite block and projection — while the spectral branch is a single `Linear(34→64)` plus fusion, roughly 10.6K parameters. If attribution mass lands overwhelmingly on the spectral side, then most of the model's capacity is contributing little to the decision.
+
+That raises a question this project will not pursue but should record: **could a spectral-only student be smaller still, at comparable accuracy?** The relevant prior evidence points both ways and is worth stating alongside the number — removing the spectral branch entirely caused N3 and REM to collapse to exactly 0.000 F1 (§5 of `PROJECT_REPORT.md`), but the converse, removing the *temporal* branch, was never tested.
+
+Log the measured percentage as future work with the figure attached, rather than as a bare "3c dropped".
 
 ---
 
@@ -146,4 +186,27 @@ The knowledge-distillation result in `PROJECT_REPORT.md` is about *staging-model
 
 **Output on completion:** `distillation/results/attribution_quality.json` — per-stage top-attributed features, top-1 attribution share, cross-recording variance, branch split, deletion AUC drop, and the matched random-masking control.
 
-**Commit hash of this file at time of registration:** _(to be filled by the commit that adds it)_
+---
+
+## 8. Provenance — how this file's commit hash is recorded
+
+**This file is frozen from the commit that finalises it. Its own commit hash is deliberately *not* written into it.**
+
+Writing the hash back in would require editing the file after committing, producing a document that references a commit whose contents differ from the document itself — which destroys the property the commit exists to establish.
+
+Instead, the registering commit hash is recorded **outside** this file, in:
+
+- `distillation/results/attribution_quality.json`, under `preregistration_commit`
+- the Gate 3a run log
+
+Anyone verifying the registration checks that the hash in the output artefact resolves to a commit of this file that predates the artefact's own timestamp.
+
+### Amendment record
+
+| Version | Commit | Change | Attribution code run at this point? |
+|---|---|---|---|
+| 1 | `db5722a` | Initial registration | **No** |
+| 2 | `eb27700` | Added §4's N2-conditional-on-N3 clause; added the >80%-spectral result as a model finding with a spectral-only-student question logged as future work; replaced the commit-hash placeholder with this section | **No** |
+| 3 | *(this commit)* | Registered the IG baseline as the training-split per-feature mean, with rejected alternatives and rationale; fixed path steps at 64; added the IG completeness-error check as a third, independent void condition | **No** |
+
+Both versions were written before any attribution method was executed against the model — verified by the absence of `distillation/results/attribution_quality.json` at the time of each commit. The predictions in §4 are unchanged between versions; version 2 only makes the *interpretation rules* more explicit, which narrows the room for post-hoc narration rather than widening it.
