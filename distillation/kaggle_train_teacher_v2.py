@@ -486,7 +486,7 @@ def main():
                 f"then re-run.\n")
         print(f"  GPU: {name} ({sm}, supported)")
 
-    print(f"\n{'='*70}\nEXPERIMENT {EXPERIMENT}norm  (EEG NORMALISATION VARIANT)\n{'='*70}")
+    print(f"\n{'='*70}\nEXPERIMENT {EXPERIMENT}  (MULTI-SCALE TEMPORAL ENCODER)\n{'='*70}")
     print(f"  OVERLAP={OVERLAP}  ALPHA_POWER={ALPHA_POWER}  "
           f"FIX_FOCAL_PT={FIX_FOCAL_PT}  EPOCH_TOKENS={EPOCH_TOKENS}")
     # Printed loudly because the header is otherwise identical to the stored E1b
@@ -495,8 +495,9 @@ def main():
           f"{'ACTIVE - this is the normalised variant' if EEG_SCALE != 1.0 else '!!! DISABLED !!!'}")
     print(f"  OUT_DIR = {OUT_DIR}")
     if EEG_SCALE == 1.0:
-        raise SystemExit("EEG_SCALE is 1.0 - this would reproduce the stored E1b "
-                         "run exactly and answer nothing. Set it to 15849.46.")
+        raise SystemExit("EEG_SCALE is 1.0, which leaves the temporal branch "
+                         "numerically inert - the new encoder would be fed "
+                         "volts and learn nothing. Set it to 15849.46.")
 
     df = pd.read_csv(root / "processed_sleepedf" / "index.csv")
     df["rec"] = [str(p).replace("\\", "/").rsplit("/", 1)[-1][:-3] for p in df["tensor_path"]]

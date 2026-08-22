@@ -14,9 +14,28 @@ Per-class F1 is reported on UNSEEN subjects only (project convention).
 Per-recording kappa and mean prediction entropy are saved for the night-level
 confidence question and for the reliability table.
 
-The student class is imported by exec-ing kaggle_train_student.py rather than
-re-declared here, so the architecture is guaranteed identical to the one that
-produced the checkpoints - a re-declaration could drift.
+The student class is imported by exec-ing the trainer that produced the
+checkpoint rather than re-declared here, so the architecture is guaranteed
+identical - a re-declaration could drift.
+
+WHICH TRAINER, AND WHICH INPUT SCALE
+------------------------------------
+Both are read from the checkpoint, not assumed:
+
+    ck["encoder"]    "multiscale" -> kaggle_train_student_v2.py
+                     absent       -> kaggle_train_student.py  (the original)
+    ck["eeg_scale"]  multiplies the raw EEG before it reaches the model
+
+The scale matters more than it looks. The preprocessed tensors are in VOLTS
+(~2e-5). A model trained at EEG_SCALE=15849.46 that is evaluated without it
+receives an effectively zero EEG input, and for the original students - whose
+temporal branch was inert anyway - that produces no error and no warning, just
+quietly different numbers. Reading it from the checkpoint is what stops the
+evaluator and the trainer from disagreeing about what the model was fed.
+
+The validation-reproduction check below is the backstop: if either of these is
+wrong, the recomputed macro-F1 will not match the training log and the run
+stops rather than emitting numbers.
 """
 
 from __future__ import annotations
@@ -45,18 +64,39 @@ LAB = list(range(5))
 WINDOW_SIZE = 256
 
 
-def load_student_class():
+# ck["encoder"] -> the trainer whose StudentSleepStagingModel matches it.
+# Checkpoints written before the multiscale encoder existed have no `encoder`
+# key, so absent means the original.
+TRAINER_FOR_ENCODER = {
+    None: "kaggle_train_student.py",
+    "atrous": "kaggle_train_student.py",
+    "multiscale": "kaggle_train_student_v2.py",
+}
+
+
+def load_student_class(trainer: str):
     """Import the exact class used for training, by exec-ing the Kaggle script."""
-    src = (Path(__file__).parent / "kaggle_train_student.py").read_text(encoding="utf-8")
-    src = src.replace("\nmain()", "")
+    p = Path(__file__).parent / trainer
+    if not p.exists():
+        raise SystemExit(f"Missing {trainer}, which this checkpoint was trained with. "
+                         f"Regenerate it (make_v2_trainer.py) before evaluating.")
+    src = p.read_text(encoding="utf-8").replace("\nmain()", "")
     ns: dict = {}
-    exec(compile(src, "kaggle_train_student.py", "exec"), ns)
+    exec(compile(src, trainer, "exec"), ns)
     return ns["StudentSleepStagingModel"]
 
 
 def load_student(ckpt_path: Path):
-    Student = load_student_class()
+    """Returns (model, checkpoint, eeg_scale)."""
     ck = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+
+    enc = ck.get("encoder")
+    if enc not in TRAINER_FOR_ENCODER:
+        raise SystemExit(f"{ckpt_path.name} declares encoder={enc!r}, which this "
+                         f"evaluator does not know how to build. Add it to "
+                         f"TRAINER_FOR_ENCODER rather than guessing.")
+    Student = load_student_class(TRAINER_FOR_ENCODER[enc])
+
     args = ck.get("args", {})
     model = Student(
         embed=args.get("embed_dim", 64), heads=args.get("heads", 2),
@@ -69,13 +109,24 @@ def load_student(ckpt_path: Path):
         raise RuntimeError(f"{ckpt_path.name} mismatch:\n  missing {sorted(missing)}"
                            f"\n  unexpected {sorted(unexpected)}")
     model.eval()
-    return model, ck
+
+    # The scale the model was TRAINED with. Defaulting to 1.0 is correct for
+    # every pre-normalisation checkpoint and wrong-but-loud for anything newer,
+    # since the validation reproduction would fail.
+    eeg_scale = float(ck.get("eeg_scale", 1.0))
+    return model, ck, eeg_scale
 
 
 @torch.no_grad()
-def predict(model, t_path: Path, s_path: Path, stages: list[str]):
-    """Non-overlapping 256-epoch windows, matching how validation ran in training."""
-    t = torch.load(t_path, map_location="cpu").float()
+def predict(model, t_path: Path, s_path: Path, stages: list[str], eeg_scale: float = 1.0):
+    """
+    Non-overlapping 256-epoch windows, matching how validation ran in training.
+
+    `eeg_scale` must be the value the checkpoint was trained with. The trainers
+    apply it inside the Dataset, so it is part of the model's input contract
+    rather than a preprocessing choice made here.
+    """
+    t = torch.load(t_path, map_location="cpu").float() * eeg_scale
     s = torch.load(s_path, map_location="cpu").float()
     y = np.array([STAGE_TO_IDX[x] for x in stages], dtype=np.int64)
     n = min(t.shape[0], s.shape[0], len(y))
@@ -107,7 +158,39 @@ def metrics_from(P, y, weights=None, g=0.0):
     }
 
 
-def collect(model, df, row_of, recs, cache: Path):
+def check_cache_provenance(cache: Path, ck: dict, eeg_scale: float) -> None:
+    """
+    Refuse to reuse a probability cache that was produced under a different
+    input contract.
+
+    Without this the trap is silent and expensive: run once with the wrong
+    eeg_scale, get a cache full of garbage probabilities, fix the scale, re-run,
+    and `collect` reuses every cached file because it only checks whether the
+    path exists. Every downstream artefact - calibration, decoder, night
+    confidence, metric reliability, the packets - would then describe a model
+    that was fed the wrong input.
+    """
+    want = {"encoder": ck.get("encoder"), "eeg_scale": eeg_scale,
+            "epoch": ck.get("epoch"), "n_parameters": ck.get("n_parameters")}
+    p = cache / "_provenance.json"
+    if p.exists():
+        have = json.loads(p.read_text(encoding="utf-8"))
+        if have != want:
+            raise SystemExit(
+                f"\nCached probabilities in {cache} were produced under different "
+                f"settings:\n  cached  {have}\n  current {want}\n"
+                f"Delete that directory and re-run rather than mixing them.")
+    else:
+        # An existing cache from before provenance was recorded: adopt it, but
+        # only after saying so, since it cannot be verified.
+        if any(cache.glob("*.npz")):
+            print(f"    note: {cache.name} predates provenance tracking; "
+                  f"stamping it as {want}")
+        cache.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(want, indent=2), encoding="utf-8")
+
+
+def collect(model, df, row_of, recs, cache: Path, eeg_scale: float = 1.0):
     cache.mkdir(parents=True, exist_ok=True)
     per_rec, Ps, ys = {}, [], []
     t0 = time.time()
@@ -119,7 +202,7 @@ def collect(model, df, row_of, recs, cache: Path):
             row = df.iloc[row_of[r]]
             P, y = predict(model, REPO_ROOT / row["tensor_path"],
                            REPO_ROOT / row["spectral"],
-                           str(row["stage_sequence"]).split())
+                           str(row["stage_sequence"]).split(), eeg_scale)
             np.savez_compressed(f, probs=P, labels=y)
             if (i + 1) % 10 == 0:
                 print(f"    [{i+1}/{len(recs)}] ({(time.time()-t0)/60:.1f} min)", flush=True)
@@ -141,6 +224,9 @@ def main() -> int:
                     default=["student_distilled_E0", "student_baseline_E0"])
     ap.add_argument("--index", default=str(REPO_ROOT / "processed_sleepedf" / "index.csv"))
     ap.add_argument("--splits", default=str(Path(__file__).parent / "splits.json"))
+    ap.add_argument("--allow-mismatch", action="store_true",
+                    help="Continue even if validation does not reproduce. For "
+                         "investigation only - never for figures.")
     args = ap.parse_args()
 
     df = pd.read_csv(args.index)
@@ -155,30 +241,48 @@ def main() -> int:
     torch.set_grad_enabled(False)
     for name in args.students:
         d = res / "students" / name
-        model, ck = load_student(d / "student_best.pt")
+        model, ck, eeg_scale = load_student(d / "student_best.pt")
         npar = sum(p.numel() for p in model.parameters() if p.requires_grad)
         logged = ck["best_macro_f1"]
         print(f"\n{'='*74}\n{name}\n{'='*74}")
         print(f"  epoch {ck['epoch']} | alpha={ck['alpha']} T={ck['T']} "
               f"cw={ck['class_weight_power']} spectral={ck['use_spectral']}")
+        print(f"  encoder {ck.get('encoder', 'atrous')} | "
+              f"trainer {TRAINER_FOR_ENCODER[ck.get('encoder')]} | "
+              f"eeg_scale {eeg_scale:g}")
         print(f"  {npar:,} params (teacher 649,229 -> {649229/npar:.2f}x)")
+
+        vcache, tcache = res / f"probs_{name}_val", res / f"probs_{name}"
+        for c in (vcache, tcache):
+            check_cache_provenance(c, ck, eeg_scale)
 
         # ---- 1. REPRODUCE VALIDATION -------------------------------------
         print(f"\n  reproducing validation ({len(val_recs)} recordings)...")
-        Pv, yv, _ = collect(model, df, row_of, val_recs, res / f"probs_{name}_val")
+        Pv, yv, _ = collect(model, df, row_of, val_recs, vcache, eeg_scale)
         mv = metrics_from(Pv, yv)
         delta = mv["macro_f1"] - logged
         agree = abs(delta) < 5e-3
         print(f"  logged in training : macro-F1 {logged:.4f}")
         print(f"  recomputed locally : macro-F1 {mv['macro_f1']:.4f}   "
               f"(delta {delta:+.4f})  {'MATCH' if agree else '*** MISMATCH ***'}")
+        if not agree and not args.allow_mismatch:
+            raise SystemExit(
+                f"\nValidation does not reproduce for {name} (delta {delta:+.4f}).\n"
+                f"The checkpoint, the model class, the input scale or the split "
+                f"disagree with what training saw, so the held-out test figures "
+                f"would be measuring something other than the model that was "
+                f"selected. Refusing to compute them.\n\n"
+                f"  encoder    {ck.get('encoder', 'atrous')}\n"
+                f"  trainer    {TRAINER_FOR_ENCODER[ck.get('encoder')]}\n"
+                f"  eeg_scale  {eeg_scale:g}\n\n"
+                f"Delete {vcache} if it is stale. Pass --allow-mismatch only to "
+                f"investigate, never to publish.")
         if not agree:
-            print("  -> checkpoint, model class or split disagree. Downstream numbers"
-                  " would be untrustworthy.")
+            print("  -> --allow-mismatch: CONTINUING WITH UNTRUSTWORTHY NUMBERS.")
 
         # ---- 2. HELD-OUT TEST ---------------------------------------------
         print(f"\n  held-out test ({len(test_recs)} recordings)...")
-        Pt, yt, per_rec = collect(model, df, row_of, test_recs, res / f"probs_{name}")
+        Pt, yt, per_rec = collect(model, df, row_of, test_recs, tcache, eeg_scale)
         mt = metrics_from(Pt, yt)
         print(f"  acc {mt['accuracy']:.4f} | kappa {mt['kappa']:.4f} | "
               f"macro-F1 {mt['macro_f1']:.4f} | entropy {mt['mean_entropy_nats']:.3f} nats")

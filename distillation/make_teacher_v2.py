@@ -205,6 +205,22 @@ def build() -> str:
         raise SystemExit(f"config substitution failed (ladder {n1}, EXPERIMENT {n2}, "
                          f"OUT_DIR {n3}) - {SRC.name} has changed shape.")
 
+    # The inherited log strings describe the run this was derived FROM. Left
+    # alone the header prints "E1bmultinorm  (EEG NORMALISATION VARIANT)", which
+    # is neither the experiment's name nor what it varies - the same defect that
+    # made the student's log read as a failed assertion.
+    src, n4 = re.subn(
+        r'EXPERIMENT \{EXPERIMENT\}norm  \(EEG NORMALISATION VARIANT\)',
+        'EXPERIMENT {EXPERIMENT}  (MULTI-SCALE TEMPORAL ENCODER)', src)
+    src, n5 = re.subn(
+        r'raise SystemExit\("EEG_SCALE is 1\.0 - this would reproduce the stored E1b "\n'
+        r'\s*"run exactly and answer nothing\. Set it to 15849\.46\."\)',
+        'raise SystemExit("EEG_SCALE is 1.0, which leaves the temporal branch "\n'
+        '                         "numerically inert - the new encoder would be fed "\n'
+        '                         "volts and learn nothing. Set it to 15849.46.")', src)
+    if n4 != 1 or n5 != 1:
+        raise SystemExit(f"log-string substitution failed (header {n4}, guard {n5}).")
+
     # 3. model section: AdaptiveAtrousPyramid + EpochEncoder -> multi-scale.
     #    SEBlock goes with them; nothing else references it.
     a, b = src.index(MODEL_START), src.index(MODEL_END)
