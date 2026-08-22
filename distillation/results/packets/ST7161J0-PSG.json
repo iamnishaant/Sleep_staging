@@ -11,8 +11,8 @@
     "model_checkpoint": "distillation/results/students/student_baseline_E0/student_best.pt",
     "model_sha256": "7d36f9c5f0e279e52958df6acad89d861d7642bbe49dc738652b5d385cde2c15",
     "model_parameters": 121099,
-    "git_commit": "e23f35d5724fbc5a7bb3df8706b54e6720fa968d",
-    "generated_at": "2026-08-22T19:33:55+00:00",
+    "git_commit": "59840a6b9b801ba9b8b98533fe883caf742ea790",
+    "generated_at": "2026-08-22T19:48:29+00:00",
     "calibration_temperature": 1.3347,
     "hypnogram_decoder": "minrun REM L=3",
     "hypnogram_decoder_spec": {

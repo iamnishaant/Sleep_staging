@@ -1,7 +1,7 @@
 {
   "model": "student_baseline_E0",
   "checkpoint": "distillation/results/students/student_baseline_E0/student_best.pt",
-  "commit": "e23f35d",
+  "commit": "59840a6",
   "n_parameters": 121099,
   "compression_vs_teacher": 5.36,
   "evaluated_on": "held-out test split, 15 subjects never seen in training or selection",
