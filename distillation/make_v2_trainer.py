@@ -184,6 +184,45 @@ def build() -> str:
         raise SystemExit(f"config substitution failed (EXPERIMENT {n1}, N_TOKENS {n2}) "
                          f"- {SRC.name} has changed shape; update this script.")
 
+    # The inherited strings describe the run this was derived FROM. Left alone
+    # they make the log read as a failed assertion ("expect 121,099" beside
+    # 139,606) and mislabel the experiment, which is how a correct result gets
+    # pasted into a report looking like a broken one.
+    src, n3 = re.subn(r'print\(f"  parameters: \{npar:,\}  \(expect 121,099\)"\)',
+                      'print(f"  parameters: {npar:,}  '
+                      '(N1norm was 121,099; the encoder costs +18,507)")', src)
+    src, n4 = re.subn(r'EXPERIMENT \{EXPERIMENT\}  -  EEG normalisation A/B',
+                      'EXPERIMENT {EXPERIMENT}  -  temporal encoder A/B', src)
+    if n3 != 1 or n4 != 1:
+        raise SystemExit(f"log-string substitution failed (params {n3}, header {n4}).")
+
+    # Compare against BOTH bars. 0.6881 is student_baseline_E0 with the EEG
+    # inert; 0.6821 is student_N1norm, which is the same EEG scale as this run
+    # and therefore the comparison that isolates the encoder.
+    src, n5 = re.subn(
+        r'^BASELINE_VAL_KAPPA    = 0\.6389$',
+        'BASELINE_VAL_KAPPA    = 0.6389\n\n'
+        '# student_N1norm: SAME EEG_SCALE, old encoder. This is the bar that\n'
+        '# isolates the encoder; the one above also carries the scaling change.\n'
+        'N1NORM_VAL_MACRO_F1   = 0.6821\n'
+        'N1NORM_VAL_KAPPA      = 0.6323', src, flags=re.M)
+    # No backslashes inside the injected f-string expressions: escapes in an
+    # f-string replacement field are a SyntaxError before Python 3.12, and
+    # Kaggle is not on 3.12. Bind to locals first instead.
+    n1norm_block = (
+        '    _mf1, _kap = m["macro_f1"], m["kappa"]\n'
+        '    print("\\n  vs student_N1norm (same EEG scale, old encoder) - "\n'
+        '          "the bar that isolates the encoder:")\n'
+        '    print(f"    macro-F1 {_mf1:.4f} vs {N1NORM_VAL_MACRO_F1:.4f}"\n'
+        '          f"   ({_mf1 - N1NORM_VAL_MACRO_F1:+.4f})")\n'
+        '    print(f"    kappa    {_kap:.4f} vs {N1NORM_VAL_KAPPA:.4f}"\n'
+        '          f"   ({_kap - N1NORM_VAL_KAPPA:+.4f})")\n'
+        '    better = m["macro_f1"] > BASELINE_VAL_MACRO_F1')
+    src, n6 = re.subn(r'^ +better = m\["macro_f1"\] > BASELINE_VAL_MACRO_F1$',
+                      n1norm_block.replace("\\", "\\\\"), src, flags=re.M)
+    if n5 != 1 or n6 != 1:
+        raise SystemExit(f"baseline-bar substitution failed ({n5}, {n6}).")
+
     # 4. model section
     a, b = src.index(MODEL_START), src.index(MODEL_END)
     body = (f"{MODEL_START}\n"

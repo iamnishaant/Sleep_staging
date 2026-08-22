@@ -112,6 +112,11 @@ USE_SPECTRAL   = True
 BASELINE_VAL_MACRO_F1 = 0.6881
 BASELINE_VAL_KAPPA    = 0.6389
 
+# student_N1norm: SAME EEG_SCALE, old encoder. This is the bar that
+# isolates the encoder; the one above also carries the scaling change.
+N1NORM_VAL_MACRO_F1   = 0.6821
+N1NORM_VAL_KAPPA      = 0.6323
+
 OUT_ROOT       = "/kaggle/working"
 
 # ==============================================================================
@@ -175,23 +180,38 @@ class ConvBlock(nn.Module):
 
 class MultiScaleEpochEncoder(nn.Module):
     """
-    (B, T, 3000) raw EEG -> (B, T, embed).
+    (B, T, L) single-channel or (B, T, C, L) multi-channel -> (B, T, embed).
 
     Two branches at different time scales, concatenated on the channel axis,
     then pooled to `n_tokens` positions per epoch. With n_tokens > 1 the tokens
     are attention-pooled to a single embedding, so the transformer's sequence
     length is unchanged and the rest of the model is untouched.
+
+    MULTI-CHANNEL
+    -------------
+    `in_channels > 1` widens the first convolution of each branch; everything
+    after is shared. That is the minimal change, and minimal is the point: how
+    best to fuse EOG with EEG is its own experiment, and baking an answer in
+    here would confound it with the encoder question this class exists to test.
+
+    EOG matters because AASM scoring uses it definitionally - rapid eye
+    movements mark REM, slow rolling eye movements mark N1 - and REM and N1 are
+    where this model is weakest. Unlike the 34 spectral features, which are
+    computed FROM the EEG and so cannot add information, EOG is a genuinely
+    independent measurement. It needs `preprocess_multichannel.py` to be run
+    first; the tensors currently on disk are single-channel.
     """
 
     def __init__(self, embed=64, n_tokens=4, fine_ch=(24, 48), coarse_ch=(24, 48),
-                 dropout=0.1):
+                 dropout=0.1, in_channels=1):
         super().__init__()
         self.n_tokens = n_tokens
+        self.in_channels = in_channels
 
         f1, f2 = fine_ch
         # 0.5 s kernel at 0.06 s stride: resolves spindles and K-complexes
         self.fine = nn.Sequential(
-            ConvBlock(1, f1, kernel=50, stride=6, padding=25),
+            ConvBlock(in_channels, f1, kernel=50, stride=6, padding=25),
             nn.MaxPool1d(8, 8),
             nn.Dropout(dropout),
             ConvBlock(f1, f2, kernel=8),
@@ -199,9 +219,10 @@ class MultiScaleEpochEncoder(nn.Module):
         )
 
         c1, c2 = coarse_ch
-        # 2 s kernel at 0.25 s stride: resolves slow waves and delta rhythm
+        # 2 s kernel at 0.25 s stride: resolves slow waves, delta, and the slow
+        # rolling eye movements that mark N1 when an EOG channel is present
         self.coarse = nn.Sequential(
-            ConvBlock(1, c1, kernel=200, stride=25, padding=100),
+            ConvBlock(in_channels, c1, kernel=200, stride=25, padding=100),
             nn.MaxPool1d(4, 4),
             nn.Dropout(dropout),
             ConvBlock(c1, c2, kernel=6),
@@ -214,8 +235,21 @@ class MultiScaleEpochEncoder(nn.Module):
             self.token_attn = nn.Linear(embed, 1)
 
     def forward(self, x):
-        B, T, L = x.shape
-        z = x.reshape(B * T, 1, L)
+        if x.dim() == 3:                                     # (B, T, L)
+            B, T, L = x.shape
+            z = x.reshape(B * T, 1, L)
+        elif x.dim() == 4:                                   # (B, T, C, L)
+            B, T, C, L = x.shape
+            if C != self.in_channels:
+                raise ValueError(f"input has {C} channels, encoder built for "
+                                 f"{self.in_channels}")
+            z = x.reshape(B * T, C, L)
+        else:
+            raise ValueError(f"expected (B,T,L) or (B,T,C,L), got {tuple(x.shape)}")
+        if z.shape[1] != self.in_channels:
+            raise ValueError(f"input has {z.shape[1]} channels, encoder built for "
+                             f"{self.in_channels}")
+
         h = torch.cat([self.pool(self.fine(z)), self.pool(self.coarse(z))], dim=1)
         h = self.proj(h.transpose(1, 2))                     # (B*T, n_tokens, embed)
         if self.n_tokens > 1:
@@ -371,7 +405,7 @@ def main():
     assert set(tr["subject"]).isdisjoint(SPLITS["test"])
     assert set(va["subject"]).isdisjoint(SPLITS["test"])
 
-    print(f"\n{'='*72}\nEXPERIMENT {EXPERIMENT}  -  EEG normalisation A/B\n{'='*72}")
+    print(f"\n{'='*72}\nEXPERIMENT {EXPERIMENT}  -  temporal encoder A/B\n{'='*72}")
     print(f"  EEG_SCALE = {EEG_SCALE}   ({'ACTIVE' if EEG_SCALE != 1.0 else 'DISABLED - reproduces the broken run'})")
     print(f"  train {len(tr)} rec / {tr['subject'].nunique()} subj | "
           f"val {len(va)} rec / {va['subject'].nunique()} subj | "
@@ -411,7 +445,7 @@ def main():
     model = StudentSleepStagingModel(EMBED_DIM, HEADS, LAYERS, DROPOUT,
                                      n_tokens=N_TOKENS, use_spectral=USE_SPECTRAL).to(device)
     npar = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"  parameters: {npar:,}  (expect 121,099)")
+    print(f"  parameters: {npar:,}  (N1norm was 121,099; the encoder costs +18,507)")
 
     opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     warm = max(1, int(WARMUP_FRAC*EPOCHS*steps)); total = EPOCHS*steps
@@ -511,6 +545,13 @@ def main():
         print("       Report as a negative finding; do not tune around it.")
     else:
         print(f"    -> LIVE. The EEG now changes {(1-agree)*100:.2f}% of predictions.")
+    _mf1, _kap = m["macro_f1"], m["kappa"]
+    print("\n  vs student_N1norm (same EEG scale, old encoder) - "
+          "the bar that isolates the encoder:")
+    print(f"    macro-F1 {_mf1:.4f} vs {N1NORM_VAL_MACRO_F1:.4f}"
+          f"   ({_mf1 - N1NORM_VAL_MACRO_F1:+.4f})")
+    print(f"    kappa    {_kap:.4f} vs {N1NORM_VAL_KAPPA:.4f}"
+          f"   ({_kap - N1NORM_VAL_KAPPA:+.4f})")
     better = m["macro_f1"] > BASELINE_VAL_MACRO_F1
     print(f"\n  VERDICT: {'BEATS' if better else 'DOES NOT BEAT'} the baseline on validation.")
     print("  Test split was NEVER loaded. Evaluate it once, afterwards, only if this passed.")
