@@ -320,8 +320,27 @@ def main() -> int:
             "per_subject_test": per_subj,
         }
 
+    # MERGE, do not clobber. This file is the cross-model comparison table, and
+    # every rung of the distillation ladder lives in it. Overwriting it with
+    # whatever --students happened to name deletes the models this run was
+    # supposed to be compared AGAINST - which is a strange way to lose a result,
+    # since the run that destroys it looks entirely successful. (It has already
+    # happened twice: a single-student regression run wiped both distilled rungs.)
     outp = res / "eval_students.json"
-    outp.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    merged = {}
+    if outp.exists():
+        try:
+            merged = json.loads(outp.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            print(f"  warning: {outp.name} is not valid JSON; starting fresh")
+    replaced = sorted(set(merged) & set(report))
+    merged.update(report)
+    outp.write_text(json.dumps(merged, indent=2), encoding="utf-8")
+    if replaced:
+        print(f"  updated: {', '.join(replaced)}")
+    kept = sorted(set(merged) - set(report))
+    if kept:
+        print(f"  kept unchanged: {', '.join(kept)}")
 
     # ---- comparison ------------------------------------------------------
     if len(args.students) == 2:

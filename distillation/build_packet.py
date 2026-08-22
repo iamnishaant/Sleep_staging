@@ -444,8 +444,17 @@ def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None
         "risk_available": False,
 
         "limitations": [
-            "Staging is from a single EEG channel (Fpz-Cz) via 34 derived spectral features. "
-            "The raw-waveform pathway contributes nothing to predictions in this model, verified by ablation.",
+            # Derived from the model, not hardcoded. The claim "the raw-waveform
+            # pathway contributes nothing" was true of student_baseline_E0 and is
+            # FALSE of the multiscale model, where zeroing the EEG changes 71% of
+            # predictions. A hardcoded limitation silently outlives the model it
+            # describes, and a false caveat is worse than none.
+            ("Staging is from a single EEG channel (Fpz-Cz): the raw waveform plus 34 "
+             "spectral features derived from that same channel. No EOG or EMG is used."
+             if prov.get("model_eeg_scale", 1.0) != 1.0 else
+             "Staging is from a single EEG channel (Fpz-Cz) via 34 derived spectral "
+             "features. The raw-waveform pathway contributes nothing to predictions in "
+             "this model, verified by ablation."),
             "N1 is representation-bound: pairwise N1-vs-N2 AUC ~0.81, unchanged across every model "
             "variant, and no decision threshold improves N1 F1 by more than +0.0086.",
             "Night-level confidence predicts agreement with the expert scorer, which is not the same "
@@ -493,7 +502,12 @@ def main() -> int:
         "model": args.model,
         "model_checkpoint": str(ckpt.relative_to(REPO_ROOT)).replace("\\", "/"),
         "model_sha256": sha256_of(ckpt),
-        "model_parameters": 121099,
+        # From reliability_table.json, which reads it from the checkpoint. A
+        # hardcoded count here would put a wrong number in the one block whose
+        # purpose is to identify what produced the packet.
+        "model_parameters": rel["n_parameters"],
+        "model_encoder": rel.get("model_encoder"),
+        "model_eeg_scale": rel.get("model_eeg_scale"),
         "git_commit": git_commit(),
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "calibration_temperature": rel["calibration_temperature"],

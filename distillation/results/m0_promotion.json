@@ -1,0 +1,151 @@
+{
+  "decision": "M0 promoted: student_baseline_E0 -> student_N2multiscale",
+  "date": "2026-08-23",
+  "checkpoint": "distillation/results/students/student_N2multiscale/student_best.pt",
+  "previous_artefacts_preserved_at": "distillation/results/m0_student_baseline_E0/",
+  "protocol": {
+    "test_evaluated": "once, after validation reproduced",
+    "validation_reproduction": {
+      "logged_in_training": 0.7236,
+      "recomputed_locally": 0.7235,
+      "delta": -0.0001,
+      "verdict": "MATCH - evaluate_student refuses to compute test figures otherwise"
+    },
+    "refit_for_the_new_model": [
+      "calibrate.py         T 1.3347 -> 1.3399",
+      "sequence_decode.py   re-selected independently on this model's validation",
+      "night_confidence.py  tier boundaries re-fitted on this model's entropy",
+      "metric_reliability.py  all 24 metrics re-measured",
+      "build_packet.py      all 29 packets rebuilt"
+    ],
+    "note": "Every one of these is fitted per-model. Inheriting any of them would describe the previous model."
+  },
+  "held_out_test": {
+    "n_subjects": 15,
+    "n_epochs": 33431,
+    "student_baseline_E0": {
+      "params": 121099,
+      "kappa": 0.6448520084401845,
+      "macro_f1": 0.6914506088924266,
+      "accuracy": 0.7359636265741378
+    },
+    "student_N2multiscale": {
+      "params": 139606,
+      "kappa": 0.6984196326055249,
+      "macro_f1": 0.7407080162878905,
+      "accuracy": 0.7748496904071072
+    },
+    "delta": {
+      "kappa": 0.0536,
+      "macro_f1": 0.0493,
+      "accuracy": 0.0389
+    },
+    "per_class_f1_delta": {
+      "W": 0.0468,
+      "N1": 0.0525,
+      "N2": 0.0291,
+      "N3": 0.0517,
+      "REM": 0.0663
+    },
+    "with_decoder_applied": {
+      "kappa": 0.6991,
+      "macro_f1": 0.7424,
+      "accuracy": 0.7756
+    },
+    "beats_the_leaky_teacher": {
+      "teacher_inherited_kappa": 0.6782,
+      "note": "the inherited teacher trained on 14 of these 15 subjects and is therefore contaminated; the 139K student now exceeds even that"
+    }
+  },
+  "why_this_was_not_automatic": {
+    "concern": "epoch-level metrics improved across the board, but the packet asserts DERIVED metrics, and those moved in both directions.",
+    "regressions_on_validation": {
+      "REM_Latency": {
+        "before": 0.332,
+        "after": 0.427,
+        "why": "REM latency is a MINIMUM over the night, so it is monotonically sensitive to REM recall. This model's REM recall rose from 0.755 to 0.799, which necessarily pulls the first predicted REM epoch earlier. A structural property of the metric, not a defect in the model."
+      },
+      "Light_Deep_Ratio": {
+        "before": 1.19,
+        "after": 1.726,
+        "why": "N3 is over-predicted 1.41x, and N3_Duration is this ratio's denominator"
+      },
+      "Sleep_Onset_Latency": {
+        "before": 0.85,
+        "after": 1.029
+      },
+      "N2_Proportion": {
+        "before": 0.208,
+        "after": 0.231
+      }
+    },
+    "improvements_on_validation": {
+      "REM_Periods": {
+        "before": 0.486,
+        "after": 0.41
+      },
+      "Wake_After_Sleep_Onset": {
+        "before": 0.426,
+        "after": 0.353
+      },
+      "Stage_Transitions": {
+        "before": 0.266,
+        "after": 0.258
+      },
+      "Total_Sleep_Time": {
+        "before": 0.055,
+        "after": 0.042
+      },
+      "Sleep_Efficiency": {
+        "before": 0.051,
+        "after": 0.04
+      }
+    },
+    "the_deciding_test": {
+      "question": "did any metric the packet is willing to ASSERT become unassertable?",
+      "tier_demotions": 0,
+      "tier_promotions": 1,
+      "promoted": "Wake_After_Sleep_Onset: unreliable -> fragile",
+      "robust_metrics_lost": 0,
+      "answer": "No. Every regression is confined to metrics already marked `unreliable`, which the packet already refuses to state without an explicit caveat. Nothing that was safe to assert stopped being safe, and one metric became usable that was not."
+    },
+    "clinical_metrics_on_test": {
+      "false_soremp": {
+        "before": 1,
+        "after": 0,
+        "note": "the narcolepsy red flag is now absent on every held-out night"
+      },
+      "rem_latency_mae_min": {
+        "before": 26.91,
+        "after": 32.09
+      },
+      "nights_off_by_over_60_min": {
+        "before": 7,
+        "after": 8
+      },
+      "rem_periods_predicted_mean": {
+        "before": 9.86,
+        "after": 7.52,
+        "expert": 9.45,
+        "note": "M0 was near-exact here; this model under-counts. A genuine regression."
+      }
+    },
+    "safe_to_assert_per_packet": {
+      "before": "5 of 19",
+      "after": "5 of 19",
+      "note": "unchanged - the promotion of Wake_After_Sleep_Onset moves it from unreliable to fragile, not to robust"
+    }
+  },
+  "what_changed_in_the_packets": {
+    "schema_version": "1.1 (unchanged)",
+    "provenance": "model_parameters now 139,606 and read from the checkpoint rather than hardcoded; model_encoder and model_eeg_scale added",
+    "limitations": "the caveat 'the raw-waveform pathway contributes nothing to predictions in this model' was TRUE of student_baseline_E0 and is FALSE here - zeroing the EEG changes 71.27% of predictions. It is now derived from the model's eeg_scale rather than hardcoded, so it cannot outlive the model it describes.",
+    "decoder": "minrun REM L=3, re-selected independently on this model's own validation data rather than inherited. It changes 0.82% of test epochs here against 1.39% for M0 - this model fragments REM less to begin with (1.38x the expert count at argmax, against 2.01x)."
+  },
+  "open_items": [
+    "REM_Periods regressed from near-exact (9.86 vs 9.45) to under-counting (7.52). The decoder's L=3 was selected on this model's validation, but a shorter L may suit a model that fragments less. Worth a sweep against REM_Periods specifically rather than the aggregate objective.",
+    "Test ECE got slightly worse under calibration (0.0273 -> 0.0350) while validation improved sharply (0.0557 -> 0.0129). The raw test probabilities were already well calibrated. Worth checking before relying on confidence.",
+    "The encoder and N_TOKENS (1 -> 4) changed together and cannot be attributed separately from this run.",
+    "EOG is still unused. preprocess_multichannel.py is written and tested but needs the raw EDFs."
+  ]
+}

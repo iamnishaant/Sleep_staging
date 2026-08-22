@@ -134,7 +134,19 @@ def main() -> int:
             raise SystemExit(f"Missing {c}. Run evaluate_student.py first.")
     Pv, yv = load(vcache, val_recs)
     Pt, yt = load(tcache, test_recs)
+
+    ckpt = res / "students" / args.model / "student_best.pt"
+    if not ckpt.exists():
+        raise SystemExit(f"Missing {ckpt}.")
+    _ck = torch.load(ckpt, map_location="cpu", weights_only=False)
+    n_parameters = int(_ck.get("n_parameters", 0))
+    if not n_parameters:
+        raise SystemExit(f"{ckpt.name} records no n_parameters; refusing to guess.")
+
     print(f"model      : {args.model}")
+    print(f"encoder    : {_ck.get('encoder', 'atrous')} | "
+          f"eeg_scale {float(_ck.get('eeg_scale', 1.0)):g} | "
+          f"{n_parameters:,} params")
     print(f"validation : {len(yv):,} epochs | test: {len(yt):,} epochs")
 
     # Recover logits from the stored probabilities. Softmax is invariant to an
@@ -178,21 +190,35 @@ def main() -> int:
     # drifted apart.
     decode_fn, decoder_meta = None, None
     dec_path = res / "sequence_decoding.json"
-    if dec_path.exists():
-        sys.path.insert(0, str(Path(__file__).parent))
-        from sequence_decode import load_decoder                # noqa: PLC0415
-        decode_fn = load_decoder(dec_path)
-        T_dec = decode_fn.artefact["calibration_temperature"]
-        assert abs(T_dec - T) < 1e-3, (
-            f"decoder was fitted against T={T_dec} but this run fitted T={T:.4f}. "
-            f"Re-run sequence_decode.py before calibrate.py.")
-        decoder_meta = {"decoder": decode_fn.artefact["selected_label"],
-                        "spec": decode_fn.spec,
-                        "fitted_against_temperature": T_dec}
-        print(f"\ndecoder    : {decode_fn.artefact['selected_label']}  {decode_fn.spec}")
+    if not dec_path.exists():
+        print(f"\ndecoder    : none fitted yet ({dec_path.name} missing) - reporting "
+              f"argmax. Run sequence_decode.py, then re-run this.")
     else:
-        print(f"\ndecoder    : none fitted yet ({dec_path.name} missing) - reporting argmax. "
-              f"Run sequence_decode.py, then re-run this.")
+        _dec = json.loads(dec_path.read_text(encoding="utf-8"))
+        if _dec.get("model") != args.model:
+            # A decoder for a DIFFERENT model. Not an error - it is what the
+            # first pass over a new model always finds - but it must not be
+            # applied, and its temperature must not be asserted against, or
+            # promoting a new model becomes impossible without deleting files
+            # by hand.
+            print(f"\ndecoder    : {dec_path.name} belongs to {_dec.get('model')!r}, "
+                  f"not {args.model!r} - IGNORED, reporting argmax.")
+            print(f"             Run sequence_decode.py --model {args.model}, "
+                  f"then re-run this.")
+        else:
+            sys.path.insert(0, str(Path(__file__).parent))
+            from sequence_decode import load_decoder            # noqa: PLC0415
+            decode_fn = load_decoder(dec_path)
+            T_dec = decode_fn.artefact["calibration_temperature"]
+            # Same model, different temperature: the decoder's parameters were
+            # selected against probabilities that no longer exist. That IS an error.
+            assert abs(T_dec - T) < 1e-3, (
+                f"decoder for {args.model} was fitted against T={T_dec} but this run "
+                f"fitted T={T:.4f}. Re-run sequence_decode.py --model {args.model}.")
+            decoder_meta = {"decoder": decode_fn.artefact["selected_label"],
+                            "spec": decode_fn.spec,
+                            "fitted_against_temperature": T_dec}
+            print(f"\ndecoder    : {decode_fn.artefact['selected_label']}  {decode_fn.spec}")
 
     # Per-class reliability must describe the sequence the packet ships. Unlike
     # temperature scaling, decoding changes decisions, so accuracy/kappa/F1 are
@@ -247,9 +273,15 @@ def main() -> int:
     out = {
         "model": args.model,
         "checkpoint": f"distillation/results/students/{args.model}/student_best.pt",
+        "model_encoder": _ck.get("encoder", "atrous"),
+        "model_eeg_scale": float(_ck.get("eeg_scale", 1.0)),
         "commit": commit,
-        "n_parameters": 121099,
-        "compression_vs_teacher": 5.36,
+        # Read from the checkpoint, never hardcoded: this table is the
+        # deliverable everything downstream consumes, and a stale parameter
+        # count would travel into every packet's provenance block - the one
+        # field whose whole purpose is to identify what produced a result.
+        "n_parameters": n_parameters,
+        "compression_vs_teacher": round(649229 / n_parameters, 3),
         "evaluated_on": "held-out test split, 15 subjects never seen in training or selection",
         "n_test_epochs": int(len(yt)),
         "calibration_temperature": round(T, 4),
