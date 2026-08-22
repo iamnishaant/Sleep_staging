@@ -2,8 +2,7 @@
   "experiment": "EEG input normalisation (N1norm / E1bnorm)",
   "date": "2026-08-17",
   "question": "The preprocessed EEG is in volts (~2e-5) against spectral features at ~7. Scaling it to unit variance makes the temporal branch numerically live. Does a live temporal branch improve sleep staging?",
-  "answer": "No. The branch becomes heavily used, and accuracy does not improve.",
-
+  "answer": "No - BUT SEE 'SUPERSEDED'. The branch becomes heavily used and accuracy does not improve, WITH THIS ENCODER. With an encoder whose receptive field can contain a spindle, it does.",
   "design": {
     "type": "one-variable A/B",
     "changed": "raw EEG multiplied by EEG_SCALE = 15849.46 (1/std, fitted on TRAINING split only)",
@@ -14,65 +13,144 @@
     ],
     "note": "Selection and comparison use VALIDATION only. The held-out test split was never loaded for these runs."
   },
-
   "branch_liveness": {
     "method": "Replace the ENTIRE raw EEG input with zeros and compare predictions epoch by epoch. Stronger than attribution: deleting an input measures its contribution rather than estimating it.",
     "tool": "distillation/check_branch_live.py",
     "n_recordings": 6,
     "results": {
-      "student_baseline_E0": {"eeg_scale": 1.0, "agreement": 1.00000, "kappa_delta_when_zeroed": 0.0000, "verdict": "INERT"},
-      "student_N1norm":      {"eeg_scale": 15849.46, "agreement": 0.74879, "kappa": 0.7308, "kappa_zeroed": 0.4942, "kappa_delta_when_zeroed": -0.2366, "verdict": "LIVE"},
-      "E1b_teacher":         {"eeg_scale": 1.0, "agreement": 1.00000, "kappa_delta_when_zeroed": 0.0000, "verdict": "INERT"},
-      "E1bnorm_teacher":     {"eeg_scale": 15849.46, "agreement": 0.58015, "kappa": 0.7571, "kappa_zeroed": 0.3265, "kappa_delta_when_zeroed": -0.4306, "verdict": "LIVE"}
+      "student_baseline_E0": {
+        "eeg_scale": 1.0,
+        "agreement": 1.0,
+        "kappa_delta_when_zeroed": 0.0,
+        "verdict": "INERT"
+      },
+      "student_N1norm": {
+        "eeg_scale": 15849.46,
+        "agreement": 0.74879,
+        "kappa": 0.7308,
+        "kappa_zeroed": 0.4942,
+        "kappa_delta_when_zeroed": -0.2366,
+        "verdict": "LIVE"
+      },
+      "E1b_teacher": {
+        "eeg_scale": 1.0,
+        "agreement": 1.0,
+        "kappa_delta_when_zeroed": 0.0,
+        "verdict": "INERT"
+      },
+      "E1bnorm_teacher": {
+        "eeg_scale": 15849.46,
+        "agreement": 0.58015,
+        "kappa": 0.7571,
+        "kappa_zeroed": 0.3265,
+        "kappa_delta_when_zeroed": -0.4306,
+        "verdict": "LIVE"
+      }
     },
     "conclusion": "Normalisation unambiguously revived the branch. Deleting the EEG now changes 25.1% of student predictions and 42.0% of teacher predictions."
   },
-
   "performance": {
     "metric": "best validation macro-F1 (the checkpoint-selection metric)",
     "student": {
-      "normalised": 0.6821, "stored": 0.6881, "delta": -0.0060,
-      "kappa_normalised": 0.6323, "kappa_stored": 0.6389, "kappa_delta": -0.0066,
-      "best_epoch_normalised": 43, "best_epoch_stored": 64,
-      "epochs_run": 69, "early_stopped": true
+      "normalised": 0.6821,
+      "stored": 0.6881,
+      "delta": -0.006,
+      "kappa_normalised": 0.6323,
+      "kappa_stored": 0.6389,
+      "kappa_delta": -0.0066,
+      "best_epoch_normalised": 43,
+      "best_epoch_stored": 64,
+      "epochs_run": 69,
+      "early_stopped": true
     },
     "teacher": {
-      "normalised": 0.6907, "stored": 0.6976, "delta": -0.0069,
-      "kappa_normalised": 0.6392, "kappa_stored": 0.6469, "kappa_delta": -0.0077,
-      "best_epoch_normalised": 40, "best_epoch_stored": 51,
-      "epochs_run": 66, "early_stopped": true
+      "normalised": 0.6907,
+      "stored": 0.6976,
+      "delta": -0.0069,
+      "kappa_normalised": 0.6392,
+      "kappa_stored": 0.6469,
+      "kappa_delta": -0.0077,
+      "best_epoch_normalised": 40,
+      "best_epoch_stored": 51,
+      "epochs_run": 66,
+      "early_stopped": true
     },
-    "per_class_f1_delta_student": {"W": -0.001, "N1": -0.021, "N2": -0.005, "N3": -0.006, "REM": 0.003},
-    "per_class_f1_delta_teacher": {"W": 0.000, "N1": -0.003, "N2": -0.012, "N3": -0.003, "REM": -0.017},
+    "per_class_f1_delta_student": {
+      "W": -0.001,
+      "N1": -0.021,
+      "N2": -0.005,
+      "N3": -0.006,
+      "REM": 0.003
+    },
+    "per_class_f1_delta_teacher": {
+      "W": 0.0,
+      "N1": -0.003,
+      "N2": -0.012,
+      "N3": -0.003,
+      "REM": -0.017
+    },
     "convergence": "both converged; last-10-epoch macro-F1 range 0.0058 (student) and 0.0060 (teacher)"
   },
-
   "interpretation": {
     "finding": "The raw EEG carries no predictive information beyond what the 34 precomputed spectral features already encode.",
     "mechanism": "The 34 spectral features are COMPUTED FROM the same single-channel EEG. They are not a second modality but a lossy summary of identical data. Giving the model the raw trace as well lets it re-derive information it already had; there is no independent signal to gain, which is what a -0.006 delta looks like.",
     "why_slightly_worse": "More input dimensions at fixed parameter count spends capacity on redundant reconstruction. Consistent with both models peaking EARLIER (epoch 43 vs 64, 40 vs 51) and then early-stopping.",
     "clarifies_earlier_result": "The earlier N3/REM collapse when the spectral branch was removed is now sharper: it did not remove one of two inputs, it removed the only usable encoding of the signal."
   },
-
   "parameter_breakdown": {
     "note": "Corrects an earlier claim in commit 4b8b82f that the temporal branch held 'most of the parameters'. It does not.",
-    "teacher_649229": {"context_transformer": 595461, "fusion": 33152, "temporal_encoder": 16136, "spectral_encoder": 4480},
-    "teacher_percent": {"context_transformer": 91.7, "fusion": 5.1, "temporal_encoder": 2.5, "spectral_encoder": 0.7},
-    "student_121099": {"transformer": 99968, "temporal_encoder": 10182, "fusion": 8384, "spectral_encoder": 2240, "classifier": 325},
-    "student_percent": {"transformer": 82.6, "temporal_encoder": 8.4, "fusion": 6.9, "spectral_encoder": 1.8, "classifier": 0.3},
+    "teacher_649229": {
+      "context_transformer": 595461,
+      "fusion": 33152,
+      "temporal_encoder": 16136,
+      "spectral_encoder": 4480
+    },
+    "teacher_percent": {
+      "context_transformer": 91.7,
+      "fusion": 5.1,
+      "temporal_encoder": 2.5,
+      "spectral_encoder": 0.7
+    },
+    "student_121099": {
+      "transformer": 99968,
+      "temporal_encoder": 10182,
+      "fusion": 8384,
+      "spectral_encoder": 2240,
+      "classifier": 325
+    },
+    "student_percent": {
+      "transformer": 82.6,
+      "temporal_encoder": 8.4,
+      "fusion": 6.9,
+      "spectral_encoder": 1.8,
+      "classifier": 0.3
+    },
     "implication": "The inert branch was a dead INPUT PATHWAY, not a large block of wasted capacity. Removing the temporal encoder and the fusion layer would give a spectral-only student of 102,533 params - 6.3x compression against the teacher, against 5.36x now. A modest gain, not the dramatic one first suggested."
   },
-
   "decision": {
     "M0_unchanged": "distillation/results/students/student_baseline_E0/student_best.pt",
     "reason": "The stored un-normalised student remains the best model on validation (0.6881 vs 0.6821) and on held-out test (kappa 0.6449). Its dead temporal branch is now known to cost nothing, because the information it would carry is already in the spectral features.",
     "normalisation_adopted": false,
     "existing_results_affected": "None. These were new files; no existing trainer, tensor or checkpoint was modified, and no published figure changes."
   },
-
   "future_work": [
     "Spectral-only student: drop temporal_encoder + fusion for 102,533 params at expected parity. Cheap to test and would raise compression to 6.3x.",
     "The transformer is 82-92% of both models and is the real target for compression, not the temporal branch.",
     "A genuinely independent second modality (EOG) would test the fusion hypothesis properly; EEG-derived spectral features cannot, since they share a source."
-  ]
+  ],
+  "SUPERSEDED": {
+    "status": "The headline finding below is FALSIFIED. The measurements are correct; the interpretation drawn from them is not.",
+    "superseded_by": "distillation/results/multiscale_encoder_ablation.json",
+    "date": "2026-08-23",
+    "falsified": "interpretation.finding - 'The raw EEG carries no predictive information beyond what the 34 precomputed spectral features already encode.'",
+    "why": "This experiment varied the input SCALE while holding the ARCHITECTURE fixed. The encoder it measured has a receptive field of 25 samples - 0.25 s at 100 Hz - and then averages all 3000 positions. No sleep spindle, K-complex, slow wave or sawtooth wave fits in 0.25 s. The -0.0060 was evidence about that encoder, not about the EEG.",
+    "what_replaced_it": "With an 8.75 s receptive field and the same EEG_SCALE, validation macro-F1 went 0.6821 -> 0.7236 (+0.0415), N1 F1 +0.092, and the raw EEG now changes 71.27% of predictions against 25.12% here.",
+    "what_still_holds": [
+      "Every measurement in this file is correct and reproducible.",
+      "The temporal branch WAS inert at EEG_SCALE=1 (agreement 1.00000).",
+      "The 34 spectral features are computed from the same EEG and are not an independent modality - which is why EOG is the right next input.",
+      "The parameter breakdown: the transformer is 82-92% of both models."
+    ],
+    "lesson": "A one-variable A/B is only as informative as the variable it holds fixed. Holding the architecture constant made the architecture invisible."
+  }
 }

@@ -274,23 +274,45 @@ def _zero_grads(m):
 
 def measured_receptive_field(encoder: nn.Module, length: int = EPOCH_SAMPLES) -> int:
     """
-    Empirical receptive field: how many input samples the centre output actually
-    depends on, found by backpropagating from one output position and counting
-    non-zero input gradients.
+    Empirical receptive field: how many input samples one output position
+    actually depends on, found by backpropagating from that position and
+    counting non-zero input gradients.
 
     Measured rather than derived, because a derivation can be wrong in exactly
     the way that produced the inert-branch bug - a number that looks right and
     describes something the code does not do.
+
+    WHAT IS MEASURED, AND WHY IT IS THE CONVOLUTIONAL STACK
+    ------------------------------------------------------
+    For an encoder with `fine`/`coarse` branches this measures the PRE-POOL
+    feature map. That is the number that answers "can a single feature contain a
+    spindle?", which is the question the encoder was rebuilt to fix.
+
+    Measuring the encoder's final output instead would always return the full
+    epoch, because AdaptiveAvgPool1d and the token attention both aggregate
+    across the whole 30 seconds. That is true of the old 0.25 s encoder as well,
+    which is precisely why it is the wrong number: it cannot distinguish an
+    encoder that resolves sleep microstructure from one that averages a
+    quarter-second texture over the epoch.
+
+    Detected by attribute rather than isinstance: the generated Kaggle trainers
+    define their own copy of the class, so an isinstance check against the class
+    in THIS module silently falls through and reports 30 s for an encoder whose
+    branches reach 8.75 s.
     """
     encoder = encoder.eval()
     x = torch.randn(1, 1, length, requires_grad=True)
 
-    # reach inside to the pre-pool feature map, so the global pool of the OLD
-    # encoder does not trivially report "everything"
-    if isinstance(encoder, MultiScaleEpochEncoder):
+    inner = getattr(encoder, "encoder", None)              # unwrap a shim
+    if hasattr(inner, "fine") and hasattr(inner, "coarse"):
+        encoder = inner
+    if hasattr(encoder, "fine") and hasattr(encoder, "coarse"):
         feats = torch.cat([encoder.fine(x), encoder.coarse(x)], dim=1)
     else:
         feats = encoder(x)
+
+    if feats.dim() != 3:
+        raise ValueError(f"expected a (1, C, L) feature map, got {tuple(feats.shape)}")
 
     mid = feats.shape[-1] // 2
     feats[0, :, mid].sum().backward()

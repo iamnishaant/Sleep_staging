@@ -1,0 +1,163 @@
+{
+  "experiment": "Multi-scale temporal encoder (N2multiscale)",
+  "date": "2026-08-23",
+  "question": "eeg_normalization_ablation.json concluded the raw EEG carries no predictive information beyond the 34 spectral features. That run held the ARCHITECTURE fixed. Was the conclusion about the EEG, or about the encoder?",
+  "answer": "About the ENCODER. With a receptive field that can contain the events being classified, the raw EEG drives 71% of predictions and the model beats every previous model in the project, including both 649K teachers.",
+  "the_defect": {
+    "method": "receptive field measured by backpropagation in student_encoder.py, not derived - a derivation can be wrong in exactly the way that produced the inert-branch bug",
+    "student_encoder_atrous_k7_dil_1_4": {
+      "samples": 25,
+      "seconds": 0.25
+    },
+    "teacher_encoder_atrous_k7_dil_1_2_4_8": {
+      "samples": 49,
+      "seconds": 0.49
+    },
+    "then": "AdaptiveAvgPool1d(1) averages all 3000 positions into one vector",
+    "so": "the encoder computed the mean, over 30 seconds, of a quarter-second texture detector",
+    "events_that_do_not_fit": {
+      "sleep_spindle": "0.5-2 s, defines N2 against N1",
+      "K_complex": ">=0.5 s, defines N2 against N1",
+      "slow_wave": "0.5-2 s, defines N3",
+      "sawtooth_wave": "1-3 s, marks REM"
+    },
+    "note": "The TEACHER has the same defect at 0.49 s. It has 4.6x the capacity to exploit a fix, and its quality is what gates whether distillation can ever break even."
+  },
+  "design": {
+    "type": "one-variable A/B against student_N1norm",
+    "changed": "temporal encoder -> two branches (fine k=50 s=6 for spindles and K-complexes, coarse k=200 s=25 for slow waves), attention-pooled to N_TOKENS=4 sub-epoch tokens instead of 1",
+    "held_constant": "data, splits, schedule, class weighting, seed 42, EEG_SCALE, spectral stream, transformer, classifier",
+    "confound_acknowledged": "the encoder AND N_TOKENS (1 -> 4) changed together. This run cannot attribute between them. A multiscale run at N_TOKENS=1 would settle it.",
+    "measured_receptive_field": {
+      "samples": 875,
+      "seconds": 8.75
+    },
+    "scripts": [
+      "distillation/student_encoder.py",
+      "distillation/make_v2_trainer.py",
+      "distillation/kaggle_train_student_v2.py (generated)"
+    ],
+    "provenance": "metrics transcribed from the Kaggle run log; regenerate from student_N2multiscale/training_metrics.jsonl to verify",
+    "runtime_min": 20.1,
+    "note": "VALIDATION only. The held-out test split was never loaded."
+  },
+  "branch_liveness": {
+    "method": "replace the entire raw EEG input with zeros and compare predictions epoch by epoch",
+    "tool": "the ablation_check built into the trainer",
+    "progression": [
+      {
+        "model": "student_baseline_E0",
+        "eeg_scale": 1.0,
+        "agreement": 1.0,
+        "pct_predictions_changed": 0.0,
+        "verdict": "INERT"
+      },
+      {
+        "model": "student_N1norm",
+        "eeg_scale": 15849.46,
+        "agreement": 0.74879,
+        "pct_predictions_changed": 25.12,
+        "verdict": "LIVE, 0.25 s receptive field"
+      },
+      {
+        "model": "student_N2multiscale",
+        "eeg_scale": 15849.46,
+        "agreement": 0.28729,
+        "pct_predictions_changed": 71.27,
+        "verdict": "LIVE, 8.75 s receptive field"
+      }
+    ],
+    "conclusion": "The model is now driven by the raw waveform rather than by the band-power summary. That is a change in what the model IS, not only in how well it scores."
+  },
+  "performance": {
+    "metric": "best validation macro-F1 (the checkpoint-selection metric)",
+    "n_parameters": 139606,
+    "compression_vs_teacher": 4.65,
+    "best_epoch": 36,
+    "epochs_run": 62,
+    "early_stopped": true,
+    "best": {
+      "macro_f1": 0.7236,
+      "kappa": 0.6736,
+      "accuracy": 0.7537
+    },
+    "per_class_f1": {
+      "W": 0.877,
+      "N1": 0.523,
+      "N2": 0.771,
+      "N3": 0.684,
+      "REM": 0.763
+    },
+    "comparisons_same_validation_split": {
+      "student_N1norm": {
+        "macro_f1": 0.6821,
+        "delta": 0.0415,
+        "note": "same EEG_SCALE, old encoder - isolates the encoder"
+      },
+      "student_baseline_E0": {
+        "macro_f1": 0.6881,
+        "delta": 0.0355,
+        "note": "M0, EEG inert"
+      },
+      "student_distilled_E1b": {
+        "macro_f1": 0.6806,
+        "delta": 0.043
+      },
+      "teacher_E1b": {
+        "macro_f1": 0.6977,
+        "delta": 0.0259,
+        "note": "649,229 params - the student now beats it at 4.65x fewer"
+      }
+    },
+    "per_class_delta_vs_baseline_E0": {
+      "W": 0.009,
+      "N1": 0.092,
+      "N2": 0.015,
+      "N3": -0.001,
+      "REM": 0.064
+    },
+    "selection_optimism": {
+      "concern": "the reported figure is the max over 62 validation evaluations, and validation is the selection split",
+      "plateau_epochs_ge_25": 32,
+      "plateau_mean": 0.7091,
+      "plateau_sd": 0.0084,
+      "max_minus_mean": 0.0145,
+      "epochs_within_0p005_of_max": 4,
+      "verdict": "The gain survives the correction. Even the plateau MEAN (0.7091) beats student_N1norm (+0.0270), student_baseline_E0 (+0.0210) and teacher_E1b (+0.0114). Prior models were selected the same way, so the comparison is fair; expect the test figure nearer the plateau."
+    }
+  },
+  "the_result_that_settles_it": {
+    "class": "N1",
+    "f1": {
+      "before": 0.431,
+      "after": 0.523,
+      "delta": 0.092
+    },
+    "why_decisive": "separability_verdict.json established that N1 was REPRESENTATION-bound, not threshold-bound: no decision rule on the existing probabilities improved N1 F1 by more than +0.0086. That verdict was correct and it predicted exactly this. The gain is ~10x that ceiling and came from changing the representation while changing nothing about the decision rule.",
+    "second": {
+      "class": "REM",
+      "delta": 0.064,
+      "note": "REM is also what sequence_decode.py targets; the two fixes attack the same weakness from different ends"
+    }
+  },
+  "supersedes": {
+    "artefact": "distillation/results/eeg_normalization_ablation.json",
+    "falsified_claim": "The raw EEG carries no predictive information beyond what the 34 precomputed spectral features already encode.",
+    "why_it_was_wrong": "It varied the input SCALE while holding the encoder fixed, so it measured a 0.25-second encoder rather than the signal. The mechanism it proposed - that the spectral features are a lossy summary of the same data and so nothing can be gained - is a sound argument that happens not to be what was limiting.",
+    "what_survives": "The spectral features ARE computed from the same EEG and are not an independent modality. That remains true and is why EOG, not more spectral engineering, is the next input to add."
+  },
+  "decision": {
+    "M0_changed": false,
+    "reason": "The held-out test split has not been evaluated. M0 moves only after a single test evaluation, and only if the gain holds there.",
+    "blocking": [
+      "download student_N2multiscale/student_best.pt from Kaggle",
+      "evaluate_student.py, then evaluate the test split ONCE",
+      "re-fit calibrate.py, sequence_decode.py, night_confidence.py and metric_reliability.py against the new model before rebuilding packets - all four are fitted per-model"
+    ]
+  },
+  "consequences": [
+    "The packet limitation 'the raw-waveform pathway contributes nothing to predictions in this model, verified by ablation' is true of M0 and will be FALSE the moment M0 becomes this model. It must be rewritten, not deleted.",
+    "The student now beats teacher_E1b by +0.0259 macro-F1, so distillation is FURTHER from breaking even than before, not closer.",
+    "The teacher's encoder has the same 0.49 s defect and 4.6x the capacity. Porting this encoder to the teacher is the direct route to the ~kappa 0.75 teacher that would make soft labels worth using."
+  ]
+}
