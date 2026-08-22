@@ -1,7 +1,7 @@
 {
   "model": "student_baseline_E0",
   "checkpoint": "distillation/results/students/student_baseline_E0/student_best.pt",
-  "commit": "b00a428",
+  "commit": "e23f35d",
   "n_parameters": 121099,
   "compression_vs_teacher": 5.36,
   "evaluated_on": "held-out test split, 15 subjects never seen in training or selection",
@@ -14,55 +14,71 @@
   "ece_validation_before": 0.0549,
   "ece_validation_after": 0.0187,
   "argmax_unchanged_by_scaling": true,
+  "hypnogram_decoder": {
+    "decoder": "minrun REM L=3",
+    "spec": {
+      "method": "min_run",
+      "length": 3,
+      "targets": [
+        "REM"
+      ]
+    },
+    "fitted_against_temperature": 1.3347
+  },
   "overall": {
+    "accuracy": 0.7379,
+    "kappa": 0.6469,
+    "macro_f1": 0.6946
+  },
+  "overall_argmax": {
     "accuracy": 0.736,
     "kappa": 0.6449,
     "macro_f1": 0.6915
   },
   "per_class": {
     "W": {
-      "f1": 0.8447,
-      "precision": 0.8687,
-      "recall": 0.822,
+      "f1": 0.8445,
+      "precision": 0.866,
+      "recall": 0.8241,
       "support": 8897,
-      "mean_confidence_calibrated": 0.8838,
-      "prediction_ratio": 0.9462,
+      "mean_confidence_calibrated": 0.8815,
+      "prediction_ratio": 0.9517,
       "reliability": "high"
     },
     "N1": {
-      "f1": 0.3886,
-      "precision": 0.3694,
-      "recall": 0.4099,
+      "f1": 0.3931,
+      "precision": 0.3657,
+      "recall": 0.4251,
       "support": 3503,
-      "mean_confidence_calibrated": 0.5196,
-      "prediction_ratio": 1.1096,
+      "mean_confidence_calibrated": 0.5171,
+      "prediction_ratio": 1.1624,
       "reliability": "low"
     },
     "N2": {
-      "f1": 0.7735,
-      "precision": 0.7889,
-      "recall": 0.7586,
+      "f1": 0.7747,
+      "precision": 0.783,
+      "recall": 0.7666,
       "support": 12778,
-      "mean_confidence_calibrated": 0.6867,
-      "prediction_ratio": 0.9617,
+      "mean_confidence_calibrated": 0.6823,
+      "prediction_ratio": 0.9791,
       "reliability": "high"
     },
     "N3": {
-      "f1": 0.737,
-      "precision": 0.7438,
-      "recall": 0.7303,
+      "f1": 0.7379,
+      "precision": 0.7437,
+      "recall": 0.7321,
       "support": 2751,
-      "mean_confidence_calibrated": 0.7252,
-      "prediction_ratio": 0.9818,
+      "mean_confidence_calibrated": 0.7243,
+      "prediction_ratio": 0.9844,
       "reliability": "medium"
     },
     "REM": {
-      "f1": 0.7135,
-      "precision": 0.6766,
-      "recall": 0.7546,
+      "f1": 0.7227,
+      "precision": 0.7118,
+      "recall": 0.7339,
       "support": 5502,
-      "mean_confidence_calibrated": 0.6969,
-      "prediction_ratio": 1.1154,
+      "mean_confidence_calibrated": 0.7169,
+      "prediction_ratio": 1.0311,
       "reliability": "medium"
     }
   },
@@ -343,7 +359,8 @@
     ]
   },
   "notes": [
-    "Temperature scaling changes confidence, not decisions - accuracy, kappa and F1 are identical before and after.",
+    "Temperature scaling changes confidence, not decisions - the reliability diagram and ECE describe the probabilities and are unaffected by decoding.",
+    "`overall` and `per_class` are measured on the DECODED hypnogram, which is what the packet ships. `overall_argmax` is kept alongside so the effect of decoding is visible. Decoding DOES change decisions, unlike scaling.",
     "Reliability labels are driven by per-class F1 on unseen subjects. A class can be well calibrated and still unreliable if it cannot be identified at all.",
     "This calibration temperature is unrelated to the KD temperature (T=3.0) used during distillation."
   ]

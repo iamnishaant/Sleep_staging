@@ -168,11 +168,55 @@ def main() -> int:
     print(f"  argmax unchanged by scaling: {same}  "
           f"(temperature scaling recalibrates confidence, not decisions)")
 
-    pred = Pt.argmax(1)
+    # ---- the decoder, if it has been fitted ---------------------------------
+    # BOOTSTRAP: sequence_decode.py reads this file for T, and this file reports
+    # per-class metrics on the decoder's output. That is not circular - the
+    # temperature is fitted on the PROBABILITIES by NLL and does not depend on
+    # how they are decoded - but it does mean a first run happens before any
+    # decoder exists. So: run calibrate.py, then sequence_decode.py, then
+    # calibrate.py again. The assert below catches the case where the two have
+    # drifted apart.
+    decode_fn, decoder_meta = None, None
+    dec_path = res / "sequence_decoding.json"
+    if dec_path.exists():
+        sys.path.insert(0, str(Path(__file__).parent))
+        from sequence_decode import load_decoder                # noqa: PLC0415
+        decode_fn = load_decoder(dec_path)
+        T_dec = decode_fn.artefact["calibration_temperature"]
+        assert abs(T_dec - T) < 1e-3, (
+            f"decoder was fitted against T={T_dec} but this run fitted T={T:.4f}. "
+            f"Re-run sequence_decode.py before calibrate.py.")
+        decoder_meta = {"decoder": decode_fn.artefact["selected_label"],
+                        "spec": decode_fn.spec,
+                        "fitted_against_temperature": T_dec}
+        print(f"\ndecoder    : {decode_fn.artefact['selected_label']}  {decode_fn.spec}")
+    else:
+        print(f"\ndecoder    : none fitted yet ({dec_path.name} missing) - reporting argmax. "
+              f"Run sequence_decode.py, then re-run this.")
+
+    # Per-class reliability must describe the sequence the packet ships. Unlike
+    # temperature scaling, decoding changes decisions, so accuracy/kappa/F1 are
+    # NOT identical before and after.
+    pred_argmax = Pt.argmax(1)
+    pred = decode_fn(Pt_cal) if decode_fn is not None else pred_argmax
+
     p, r, f1, sup = precision_recall_fscore_support(yt, pred, labels=LAB, zero_division=0)
     acc = float(accuracy_score(yt, pred))
     kap = float(cohen_kappa_score(yt, pred, labels=LAB))
     mf1 = float(f1_score(yt, pred, average="macro", labels=LAB, zero_division=0))
+
+    argmax_overall = {
+        "accuracy": round(float(accuracy_score(yt, pred_argmax)), 4),
+        "kappa": round(float(cohen_kappa_score(yt, pred_argmax, labels=LAB)), 4),
+        "macro_f1": round(float(f1_score(yt, pred_argmax, average="macro",
+                                         labels=LAB, zero_division=0)), 4),
+    }
+    if decode_fn is not None:
+        n_chg = int((pred != pred_argmax).sum())
+        print(f"  decoding changed {n_chg:,} of {len(pred):,} test epochs "
+              f"({100 * n_chg / len(pred):.2f}%)")
+        print(f"  test kappa: argmax {argmax_overall['kappa']:.4f} -> decoded {kap:.4f} "
+              f"({kap - argmax_overall['kappa']:+.4f})")
 
     per_class = {}
     print(f"\nPER-CLASS on the HELD-OUT TEST SPLIT (unseen subjects only)")
@@ -216,13 +260,18 @@ def main() -> int:
         "ece_validation_before": round(ev_before, 4),
         "ece_validation_after": round(ev_after, 4),
         "argmax_unchanged_by_scaling": same,
+        "hypnogram_decoder": decoder_meta,
         "overall": {"accuracy": round(acc, 4), "kappa": round(kap, 4),
                     "macro_f1": round(mf1, 4)},
+        "overall_argmax": argmax_overall,
         "per_class": per_class,
         "reliability_diagram_test": {"before": bins_before, "after": bins_after},
         "notes": [
-            "Temperature scaling changes confidence, not decisions - accuracy, "
-            "kappa and F1 are identical before and after.",
+            "Temperature scaling changes confidence, not decisions - the reliability "
+            "diagram and ECE describe the probabilities and are unaffected by decoding.",
+            "`overall` and `per_class` are measured on the DECODED hypnogram, which is "
+            "what the packet ships. `overall_argmax` is kept alongside so the effect of "
+            "decoding is visible. Decoding DOES change decisions, unlike scaling.",
             "Reliability labels are driven by per-class F1 on unseen subjects. "
             "A class can be well calibrated and still unreliable if it cannot "
             "be identified at all.",

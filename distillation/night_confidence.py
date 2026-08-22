@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import warnings
 from pathlib import Path
 
@@ -42,9 +43,33 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 STAGES = ["W", "N1", "N2", "N3", "REM"]
 LAB = list(range(5))
 
+sys.path.insert(0, str(Path(__file__).parent))
+from sequence_decode import calibrate, load_decoder            # noqa: E402
 
-def per_recording(cache: Path, recs: list[str]) -> dict:
-    """Per-recording entropy, kappa and stage composition from cached probabilities."""
+
+def per_recording(cache: Path, recs: list[str], decode_fn, T: float) -> dict:
+    """
+    Per-recording entropy, kappa and stage composition from cached probabilities.
+
+    TWO DIFFERENT QUANTITIES, AND THEY COME FROM DIFFERENT PLACES
+    -------------------------------------------------------------
+    Entropy is a property of the PROBABILITIES and is computed on the calibrated
+    ones, because those are what the evidence packet ships. An earlier version
+    fitted the tier boundaries on raw entropy while the packet computed
+    calibrated entropy - since T = 1.3347 softens the distribution, that raised
+    entropy by ~0.16 nats and pushed 9 of 29 test nights into the wrong tier.
+    Anything recomputing entropy from a packet's own probabilities must land on
+    the same tier.
+
+    Kappa is a property of the DECISIONS, so it is computed on the decoded
+    hypnogram - the sequence the packet actually ships. Scoring argmax here
+    while shipping a decoded hypnogram would make every tier's mean kappa
+    describe a model nobody is using. Decoding, unlike temperature scaling,
+    changes decisions.
+
+    The tier boundaries themselves are entropy tertiles and so are unaffected by
+    decoding; what moves is the kappa each tier is measured to deliver.
+    """
     out = {}
     for r in recs:
         f = cache / f"{r}.npz"
@@ -52,14 +77,16 @@ def per_recording(cache: Path, recs: list[str]) -> dict:
             continue
         d = np.load(f)
         P, y = d["probs"], d["labels"]
-        pred = P.argmax(1)
-        ent = -(P * np.log(np.clip(P, 1e-12, None))).sum(1)
+        Pc = calibrate(P, T)
+        pred = decode_fn(Pc)
+        ent = -(Pc * np.log(np.clip(Pc, 1e-12, None))).sum(1)
         out[r] = {
             "subject": r[:5],
             "cohort": r[:2],
             "n_epochs": int(len(y)),
             "mean_entropy_nats": float(ent.mean()),
             "kappa": float(cohen_kappa_score(y, pred, labels=LAB)),
+            "kappa_argmax": float(cohen_kappa_score(y, Pc.argmax(1), labels=LAB)),
             "n1_fraction": float((y == 1).mean()),
             "n1_rem_fraction": float(((y == 1) | (y == 4)).mean()),
         }
@@ -94,10 +121,17 @@ def main() -> int:
         if not c.exists():
             raise SystemExit(f"Missing {c}. Run evaluate_student.py first.")
 
-    val = per_recording(vcache, val_recs)
-    test = per_recording(tcache, test_recs)
+    decode_fn = load_decoder()
+    T = decode_fn.artefact["calibration_temperature"]
+
+    val = per_recording(vcache, val_recs, decode_fn, T)
+    test = per_recording(tcache, test_recs, decode_fn, T)
     print(f"model      : {args.model}")
+    print(f"decoder    : {decode_fn.artefact['selected_label']}  {decode_fn.spec}")
+    print(f"calibration: T = {T}")
     print(f"validation : {len(val)} recordings | test: {len(test)} recordings")
+    print(f"kappa is computed on the DECODED hypnogram (what the packet ships); "
+          f"entropy on the calibrated probabilities.")
 
     ve = np.array([v["mean_entropy_nats"] for v in val.values()])
     vk = np.array([v["kappa"] for v in val.values()])
@@ -175,6 +209,16 @@ def main() -> int:
     out = {
         "model": args.model,
         "field": "night_confidence",
+        "entropy_basis": f"calibrated probabilities (T={T}), matching what the "
+                         f"evidence packet ships, so a consumer recomputing entropy "
+                         f"from a packet lands on the same tier",
+        "kappa_basis": {
+            "decoder": decode_fn.artefact["selected_label"],
+            "spec": decode_fn.spec,
+            "note": "Kappa is measured on the DECODED hypnogram, the sequence the "
+                    "packet ships. `kappa_argmax` is retained per recording so the "
+                    "effect of decoding is visible rather than asserted.",
+        },
         "description": "Per-recording confidence from mean prediction entropy. "
                        "Available at inference without ground truth.",
         "tier_boundaries_nats": {"high_max": float(lo), "medium_max": float(hi)},
@@ -191,7 +235,8 @@ def main() -> int:
         "caveats": [
             "Within the ST cohort alone (n=6 test recordings) the correlation does not "
             "reach significance. That is a sample-size limit, not evidence of absence.",
-            "Tier boundaries are validation-fitted; re-fit them if the model changes.",
+            "Tier boundaries are validation-fitted; re-fit them if the model OR the "
+            "calibration temperature changes.",
             "This predicts agreement with the expert scorer, which is not the same as "
             "clinical correctness - both can be wrong on the same night.",
         ],
