@@ -13,8 +13,8 @@
     "model_parameters": 139606,
     "model_encoder": "multiscale",
     "model_eeg_scale": 15849.46,
-    "git_commit": "a9e52ad4c49a793dfd0159f222fe9c8e04d76011",
-    "generated_at": "2026-08-22T21:11:02+00:00",
+    "git_commit": "2825cf5a70a564b5944c69def30ade0e1d1d18eb",
+    "generated_at": "2026-08-25T05:15:53+00:00",
     "calibration_temperature": 1.3399,
     "hypnogram_decoder": "minrun REM L=3",
     "hypnogram_decoder_spec": {
@@ -7704,7 +7704,7 @@
       "assertion_level": "factual",
       "safe_to_assert": true,
       "mean_entropy_nats": 0.5333,
-      "basis": "prediction entropy; Spearman rho -0.75 against per-recording kappa on held-out data"
+      "basis": "prediction entropy; Spearman rho -0.508 against per-recording kappa on held-out data (n=29)"
     },
     {
       "id": "model.n1_reliability_warning",

@@ -6,8 +6,10 @@
 |---|---|
 | **Built** | 2026-08-23 |
 | **Packets** | 29 — every held-out test recording |
-| **Source model (M0)** | `distillation/results/students/student_baseline_E0/student_best.pt` |
+| **Source model (M0)** | `distillation/results/students/student_N2multiscale/student_best.pt` |
+| **M0 size / test κ** | 139,606 params · κ 0.6991 · macro-F1 0.7424 (decoded) |
 | **Hypnogram** | **decoded** — `sequence_decode.py`, REM minimum-run L=3 |
+| **Previous M0** | `student_baseline_E0` (121,099 params, κ 0.6469) — artefacts preserved under `results/m0_student_baseline_E0/`, promotion recorded in `results/m0_promotion.json` |
 | **Output** | `distillation/results/packets/<recording_id>.json` |
 | **Schema** | `1.1` |
 | **Status** | M1 minus attributions — Gate 3a has not run |
@@ -87,17 +89,30 @@ Every packet records what produced it. Two silent bugs have already been found i
 
 ```json
 "provenance": {
-  "model": "student_baseline_E0",
-  "model_checkpoint": "distillation/results/students/student_baseline_E0/student_best.pt",
-  "model_sha256": "7d36f9c5f0e279e52958df6acad89d861d7642bbe49dc738652b5d385cde2c15",
-  "model_parameters": 121099,
-  "git_commit": "e23f35d5724fbc5a7bb3df8706b54e6720fa968d",
-  "generated_at": "2026-08-18T10:20:26+00:00",
-  "calibration_temperature": 1.3347,
+  "model": "student_N2multiscale",
+  "model_checkpoint": "distillation/results/students/student_N2multiscale/student_best.pt",
+  "model_sha256": "2f1363a561774f0a843ad5e93cb63f64ccf51cf1f1974a8903f5dabdf2e1c934",
+  "model_parameters": 139606,
+  "model_encoder": "multiscale",
+  "model_eeg_scale": 15849.46,
+  "git_commit": "a9e52ad4c49a793dfd0159f222fe9c8e04d76011",
+  "generated_at": "2026-08-22T21:11:02+00:00",
+  "calibration_temperature": 1.3399,
+  "hypnogram_decoder": "minrun REM L=3",
   "generator": "distillation/build_packet.py",
-  "schema_version": "1.0"
+  "schema_version": "1.1"
 }
 ```
+
+`model_parameters`, `model_encoder` and `model_eeg_scale` are read from the
+checkpoint, never hardcoded. They were hardcoded until M0 moved, and a stale
+parameter count in the one block whose purpose is identifying what produced a
+result is exactly the failure this block exists to prevent.
+
+`model_eeg_scale` matters to a reader as well as to an auditor: it is `1.0` for
+every model up to and including the previous M0, whose raw-EEG pathway was
+provably inert, and `15849.46` for the current one, which is driven by the
+waveform.
 
 ### `evidence_items`
 
@@ -107,15 +122,15 @@ Every packet records what produced it. Two silent bugs have already been found i
 {
   "id": "arch.rem_latency",
   "label": "REM latency",
-  "value": 5.5,
+  "value": 18.5,
   "unit": "minutes",
   "assertion_level": "factual",
   "metric_reliability": "unreliable",
   "safe_to_assert": false,
-  "mean_abs_error": 60.02,
+  "mean_abs_error": 67.7258,
   "error_unit": "minutes",
   "error_measured_on": "validation split",
-  "caveat": "depends on a single epoch; one spurious REM call collapses it. Produced a false sleep-onset-REM reading on 4 of 29 held-out nights."
+  "caveat": "depends on a single epoch. Even on the decoded hypnogram it produced a false sleep-onset-REM reading - a narcolepsy red flag - on 3 of 31 validation nights (mean relative error 43%)."
 }
 ```
 
@@ -150,6 +165,11 @@ arch.wake_interruptions_per_hour
 ---
 
 ## 4. The finding that changed the schema
+
+**Measured on the previous M0 (`student_baseline_E0`, argmax decoding).** The
+numbers below are kept as recorded because they are what forced the schema to
+carry error bounds, and that design decision is still load-bearing. Current
+figures for the model actually shipping are in §4c.
 
 `physiological_features.extract_features` is exact arithmetic. Hand it a perfect hypnogram and every metric is correct. Hand it **model output** and the errors do not distribute evenly.
 
@@ -188,13 +208,13 @@ And `REM_Periods`: predicted mean **22.3** against an expert mean of **9.4** —
 
 `metric_reliability.py` compares metrics derived from predictions against metrics derived from expert labels, **on the validation split only** — never test, consistent with temperature scaling and the night-confidence tiers.
 
-| Tier | Criterion | Count |
+| Tier | Criterion | Count (previous M0) |
 |---|---|---|
 | **robust** | ≤10% relative error | **3** |
 | **fragile** | 10–40% | 12 |
 | **unreliable** | >40%, or a known catastrophic mode | 9 |
 
-**Only 3 of 24 derived metrics are robust:**
+**Only 3 of 24 derived metrics were robust:**
 
 ```
 Sleep_Efficiency     5% error

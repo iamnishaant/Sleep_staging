@@ -134,6 +134,19 @@
       "before": "5 of 19",
       "after": "5 of 19",
       "note": "unchanged - the promotion of Wake_After_Sleep_Onset moves it from unreliable to fragile, not to robust"
+    },
+    "flagship_night_regression": {
+      "recording": "SC4011E0-PSG",
+      "why_it_matters": "This is the night EVIDENCE_PACKET.md section 4 opens with - the case that forced the schema to carry error bounds at all.",
+      "expert_rem_latency_min": 119.5,
+      "previous_M0_predicted_min": 101.0,
+      "previous_M0_error_min": 18.5,
+      "current_M0_predicted_min": 18.5,
+      "current_M0_error_min": 101.0,
+      "mechanism": "The new model calls a SUSTAINED REM run (>=3 epochs) at epoch 93, which the expert scores N1. The decoder's minimum-run rule is designed for isolated single-epoch spray and cannot catch a sustained false run - by construction, not by oversight.",
+      "how_close_to_the_red_flag": "18.5 min against a <15 min SOREMP threshold. It did not trip, but by 3.5 minutes.",
+      "does_this_reverse_the_promotion": "No, on three grounds, all recorded rather than asserted: REM_Latency is tier `unreliable` under BOTH models so the packet never states it without a caveat; aggregate false SOREMP on test improved 1 -> 0; and epoch-level agreement improved by +0.0535 kappa with every class better. But it is the strongest single argument against, and it should be the first thing re-checked if REM precision is ever worked on.",
+      "what_it_points_at": "A REM PRECISION problem early in the night, created by the higher REM recall (0.755 -> 0.799). A longer decoder L would catch sustained runs but would also mask genuine SOREMPs, which are the thing the metric exists to detect. This needs a REM-precision fix in the model, not a decoder parameter."
     }
   },
   "what_changed_in_the_packets": {
@@ -143,6 +156,7 @@
     "decoder": "minrun REM L=3, re-selected independently on this model's own validation data rather than inherited. It changes 0.82% of test epochs here against 1.39% for M0 - this model fragments REM less to begin with (1.38x the expert count at argmax, against 2.01x)."
   },
   "open_items": [
+    "SC4011E0-PSG REM latency error went 18.5 -> 101.0 min. See why_this_was_not_automatic.flagship_night_regression. Highest-priority follow-up if the packet ever needs to assert REM timing.",
     "REM_Periods regressed from near-exact (9.86 vs 9.45) to under-counting (7.52). The decoder's L=3 was selected on this model's validation, but a shorter L may suit a model that fragments less. Worth a sweep against REM_Periods specifically rather than the aggregate objective.",
     "Test ECE got slightly worse under calibration (0.0273 -> 0.0350) while validation improved sharply (0.0557 -> 0.0129). The raw test probabilities were already well calibrated. Worth checking before relying on confidence.",
     "The encoder and N_TOKENS (1 -> 4) changed together and cannot be attributed separately from this run.",

@@ -14,7 +14,7 @@ integration).
 WHAT GOES IN, AND WHERE IT COMES FROM
 -------------------------------------
   stage probabilities, hypnogram   cached predictions from evaluate_student.py
-  calibrated probabilities         temperature 1.3347, fitted on validation
+  calibrated probabilities         temperature from reliability_table.json, fitted on validation
   derived sleep metrics            code/Phase2_47/physiological_features.py
   per-stage confidence + tier      distillation/reliability_table.json
   night-level confidence + tier    distillation/results/night_confidence.json
@@ -342,7 +342,13 @@ def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None
              model_reliability=per_stage[s]["model_reliability_tier"])
     item("night.confidence", "Night-level confidence", night_tier, "tier",
          mean_entropy_nats=round(night_H, 4),
-         basis="prediction entropy; Spearman rho -0.75 against per-recording kappa on held-out data")
+         # Read from night_confidence.json, not hardcoded. This shipped "-0.75"
+         # in every packet while the measured value for the current model is
+         # -0.508 - a stale statistic asserted to a consumer as the reason to
+         # trust the tier.
+         basis=f"prediction entropy; Spearman rho "
+               f"{nc['correlation']['TEST']['spearman_rho']:+.3f} against per-recording "
+               f"kappa on held-out data (n={nc['correlation']['TEST']['n']})")
     item("model.n1_reliability_warning", "N1 is low-reliability in this model",
          rel["per_class"]["N1"]["reliability"], "tier",
          model_f1=rel["per_class"]["N1"]["f1"],
