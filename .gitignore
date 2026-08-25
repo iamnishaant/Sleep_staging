@@ -86,3 +86,6 @@ credentials.json
 #   distillation/figures/            report figures
 #   processed_sleepedf/index.csv     small, required to load the dataset
 # =============================================================================
+
+# multi-channel tensors (~8 GB, regenerate with preprocess_multichannel.py)
+processed_sleepedf_mc/tensors/

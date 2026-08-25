@@ -146,16 +146,36 @@ def epoch_bounds(labels):
 
 
 def native_rates(psg_path) -> dict[str, float]:
-    """Per-channel sampling rate as recorded in the EDF header."""
-    import mne
-    with mne.io.read_raw_edf(psg_path, preload=False, verbose=False) as _:
-        pass
-    from mne.io.edf.edf import _read_edf_header
-    try:
-        hdr = _read_edf_header(str(psg_path), exclude=(), infer_types=False)[0]
-        return dict(zip(hdr["ch_names"], np.asarray(hdr["n_samps"]) / hdr["record_length"][0]))
-    except Exception:                                          # noqa: BLE001
-        return {}
+    """
+    Per-channel sampling rate, parsed from the EDF header directly.
+
+    Deliberately not via mne's internals. An earlier version called
+    `mne.io.edf.edf._read_edf_header`, whose signature changed in mne 1.12 and
+    broke - and because the caller swallowed the exception, the effect was to
+    silently stop checking sampling rates rather than to fail. The header layout
+    below is fixed by the EDF spec and will not move.
+
+        256 bytes  fixed header, with ns (number of signals) in the last 4
+        ns*16      labels
+        ns*80      transducer
+        ns*8       physical dimension
+        ns*8*4     physical min/max, digital min/max
+        ns*80      prefiltering
+        ns*8       samples per data record   <- what we want
+    """
+    with open(psg_path, "rb") as f:
+        head = f.read(256)
+        n_records = int(head[236:244].decode("ascii", "ignore").strip() or 0)
+        record_sec = float(head[244:252].decode("ascii", "ignore").strip() or 1.0)
+        ns = int(head[252:256].decode("ascii", "ignore").strip() or 0)
+        if ns <= 0 or record_sec <= 0:
+            return {}
+        labels = [f.read(16).decode("ascii", "ignore").strip() for _ in range(ns)]
+        f.read(ns * (80 + 8 + 8 + 8 + 8 + 8 + 80))             # skip to n_samps
+        n_samps = [int(f.read(8).decode("ascii", "ignore").strip() or 0)
+                   for _ in range(ns)]
+    del n_records
+    return {lab: n / record_sec for lab, n in zip(labels, n_samps)}
 
 
 def process(edf_dirs, channels, out_root: Path, limit=None):

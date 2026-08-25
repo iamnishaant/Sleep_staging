@@ -95,7 +95,14 @@ def load_student(ckpt_path: Path):
         raise SystemExit(f"{ckpt_path.name} declares encoder={enc!r}, which this "
                          f"evaluator does not know how to build. Add it to "
                          f"TRAINER_FOR_ENCODER rather than guessing.")
-    Student = load_student_class(TRAINER_FOR_ENCODER[enc])
+    # A multi-channel checkpoint shares encoder="multiscale" with the
+    # single-channel one but has a different first convolution. Keying on the
+    # encoder alone would build in_channels=1 and then fail on load_state_dict -
+    # loudly, but for a confusing reason. `channels` is the discriminator.
+    trainer = TRAINER_FOR_ENCODER[enc]
+    if ck.get("channels"):
+        trainer = "kaggle_train_student_mc.py"
+    Student = load_student_class(trainer)
 
     args = ck.get("args", {})
     model = Student(
@@ -110,21 +117,28 @@ def load_student(ckpt_path: Path):
                            f"\n  unexpected {sorted(unexpected)}")
     model.eval()
 
-    # The scale the model was TRAINED with. Defaulting to 1.0 is correct for
-    # every pre-normalisation checkpoint and wrong-but-loud for anything newer,
-    # since the validation reproduction would fail.
-    eeg_scale = float(ck.get("eeg_scale", 1.0))
-    return model, ck, eeg_scale
+    # The scale the model was TRAINED with, as a tensor broadcastable over the
+    # stored tensor's shape:
+    #    single-channel (n, 3000)      -> scalar
+    #    multi-channel  (n, C, 3000)   -> (1, C, 1), one per channel
+    # Defaulting to 1.0 is correct for every pre-normalisation checkpoint and
+    # wrong-but-loud for anything newer, since validation would not reproduce.
+    if ck.get("channel_scale"):
+        scale = torch.tensor(ck["channel_scale"], dtype=torch.float32).view(1, -1, 1)
+    else:
+        scale = torch.tensor(float(ck.get("eeg_scale", 1.0)), dtype=torch.float32)
+    return model, ck, scale
 
 
 @torch.no_grad()
-def predict(model, t_path: Path, s_path: Path, stages: list[str], eeg_scale: float = 1.0):
+def predict(model, t_path: Path, s_path: Path, stages: list[str], eeg_scale=1.0):
     """
     Non-overlapping 256-epoch windows, matching how validation ran in training.
 
-    `eeg_scale` must be the value the checkpoint was trained with. The trainers
-    apply it inside the Dataset, so it is part of the model's input contract
-    rather than a preprocessing choice made here.
+    `eeg_scale` must be the value the checkpoint was trained with - a scalar for
+    single-channel models, a (1, C, 1) tensor for multi-channel ones. The
+    trainers apply it inside the Dataset, so it is part of the model's input
+    contract rather than a preprocessing choice made here.
     """
     t = torch.load(t_path, map_location="cpu").float() * eeg_scale
     s = torch.load(s_path, map_location="cpu").float()
@@ -170,16 +184,29 @@ def check_cache_provenance(cache: Path, ck: dict, eeg_scale: float) -> None:
     confidence, metric reliability, the packets - would then describe a model
     that was fed the wrong input.
     """
-    want = {"encoder": ck.get("encoder"), "eeg_scale": eeg_scale,
+    want = {"encoder": ck.get("encoder"),
+            "channels": ck.get("channels"),
+            "eeg_scale": ck.get("channel_scale") or float(ck.get("eeg_scale", 1.0)),
             "epoch": ck.get("epoch"), "n_parameters": ck.get("n_parameters")}
+    # Compare on a NORMALISED view. A key added to this stamp later (as
+    # `channels` was) is a schema change, not a data change, and must not
+    # invalidate a cache whose contents are still correct - otherwise every
+    # extension to the provenance block silently costs a full re-evaluation and
+    # trains people to delete the directory reflexively, defeating the guard.
+    def norm(d):
+        return {k: d.get(k) for k in
+                ("encoder", "channels", "eeg_scale", "epoch", "n_parameters")}
+
     p = cache / "_provenance.json"
     if p.exists():
         have = json.loads(p.read_text(encoding="utf-8"))
-        if have != want:
+        if norm(have) != norm(want):
             raise SystemExit(
                 f"\nCached probabilities in {cache} were produced under different "
-                f"settings:\n  cached  {have}\n  current {want}\n"
+                f"settings:\n  cached  {norm(have)}\n  current {norm(want)}\n"
                 f"Delete that directory and re-run rather than mixing them.")
+        if have != want:                   # same data, older stamp
+            p.write_text(json.dumps(want, indent=2), encoding="utf-8")
     else:
         # An existing cache from before provenance was recorded: adopt it, but
         # only after saying so, since it cannot be verified.
@@ -229,9 +256,16 @@ def main() -> int:
                          "investigation only - never for figures.")
     args = ap.parse_args()
 
-    df = pd.read_csv(args.index)
-    df["rec"] = [str(p).replace("\\", "/").rsplit("/", 1)[-1][:-3] for p in df["tensor_path"]]
-    row_of = {r: i for i, r in enumerate(df["rec"])}
+    def load_index(path):
+        d = pd.read_csv(path)
+        d["rec"] = [str(x).replace("\\", "/").rsplit("/", 1)[-1][:-3] for x in d["tensor_path"]]
+        return d, {r: i for i, r in enumerate(d["rec"])}
+
+    # A multi-channel checkpoint reads a DIFFERENT tensor directory. Deriving it
+    # from the checkpoint rather than a flag means a mixed --students run works
+    # and a wrong pairing is impossible rather than merely unlikely.
+    MC_INDEX = REPO_ROOT / "processed_sleepedf_mc" / "index.csv"
+    df, row_of = load_index(args.index)
     sp = json.loads(Path(args.splits).read_text(encoding="utf-8"))
     rbs = sp["recordings_by_subject"]
     val_recs = sorted(r for s in sp["splits"]["val"] for r in rbs[s])
@@ -247,10 +281,21 @@ def main() -> int:
         print(f"\n{'='*74}\n{name}\n{'='*74}")
         print(f"  epoch {ck['epoch']} | alpha={ck['alpha']} T={ck['T']} "
               f"cw={ck['class_weight_power']} spectral={ck['use_spectral']}")
-        print(f"  encoder {ck.get('encoder', 'atrous')} | "
-              f"trainer {TRAINER_FOR_ENCODER[ck.get('encoder')]} | "
-              f"eeg_scale {eeg_scale:g}")
+        _tr = ("kaggle_train_student_mc.py" if ck.get("channels")
+               else TRAINER_FOR_ENCODER[ck.get("encoder")])
+        print(f"  encoder {ck.get('encoder', 'atrous')} | trainer {_tr}")
+        print(f"  input   {ck.get('channels') or ['EEG Fpz-Cz']} | "
+              f"scale {ck.get('channel_scale') or eeg_scale}")
         print(f"  {npar:,} params (teacher 649,229 -> {649229/npar:.2f}x)")
+
+        if ck.get("channels"):
+            if not MC_INDEX.exists():
+                raise SystemExit(f"{name} is multi-channel but {MC_INDEX} is missing. "
+                                 f"Run preprocess_multichannel.py first.")
+            df, row_of = load_index(MC_INDEX)
+            print(f"  index   {MC_INDEX.relative_to(REPO_ROOT)}")
+        else:
+            df, row_of = load_index(args.index)
 
         vcache, tcache = res / f"probs_{name}_val", res / f"probs_{name}"
         for c in (vcache, tcache):

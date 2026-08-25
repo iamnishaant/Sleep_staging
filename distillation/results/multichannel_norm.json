@@ -1,0 +1,27 @@
+{
+  "fitted_on": "train split only",
+  "n_recordings": 4,
+  "n_subjects": 2,
+  "channels": [
+    "EEG Fpz-Cz",
+    "EOG horizontal",
+    "EEG Pz-Oz"
+  ],
+  "mean_volts": [
+    3.2880066685772977e-07,
+    6.719356494912408e-07,
+    3.207068392950242e-07
+  ],
+  "std_volts": [
+    5.129530740575669e-05,
+    5.4828499065998384e-05,
+    2.7633306403621165e-05
+  ],
+  "scale": [
+    19494.960661601835,
+    18238.690043225073,
+    36188.2137951091
+  ],
+  "note": "Multiply each channel by its `scale` to reach unit variance. Per-CHANNEL, not per-epoch: a per-epoch z-score would normalise away the amplitude difference that defines N3.",
+  "reference": "single-channel EEG scale from eeg_normalization.json is 15849.46; channel 0 here should land close to it."
+}
