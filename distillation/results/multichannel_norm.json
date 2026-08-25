@@ -1,27 +1,44 @@
 {
   "fitted_on": "train split only",
-  "n_recordings": 4,
-  "n_subjects": 2,
+  "n_recordings": 137,
+  "n_subjects": 69,
   "channels": [
     "EEG Fpz-Cz",
     "EOG horizontal",
     "EEG Pz-Oz"
   ],
   "mean_volts": [
-    3.2880066685772977e-07,
-    6.719356494912408e-07,
-    3.207068392950242e-07
+    -3.887357852561613e-07,
+    -1.247725239229729e-06,
+    -5.510936919064899e-07
   ],
   "std_volts": [
-    5.129530740575669e-05,
-    5.4828499065998384e-05,
-    2.7633306403621165e-05
+    4.3693160506679396e-05,
+    7.040727998321808e-05,
+    6.65998017567973e-05
   ],
   "scale": [
-    19494.960661601835,
-    18238.690043225073,
-    36188.2137951091
+    22886.87722297245,
+    14203.076730678345,
+    15015.059709212095
   ],
   "note": "Multiply each channel by its `scale` to reach unit variance. Per-CHANNEL, not per-epoch: a per-epoch z-score would normalise away the amplitude difference that defines N3.",
-  "reference": "single-channel EEG scale from eeg_normalization.json is 15849.46; channel 0 here should land close to it."
+  "reference": "single-channel EEG scale from eeg_normalization.json is 15849.46; channel 0 here should land close to it.",
+  "disagrees_with_eeg_normalization_json": {
+    "this_file": {
+      "channel": "EEG Fpz-Cz",
+      "std_volts": 4.3693e-05,
+      "scale": 22886.88,
+      "method": "every epoch of all 137 training recordings"
+    },
+    "eeg_normalization_json": {
+      "std_volts": 6.309361708858279e-05,
+      "scale": 15849.46,
+      "method": "120 randomly sampled epochs per recording"
+    },
+    "which_is_right": "this one. Recomputing over the full training split from the SINGLE-channel tensors reproduces 4.3693e-05 exactly, so the difference is the estimator, not the data - and channel 0 is verified bit-identical to those tensors on all 196 recordings.",
+    "why_the_old_estimate_is_biased": "Sampling a FIXED 120 epochs per recording weights every recording equally, regardless of length. Per-recording amplitude spans 30x in this data (ST7191J0 3.1e-04 V against SC4552F0 1.0e-05 V), and the high-amplitude ST telemetry recordings are SHORTER than the SC cassette ones. Equal-weighting therefore over-represents them and inflates the global std by ~44%.",
+    "does_it_invalidate_anything": "No. EEG_SCALE is an input contract, not a claim about the world: a model trained and evaluated at 15849.46 is self-consistent, and BatchNorm after the first convolution makes the network largely invariant to a constant input scale. The practical effect on student_N2multiscale is that its input variance is ~0.69 rather than 1.0 - which is why its own log reported an input std of 0.457 rather than ~1.",
+    "consequence_for_the_mc_run": "It changes channel 0's scale from 15849.46 to 22886.88, so the multi-channel run varies the channel-0 scale as well as adding channels. A mild confound, recorded rather than hidden. Using the biased value to preserve comparability would mean knowingly shipping a wrong normalisation into a new model."
+  }
 }

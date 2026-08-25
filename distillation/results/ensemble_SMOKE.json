@@ -1,0 +1,99 @@
+{
+  "tag": "SMOKE",
+  "members": [
+    "student_baseline_E0",
+    "student_distilled_E0",
+    "student_distilled_E1b"
+  ],
+  "n_members": 3,
+  "channels": [
+    "EEG Fpz-Cz"
+  ],
+  "averaging": "mean of per-model softmax probabilities (not logits)",
+  "why_probabilities": "logit averaging is dominated by whichever member is most overconfident; the mean predictive distribution is what a soft target is supposed to be",
+  "validation": {
+    "ensemble": {
+      "accuracy": 0.7247038428199942,
+      "kappa": 0.6316655249809356,
+      "macro_f1": 0.6886572158049338
+    },
+    "ensemble_per_class_f1": {
+      "W": 0.8666,
+      "N1": 0.4503,
+      "N2": 0.7482,
+      "N3": 0.6882,
+      "REM": 0.6902
+    },
+    "members": {
+      "student_baseline_E0": {
+        "accuracy": 0.7302,
+        "kappa": 0.6389,
+        "macro_f1": 0.6881
+      },
+      "student_distilled_E0": {
+        "accuracy": 0.7022,
+        "kappa": 0.6055,
+        "macro_f1": 0.6747
+      },
+      "student_distilled_E1b": {
+        "accuracy": 0.7207,
+        "kappa": 0.624,
+        "macro_f1": 0.6806
+      }
+    },
+    "member_mean_kappa": 0.6228,
+    "best_member_kappa": 0.6389,
+    "best_member": "student_baseline_E0",
+    "ensemble_gain_over_best_member": -0.0073,
+    "ensemble_gain_over_mean_member": 0.0089,
+    "member_kappa_spread": 0.0335,
+    "ensemble_beats_best_member": false
+  },
+  "test_heldout": {
+    "ensemble": {
+      "accuracy": 0.7229517513684903,
+      "kappa": 0.6288959755563486,
+      "macro_f1": 0.6846842783764949
+    },
+    "ensemble_per_class_f1": {
+      "W": 0.8273,
+      "N1": 0.3952,
+      "N2": 0.7668,
+      "N3": 0.734,
+      "REM": 0.7002
+    },
+    "members": {
+      "student_baseline_E0": {
+        "accuracy": 0.736,
+        "kappa": 0.6449,
+        "macro_f1": 0.6915
+      },
+      "student_distilled_E0": {
+        "accuracy": 0.6926,
+        "kappa": 0.5925,
+        "macro_f1": 0.6611
+      },
+      "student_distilled_E1b": {
+        "accuracy": 0.7123,
+        "kappa": 0.6134,
+        "macro_f1": 0.6708
+      }
+    },
+    "member_mean_kappa": 0.6169,
+    "best_member_kappa": 0.6449,
+    "best_member": "student_baseline_E0",
+    "ensemble_gain_over_best_member": -0.016,
+    "ensemble_gain_over_mean_member": 0.012,
+    "member_kappa_spread": 0.0523,
+    "ensemble_beats_best_member": false
+  },
+  "verdict": {
+    "question": "Does this ensemble exceed the student it would teach?",
+    "ensemble_test_kappa": 0.6289,
+    "best_member_test_kappa": 0.6449,
+    "exceeds_best_member": false,
+    "member_kappa_spread": 0.0523,
+    "note": "Distillation has cost accuracy in this project every time the teacher was weaker than the student. If this ensemble beats its best member, it is the first teacher here that does not have that problem - and it is better without being bigger, which is the whole point.",
+    "precondition": "Averaging cancels decorrelated error, not a member being worse. If the members differ in quality, the ensemble can lose to its best member - measured at -0.0160 on the three existing single-channel students, whose kappa spread is 0.0524. Use K runs of ONE configuration differing only in seed."
+  }
+}
