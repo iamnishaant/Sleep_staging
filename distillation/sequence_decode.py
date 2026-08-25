@@ -44,7 +44,7 @@ posterior mass over the short run's own span, so the probabilities decide
 rather than run length alone. Iterated, because absorbing one run can merge its
 neighbours and expose a new short run.
 
-Applied to REM only, at L=3:
+Applied to REM only. On the first M0 (student_baseline_E0) L=3 was selected:
 
                         argmax   REM-only L=3
     REM_Periods          2.01x   0.83x
@@ -58,12 +58,23 @@ Removing a spurious REM epoch also removes the two spurious transitions it
 created, which is why the transition metrics improve here and degrade under
 global smoothing. That asymmetry is the whole argument.
 
-L=3 is not a new constant. `robust_rem_latency()` in metric_reliability.py and
-build_packet.py already uses a 3-epoch (90 s) REM run, justified there as the
-smallest window surviving one misclassification, and clinical scoring already
-treats an isolated REM epoch as noise. This applies the rule the repo had
-already adopted for one metric to the hypnogram those metrics are derived from.
-It is nevertheless SELECTED on validation below, not assumed.
+L IS RE-SELECTED PER MODEL, NOT FIXED. On student_N2multiscale the objective
+picks L=4 (validation REM-latency MAE 81.3 -> 61.8 min, false SOREMP 3 -> 1).
+Neither value is assumed: 3 happens to match the constant `robust_rem_latency()`
+already used, and that coincidence is a sanity check, not the reason.
+
+WHAT THIS FAMILY OF RULES CANNOT DO
+-----------------------------------
+A minimum-run rule removes runs SHORTER than L. It therefore cannot touch a
+SUSTAINED false REM run, by construction. On SC4011E0-PSG - the night
+EVIDENCE_PACKET.md s4 opens with - student_N2multiscale predicts a 4-epoch REM
+run at epoch 93 that the expert scores N1 throughout, giving a REM latency of
+18.5 min against an expert 119.5. No L in the swept range removes it, and an L
+large enough to do so would begin masking genuine sleep-onset REM periods, which
+are exactly what the metric exists to detect.
+
+That is a REM PRECISION problem in the model, not a decoder parameter, and it is
+the honest limit of this component.
 
 WHAT IS FITTED WHERE
 --------------------
@@ -454,23 +465,45 @@ def main() -> int:
     # ---- selection -------------------------------------------------------
     # Objective: maximise the net number of asserted metrics whose error
     # improves, subject to per-epoch agreement not degrading. Ties broken by
-    # REM_Periods error - the metric this intervention exists to fix.
+    # FALSE SOREMP COUNT first, then by REM_Periods error.
     #
     # Deliberately NOT kappa. kappa is the guard: a decoder that smooths its way
     # to a tidy hypnogram while losing agreement has traded the thing being
     # measured for the measurement. But among decoders that hold kappa, what
     # matters is how many asserted values get closer to the truth.
+    #
+    # WHY FALSE SOREMP LEADS THE TIEBREAK
+    # -----------------------------------
+    # It did not, originally. The tiebreak was REM_Periods error, chosen when
+    # REM_Periods was the catastrophic metric (2.01x the expert count under the
+    # first M0). On a model that no longer over-fragments REM that tiebreak
+    # makes a bad trade: measured on student_N2multiscale, minrun REM L=3 and
+    # L=4 are tied at 8 net improvements, and L=3 wins on REM_Periods (0.66x vs
+    # 0.57x) while producing THREE false sleep-onset-REM readings against L=4's
+    # one, and 6 minutes more REM-latency error.
+    #
+    # A false SOREMP is a narcolepsy red flag handed to a report generator. It
+    # is the specific failure EVIDENCE_PACKET.md s4 exists to guard against.
+    # Trading two of them for a closer period count is backwards, and
+    # metric_reliability.classify() already encodes the governing principle -
+    # clinical significance overrides raw percentage. This applies the same rule
+    # one stage earlier, where the hypnogram is actually decided.
+    #
+    # Selection remains on VALIDATION only.
     eligible = [r for r in rows if r["kappa"] >= base["kappa"] - 1e-9]
     if len(eligible) <= 1:
         best = base
         rationale = "no candidate held validation kappa; decoding disabled (argmax)"
     else:
         best = max(eligible, key=lambda r: (r["net_improved"],
+                                            -r["false_soremp_nights"],
                                             -r["relative_error"]["REM_Periods"]))
         rationale = (f"highest net improvement across the {len(SHIPPED_METRICS)} asserted "
                      f"metrics ({best['n_improved']} improved, {best['n_degraded']} degraded) "
                      f"among the {len(eligible)} candidates that did not reduce validation "
-                     f"kappa; ties broken by REM_Periods error")
+                     f"kappa; ties broken by false-SOREMP count "
+                     f"({best['false_soremp_nights']} vs {base['false_soremp_nights']} at "
+                     f"argmax), then by REM_Periods error")
 
     print(f"\nSELECTED: {best['decoder']}   {best['spec']}")
     print(f"  {rationale}")
@@ -534,7 +567,16 @@ def main() -> int:
                               "a metric the packet never asserts cannot decide what ships",
             "objective": "maximise (metrics improved - metrics degraded), subject to "
                          "validation kappa not falling below argmax; ties broken by "
-                         "REM_Periods relative error",
+                         "false-SOREMP count, then by REM_Periods relative error",
+            "why_soremp_leads_the_tiebreak": "A false sleep-onset-REM reading is a "
+                         "narcolepsy red flag handed to a report generator - the specific "
+                         "failure EVIDENCE_PACKET.md s4 exists to guard against. The "
+                         "original tiebreak (REM_Periods error) was chosen when REM_Periods "
+                         "was catastrophic at 2.01x the expert count; on a model that no "
+                         "longer over-fragments REM it trades false SOREMPs for a closer "
+                         "period count, which is backwards. metric_reliability.classify() "
+                         "already encodes the rule that clinical significance overrides raw "
+                         "percentage; this applies it where the hypnogram is decided.",
             "why_not_kappa": "kappa is the guard, not the objective. A decoder that smooths "
                              "its way to a tidy hypnogram while losing agreement has traded "
                              "the thing being measured for the measurement.",

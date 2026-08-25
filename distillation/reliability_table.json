@@ -3,7 +3,7 @@
   "checkpoint": "distillation/results/students/student_N2multiscale/student_best.pt",
   "model_encoder": "multiscale",
   "model_eeg_scale": 15849.46,
-  "commit": "a9e52ad",
+  "commit": "06dbb4d",
   "n_parameters": 139606,
   "compression_vs_teacher": 4.65,
   "evaluated_on": "held-out test split, 15 subjects never seen in training or selection",
@@ -17,10 +17,10 @@
   "ece_validation_after": 0.0129,
   "argmax_unchanged_by_scaling": true,
   "hypnogram_decoder": {
-    "decoder": "minrun REM L=3",
+    "decoder": "minrun REM L=4",
     "spec": {
       "method": "min_run",
-      "length": 3,
+      "length": 4,
       "targets": [
         "REM"
       ]
@@ -29,8 +29,8 @@
   },
   "overall": {
     "accuracy": 0.7756,
-    "kappa": 0.6991,
-    "macro_f1": 0.7424
+    "kappa": 0.699,
+    "macro_f1": 0.743
   },
   "overall_argmax": {
     "accuracy": 0.7748,
@@ -48,21 +48,21 @@
       "reliability": "high"
     },
     "N1": {
-      "f1": 0.444,
-      "precision": 0.3829,
-      "recall": 0.5284,
+      "f1": 0.4471,
+      "precision": 0.3835,
+      "recall": 0.5361,
       "support": 3503,
-      "mean_confidence_calibrated": 0.5771,
-      "prediction_ratio": 1.38,
+      "mean_confidence_calibrated": 0.576,
+      "prediction_ratio": 1.3979,
       "reliability": "low"
     },
     "N2": {
-      "f1": 0.803,
-      "precision": 0.8058,
-      "recall": 0.8001,
+      "f1": 0.8026,
+      "precision": 0.8038,
+      "recall": 0.8014,
       "support": 12778,
-      "mean_confidence_calibrated": 0.7005,
-      "prediction_ratio": 0.993,
+      "mean_confidence_calibrated": 0.6997,
+      "prediction_ratio": 0.9969,
       "reliability": "high"
     },
     "N3": {
@@ -75,12 +75,12 @@
       "reliability": "high"
     },
     "REM": {
-      "f1": 0.7834,
-      "precision": 0.7838,
-      "recall": 0.783,
+      "f1": 0.7835,
+      "precision": 0.7923,
+      "recall": 0.775,
       "support": 5502,
-      "mean_confidence_calibrated": 0.7399,
-      "prediction_ratio": 0.9989,
+      "mean_confidence_calibrated": 0.7452,
+      "prediction_ratio": 0.9782,
       "reliability": "high"
     }
   },

@@ -161,5 +161,55 @@
     "Test ECE got slightly worse under calibration (0.0273 -> 0.0350) while validation improved sharply (0.0557 -> 0.0129). The raw test probabilities were already well calibrated. Worth checking before relying on confidence.",
     "The encoder and N_TOKENS (1 -> 4) changed together and cannot be attributed separately from this run.",
     "EOG is still unused. preprocess_multichannel.py is written and tested but needs the raw EDFs."
-  ]
+  ],
+  "decoder_objective_revision": {
+    "date": "2026-08-23",
+    "change": "decoder tiebreak: REM_Periods relative error -> false-SOREMP count, then REM_Periods relative error",
+    "why": "The original tiebreak was chosen when REM_Periods was catastrophic (2.01x the expert count on the first M0). On student_N2multiscale, minrun REM L=3 and L=4 tie at 8 net metric improvements; L=3 wins on REM_Periods (0.66x vs 0.57x) while producing THREE false sleep-onset-REM readings against L=4's one. Trading two narcolepsy red flags for a closer period count is backwards. metric_reliability.classify() already encodes 'clinical significance overrides raw percentage'; this applies the same rule where the hypnogram is decided.",
+    "selected": "minrun REM L=4",
+    "validation": {
+      "rem_latency_mae_min": {
+        "argmax": 81.26,
+        "L3": 67.73,
+        "L4": 61.76
+      },
+      "false_soremp": {
+        "argmax": 3,
+        "L3": 3,
+        "L4": 1
+      },
+      "asserted_metrics_under_40pct": {
+        "argmax": 10,
+        "L4": 11
+      },
+      "kappa": {
+        "argmax": 0.6735,
+        "L4": 0.6759
+      }
+    },
+    "held_out_test": {
+      "rem_latency_mae_min": {
+        "L3": 32.09,
+        "L4": 33.66
+      },
+      "nights_off_by_over_60_min": {
+        "L3": 8,
+        "L4": 9
+      },
+      "false_soremp": {
+        "L3": 0,
+        "L4": 0
+      },
+      "kappa": {
+        "argmax": 0.6984,
+        "L4": 0.699
+      },
+      "verdict": "TEST DID NOT CONFIRM THE VALIDATION GAIN. L=4 is marginally worse than L=3 on test REM-latency MAE and equal on false SOREMP (both 0). L=4 is kept anyway: it was selected on validation under a stated objective, and switching to L=3 now would be selecting on test, which is the one thing this protocol forbids. Recorded as a validation/test disagreement rather than presented as a win."
+    },
+    "the_limit_of_this_component": {
+      "finding": "A minimum-run rule removes runs SHORTER than L and therefore cannot touch a sustained false REM run.",
+      "evidence": "On SC4011E0-PSG the model predicts a 4-epoch REM run at epoch 93 that the expert scores N1 throughout. No swept L removes it; an L large enough would begin masking genuine SOREMPs.",
+      "implication": "REM precision early in the night is a MODEL problem. The decoder has reached its honest limit here."
+    }
+  }
 }
