@@ -189,10 +189,85 @@ def build() -> str:
         r'self\.temporal_encoder = MultiScaleEpochEncoder\(embed=embed, n_tokens=n_tokens\)',
         'self.temporal_encoder = MultiScaleEpochEncoder(\n'
         '            embed=embed, n_tokens=n_tokens, in_channels=len(CHANNELS))', src)
-    src, n7 = re.subn(r'"processed_sleepedf/tensors/%s\.pt"',
-                      'DATA_DIR + "/tensors/%s.pt"', src)
-    if not all((n4, n5, n6, n7)):
-        raise SystemExit(f"body substitution failed ({n4}, {n5}, {n6}, {n7})")
+    # DATA RESOLUTION. The inherited code does `find_file("index.csv")` and takes
+    # the first match, then assumes `index.parent.parent` contains everything.
+    # Both assumptions break here:
+    #
+    #   1. With processed_sleepedf AND processed_sleepedf_mc both attached,
+    #      sorted() puts the SINGLE-channel index first ('/' is 0x2F, '_' is
+    #      0x5F). The run would read the wrong index - and because both indexes
+    #      carry the same recordings and stage sequences, it would WORK, quietly,
+    #      which is worse than failing.
+    #   2. The multi-channel tensors (8 GB) and the spectral features (32 MB)
+    #      are naturally two separate Kaggle datasets, so they do not share a
+    #      parent directory.
+    #
+    # Both are resolved explicitly below, and the index is checked to be the one
+    # whose `channels` column matches CHANNELS. Absolute paths are stored, so
+    # the dataset's `root` argument becomes irrelevant.
+    _old_paths = (
+        '    index = find_file("index.csv"); root = index.parent.parent\n'
+        '    df = pd.read_csv(index)\n'
+        '    df["rec"] = [str(p).replace("\\\\", "/").rsplit("/", 1)[-1][:-3] '
+        'for p in df["tensor_path"]]\n'
+        '    df["subject"] = df["rec"].str[:5]\n'
+        '    df["tensor_path"] = ["processed_sleepedf/tensors/%s.pt" % r for r in df["rec"]]\n'
+        '    df["spectral"] = ["processed_sleepedf/spectral/%s_spectral.pt" % r '
+        'for r in df["rec"]]')
+    _new_paths = (
+        '    index = find_file(f"{DATA_DIR}/index.csv")\n'
+        '    tensor_dir = index.parent / "tensors"\n'
+        '    spec_dir = find_file("processed_sleepedf/spectral")\n'
+        '    print(f"  index     {index}")\n'
+        '    print(f"  tensors   {tensor_dir}")\n'
+        '    print(f"  spectral  {spec_dir}")\n'
+        '    if not tensor_dir.is_dir():\n'
+        '        raise SystemExit(f"{tensor_dir} is not a directory. Attach the "\n'
+        '                         f"{DATA_DIR} dataset (tensors/ + index.csv).")\n'
+        '\n'
+        '    df = pd.read_csv(index)\n'
+        '    if "channels" not in df.columns:\n'
+        '        raise SystemExit(f"{index} has no `channels` column, so it is not a "\n'
+        '                         f"multi-channel index. Attach {DATA_DIR}, produced by "\n'
+        '                         f"preprocess_multichannel.py.")\n'
+        '    _have = str(df.iloc[0]["channels"]).split("|")\n'
+        '    if _have[:len(CHANNELS)] != CHANNELS:\n'
+        '        raise SystemExit(f"Channel mismatch.\\n  index has  {_have}\\n"\n'
+        '                         f"  CHANNELS   {CHANNELS}\\n"\n'
+        '                         f"CHANNELS must be a leading slice of what was "\n'
+        '                         f"preprocessed, in the same order.")\n'
+        '\n'
+        '    df["rec"] = [str(p).replace("\\\\", "/").rsplit("/", 1)[-1][:-3] '
+        'for p in df["tensor_path"]]\n'
+        '    df["subject"] = df["rec"].str[:5]\n'
+        '    # absolute, so the two datasets need not share a parent\n'
+        '    df["tensor_path"] = [str(tensor_dir / f"{r}.pt") for r in df["rec"]]\n'
+        '    df["spectral"] = [str(spec_dir / f"{r}_spectral.pt") for r in df["rec"]]\n'
+        '    _missing = [p for p in list(df["tensor_path"]) + list(df["spectral"])\n'
+        '                if not Path(p).exists()]\n'
+        '    if _missing:\n'
+        '        raise SystemExit(f"{len(_missing)} input files missing, first: "\n'
+        '                         f"{_missing[:3]}")')
+    if src.count(_old_paths) != 1:
+        raise SystemExit(f"data-path fix did not apply ({src.count(_old_paths)} matches).")
+    src = src.replace(_old_paths, _new_paths, 1)
+
+    # CHANNELS may be a leading slice of what was preprocessed, so the dataset
+    # must trim. This is what makes "EEG only" / "EEG+EOG" / "all three" a config
+    # edit rather than three preprocessing runs.
+    src = src.replace(
+        '        xt = xt[:n].float() * _CH_SCALE',
+        '        xt = xt[:n, :_keep].float() * _CH_SCALE')
+    src = src.replace(
+        "class SleepDataset(Dataset):",
+        "# How many leading channels of the stored tensor the model consumes.\n"
+        "# CHANNELS may be a leading slice of what was preprocessed - main()\n"
+        "# verifies that against the index's `channels` column before training.\n"
+        "_keep = len(CHANNELS)\n\n\n"
+        "class SleepDataset(Dataset):", 1)
+
+    if not all((n4, n5, n6)):
+        raise SystemExit(f"body substitution failed ({n4}, {n5}, {n6})")
 
     # RESUME GUARD. The inherited check compares ck["eeg_scale"] against
     # EEG_SCALE, and both are None here - so `None != None` is False and the

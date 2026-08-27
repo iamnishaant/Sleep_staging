@@ -329,6 +329,12 @@ class StudentSleepStagingModel(nn.Module):
 
 
 # -------------------------------------------------------------------- DATA ---
+# How many leading channels of the stored tensor the model consumes.
+# CHANNELS may be a leading slice of what was preprocessed - main()
+# verifies that against the index's `channels` column before training.
+_keep = len(CHANNELS)
+
+
 class SleepDataset(Dataset):
     """
     Identical to KDSleepDataset with the teacher cache disabled, EXCEPT for the
@@ -352,7 +358,7 @@ class SleepDataset(Dataset):
         xs = torch.load(self.root / row["spectral"], map_location="cpu")[st:en]
         n = min(len(y), xt.shape[0], xs.shape[0])
         # (n, C, 3000) * (1, C, 1) - per channel, not one scalar
-        xt = xt[:n].float() * _CH_SCALE
+        xt = xt[:n, :_keep].float() * _CH_SCALE
         return xt, xs[:n].float(), y[:n]
 
 def collate(batch):
@@ -415,12 +421,38 @@ def main():
             raise SystemExit(f"UNSUPPORTED GPU ({sm}); build supports {sup}. Use 'GPU T4 x2'.")
         print(f"GPU: {torch.cuda.get_device_name(0)} ({sm})")
 
-    index = find_file("index.csv"); root = index.parent.parent
+    index = find_file(f"{DATA_DIR}/index.csv")
+    tensor_dir = index.parent / "tensors"
+    spec_dir = find_file("processed_sleepedf/spectral")
+    print(f"  index     {index}")
+    print(f"  tensors   {tensor_dir}")
+    print(f"  spectral  {spec_dir}")
+    if not tensor_dir.is_dir():
+        raise SystemExit(f"{tensor_dir} is not a directory. Attach the "
+                         f"{DATA_DIR} dataset (tensors/ + index.csv).")
+
     df = pd.read_csv(index)
+    if "channels" not in df.columns:
+        raise SystemExit(f"{index} has no `channels` column, so it is not a "
+                         f"multi-channel index. Attach {DATA_DIR}, produced by "
+                         f"preprocess_multichannel.py.")
+    _have = str(df.iloc[0]["channels"]).split("|")
+    if _have[:len(CHANNELS)] != CHANNELS:
+        raise SystemExit(f"Channel mismatch.\n  index has  {_have}\n"
+                         f"  CHANNELS   {CHANNELS}\n"
+                         f"CHANNELS must be a leading slice of what was "
+                         f"preprocessed, in the same order.")
+
     df["rec"] = [str(p).replace("\\", "/").rsplit("/", 1)[-1][:-3] for p in df["tensor_path"]]
     df["subject"] = df["rec"].str[:5]
-    df["tensor_path"] = [DATA_DIR + "/tensors/%s.pt" % r for r in df["rec"]]
-    df["spectral"] = ["processed_sleepedf/spectral/%s_spectral.pt" % r for r in df["rec"]]
+    # absolute, so the two datasets need not share a parent
+    df["tensor_path"] = [str(tensor_dir / f"{r}.pt") for r in df["rec"]]
+    df["spectral"] = [str(spec_dir / f"{r}_spectral.pt") for r in df["rec"]]
+    _missing = [p for p in list(df["tensor_path"]) + list(df["spectral"])
+                if not Path(p).exists()]
+    if _missing:
+        raise SystemExit(f"{len(_missing)} input files missing, first: "
+                         f"{_missing[:3]}")
 
     tr = df[df["subject"].isin(SPLITS["train"])]
     va = df[df["subject"].isin(SPLITS["val"])]
