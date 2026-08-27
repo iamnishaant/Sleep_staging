@@ -164,12 +164,20 @@ def main() -> int:
               f"| epoch {ck['epoch']} | {ck.get('n_parameters', 0):,} params "
               f"| channels {ck.get('channels') or ['EEG Fpz-Cz']}")
 
-    # every member must agree on what it was trained on, or the average is
-    # mixing models that saw different data
+    # Members MAY differ in their inputs. This used to be a hard error, on the
+    # reasoning that an ensemble must average models trained on the same data.
+    # That is wrong: averaging cancels DECORRELATED error, and models given
+    # different inputs decorrelate more than models differing only in seed. An
+    # EEG-only and an EEG+EOG model are a better pair than two seeds of either.
+    #
+    # What must match is the label space and the recordings, which is enforced
+    # by aligning on recording id and truncating to the shortest member.
     chans = {tuple(ck.get("channels") or ["EEG Fpz-Cz"]) for _, _, ck, _, _, _ in members}
     if len(chans) > 1:
-        raise SystemExit(f"Members disagree on input channels: {chans}. An ensemble "
-                         f"must average models trained on the same inputs.")
+        print(f"  note: members differ in inputs - {[list(c) for c in sorted(chans)]}")
+        print(f"        that is a source of diversity, not a problem")
+
+    member_cfgs = [ck for _, _, ck, _, _, _ in members]
 
     def run_split(recs, split_name, cache_dir: Path | None):
         per_member, ys = [], None
@@ -244,8 +252,22 @@ def main() -> int:
             print(f"      Ship {best[0]} alone, or rebuild the ensemble from runs that "
                   f"differ only in seed.")
         elif spread > 0.02:
-            print(f"  note: member kappa spread {spread:.4f} is wide for a seed-only "
-                  f"ensemble; check the members really are the same configuration.")
+            # A wide spread is only a warning sign for a SEED-ONLY ensemble, where
+            # members should be near-identical in strength. For a deliberately
+            # diverse one it is expected and often good: measured here, adding
+            # student_baseline_E0 - a different encoder, 0.037 kappa weaker on
+            # validation - took the gain over the best member from +0.0033 to
+            # +0.0168. Diversity bought more than the quality gap cost.
+            same_cfg = len({(tuple(m.get("channels") or ["EEG Fpz-Cz"]),
+                             m.get("encoder")) for m in member_cfgs}) == 1
+            if same_cfg:
+                print(f"  note: member kappa spread {spread:.4f} is wide for members "
+                      f"of the SAME configuration - check they really differ only "
+                      f"in seed.")
+            else:
+                print(f"  note: member kappa spread {spread:.4f}, across "
+                      f"{len(member_cfgs)} differing configurations. Expected for a "
+                      f"diverse ensemble, and the gain above is what decides.")
 
     # ---- the point of the exercise: is this a teacher worth distilling from? ----
     ref = out["test_heldout"]
