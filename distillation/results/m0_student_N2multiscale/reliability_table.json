@@ -1,0 +1,369 @@
+{
+  "model": "student_N2multiscale",
+  "checkpoint": "distillation/results/students/student_N2multiscale/student_best.pt",
+  "model_encoder": "multiscale",
+  "model_eeg_scale": 15849.46,
+  "commit": "06dbb4d",
+  "n_parameters": 139606,
+  "compression_vs_teacher": 4.65,
+  "evaluated_on": "held-out test split, 15 subjects never seen in training or selection",
+  "n_test_epochs": 33431,
+  "calibration_temperature": 1.3399,
+  "temperature_fitted_on": "validation split only",
+  "ece_bins": 15,
+  "ece_before": 0.0273,
+  "ece_after": 0.035,
+  "ece_validation_before": 0.0557,
+  "ece_validation_after": 0.0129,
+  "argmax_unchanged_by_scaling": true,
+  "hypnogram_decoder": {
+    "decoder": "minrun REM L=4",
+    "spec": {
+      "method": "min_run",
+      "length": 4,
+      "targets": [
+        "REM"
+      ]
+    },
+    "fitted_against_temperature": 1.3399
+  },
+  "overall": {
+    "accuracy": 0.7756,
+    "kappa": 0.699,
+    "macro_f1": 0.743
+  },
+  "overall_argmax": {
+    "accuracy": 0.7748,
+    "kappa": 0.6984,
+    "macro_f1": 0.7407
+  },
+  "per_class": {
+    "W": {
+      "f1": 0.8914,
+      "precision": 0.9731,
+      "recall": 0.8223,
+      "support": 8897,
+      "mean_confidence_calibrated": 0.9189,
+      "prediction_ratio": 0.845,
+      "reliability": "high"
+    },
+    "N1": {
+      "f1": 0.4471,
+      "precision": 0.3835,
+      "recall": 0.5361,
+      "support": 3503,
+      "mean_confidence_calibrated": 0.576,
+      "prediction_ratio": 1.3979,
+      "reliability": "low"
+    },
+    "N2": {
+      "f1": 0.8026,
+      "precision": 0.8038,
+      "recall": 0.8014,
+      "support": 12778,
+      "mean_confidence_calibrated": 0.6997,
+      "prediction_ratio": 0.9969,
+      "reliability": "high"
+    },
+    "N3": {
+      "f1": 0.7903,
+      "precision": 0.7706,
+      "recall": 0.811,
+      "support": 2751,
+      "mean_confidence_calibrated": 0.7214,
+      "prediction_ratio": 1.0523,
+      "reliability": "high"
+    },
+    "REM": {
+      "f1": 0.7835,
+      "precision": 0.7923,
+      "recall": 0.775,
+      "support": 5502,
+      "mean_confidence_calibrated": 0.7452,
+      "prediction_ratio": 0.9782,
+      "reliability": "high"
+    }
+  },
+  "reliability_diagram_test": {
+    "before": [
+      {
+        "bin": [
+          0.0,
+          0.06666666666666667
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.06666666666666667,
+          0.13333333333333333
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.13333333333333333,
+          0.2
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.2,
+          0.26666666666666666
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.26666666666666666,
+          0.3333333333333333
+        ],
+        "n": 22,
+        "confidence": 0.3187413513660431,
+        "accuracy": 0.5454545454545454
+      },
+      {
+        "bin": [
+          0.3333333333333333,
+          0.4
+        ],
+        "n": 415,
+        "confidence": 0.37515804171562195,
+        "accuracy": 0.3325301204819277
+      },
+      {
+        "bin": [
+          0.4,
+          0.4666666666666667
+        ],
+        "n": 1137,
+        "confidence": 0.43734845519065857,
+        "accuracy": 0.4001759014951627
+      },
+      {
+        "bin": [
+          0.4666666666666667,
+          0.5333333333333333
+        ],
+        "n": 2228,
+        "confidence": 0.503054141998291,
+        "accuracy": 0.4699281867145422
+      },
+      {
+        "bin": [
+          0.5333333333333333,
+          0.6
+        ],
+        "n": 2476,
+        "confidence": 0.5667902827262878,
+        "accuracy": 0.527059773828756
+      },
+      {
+        "bin": [
+          0.6,
+          0.6666666666666666
+        ],
+        "n": 2490,
+        "confidence": 0.6342306733131409,
+        "accuracy": 0.5883534136546185
+      },
+      {
+        "bin": [
+          0.6666666666666666,
+          0.7333333333333333
+        ],
+        "n": 2675,
+        "confidence": 0.7000994682312012,
+        "accuracy": 0.6710280373831776
+      },
+      {
+        "bin": [
+          0.7333333333333333,
+          0.8
+        ],
+        "n": 2817,
+        "confidence": 0.7679185271263123,
+        "accuracy": 0.7284345047923323
+      },
+      {
+        "bin": [
+          0.8,
+          0.8666666666666667
+        ],
+        "n": 3213,
+        "confidence": 0.8344135284423828,
+        "accuracy": 0.7802676626206038
+      },
+      {
+        "bin": [
+          0.8666666666666667,
+          0.9333333333333333
+        ],
+        "n": 4045,
+        "confidence": 0.9022071361541748,
+        "accuracy": 0.8613102595797281
+      },
+      {
+        "bin": [
+          0.9333333333333333,
+          1.0
+        ],
+        "n": 11913,
+        "confidence": 0.9801312685012817,
+        "accuracy": 0.9774196256190716
+      }
+    ],
+    "after": [
+      {
+        "bin": [
+          0.0,
+          0.06666666666666667
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.06666666666666667,
+          0.13333333333333333
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.13333333333333333,
+          0.2
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.2,
+          0.26666666666666666
+        ],
+        "n": 0,
+        "confidence": null,
+        "accuracy": null
+      },
+      {
+        "bin": [
+          0.26666666666666666,
+          0.3333333333333333
+        ],
+        "n": 92,
+        "confidence": 0.31708258390426636,
+        "accuracy": 0.41304347826086957
+      },
+      {
+        "bin": [
+          0.3333333333333333,
+          0.4
+        ],
+        "n": 920,
+        "confidence": 0.3734658658504486,
+        "accuracy": 0.3684782608695652
+      },
+      {
+        "bin": [
+          0.4,
+          0.4666666666666667
+        ],
+        "n": 2056,
+        "confidence": 0.4364546835422516,
+        "accuracy": 0.441147859922179
+      },
+      {
+        "bin": [
+          0.4666666666666667,
+          0.5333333333333333
+        ],
+        "n": 3202,
+        "confidence": 0.5004814863204956,
+        "accuracy": 0.5171767645221736
+      },
+      {
+        "bin": [
+          0.5333333333333333,
+          0.6
+        ],
+        "n": 3180,
+        "confidence": 0.5669463872909546,
+        "accuracy": 0.6025157232704402
+      },
+      {
+        "bin": [
+          0.6,
+          0.6666666666666666
+        ],
+        "n": 3109,
+        "confidence": 0.632686197757721,
+        "accuracy": 0.6880025731746542
+      },
+      {
+        "bin": [
+          0.6666666666666666,
+          0.7333333333333333
+        ],
+        "n": 3083,
+        "confidence": 0.6995231509208679,
+        "accuracy": 0.7554330197859228
+      },
+      {
+        "bin": [
+          0.7333333333333333,
+          0.8
+        ],
+        "n": 3168,
+        "confidence": 0.766357958316803,
+        "accuracy": 0.8020833333333334
+      },
+      {
+        "bin": [
+          0.8,
+          0.8666666666666667
+        ],
+        "n": 3217,
+        "confidence": 0.8336668610572815,
+        "accuracy": 0.887161952129313
+      },
+      {
+        "bin": [
+          0.8666666666666667,
+          0.9333333333333333
+        ],
+        "n": 4042,
+        "confidence": 0.9010932445526123,
+        "accuracy": 0.9512617516081148
+      },
+      {
+        "bin": [
+          0.9333333333333333,
+          1.0
+        ],
+        "n": 7362,
+        "confidence": 0.9767457842826843,
+        "accuracy": 0.9970116816082586
+      }
+    ]
+  },
+  "notes": [
+    "Temperature scaling changes confidence, not decisions - the reliability diagram and ECE describe the probabilities and are unaffected by decoding.",
+    "`overall` and `per_class` are measured on the DECODED hypnogram, which is what the packet ships. `overall_argmax` is kept alongside so the effect of decoding is visible. Decoding DOES change decisions, unlike scaling.",
+    "Reliability labels are driven by per-class F1 on unseen subjects. A class can be well calibrated and still unreliable if it cannot be identified at all.",
+    "This calibration temperature is unrelated to the KD temperature (T=3.0) used during distillation."
+  ]
+}

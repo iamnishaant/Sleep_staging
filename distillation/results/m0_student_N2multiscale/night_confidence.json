@@ -1,0 +1,694 @@
+{
+  "model": "student_N2multiscale",
+  "field": "night_confidence",
+  "entropy_basis": "calibrated probabilities (T=1.3399), matching what the evidence packet ships, so a consumer recomputing entropy from a packet lands on the same tier",
+  "kappa_basis": {
+    "decoder": "minrun REM L=4",
+    "spec": {
+      "method": "min_run",
+      "length": 4,
+      "targets": [
+        "REM"
+      ]
+    },
+    "note": "Kappa is measured on the DECODED hypnogram, the sequence the packet ships. `kappa_argmax` is retained per recording so the effect of decoding is visible rather than asserted."
+  },
+  "description": "Per-recording confidence from mean prediction entropy. Available at inference without ground truth.",
+  "tier_boundaries_nats": {
+    "high_max": 0.6211466789245605,
+    "medium_max": 0.701659619808197
+  },
+  "boundaries_fitted_on": "validation split entropy tertiles",
+  "correlation": {
+    "validation": {
+      "n": 31,
+      "pearson_r": -0.5556706302057945,
+      "pearson_p": 0.001173355595232227,
+      "spearman_rho": -0.7040322580645162,
+      "spearman_p": 9.898690195897689e-06,
+      "r_squared": 0.30876984927330486
+    },
+    "TEST": {
+      "n": 29,
+      "pearson_r": -0.4545811506837076,
+      "pearson_p": 0.013233482256635733,
+      "spearman_rho": -0.5049261083743841,
+      "spearman_p": 0.005212906558309444,
+      "r_squared": 0.20664402255692366
+    }
+  },
+  "composition_controls": {
+    "n1_fraction": {
+      "partial_r": -0.4210736482499764,
+      "partial_p": 0.022921570568505748,
+      "variance_attributable_to_composition": 0.14198816371906586
+    },
+    "n1_rem_fraction": {
+      "partial_r": -0.39584638765292307,
+      "partial_p": 0.03353420709030768,
+      "variance_attributable_to_composition": 0.24171838759718245
+    },
+    "both": {
+      "partial_r": -0.3885782024407151,
+      "partial_p": 0.03723533955529247,
+      "variance_attributable_to_composition": 0.26930855514843777
+    }
+  },
+  "independent_of_stage_composition": true,
+  "test_tiers": {
+    "high": {
+      "n_nights": 10,
+      "mean_kappa": 0.7453361585754392,
+      "min_kappa": 0.5885644629313243,
+      "max_kappa": 0.8556667437940944
+    },
+    "medium": {
+      "n_nights": 5,
+      "mean_kappa": 0.7316300420818442,
+      "min_kappa": 0.6098493828782638,
+      "max_kappa": 0.7964229589381085
+    },
+    "low": {
+      "n_nights": 14,
+      "mean_kappa": 0.6211984736222744,
+      "min_kappa": 0.3042506477836896,
+      "max_kappa": 0.7629601685057688
+    }
+  },
+  "tiers_monotone_on_test": true,
+  "triage": {
+    "n_flagged": 10,
+    "worst_nights_caught": 6,
+    "flagged_mean_kappa": 0.618418308035322,
+    "unflagged_mean_kappa": 0.7170582813959071
+  },
+  "per_recording_test": {
+    "SC4011E0-PSG": {
+      "subject": "SC401",
+      "cohort": "SC",
+      "n_epochs": 1103,
+      "mean_entropy_nats": 0.6192011833190918,
+      "kappa": 0.815771481030652,
+      "kappa_argmax": 0.8132800109494178,
+      "n1_fraction": 0.09882139619220308,
+      "n1_rem_fraction": 0.25294650951949227
+    },
+    "SC4012E0-PSG": {
+      "subject": "SC401",
+      "cohort": "SC",
+      "n_epochs": 1186,
+      "mean_entropy_nats": 0.6498463749885559,
+      "kappa": 0.7818743681292661,
+      "kappa_argmax": 0.7806039864958609,
+      "n1_fraction": 0.0775716694772344,
+      "n1_rem_fraction": 0.22596964586846544
+    },
+    "SC4021E0-PSG": {
+      "subject": "SC402",
+      "cohort": "SC",
+      "n_epochs": 1025,
+      "mean_entropy_nats": 0.6666123867034912,
+      "kappa": 0.7964229589381085,
+      "kappa_argmax": 0.7969648467603296,
+      "n1_fraction": 0.09170731707317073,
+      "n1_rem_fraction": 0.25073170731707317
+    },
+    "SC4022E0-PSG": {
+      "subject": "SC402",
+      "cohort": "SC",
+      "n_epochs": 1009,
+      "mean_entropy_nats": 0.7050889730453491,
+      "kappa": 0.7263697433413521,
+      "kappa_argmax": 0.7284681865092553,
+      "n1_fraction": 0.1823587710604559,
+      "n1_rem_fraction": 0.3597621407333994
+    },
+    "SC4141E0-PSG": {
+      "subject": "SC414",
+      "cohort": "SC",
+      "n_epochs": 1004,
+      "mean_entropy_nats": 0.4958939552307129,
+      "kappa": 0.8556667437940944,
+      "kappa_argmax": 0.8572084983480297,
+      "n1_fraction": 0.02888446215139442,
+      "n1_rem_fraction": 0.26095617529880477
+    },
+    "SC4142E0-PSG": {
+      "subject": "SC414",
+      "cohort": "SC",
+      "n_epochs": 952,
+      "mean_entropy_nats": 0.5320876240730286,
+      "kappa": 0.8518896694645546,
+      "kappa_argmax": 0.8561575014920637,
+      "n1_fraction": 0.028361344537815126,
+      "n1_rem_fraction": 0.25210084033613445
+    },
+    "SC4201E0-PSG": {
+      "subject": "SC420",
+      "cohort": "SC",
+      "n_epochs": 1022,
+      "mean_entropy_nats": 0.5902567505836487,
+      "kappa": 0.8111974852136072,
+      "kappa_argmax": 0.8044216295811518,
+      "n1_fraction": 0.03816046966731898,
+      "n1_rem_fraction": 0.21135029354207435
+    },
+    "SC4202E0-PSG": {
+      "subject": "SC420",
+      "cohort": "SC",
+      "n_epochs": 1021,
+      "mean_entropy_nats": 0.8441686630249023,
+      "kappa": 0.7420067181745023,
+      "kappa_argmax": 0.7340311035124786,
+      "n1_fraction": 0.11753183153770813,
+      "n1_rem_fraction": 0.32027424094025464
+    },
+    "SC4211E0-PSG": {
+      "subject": "SC421",
+      "cohort": "SC",
+      "n_epochs": 1578,
+      "mean_entropy_nats": 0.3795645534992218,
+      "kappa": 0.8037407045381958,
+      "kappa_argmax": 0.800129555710765,
+      "n1_fraction": 0.06717363751584284,
+      "n1_rem_fraction": 0.1628643852978454
+    },
+    "SC4212E0-PSG": {
+      "subject": "SC421",
+      "cohort": "SC",
+      "n_epochs": 808,
+      "mean_entropy_nats": 0.5333346128463745,
+      "kappa": 0.6457833059614089,
+      "kappa_argmax": 0.6460264943964221,
+      "n1_fraction": 0.10767326732673267,
+      "n1_rem_fraction": 0.21534653465346534
+    },
+    "SC4231E0-PSG": {
+      "subject": "SC423",
+      "cohort": "SC",
+      "n_epochs": 904,
+      "mean_entropy_nats": 0.772883951663971,
+      "kappa": 0.6292188658691045,
+      "kappa_argmax": 0.6290648988709457,
+      "n1_fraction": 0.15376106194690264,
+      "n1_rem_fraction": 0.38827433628318586
+    },
+    "SC4232E0-PSG": {
+      "subject": "SC423",
+      "cohort": "SC",
+      "n_epochs": 1729,
+      "mean_entropy_nats": 0.5544410943984985,
+      "kappa": 0.5885644629313243,
+      "kappa_argmax": 0.582785581891752,
+      "n1_fraction": 0.22093695777906305,
+      "n1_rem_fraction": 0.34644303065355697
+    },
+    "SC4291G0-PSG": {
+      "subject": "SC429",
+      "cohort": "SC",
+      "n_epochs": 1131,
+      "mean_entropy_nats": 0.7699042558670044,
+      "kappa": 0.7629601685057688,
+      "kappa_argmax": 0.7591868941158788,
+      "n1_fraction": 0.16003536693191867,
+      "n1_rem_fraction": 0.3147656940760389
+    },
+    "SC4292G0-PSG": {
+      "subject": "SC429",
+      "cohort": "SC",
+      "n_epochs": 1605,
+      "mean_entropy_nats": 0.538062334060669,
+      "kappa": 0.7519906516359637,
+      "kappa_argmax": 0.751711984691094,
+      "n1_fraction": 0.030529595015576325,
+      "n1_rem_fraction": 0.167601246105919
+    },
+    "SC4371F0-PSG": {
+      "subject": "SC437",
+      "cohort": "SC",
+      "n_epochs": 918,
+      "mean_entropy_nats": 0.77119380235672,
+      "kappa": 0.699573591321557,
+      "kappa_argmax": 0.6758517652285012,
+      "n1_fraction": 0.2549019607843137,
+      "n1_rem_fraction": 0.30392156862745096
+    },
+    "SC4372F0-PSG": {
+      "subject": "SC437",
+      "cohort": "SC",
+      "n_epochs": 1509,
+      "mean_entropy_nats": 0.617493748664856,
+      "kappa": 0.6840605073247719,
+      "kappa_argmax": 0.6750451969290228,
+      "n1_fraction": 0.18687872763419483,
+      "n1_rem_fraction": 0.2571239231278993
+    },
+    "SC4522E0-PSG": {
+      "subject": "SC452",
+      "cohort": "SC",
+      "n_epochs": 997,
+      "mean_entropy_nats": 0.6406317353248596,
+      "kappa": 0.6098493828782638,
+      "kappa_argmax": 0.6185175931412091,
+      "n1_fraction": 0.08926780341023069,
+      "n1_rem_fraction": 0.17352056168505517
+    },
+    "SC4531E0-PSG": {
+      "subject": "SC453",
+      "cohort": "SC",
+      "n_epochs": 1096,
+      "mean_entropy_nats": 0.8224093317985535,
+      "kappa": 0.6426970606042364,
+      "kappa_argmax": 0.6215101098965798,
+      "n1_fraction": 0.11313868613138686,
+      "n1_rem_fraction": 0.2773722627737226
+    },
+    "SC4532E0-PSG": {
+      "subject": "SC453",
+      "cohort": "SC",
+      "n_epochs": 1056,
+      "mean_entropy_nats": 0.6905578970909119,
+      "kappa": 0.7827534936659146,
+      "kappa_argmax": 0.7803024948288347,
+      "n1_fraction": 0.13920454545454544,
+      "n1_rem_fraction": 0.3001893939393939
+    },
+    "SC4611E0-PSG": {
+      "subject": "SC461",
+      "cohort": "SC",
+      "n_epochs": 1652,
+      "mean_entropy_nats": 0.7266661524772644,
+      "kappa": 0.5064944571334176,
+      "kappa_argmax": 0.5253532011017101,
+      "n1_fraction": 0.07445520581113801,
+      "n1_rem_fraction": 0.3159806295399516
+    },
+    "SC4612E0-PSG": {
+      "subject": "SC461",
+      "cohort": "SC",
+      "n_epochs": 1062,
+      "mean_entropy_nats": 1.0065957307815552,
+      "kappa": 0.6462075042500518,
+      "kappa_argmax": 0.6495899064837035,
+      "n1_fraction": 0.0903954802259887,
+      "n1_rem_fraction": 0.2919020715630885
+    },
+    "SC4741E0-PSG": {
+      "subject": "SC474",
+      "cohort": "SC",
+      "n_epochs": 2210,
+      "mean_entropy_nats": 0.5586506724357605,
+      "kappa": 0.6446965738598194,
+      "kappa_argmax": 0.6495122188897431,
+      "n1_fraction": 0.07149321266968325,
+      "n1_rem_fraction": 0.1678733031674208
+    },
+    "SC4742E0-PSG": {
+      "subject": "SC474",
+      "cohort": "SC",
+      "n_epochs": 1063,
+      "mean_entropy_nats": 0.9100447297096252,
+      "kappa": 0.5263044290591585,
+      "kappa_argmax": 0.5180301102899822,
+      "n1_fraction": 0.1947318908748824,
+      "n1_rem_fraction": 0.39040451552210725
+    },
+    "ST7101J0-PSG": {
+      "subject": "ST710",
+      "cohort": "ST",
+      "n_epochs": 1042,
+      "mean_entropy_nats": 0.7644067406654358,
+      "kappa": 0.7078884038606468,
+      "kappa_argmax": 0.7130970271906109,
+      "n1_fraction": 0.0690978886756238,
+      "n1_rem_fraction": 0.2907869481765835
+    },
+    "ST7102J0-PSG": {
+      "subject": "ST710",
+      "cohort": "ST",
+      "n_epochs": 980,
+      "mean_entropy_nats": 0.6726068258285522,
+      "kappa": 0.6872500067976685,
+      "kappa_argmax": 0.6962160471060301,
+      "n1_fraction": 0.030612244897959183,
+      "n1_rem_fraction": 0.3806122448979592
+    },
+    "ST7141J0-PSG": {
+      "subject": "ST714",
+      "cohort": "ST",
+      "n_epochs": 858,
+      "mean_entropy_nats": 0.8215067386627197,
+      "kappa": 0.6392487358535999,
+      "kappa_argmax": 0.634516299898878,
+      "n1_fraction": 0.09090909090909091,
+      "n1_rem_fraction": 0.3333333333333333
+    },
+    "ST7142J0-PSG": {
+      "subject": "ST714",
+      "cohort": "ST",
+      "n_epochs": 873,
+      "mean_entropy_nats": 0.7260923385620117,
+      "kappa": 0.571842946023205,
+      "kappa_argmax": 0.5849765895907573,
+      "n1_fraction": 0.035509736540664374,
+      "n1_rem_fraction": 0.3207331042382589
+    },
+    "ST7161J0-PSG": {
+      "subject": "ST716",
+      "cohort": "ST",
+      "n_epochs": 1050,
+      "mean_entropy_nats": 0.7799130082130432,
+      "kappa": 0.3042506477836896,
+      "kappa_argmax": 0.30529104193358503,
+      "n1_fraction": 0.08761904761904762,
+      "n1_rem_fraction": 0.2704761904761905
+    },
+    "ST7162J0-PSG": {
+      "subject": "ST716",
+      "cohort": "ST",
+      "n_epochs": 988,
+      "mean_entropy_nats": 0.8430206775665283,
+      "kappa": 0.5917153589315525,
+      "kappa_argmax": 0.5918823300150133,
+      "n1_fraction": 0.10323886639676114,
+      "n1_rem_fraction": 0.18421052631578946
+    }
+  },
+  "per_recording_validation": {
+    "SC4081E0-PSG": {
+      "subject": "SC408",
+      "cohort": "SC",
+      "n_epochs": 1134,
+      "mean_entropy_nats": 0.4911115765571594,
+      "kappa": 0.8384895472109383,
+      "kappa_argmax": 0.836216092418856,
+      "n1_fraction": 0.059964726631393295,
+      "n1_rem_fraction": 0.17548500881834214
+    },
+    "SC4082E0-PSG": {
+      "subject": "SC408",
+      "cohort": "SC",
+      "n_epochs": 1054,
+      "mean_entropy_nats": 0.5968565940856934,
+      "kappa": 0.7956014147178427,
+      "kappa_argmax": 0.7944187728960461,
+      "n1_fraction": 0.03700189753320683,
+      "n1_rem_fraction": 0.2836812144212524
+    },
+    "SC4111E0-PSG": {
+      "subject": "SC411",
+      "cohort": "SC",
+      "n_epochs": 928,
+      "mean_entropy_nats": 0.8224349021911621,
+      "kappa": 0.4099042786014365,
+      "kappa_argmax": 0.4054378729027349,
+      "n1_fraction": 0.014008620689655173,
+      "n1_rem_fraction": 0.18426724137931033
+    },
+    "SC4112E0-PSG": {
+      "subject": "SC411",
+      "cohort": "SC",
+      "n_epochs": 802,
+      "mean_entropy_nats": 0.5896291136741638,
+      "kappa": 0.8118580264101221,
+      "kappa_argmax": 0.8053474672998964,
+      "n1_fraction": 0.022443890274314215,
+      "n1_rem_fraction": 0.21072319201995013
+    },
+    "SC4131E0-PSG": {
+      "subject": "SC413",
+      "cohort": "SC",
+      "n_epochs": 1028,
+      "mean_entropy_nats": 0.5033447742462158,
+      "kappa": 0.8141394732570462,
+      "kappa_argmax": 0.8134230112145575,
+      "n1_fraction": 0.05544747081712062,
+      "n1_rem_fraction": 0.2227626459143969
+    },
+    "SC4171E0-PSG": {
+      "subject": "SC417",
+      "cohort": "SC",
+      "n_epochs": 1002,
+      "mean_entropy_nats": 0.6766932010650635,
+      "kappa": 0.5732240084077163,
+      "kappa_argmax": 0.5777134235760092,
+      "n1_fraction": 0.020958083832335328,
+      "n1_rem_fraction": 0.282435129740519
+    },
+    "SC4172E0-PSG": {
+      "subject": "SC417",
+      "cohort": "SC",
+      "n_epochs": 1773,
+      "mean_entropy_nats": 0.6581019759178162,
+      "kappa": 0.7188756756756757,
+      "kappa_argmax": 0.7101512771653482,
+      "n1_fraction": 0.024816694867456288,
+      "n1_rem_fraction": 0.11787930062041738
+    },
+    "SC4321E0-PSG": {
+      "subject": "SC432",
+      "cohort": "SC",
+      "n_epochs": 1560,
+      "mean_entropy_nats": 0.4464842975139618,
+      "kappa": 0.7572430447815679,
+      "kappa_argmax": 0.7635184964074758,
+      "n1_fraction": 0.13076923076923078,
+      "n1_rem_fraction": 0.3141025641025641
+    },
+    "SC4322E0-PSG": {
+      "subject": "SC432",
+      "cohort": "SC",
+      "n_epochs": 1021,
+      "mean_entropy_nats": 0.6101070046424866,
+      "kappa": 0.7964199805698108,
+      "kappa_argmax": 0.7938451328683177,
+      "n1_fraction": 0.14103819784524976,
+      "n1_rem_fraction": 0.3770812928501469
+    },
+    "SC4341F0-PSG": {
+      "subject": "SC434",
+      "cohort": "SC",
+      "n_epochs": 1501,
+      "mean_entropy_nats": 0.6110483407974243,
+      "kappa": 0.6474002458300319,
+      "kappa_argmax": 0.647525116937352,
+      "n1_fraction": 0.09993337774816789,
+      "n1_rem_fraction": 0.2145236508994004
+    },
+    "SC4342F0-PSG": {
+      "subject": "SC434",
+      "cohort": "SC",
+      "n_epochs": 1582,
+      "mean_entropy_nats": 0.49570512771606445,
+      "kappa": 0.8410394494611719,
+      "kappa_argmax": 0.8337969451760093,
+      "n1_fraction": 0.08596713021491782,
+      "n1_rem_fraction": 0.19089759797724398
+    },
+    "SC4351F0-PSG": {
+      "subject": "SC435",
+      "cohort": "SC",
+      "n_epochs": 976,
+      "mean_entropy_nats": 0.7278582453727722,
+      "kappa": 0.6977704376548307,
+      "kappa_argmax": 0.6915577591308665,
+      "n1_fraction": 0.07991803278688525,
+      "n1_rem_fraction": 0.10450819672131148
+    },
+    "SC4352F0-PSG": {
+      "subject": "SC435",
+      "cohort": "SC",
+      "n_epochs": 963,
+      "mean_entropy_nats": 0.700020432472229,
+      "kappa": 0.5934262459583008,
+      "kappa_argmax": 0.5946987716123755,
+      "n1_fraction": 0.06853582554517133,
+      "n1_rem_fraction": 0.14330218068535824
+    },
+    "SC4441E0-PSG": {
+      "subject": "SC444",
+      "cohort": "SC",
+      "n_epochs": 1195,
+      "mean_entropy_nats": 0.6740918159484863,
+      "kappa": 0.6844273983757794,
+      "kappa_argmax": 0.6728584610554447,
+      "n1_fraction": 0.15313807531380752,
+      "n1_rem_fraction": 0.23682008368200838
+    },
+    "SC4442E0-PSG": {
+      "subject": "SC444",
+      "cohort": "SC",
+      "n_epochs": 1092,
+      "mean_entropy_nats": 0.7063862681388855,
+      "kappa": 0.7326093062447336,
+      "kappa_argmax": 0.7189303069373709,
+      "n1_fraction": 0.08424908424908426,
+      "n1_rem_fraction": 0.17216117216117216
+    },
+    "SC4461F0-PSG": {
+      "subject": "SC446",
+      "cohort": "SC",
+      "n_epochs": 983,
+      "mean_entropy_nats": 0.6444432139396667,
+      "kappa": 0.7826294286126889,
+      "kappa_argmax": 0.777005080870268,
+      "n1_fraction": 0.12004069175991862,
+      "n1_rem_fraction": 0.2990844354018311
+    },
+    "SC4462F0-PSG": {
+      "subject": "SC446",
+      "cohort": "SC",
+      "n_epochs": 1022,
+      "mean_entropy_nats": 0.701659619808197,
+      "kappa": 0.7819476888905909,
+      "kappa_argmax": 0.7765460846369967,
+      "n1_fraction": 0.19373776908023482,
+      "n1_rem_fraction": 0.37573385518590996
+    },
+    "SC4561F0-PSG": {
+      "subject": "SC456",
+      "cohort": "SC",
+      "n_epochs": 1237,
+      "mean_entropy_nats": 0.683614194393158,
+      "kappa": 0.5991177335208135,
+      "kappa_argmax": 0.6028549201684303,
+      "n1_fraction": 0.4211802748585287,
+      "n1_rem_fraction": 0.5125303152789006
+    },
+    "SC4562F0-PSG": {
+      "subject": "SC456",
+      "cohort": "SC",
+      "n_epochs": 1148,
+      "mean_entropy_nats": 0.6211466789245605,
+      "kappa": 0.7182285555990093,
+      "kappa_argmax": 0.7247701575627051,
+      "n1_fraction": 0.31794425087108014,
+      "n1_rem_fraction": 0.4372822299651568
+    },
+    "SC4581G0-PSG": {
+      "subject": "SC458",
+      "cohort": "SC",
+      "n_epochs": 1095,
+      "mean_entropy_nats": 0.8031930923461914,
+      "kappa": 0.6021663628750185,
+      "kappa_argmax": 0.6041774506681881,
+      "n1_fraction": 0.13881278538812786,
+      "n1_rem_fraction": 0.28584474885844746
+    },
+    "SC4582G0-PSG": {
+      "subject": "SC458",
+      "cohort": "SC",
+      "n_epochs": 1175,
+      "mean_entropy_nats": 0.8088133931159973,
+      "kappa": 0.5510074814780201,
+      "kappa_argmax": 0.5480633359286149,
+      "n1_fraction": 0.16595744680851063,
+      "n1_rem_fraction": 0.23914893617021277
+    },
+    "SC4671G0-PSG": {
+      "subject": "SC467",
+      "cohort": "SC",
+      "n_epochs": 1968,
+      "mean_entropy_nats": 0.5285840630531311,
+      "kappa": 0.7685146636166797,
+      "kappa_argmax": 0.7643564394678244,
+      "n1_fraction": 0.18089430894308944,
+      "n1_rem_fraction": 0.25660569105691056
+    },
+    "SC4672G0-PSG": {
+      "subject": "SC467",
+      "cohort": "SC",
+      "n_epochs": 1021,
+      "mean_entropy_nats": 0.6328123807907104,
+      "kappa": 0.7810991053855312,
+      "kappa_argmax": 0.7801657110503274,
+      "n1_fraction": 0.20861900097943192,
+      "n1_rem_fraction": 0.30166503428011754
+    },
+    "ST7081J0-PSG": {
+      "subject": "ST708",
+      "cohort": "ST",
+      "n_epochs": 947,
+      "mean_entropy_nats": 0.7049954533576965,
+      "kappa": 0.7321460104043118,
+      "kappa_argmax": 0.7329351934660604,
+      "n1_fraction": 0.08342133051742344,
+      "n1_rem_fraction": 0.17634635691657866
+    },
+    "ST7082J0-PSG": {
+      "subject": "ST708",
+      "cohort": "ST",
+      "n_epochs": 931,
+      "mean_entropy_nats": 0.7298391461372375,
+      "kappa": 0.5555794488875875,
+      "kappa_argmax": 0.5510222399369572,
+      "n1_fraction": 0.1836734693877551,
+      "n1_rem_fraction": 0.3029001074113856
+    },
+    "ST7131J0-PSG": {
+      "subject": "ST713",
+      "cohort": "ST",
+      "n_epochs": 859,
+      "mean_entropy_nats": 0.6434619426727295,
+      "kappa": 0.6230196221974792,
+      "kappa_argmax": 0.6190592701477787,
+      "n1_fraction": 0.06984866123399301,
+      "n1_rem_fraction": 0.25844004656577413
+    },
+    "ST7132J0-PSG": {
+      "subject": "ST713",
+      "cohort": "ST",
+      "n_epochs": 852,
+      "mean_entropy_nats": 0.7348130345344543,
+      "kappa": 0.5296745029075727,
+      "kappa_argmax": 0.5313869402917786,
+      "n1_fraction": 0.10446009389671361,
+      "n1_rem_fraction": 0.357981220657277
+    },
+    "ST7151J0-PSG": {
+      "subject": "ST715",
+      "cohort": "ST",
+      "n_epochs": 897,
+      "mean_entropy_nats": 0.8576322197914124,
+      "kappa": 0.1233385457388585,
+      "kappa_argmax": 0.12075169550898635,
+      "n1_fraction": 0.08695652173913043,
+      "n1_rem_fraction": 0.2463768115942029
+    },
+    "ST7152J0-PSG": {
+      "subject": "ST715",
+      "cohort": "ST",
+      "n_epochs": 1045,
+      "mean_entropy_nats": 0.6821186542510986,
+      "kappa": 0.7864352251676149,
+      "kappa_argmax": 0.7837277780979677,
+      "n1_fraction": 0.07751196172248803,
+      "n1_rem_fraction": 0.26889952153110047
+    },
+    "ST7201J0-PSG": {
+      "subject": "ST720",
+      "cohort": "ST",
+      "n_epochs": 921,
+      "mean_entropy_nats": 0.7290770411491394,
+      "kappa": 0.06834247494414758,
+      "kappa_argmax": 0.0696408408822542,
+      "n1_fraction": 0.0749185667752443,
+      "n1_rem_fraction": 0.22041259500542887
+    },
+    "ST7202J0-PSG": {
+      "subject": "ST720",
+      "cohort": "ST",
+      "n_epochs": 898,
+      "mean_entropy_nats": 0.599464476108551,
+      "kappa": 0.16517053529133097,
+      "kappa_argmax": 0.16191596572750633,
+      "n1_fraction": 0.0378619153674833,
+      "n1_rem_fraction": 0.23162583518930957
+    }
+  },
+  "caveats": [
+    "Within the ST cohort alone (n=6 test recordings) the correlation does not reach significance. That is a sample-size limit, not evidence of absence.",
+    "Tier boundaries are validation-fitted; re-fit them if the model OR the calibration temperature changes.",
+    "This predicts agreement with the expert scorer, which is not the same as clinical correctness - both can be wrong on the same night."
+  ]
+}

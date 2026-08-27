@@ -1,0 +1,185 @@
+{
+  "experiment": "N4kd - distil the ensemble teacher",
+  "date": "2026-08-28",
+  "question": "Do soft targets beat hard labels, given a teacher that is finally better than the student?",
+  "answer": "Not on accuracy - that is a tie. On CALIBRATION and on the clinical derived metrics, decisively. Which for this project is the axis that matters, because the evidence packet's entire trust machinery is built on calibrated probabilities.",
+  "setup": {
+    "teacher": "ENSmc - ensemble of student_N2multiscale_fix, student_N3mc_s42, student_baseline_E0",
+    "teacher_val_kappa": 0.6930705533212478,
+    "teacher_test_kappa": 0.713995403021263,
+    "alpha": 0.5,
+    "T": 3.0,
+    "student": "single-channel multiscale, 139,606 params, 4.65x compression",
+    "control": "the SAME trainer at alpha=1.0 reproduces hard labels, so the comparison isolates the training signal",
+    "validation_reproduces": {
+      "logged": 0.7254,
+      "recomputed": 0.7253,
+      "delta": -0.0001,
+      "verdict": "MATCH"
+    }
+  },
+  "accuracy_is_a_tie": {
+    "validation": {
+      "hard_kappa": 0.6762853600376468,
+      "kd_kappa": 0.680952837931466,
+      "delta_kappa": 0.0047,
+      "delta_macro_f1": 0.0003
+    },
+    "test": {
+      "hard_kappa": 0.6992404804170173,
+      "kd_kappa": 0.7000849649157589,
+      "delta_kappa": 0.0008,
+      "delta_macro_f1": -0.0031
+    },
+    "paired_per_recording": {
+      "validation": {
+        "mean_delta_kappa": 0.0055,
+        "better_on": "20/31",
+        "wilcoxon_p": 0.327,
+        "ci": [
+          -0.0048,
+          0.0157
+        ]
+      },
+      "test": {
+        "mean_delta_kappa": 0.0026,
+        "better_on": "20/29",
+        "wilcoxon_p": 0.238,
+        "ci": [
+          -0.006,
+          0.0111
+        ]
+      }
+    },
+    "verdict": "Not significant on either split. Consistently better more often than not (20/31 and 20/29), but the confidence intervals span zero."
+  },
+  "the_result_that_matters": {
+    "calibration_uncalibrated_ECE_15_bins": {
+      "hard_labels": {
+        "validation": 0.061,
+        "test": 0.0359
+      },
+      "distilled": {
+        "validation": 0.0463,
+        "test": 0.0241
+      },
+      "change": {
+        "validation": "-24%",
+        "test": "-33%"
+      },
+      "mean_entropy_nats": {
+        "hard": {
+          "val": 0.465,
+          "test": 0.487
+        },
+        "distilled": {
+          "val": 0.494,
+          "test": 0.518
+        }
+      },
+      "why_it_matters": "night_confidence tiers, safe_to_assert and the whole evidence packet are built on the probabilities being trustworthy, not on the argmax being right. This is the axis the project actually depends on, and it improved on BOTH splits - unlike the accuracy difference, which is noise.",
+      "consistent_across_splits": true
+    },
+    "clinical_metrics_held_out_test": {
+      "rem_latency_mae_min": {
+        "hard": 33.66,
+        "distilled": 18.26,
+        "change": "-46%"
+      },
+      "nights_off_by_over_60_min": {
+        "hard": 9,
+        "distilled": 6
+      },
+      "false_soremp": {
+        "hard": 0,
+        "distilled": 0
+      },
+      "note": "REM latency is the failure EVIDENCE_PACKET.md s4 was written around. 18.26 min is the best this project has measured; the original M0 was at 39.4."
+    },
+    "night_confidence": {
+      "test_spearman_rho": {
+        "hard": -0.505,
+        "distilled": -0.59
+      },
+      "triage_gap": {
+        "hard": 0.0986,
+        "distilled": 0.141
+      },
+      "tiers_monotone_on_test": true,
+      "note": "The triage signal - flag the third of nights most likely to be wrong - separates 43% better. That is a direct consequence of the probabilities being better calibrated."
+    },
+    "decoder": {
+      "improved_vs_degraded": "13 / 1",
+      "previous_M0": "12 / 4",
+      "selected": "minrun REM L=3"
+    }
+  },
+  "derived_metrics": {
+    "asserted_surface_16_metrics": {
+      "improved": 10,
+      "degraded": 6
+    },
+    "tier_demotions_among_asserted": 0,
+    "only_demotion": {
+      "metric": "N1_Duration",
+      "change": "fragile -> unreliable",
+      "asserted_by_packet": false
+    },
+    "notable": {
+      "REM_Latency": {
+        "before": 0.389,
+        "after": 0.304
+      },
+      "REM_Periods": {
+        "before": 0.469,
+        "after": 0.455
+      },
+      "N1_Proportion": {
+        "before": 0.359,
+        "after": 0.384
+      },
+      "R_Proportion": {
+        "before": 0.203,
+        "after": 0.247
+      }
+    },
+    "safe_to_assert_per_packet": "5 of 19, unchanged"
+  },
+  "what_this_settles_about_distillation": {
+    "finding": "The penalty is gone. Distillation cost 0.03-0.05 kappa every previous time it was tried here; with a teacher that exceeds the student it costs nothing and improves calibration.",
+    "history": {
+      "student_distilled_E0": -0.0524,
+      "student_distilled_E1b": -0.0315,
+      "student_N4kd": 0.0009,
+      "units": "test kappa against the matched hard-label baseline"
+    },
+    "fig8_rq3_extrapolation": "put break-even at teacher kappa ~0.75 on test. The ensemble reached 0.7140 and the penalty had already vanished, so the two-point extrapolation was pessimistic - unsurprising, with n=2.",
+    "the_transferable_claim": "A teacher must exceed the student before its guidance carries usable information. An ensemble of comparable models reaches that without a larger architecture, and what transfers to the student is calibration rather than accuracy.",
+    "what_did_NOT_transfer": "The teacher's accuracy advantage. The ensemble is at val kappa 0.6931 and the student reached 0.6810, closing about 28% of the gap to its own hard-label baseline at 0.6763. Reported as measured."
+  },
+  "decision": {
+    "M0_changed": true,
+    "from": "student_N2multiscale",
+    "to": "student_N4kd",
+    "previous_artefacts_preserved_at": "distillation/results/m0_student_N2multiscale/",
+    "case_for": [
+      "raw test ECE 0.0359 -> 0.0241, and on validation too",
+      "REM latency MAE on test 33.66 -> 18.26 min",
+      "nights off by >60 min 9 -> 6",
+      "night-confidence triage gap 0.0986 -> 0.1410",
+      "validation kappa and macro-F1 both marginally better",
+      "10 of 16 asserted metrics improved, zero demoted"
+    ],
+    "case_against": [
+      "test macro-F1 0.7407 -> 0.7376",
+      "validation false SOREMP 1 -> 2, though test stayed at 0",
+      "accuracy difference is not statistically significant"
+    ],
+    "why_promoted_anyway": "Accuracy is a tie, so accuracy cannot decide it. What decides it is that every part of the packet's trust machinery - calibration, night confidence, derived-metric error, the clinical REM-latency failure - improved, and improved on both splits. This is the model that is more honest about what it does not know, which is the property a clinical packet is built to carry."
+  },
+  "open_items": [
+    "Temperature scaling now HURTS test ECE for both models (0.0241 -> 0.0327 here, 0.0273 -> 0.0350 for the previous M0). The validation-fitted temperature over-corrects on test. The raw distilled probabilities are the best-calibrated output this project has produced, and the calibration step may no longer earn its place - worth testing before relying on it.",
+    "The student closed only ~28% of the gap to its teacher. A larger alpha sweep (0.3, 0.7) or a longer schedule might close more.",
+    "ABSTRACT.md and PROJECT_REPORT.md still carry the pre-multiscale numbers."
+  ]
+}

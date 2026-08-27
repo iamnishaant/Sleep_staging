@@ -6,10 +6,11 @@
 |---|---|
 | **Built** | 2026-08-23 |
 | **Packets** | 29 — every held-out test recording |
-| **Source model (M0)** | `distillation/results/students/student_N2multiscale/student_best.pt` |
-| **M0 size / test κ** | 139,606 params · κ 0.6991 · macro-F1 0.7424 (decoded) |
+| **Source model (M0)** | `distillation/results/students/student_N4kd/student_best.pt` |
+| **M0 size / test κ** | 139,606 params · κ 0.6993 · macro-F1 0.7376 (decoded) |
+| **Trained on** | **soft targets** from a 3-model ensemble (α=0.5, T=3.0) |
 | **Hypnogram** | **decoded** — `sequence_decode.py`, REM minimum-run L=3 |
-| **Previous M0** | `student_baseline_E0` (121,099 params, κ 0.6469) — artefacts preserved under `results/m0_student_baseline_E0/`, promotion recorded in `results/m0_promotion.json` |
+| **Previous M0** | `student_N2multiscale` (κ 0.6991, hard labels) — artefacts under `results/m0_student_N2multiscale/`. Before that `student_baseline_E0` (κ 0.6469) under `results/m0_student_baseline_E0/`. Promotions recorded in `results/m0_promotion.json` and `results/kd_result.json`. |
 | **Output** | `distillation/results/packets/<recording_id>.json` |
 | **Schema** | `1.1` |
 | **Status** | M1 minus attributions — Gate 3a has not run |
@@ -89,15 +90,15 @@ Every packet records what produced it. Two silent bugs have already been found i
 
 ```json
 "provenance": {
-  "model": "student_N2multiscale",
-  "model_checkpoint": "distillation/results/students/student_N2multiscale/student_best.pt",
-  "model_sha256": "2f1363a561774f0a843ad5e93cb63f64ccf51cf1f1974a8903f5dabdf2e1c934",
+  "model": "student_N4kd",
+  "model_checkpoint": "distillation/results/students/student_N4kd/student_best.pt",
+  "model_sha256": "ec4448ea148cdf5f917eed1bc0b876b016731d8eadcd78dfd7cdc78bb01d0029",
   "model_parameters": 139606,
   "model_encoder": "multiscale",
   "model_eeg_scale": 15849.46,
-  "git_commit": "a9e52ad4c49a793dfd0159f222fe9c8e04d76011",
-  "generated_at": "2026-08-22T21:11:02+00:00",
-  "calibration_temperature": 1.3399,
+  "git_commit": "96ac9fd85c4c47070a690e1cbd032934658cf2f8",
+  "generated_at": "2026-08-27T19:47:47+00:00",
+  "calibration_temperature": 1.2847,
   "hypnogram_decoder": "minrun REM L=3",
   "generator": "distillation/build_packet.py",
   "schema_version": "1.1"
@@ -122,15 +123,15 @@ waveform.
 {
   "id": "arch.rem_latency",
   "label": "REM latency",
-  "value": 18.5,
+  "value": 119.0,
   "unit": "minutes",
   "assertion_level": "factual",
   "metric_reliability": "unreliable",
   "safe_to_assert": false,
-  "mean_abs_error": 67.7258,
+  "mean_abs_error": 48.2097,
   "error_unit": "minutes",
   "error_measured_on": "validation split",
-  "caveat": "depends on a single epoch. Even on the decoded hypnogram it produced a false sleep-onset-REM reading - a narcolepsy red flag - on 3 of 31 validation nights (mean relative error 43%)."
+  "caveat": "depends on a single epoch. Even on the decoded hypnogram it produced a false sleep-onset-REM reading - a narcolepsy red flag - on 2 of 31 validation nights (mean relative error 30%)."
 }
 ```
 
