@@ -378,8 +378,37 @@ def main() -> int:
     records, skipped = process(dirs, args.channels, out_root, args.limit)
 
     out_root.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(records).to_csv(out_root / "index.csv", index=False)
+
+    # --limit IS A SMOKE TEST AND MUST NOT TOUCH THE PRODUCTION ARTEFACTS.
+    #
+    # It used to write index.csv and refit multichannel_norm.json from whatever
+    # handful of recordings it processed. Run against a FINISHED dataset that
+    # destroyed the index (197 rows -> 2) and replaced the fitted per-channel
+    # scales with values computed from two recordings - while the tensors, the
+    # slow part, stayed fine, so nothing looked wrong. And without --channels it
+    # also rewrote those two recordings' tensors using DEFAULT_CHANNELS, quietly
+    # reducing them from 3 channels to 2.
+    #
+    # Nothing about a capped run announces "this output is partial", which is
+    # what made it dangerous. Now it writes a separate index and skips the
+    # normalisation fit entirely.
+    index_path = out_root / ("index.csv" if not args.limit
+                             else f"index_limit{args.limit}.csv")
+    pd.DataFrame(records).to_csv(index_path, index=False)
     print(f"\n{len(records)} recordings written, {len(skipped)} skipped")
+    print(f"index -> {index_path.name}")
+    if args.limit:
+        for f, why in skipped[:10]:
+            print(f"  skipped {f}: {why}")
+        print(f"\n--limit is a smoke test. Wrote {index_path.name} rather than "
+              f"index.csv, and\nSKIPPED the normalisation fit, which needs the whole "
+              f"training split. Neither\nproduction artefact was touched. Re-run "
+              f"without --limit for the real thing.")
+        print(f"\nNOTE: the {len(records)} tensors it wrote used "
+              f"--channels {args.channels}.\nIf that differs from the full run, those "
+              f"tensors are now inconsistent with\nthe rest - re-run without --limit "
+              f"to restore them.")
+        return 0
 
     # COMPLETENESS AGAINST splits.json.
     #
