@@ -109,9 +109,34 @@ WARMUP_FRAC    = 0.05
 WINDOW_SIZE    = 256
 OVERLAP        = 192
 import sys as _sys
+
+
+def _resolve_seed(default=42):
+    """
+    Seed from the command line, an environment variable, or the default.
+
+    A bare int(_sys.argv[1]) breaks in a notebook: Jupyter and Kaggle pass
+    argv = ["ipykernel_launcher.py", "-f", "<kernel.json>"], so argv[1] is
+    "-f" and int() raises before the file has even finished importing.
+    Only an argument that actually parses as an integer is taken as a seed.
+
+    SLEEP_SEED covers the notebook case, where there is no argv to set:
+        import os; os.environ["SLEEP_SEED"] = "1"
+    or just edit SEED below.
+    """
+    for a in _sys.argv[1:]:
+        if a.lstrip("+-").isdigit():
+            return int(a)
+    v = os.environ.get("SLEEP_SEED", "")
+    if v.lstrip("+-").isdigit():
+        return int(v)
+    return default
+
+
 # The ensemble needs K runs differing only in seed:
-#     python kaggle_train_student_mc.py 1
-SEED           = int(_sys.argv[1]) if len(_sys.argv) > 1 else 42
+#     python kaggle_train_student_mc.py 1        (script)
+#     os.environ["SLEEP_SEED"] = "1"             (notebook)
+SEED           = _resolve_seed()
 EARLY_STOP_PATIENCE = 25
 NUM_WORKERS    = 2
 
@@ -422,6 +447,11 @@ def main():
         print(f"GPU: {torch.cuda.get_device_name(0)} ({sm})")
 
     index = find_file(f"{DATA_DIR}/index.csv")
+    # The dataframe below carries ABSOLUTE paths, so the dataset's `root`
+    # is inert: Path(root) / "<absolute>" returns the absolute path
+    # unchanged. Kept, rather than removed, so SleepDataset keeps the same
+    # signature as the single-channel trainers.
+    root = Path(".")
     tensor_dir = index.parent / "tensors"
     spec_dir = find_file("processed_sleepedf/spectral")
     print(f"  index     {index}")

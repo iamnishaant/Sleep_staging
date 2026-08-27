@@ -170,9 +170,34 @@ def build() -> str:
     src, n3 = re.subn(
         r'^SEED           = 42$',
         'import sys as _sys\n'
+        '\n'
+        '\n'
+        'def _resolve_seed(default=42):\n'
+        '    """\n'
+        '    Seed from the command line, an environment variable, or the default.\n'
+        '\n'
+        '    A bare int(_sys.argv[1]) breaks in a notebook: Jupyter and Kaggle pass\n'
+        '    argv = ["ipykernel_launcher.py", "-f", "<kernel.json>"], so argv[1] is\n'
+        '    "-f" and int() raises before the file has even finished importing.\n'
+        '    Only an argument that actually parses as an integer is taken as a seed.\n'
+        '\n'
+        '    SLEEP_SEED covers the notebook case, where there is no argv to set:\n'
+        '        import os; os.environ["SLEEP_SEED"] = "1"\n'
+        '    or just edit SEED below.\n'
+        '    """\n'
+        '    for a in _sys.argv[1:]:\n'
+        '        if a.lstrip("+-").isdigit():\n'
+        '            return int(a)\n'
+        '    v = os.environ.get("SLEEP_SEED", "")\n'
+        '    if v.lstrip("+-").isdigit():\n'
+        '        return int(v)\n'
+        '    return default\n'
+        '\n'
+        '\n'
         '# The ensemble needs K runs differing only in seed:\n'
-        '#     python kaggle_train_student_mc.py 1\n'
-        'SEED           = int(_sys.argv[1]) if len(_sys.argv) > 1 else 42', src, flags=re.M)
+        '#     python kaggle_train_student_mc.py 1        (script)\n'
+        '#     os.environ["SLEEP_SEED"] = "1"             (notebook)\n'
+        'SEED           = _resolve_seed()', src, flags=re.M)
     if n1 != 1 or n2 != 1 or n3 != 1:
         raise SystemExit(f"config substitution failed ({n1}, {n2}, {n3})")
 
@@ -226,6 +251,11 @@ def build() -> str:
         'for r in df["rec"]]')
     _new_paths = (
         '    index = find_file(f"{DATA_DIR}/index.csv")\n'
+        '    # The dataframe below carries ABSOLUTE paths, so the dataset\'s `root`\n'
+        '    # is inert: Path(root) / "<absolute>" returns the absolute path\n'
+        '    # unchanged. Kept, rather than removed, so SleepDataset keeps the same\n'
+        '    # signature as the single-channel trainers.\n'
+        '    root = Path(".")\n'
         '    tensor_dir = index.parent / "tensors"\n'
         '    spec_dir = find_file("processed_sleepedf/spectral")\n'
         '    print(f"  index     {index}")\n'
