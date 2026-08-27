@@ -181,5 +181,37 @@
     "Temperature scaling now HURTS test ECE for both models (0.0241 -> 0.0327 here, 0.0273 -> 0.0350 for the previous M0). The validation-fitted temperature over-corrects on test. The raw distilled probabilities are the best-calibrated output this project has produced, and the calibration step may no longer earn its place - worth testing before relying on it.",
     "The student closed only ~28% of the gap to its teacher. A larger alpha sweep (0.3, 0.7) or a longer schedule might close more.",
     "ABSTRACT.md and PROJECT_REPORT.md still carry the pre-multiscale numbers."
-  ]
+  ],
+  "statistical_resolution": {
+    "headline_test_kappa": 0.6993,
+    "bootstrap_95_ci": [
+      0.6545,
+      0.7414
+    ],
+    "method": "2000 resamples over the 29 held-out RECORDINGS, the unit of independence - not over epochs, which would understate the interval by treating 33,431 correlated epochs as independent draws",
+    "what_it_resolves": "The previous delivered model (0.6449) sits BELOW the lower bound, so that improvement is real.",
+    "what_it_cannot_resolve": "Anything smaller than about 0.04 kappa. The hard-label twin at 0.6992 and this model at 0.6993 are not distinguishable at n=29 and never will be.",
+    "implication": "Since the encoder change, every result has been a tie because the test set cannot resolve the differences being made. Further tuning on Sleep-EDF is optimisation below the noise floor. More statistical power requires more subjects, which means a second cohort - the same thing external validation requires for clinical credibility."
+  },
+  "n1_is_self_aware": {
+    "question": "Is N1 error predictable from the model's own confidence?",
+    "answer": "Yes, monotonically.",
+    "accuracy_by_confidence_bin_when_predicting_N1": {
+      "0.0-0.4": 0.227,
+      "0.4-0.5": 0.318,
+      "0.5-0.6": 0.353,
+      "0.6-0.8": 0.41,
+      "0.8-1.0": 0.551
+    },
+    "mean_confidence_predicting_N1": 0.623,
+    "mean_confidence_predicting_anything_else": 0.827,
+    "where_true_N1_goes": {
+      "N1": 0.48,
+      "N2": 0.32,
+      "REM": 0.12,
+      "W": 0.05,
+      "N3": 0.02
+    },
+    "implication": "The model already knows N1 is where it is unsure, and the confusion lands on N1/N2 and N1/REM - the boundaries human scorers disagree on too. That is more useful to the packet than a better N1 classifier would be: N1 epochs can be flagged by confidence rather than asserted, which is what a clinical reader needs. Chasing N1 F1 as a number treats a labelling-ambiguity problem as a modelling problem."
+  }
 }
