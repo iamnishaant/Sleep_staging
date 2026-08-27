@@ -205,8 +205,18 @@ def build() -> str:
     # Both are resolved explicitly below, and the index is checked to be the one
     # whose `channels` column matches CHANNELS. Absolute paths are stored, so
     # the dataset's `root` argument becomes irrelevant.
+    # Matches the block v2 now emits, which resolves its own index explicitly.
+    # Kept as an exact-match replace so a change in v2 breaks this loudly rather
+    # than leaving mc silently reading a single-channel index.
     _old_paths = (
-        '    index = find_file("index.csv"); root = index.parent.parent\n'
+        '    index = find_file("processed_sleepedf/index.csv")\n'
+        '    root = index.parent.parent\n'
+        '    print(f"  index     {index}")\n'
+        '    if "channels" in pd.read_csv(index, nrows=1).columns:\n'
+        '        raise SystemExit(f"{index} is a MULTI-CHANNEL index, but this "\n'
+        '                         f"trainer is single-channel.\\n"\n'
+        '                         f"Attach processed_sleepedf, or run "\n'
+        '                         f"kaggle_train_student_mc.py instead.")\n'
         '    df = pd.read_csv(index)\n'
         '    df["rec"] = [str(p).replace("\\\\", "/").rsplit("/", 1)[-1][:-3] '
         'for p in df["tensor_path"]]\n'

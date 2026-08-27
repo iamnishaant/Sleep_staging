@@ -232,6 +232,26 @@ def build() -> str:
                          f"({src.count(_buggy)} matches).")
     src = src.replace(_buggy, _fixed, 1)
 
+    # Resolve the index EXPLICITLY, as the mc trainer does. find_file("index.csv")
+    # takes the first sorted match, and with processed_sleepedf_mc also attached
+    # that is ambiguous - it picks the right one here only because '/' (0x2F)
+    # sorts before '_' (0x5F). Which dataset a run trains on should not depend on
+    # a sort order, and a multi-channel index handed to this single-channel
+    # trainer would otherwise be read without complaint.
+    _old_idx = '    index = find_file("index.csv"); root = index.parent.parent'
+    _new_idx = (
+        '    index = find_file("processed_sleepedf/index.csv")\n'
+        '    root = index.parent.parent\n'
+        '    print(f"  index     {index}")\n'
+        '    if "channels" in pd.read_csv(index, nrows=1).columns:\n'
+        '        raise SystemExit(f"{index} is a MULTI-CHANNEL index, but this "\n'
+        '                         f"trainer is single-channel.\\n"\n'
+        '                         f"Attach processed_sleepedf, or run "\n'
+        '                         f"kaggle_train_student_mc.py instead.")')
+    if src.count(_old_idx) != 1:
+        raise SystemExit(f"index-resolution fix did not apply ({src.count(_old_idx)}).")
+    src = src.replace(_old_idx, _new_idx, 1)
+
     # Compare against BOTH bars. 0.6881 is student_baseline_E0 with the EEG
     # inert; 0.6821 is student_N1norm, which is the same EEG scale as this run
     # and therefore the comparison that isolates the encoder.

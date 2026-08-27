@@ -392,7 +392,14 @@ def main():
             raise SystemExit(f"UNSUPPORTED GPU ({sm}); build supports {sup}. Use 'GPU T4 x2'.")
         print(f"GPU: {torch.cuda.get_device_name(0)} ({sm})")
 
-    index = find_file("index.csv"); root = index.parent.parent
+    index = find_file("processed_sleepedf/index.csv")
+    root = index.parent.parent
+    print(f"  index     {index}")
+    if "channels" in pd.read_csv(index, nrows=1).columns:
+        raise SystemExit(f"{index} is a MULTI-CHANNEL index, but this "
+                         f"trainer is single-channel.\n"
+                         f"Attach processed_sleepedf, or run "
+                         f"kaggle_train_student_mc.py instead.")
     df = pd.read_csv(index)
     df["rec"] = [str(p).replace("\\", "/").rsplit("/", 1)[-1][:-3] for p in df["tensor_path"]]
     df["subject"] = df["rec"].str[:5]
