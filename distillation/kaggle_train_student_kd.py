@@ -121,13 +121,17 @@ USE_SPECTRAL   = True
 
 # The bar, from the stored baseline. VALIDATION figures - the test split is not
 # loaded by this script and must not be used to decide whether this worked.
-BASELINE_VAL_MACRO_F1 = 0.6881
-BASELINE_VAL_KAPPA    = 0.6389
+# student_N2multiscale_fix: the SAME architecture on hard labels.
+# Beating this is what shows the soft targets did the work.
+BASELINE_VAL_MACRO_F1 = 0.7249
+BASELINE_VAL_KAPPA    = 0.6763
 
 # student_N1norm: SAME EEG_SCALE, old encoder. This is the bar that
 # isolates the encoder; the one above also carries the scaling change.
-N1NORM_VAL_MACRO_F1   = 0.6821
-N1NORM_VAL_KAPPA      = 0.6323
+# The ensemble teacher this student is distilled FROM. The student is
+# not expected to reach it; how much of the gap it closes is the result.
+N1NORM_VAL_MACRO_F1   = 0.7370
+N1NORM_VAL_KAPPA      = 0.6931
 
 OUT_ROOT       = "/kaggle/working"
 
@@ -584,6 +588,7 @@ def main():
         model.train(); tot_loss = 0.0
         for xt, xs, tl, y, mask in dl_tr:
             xt, xs = xt.to(device, non_blocking=True), xs.to(device, non_blocking=True)
+            tl = tl.to(device, non_blocking=True)
             y, mask = y.to(device, non_blocking=True), mask.to(device, non_blocking=True)
             nv = (y != IGNORE_INDEX).sum().clamp_min(1)
             opt.zero_grad(set_to_none=True)
@@ -601,16 +606,6 @@ def main():
                     # bug make_v2_trainer fixes.
                     loss = distillation_loss(lg, tl[sl], y[sl], T=T, alpha=ALPHA,
                                              class_weights=cw) * (nvc / nv).float()
-                # KNOWN BUG - LEFT IN PLACE DELIBERATELY.
-                # `loss` is already sum/nv, i.e. this chunk's share of the
-                # full-batch mean. Multiplying by nvc/nv divides by nv a second
-                # time: gradients come out 0.5x too small with balanced chunks,
-                # and MIS-DIRECTED (cosine 0.9916) when padding makes chunks
-                # uneven, since each chunk is then weighted by nvc^2 not nvc.
-                #
-                # Not fixed here because this file must keep reproducing the
-                # stored student_N1norm checkpoint. The fix is applied by
-                # make_v2_trainer.py to every generated trainer; run those.
                 # `loss` is ALREADY this chunk's share of the full-batch
                 # mean (its sum / nv). Summing over chunks therefore gives
                 # the full-batch mean exactly. Do NOT reweight it again.
@@ -675,8 +670,8 @@ def main():
     else:
         print(f"    -> LIVE. The EEG now changes {(1-agree)*100:.2f}% of predictions.")
     _mf1, _kap = m["macro_f1"], m["kappa"]
-    print("\n  vs student_N1norm (same EEG scale, old encoder) - "
-          "the bar that isolates the encoder:")
+    print("\n  vs the ENSEMBLE TEACHER it was distilled from "
+          "(a 3-model average, not a shippable model):")
     print(f"    macro-F1 {_mf1:.4f} vs {N1NORM_VAL_MACRO_F1:.4f}"
           f"   ({_mf1 - N1NORM_VAL_MACRO_F1:+.4f})")
     print(f"    kappa    {_kap:.4f} vs {N1NORM_VAL_KAPPA:.4f}"

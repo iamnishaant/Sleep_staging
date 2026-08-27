@@ -219,7 +219,21 @@ def build() -> str:
     # kaggle_train_student.py is NOT affected: distillation_loss returns a MEAN,
     # so multiplying by nvc/nv is correct there. The defect appeared when
     # _norm.py switched to reduction="sum" / nv and kept the weight.
-    _buggy = ('                w = (nvc/nv).float()\n'
+    # The annotation is part of what gets replaced. Left behind, every generated
+    # trainer carried a comment reading "KNOWN BUG - LEFT IN PLACE DELIBERATELY
+    # ... not fixed here" directly above the FIXED code - which is worse than no
+    # comment, since a reader would trust it over the line beneath it.
+    _buggy = ('                # KNOWN BUG - LEFT IN PLACE DELIBERATELY.\n'
+              '                # `loss` is already sum/nv, i.e. this chunk\'s share of the\n'
+              '                # full-batch mean. Multiplying by nvc/nv divides by nv a second\n'
+              '                # time: gradients come out 0.5x too small with balanced chunks,\n'
+              '                # and MIS-DIRECTED (cosine 0.9916) when padding makes chunks\n'
+              '                # uneven, since each chunk is then weighted by nvc^2 not nvc.\n'
+              '                #\n'
+              '                # Not fixed here because this file must keep reproducing the\n'
+              '                # stored student_N1norm checkpoint. The fix is applied by\n'
+              '                # make_v2_trainer.py to every generated trainer; run those.\n'
+              '                w = (nvc/nv).float()\n'
               '                scaler.scale(loss*w).backward()\n'
               '                tot_loss += loss.item()*w.item()')
     _fixed = ("                # `loss` is ALREADY this chunk's share of the full-batch\n"

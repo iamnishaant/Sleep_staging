@@ -577,16 +577,6 @@ def main():
                     loss = F.cross_entropy(lg.reshape(-1, NUM_CLASSES), y[sl].reshape(-1),
                                            weight=cw, ignore_index=IGNORE_INDEX,
                                            reduction="sum") / nv
-                # KNOWN BUG - LEFT IN PLACE DELIBERATELY.
-                # `loss` is already sum/nv, i.e. this chunk's share of the
-                # full-batch mean. Multiplying by nvc/nv divides by nv a second
-                # time: gradients come out 0.5x too small with balanced chunks,
-                # and MIS-DIRECTED (cosine 0.9916) when padding makes chunks
-                # uneven, since each chunk is then weighted by nvc^2 not nvc.
-                #
-                # Not fixed here because this file must keep reproducing the
-                # stored student_N1norm checkpoint. The fix is applied by
-                # make_v2_trainer.py to every generated trainer; run those.
                 # `loss` is ALREADY this chunk's share of the full-batch
                 # mean (its sum / nv). Summing over chunks therefore gives
                 # the full-batch mean exactly. Do NOT reweight it again.

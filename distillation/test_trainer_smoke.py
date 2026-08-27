@@ -101,6 +101,41 @@ def run_trainer(trainer: str, data_dir: str, n_train=3, n_val=2, extra=None):
     return out_root, ns
 
 
+def check_device_moves():
+    """
+    Every tensor unpacked from the training DataLoader must reach the device.
+
+    This is a STATIC check because the dynamic one cannot exist here: the smoke
+    test runs on CPU, where every tensor is already co-located, so a missing
+    .to(device) is structurally invisible. It cost a Kaggle run to find - `tl`
+    was renamed into the loop header and never moved, and distillation_loss
+    then indexed a CPU tensor with a CUDA mask.
+    """
+    import re as _re
+    for trainer in ("kaggle_train_student_v2.py", "kaggle_train_student_mc.py",
+                    "kaggle_train_student_kd.py"):
+        f = HERE / trainer
+        if not f.exists():
+            check(f"{trainer} exists for device scan", False, "regenerate it")
+            continue
+        src = f.read_text(encoding="utf-8")
+        # Deliberately NOT `:\s*$` - \s matches newlines and is greedy, so the
+        # match end lands several lines past the header and the device moves fall
+        # outside the scanned body. That version failed on correct code, and a
+        # check that cries wolf is worse than no check.
+        m = _re.search(r"^[ \t]*for (.+?) in dl_tr:[ \t]*$", src, _re.M)
+        if not m:
+            check(f"{trainer} has a dl_tr loop", False, "pattern not found")
+            continue
+        names = [n.strip() for n in m.group(1).split(",")]
+        body = src[m.end():m.end() + 1500]
+        missing = [n for n in names
+                   if not n.startswith("_")
+                   and not _re.search(r"\b" + _re.escape(n) + r"\.to\(device", body)]
+        check(f"{trainer}: every batch tensor reaches the device",
+              not missing, f"never moved: {missing} (unpacks {names})")
+
+
 def main() -> int:
     print(__doc__.strip().splitlines()[0])
     print()
@@ -145,6 +180,10 @@ def main() -> int:
             if out_root:
                 shutil.rmtree(out_root, ignore_errors=True)
         print()
+
+    print("device placement (static - the CPU smoke test cannot see this)")
+    check_device_moves()
+    print()
 
     # the notebook-argv case that started this
     print("seed resolution (the notebook argv case)")

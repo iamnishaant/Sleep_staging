@@ -327,6 +327,44 @@ def build() -> str:
         raise SystemExit(f"sanity-probe substitution failed ({src.count(_old_probe)})")
     src = src.replace(_old_probe, _new_probe, 1)
 
+    # THE TEACHER LOGITS MUST GO TO THE DEVICE TOO.
+    #
+    # Renaming the loop variable is not enough: xt/xs/y/mask are moved, tl was
+    # not, so distillation_loss indexed a CPU tensor with a CUDA mask and died
+    # a few seconds into the first epoch. test_trainer_smoke could not catch it
+    # because it runs on CPU, where every tensor is already on one device - a
+    # device-placement bug is structurally invisible there. Guarded statically
+    # instead; see test_trainer_smoke.check_device_moves.
+    _old_dev = ('            xt, xs = xt.to(device, non_blocking=True), xs.to(device, non_blocking=True)\n'
+                '            y, mask = y.to(device, non_blocking=True), mask.to(device, non_blocking=True)')
+    _new_dev = ('            xt, xs = xt.to(device, non_blocking=True), xs.to(device, non_blocking=True)\n'
+                '            tl = tl.to(device, non_blocking=True)\n'
+                '            y, mask = y.to(device, non_blocking=True), mask.to(device, non_blocking=True)')
+    if src.count(_old_dev) != 1:
+        raise SystemExit(f"device-move substitution failed ({src.count(_old_dev)})")
+    src = src.replace(_old_dev, _new_dev, 1)
+
+    # The inherited bars are student_baseline_E0's. The bar for THIS experiment
+    # is the same architecture trained on hard labels, which is what isolates
+    # the training signal - the whole question the run exists to answer.
+    _old_bars = ('BASELINE_VAL_MACRO_F1 = 0.6881\n'
+                 'BASELINE_VAL_KAPPA    = 0.6389')
+    _new_bars = ('# student_N2multiscale_fix: the SAME architecture on hard labels.\n'
+                 '# Beating this is what shows the soft targets did the work.\n'
+                 'BASELINE_VAL_MACRO_F1 = 0.7249\n'
+                 'BASELINE_VAL_KAPPA    = 0.6763')
+    if src.count(_old_bars) != 1:
+        raise SystemExit(f"bar substitution failed ({src.count(_old_bars)})")
+    src = src.replace(_old_bars, _new_bars, 1)
+    src = src.replace('N1NORM_VAL_MACRO_F1   = 0.6821\nN1NORM_VAL_KAPPA      = 0.6323',
+                      '# The ensemble teacher this student is distilled FROM. The student is\n'
+                      '# not expected to reach it; how much of the gap it closes is the result.\n'
+                      'N1NORM_VAL_MACRO_F1   = 0.7370\nN1NORM_VAL_KAPPA      = 0.6931')
+    src = src.replace('vs student_N1norm (same EEG scale, old encoder) - "\n'
+                      '          "the bar that isolates the encoder:',
+                      'vs the ENSEMBLE TEACHER it was distilled from "\n'
+                      '          "(a 3-model average, not a shippable model):')
+
     # --- config echo and checkpoint provenance -------------------------------
     src = src.replace('EXPERIMENT {EXPERIMENT}  -  temporal encoder A/B',
                       'EXPERIMENT {EXPERIMENT}  -  distil the ensemble teacher')
