@@ -55,7 +55,7 @@ def check(name, cond, detail=""):
     print(f"  {'ok  ' if cond else 'FAIL'}  {name}" + (f"  -- {detail}" if not cond else ""))
 
 
-def run_trainer(trainer: str, data_dir: str, n_train=3, n_val=2):
+def run_trainer(trainer: str, data_dir: str, n_train=3, n_val=2, extra=None):
     """Execute one trainer's main() against local data, one epoch, on CPU."""
     src = (HERE / trainer).read_text(encoding="utf-8")
     out_root = Path(tempfile.mkdtemp(prefix="smoke_"))
@@ -76,6 +76,10 @@ def run_trainer(trainer: str, data_dir: str, n_train=3, n_val=2):
     src = src.replace("EPOCHS         = 75", "EPOCHS         = 1")
     src = src.replace("EARLY_STOP_PATIENCE = 25", "EARLY_STOP_PATIENCE = 0")
     src = src.replace("NUM_WORKERS    = 2", "NUM_WORKERS    = 0")
+    for a, b in (extra or {}).items():
+        if a not in src:
+            raise AssertionError(f"override target not found: {a!r}")
+        src = src.replace(a, b)
 
     ns: dict = {"__name__": "smoke"}
     exec(compile(src, trainer, "exec"), ns)
@@ -104,6 +108,8 @@ def main() -> int:
     cases = [
         ("kaggle_train_student_v2.py", None, "single-channel"),
         ("kaggle_train_student_mc.py", "processed_sleepedf_mc", "multi-channel"),
+        ("kaggle_train_student_kd.py", None, "distillation, alpha=0.5"),
+        ("kaggle_train_student_kd.py", None, "distillation, alpha=1.0 control"),
     ]
     for trainer, data_dir, label in cases:
         print(f"{trainer}  ({label})")
@@ -117,7 +123,10 @@ def main() -> int:
 
         out_root = None
         try:
-            out_root, ns = run_trainer(trainer, data_dir)
+            # the alpha=1.0 control must reach the same code path with the soft
+            # term off, so it is run as a separate case rather than assumed
+            extra = {"ALPHA          = 0.5": "ALPHA          = 1.0"}                 if "alpha=1.0" in label else None
+            out_root, ns = run_trainer(trainer, data_dir, extra=extra)
             check(f"{trainer} main() completes", True)
             ckpts = list(Path(out_root).rglob("student_best.pt"))
             check(f"{trainer} writes student_best.pt", bool(ckpts),
