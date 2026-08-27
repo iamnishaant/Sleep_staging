@@ -196,6 +196,42 @@ def build() -> str:
     if n3 != 1 or n4 != 1:
         raise SystemExit(f"log-string substitution failed (params {n3}, header {n4}).")
 
+    # GRADIENT-ACCUMULATION BUG, inherited from kaggle_train_student_norm.py.
+    #
+    #     loss = F.cross_entropy(..., reduction="sum") / nv    # already the
+    #                                                         # micro-batch's share
+    #                                                         # of the full-batch MEAN
+    #     w = (nvc / nv)
+    #     scaler.scale(loss * w).backward()                    # divides by nv AGAIN
+    #
+    # summing loss over chunks already gives total_sum / nv, which IS the
+    # full-batch mean - linearity of the sum is the whole reason accumulation
+    # works. The extra w is a second division.
+    #
+    # Measured against a true full-batch backward:
+    #   balanced chunks    gradient norm exactly 0.5x correct (1/K, K=2 chunks)
+    #   unbalanced chunks  cosine similarity 0.9916 - the DIRECTION is wrong,
+    #                      because each chunk ends up weighted by nvc^2 rather
+    #                      than nvc. AdamW normalises away a uniform rescale;
+    #                      it cannot fix a direction.
+    # The fixed form reproduces a full-batch backward to 2.5e-07 relative error.
+    #
+    # kaggle_train_student.py is NOT affected: distillation_loss returns a MEAN,
+    # so multiplying by nvc/nv is correct there. The defect appeared when
+    # _norm.py switched to reduction="sum" / nv and kept the weight.
+    _buggy = ('                w = (nvc/nv).float()\n'
+              '                scaler.scale(loss*w).backward()\n'
+              '                tot_loss += loss.item()*w.item()')
+    _fixed = ("                # `loss` is ALREADY this chunk's share of the full-batch\n"
+              "                # mean (its sum / nv). Summing over chunks therefore gives\n"
+              "                # the full-batch mean exactly. Do NOT reweight it again.\n"
+              "                scaler.scale(loss).backward()\n"
+              "                tot_loss += loss.item()")
+    if src.count(_buggy) != 1:
+        raise SystemExit(f"gradient-accumulation fix did not apply "
+                         f"({src.count(_buggy)} matches).")
+    src = src.replace(_buggy, _fixed, 1)
+
     # Compare against BOTH bars. 0.6881 is student_baseline_E0 with the EEG
     # inert; 0.6821 is student_N1norm, which is the same EEG scale as this run
     # and therefore the comparison that isolates the encoder.

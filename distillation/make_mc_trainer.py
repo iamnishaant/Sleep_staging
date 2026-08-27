@@ -88,6 +88,22 @@ WHAT SUCCESS LOOKS LIKE
 
 Held-out TEST must NOT be used to decide anything here.
 
+ONE CONFOUND, STATED UP FRONT
+-----------------------------
+student_N2multiscale was trained with a gradient-accumulation bug that this
+trainer fixes. Its loss was already `sum / nv` - this chunk's share of the
+full-batch mean - and it was then multiplied by `nvc / nv` again. Measured
+against a true full-batch backward: gradients came out exactly 0.5x too small
+with balanced chunks, and MIS-DIRECTED (cosine 0.9916) whenever padding made
+the chunks uneven, because each chunk was effectively weighted by nvc^2 rather
+than nvc. AdamW normalises away a uniform rescale; it cannot fix a direction.
+
+So "N3mc beats N2multiscale" would confound the added channels with the
+gradient fix. To get a clean read, re-run N2multiscale from the regenerated
+kaggle_train_student_v2.py first - it is ~20 minutes - and use ITS number as
+the bar. The bar constants below are the OLD (buggy-run) figures until that
+happens; update them when it does.
+
 The zeroed-input ablation at the end zeroes ALL channels together. To attribute
 per channel, re-run it zeroing one at a time - that is a separate script, not a
 knob here.
@@ -177,6 +193,66 @@ def build() -> str:
                       'DATA_DIR + "/tensors/%s.pt"', src)
     if not all((n4, n5, n6, n7)):
         raise SystemExit(f"body substitution failed ({n4}, {n5}, {n6}, {n7})")
+
+    # RESUME GUARD. The inherited check compares ck["eeg_scale"] against
+    # EEG_SCALE, and both are None here - so `None != None` is False and the
+    # guard can never fire. A stale student_last.pt would resume silently onto
+    # DIFFERENT per-channel scales, which is exactly the failure this file
+    # argues against everywhere else: a numerically wrong channel goes inert
+    # with no error and no warning.
+    _old_guard = (
+        '        if ck.get("eeg_scale") != EEG_SCALE or ck.get("schedule_shape") != '
+        '{"epochs": EPOCHS, "steps": steps}:\n'
+        '            raise SystemExit(f"Cannot resume: config changed "\n'
+        '                             f"(scale {ck.get(\'eeg_scale\')} -> {EEG_SCALE}). '
+        'Delete {out}.")')
+    _new_guard = (
+        '        _want = {"channels": CHANNELS, "channel_scale": CHANNEL_SCALE,\n'
+        '                 "schedule_shape": {"epochs": EPOCHS, "steps": steps}}\n'
+        '        _have = {k: ck.get(k) for k in _want}\n'
+        '        if _have != _want:\n'
+        '            raise SystemExit("Cannot resume: config changed.\\n"\n'
+        '                             f"  checkpoint {_have}\\n"\n'
+        '                             f"  this run   {_want}\\n"\n'
+        '                             f"Delete {out} to start fresh.")')
+    if src.count(_old_guard) != 1:
+        raise SystemExit(f"resume-guard fix did not apply "
+                         f"({src.count(_old_guard)} matches).")
+    src = src.replace(_old_guard, _new_guard, 1)
+
+    # The inherited bars are student_baseline_E0 (0.6881) and student_N1norm
+    # (0.6821). Neither is the right comparison here: this run's own docstring
+    # says the bar is student_N2multiscale, which is the same encoder on EEG
+    # alone, so it isolates the added channels. Printing one bar while claiming
+    # another is how a result gets read against the wrong reference.
+    src, nb = re.subn(
+        r'^BASELINE_VAL_MACRO_F1 = 0\.6881\nBASELINE_VAL_KAPPA    = 0\.6389$',
+        '# student_N2multiscale: SAME encoder, EEG only. The bar that isolates\n'
+        '# the added channels, and the one this experiment is judged against.\n'
+        'BASELINE_VAL_MACRO_F1 = 0.7236\n'
+        'BASELINE_VAL_KAPPA    = 0.6735', src, flags=re.M)
+    src, nc = re.subn(
+        r'^N1NORM_VAL_MACRO_F1   = 0\.6821\nN1NORM_VAL_KAPPA      = 0\.6323$',
+        '# student_baseline_E0: the original shipped model, EEG branch inert.\n'
+        '# Kept as the long-run reference, not as the bar.\n'
+        'N1NORM_VAL_MACRO_F1   = 0.6881\n'
+        'N1NORM_VAL_KAPPA      = 0.6389', src, flags=re.M)
+    src = src.replace(
+        'vs student_N1norm (same EEG scale, old encoder) - "\n'
+        '          "the bar that isolates the encoder:',
+        'vs student_baseline_E0 (the original shipped model, "\n'
+        '          "EEG branch inert):')
+    src = src.replace('EXPERIMENT {EXPERIMENT}  (MULTI-SCALE TEMPORAL ENCODER)',
+                      'EXPERIMENT {EXPERIMENT}  (MULTI-CHANNEL: EEG + EOG + Pz-Oz)')
+    src = src.replace('EXPERIMENT {EXPERIMENT}  -  temporal encoder A/B',
+                      'EXPERIMENT {EXPERIMENT}  -  added-channel A/B')
+    src = src.replace(
+        'print(f"  parameters: {npar:,}  '
+        '(N1norm was 121,099; the encoder costs +18,507)")',
+        'print(f"  parameters: {npar:,}  '
+        '(N2multiscale was 139,606; {len(CHANNELS)} channels cost +{npar-139606:,})")')
+    if nb != 1 or nc != 1:
+        raise SystemExit(f"bar substitution failed ({nb}, {nc}).")
 
     src = src.replace(
         "NUM_CLASSES = 5\nSTAGES = [",

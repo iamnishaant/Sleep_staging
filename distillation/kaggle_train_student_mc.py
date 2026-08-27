@@ -41,6 +41,22 @@ WHAT SUCCESS LOOKS LIKE
 
 Held-out TEST must NOT be used to decide anything here.
 
+ONE CONFOUND, STATED UP FRONT
+-----------------------------
+student_N2multiscale was trained with a gradient-accumulation bug that this
+trainer fixes. Its loss was already `sum / nv` - this chunk's share of the
+full-batch mean - and it was then multiplied by `nvc / nv` again. Measured
+against a true full-batch backward: gradients came out exactly 0.5x too small
+with balanced chunks, and MIS-DIRECTED (cosine 0.9916) whenever padding made
+the chunks uneven, because each chunk was effectively weighted by nvc^2 rather
+than nvc. AdamW normalises away a uniform rescale; it cannot fix a direction.
+
+So "N3mc beats N2multiscale" would confound the added channels with the
+gradient fix. To get a clean read, re-run N2multiscale from the regenerated
+kaggle_train_student_v2.py first - it is ~20 minutes - and use ITS number as
+the bar. The bar constants below are the OLD (buggy-run) figures until that
+happens; update them when it does.
+
 The zeroed-input ablation at the end zeroes ALL channels together. To attribute
 per channel, re-run it zeroing one at a time - that is a separate script, not a
 knob here.
@@ -108,13 +124,17 @@ USE_SPECTRAL   = True
 
 # The bar, from the stored baseline. VALIDATION figures - the test split is not
 # loaded by this script and must not be used to decide whether this worked.
-BASELINE_VAL_MACRO_F1 = 0.6881
-BASELINE_VAL_KAPPA    = 0.6389
+# student_N2multiscale: SAME encoder, EEG only. The bar that isolates
+# the added channels, and the one this experiment is judged against.
+BASELINE_VAL_MACRO_F1 = 0.7236
+BASELINE_VAL_KAPPA    = 0.6735
 
 # student_N1norm: SAME EEG_SCALE, old encoder. This is the bar that
 # isolates the encoder; the one above also carries the scaling change.
-N1NORM_VAL_MACRO_F1   = 0.6821
-N1NORM_VAL_KAPPA      = 0.6323
+# student_baseline_E0: the original shipped model, EEG branch inert.
+# Kept as the long-run reference, not as the bar.
+N1NORM_VAL_MACRO_F1   = 0.6881
+N1NORM_VAL_KAPPA      = 0.6389
 
 OUT_ROOT       = "/kaggle/working"
 
@@ -408,7 +428,7 @@ def main():
     assert set(tr["subject"]).isdisjoint(SPLITS["test"])
     assert set(va["subject"]).isdisjoint(SPLITS["test"])
 
-    print(f"\n{'='*72}\nEXPERIMENT {EXPERIMENT}  -  temporal encoder A/B\n{'='*72}")
+    print(f"\n{'='*72}\nEXPERIMENT {EXPERIMENT}  -  added-channel A/B\n{'='*72}")
     print(f"  channels  = {CHANNELS}")
     print(f"  scales    = {CHANNEL_SCALE}")
     print(f"  seed      = {SEED}")
@@ -450,7 +470,7 @@ def main():
     model = StudentSleepStagingModel(EMBED_DIM, HEADS, LAYERS, DROPOUT,
                                      n_tokens=N_TOKENS, use_spectral=USE_SPECTRAL).to(device)
     npar = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"  parameters: {npar:,}  (N1norm was 121,099; the encoder costs +18,507)")
+    print(f"  parameters: {npar:,}  (N2multiscale was 139,606; {len(CHANNELS)} channels cost +{npar-139606:,})")
 
     opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     warm = max(1, int(WARMUP_FRAC*EPOCHS*steps)); total = EPOCHS*steps
@@ -463,9 +483,14 @@ def main():
     last = out / "student_last.pt"
     if last.exists():
         ck = torch.load(last, map_location=device, weights_only=False)
-        if ck.get("eeg_scale") != EEG_SCALE or ck.get("schedule_shape") != {"epochs": EPOCHS, "steps": steps}:
-            raise SystemExit(f"Cannot resume: config changed "
-                             f"(scale {ck.get('eeg_scale')} -> {EEG_SCALE}). Delete {out}.")
+        _want = {"channels": CHANNELS, "channel_scale": CHANNEL_SCALE,
+                 "schedule_shape": {"epochs": EPOCHS, "steps": steps}}
+        _have = {k: ck.get(k) for k in _want}
+        if _have != _want:
+            raise SystemExit("Cannot resume: config changed.\n"
+                             f"  checkpoint {_have}\n"
+                             f"  this run   {_want}\n"
+                             f"Delete {out} to start fresh.")
         model.load_state_dict(ck["model"]); opt.load_state_dict(ck["optimizer"])
         sched.load_state_dict(ck["scheduler"]); scaler.load_state_dict(ck["scaler"])
         start, best, since = ck["epoch"]+1, ck["best_macro_f1"], ck.get("since_best", 0)
@@ -490,9 +515,21 @@ def main():
                     loss = F.cross_entropy(lg.reshape(-1, NUM_CLASSES), y[sl].reshape(-1),
                                            weight=cw, ignore_index=IGNORE_INDEX,
                                            reduction="sum") / nv
-                w = (nvc/nv).float()
-                scaler.scale(loss*w).backward()
-                tot_loss += loss.item()*w.item()
+                # KNOWN BUG - LEFT IN PLACE DELIBERATELY.
+                # `loss` is already sum/nv, i.e. this chunk's share of the
+                # full-batch mean. Multiplying by nvc/nv divides by nv a second
+                # time: gradients come out 0.5x too small with balanced chunks,
+                # and MIS-DIRECTED (cosine 0.9916) when padding makes chunks
+                # uneven, since each chunk is then weighted by nvc^2 not nvc.
+                #
+                # Not fixed here because this file must keep reproducing the
+                # stored student_N1norm checkpoint. The fix is applied by
+                # make_v2_trainer.py to every generated trainer; run those.
+                # `loss` is ALREADY this chunk's share of the full-batch
+                # mean (its sum / nv). Summing over chunks therefore gives
+                # the full-batch mean exactly. Do NOT reweight it again.
+                scaler.scale(loss).backward()
+                tot_loss += loss.item()
             scaler.unscale_(opt)
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             scaler.step(opt); scaler.update(); sched.step()
@@ -552,8 +589,8 @@ def main():
     else:
         print(f"    -> LIVE. The EEG now changes {(1-agree)*100:.2f}% of predictions.")
     _mf1, _kap = m["macro_f1"], m["kappa"]
-    print("\n  vs student_N1norm (same EEG scale, old encoder) - "
-          "the bar that isolates the encoder:")
+    print("\n  vs student_baseline_E0 (the original shipped model, "
+          "EEG branch inert):")
     print(f"    macro-F1 {_mf1:.4f} vs {N1NORM_VAL_MACRO_F1:.4f}"
           f"   ({_mf1 - N1NORM_VAL_MACRO_F1:+.4f})")
     print(f"    kappa    {_kap:.4f} vs {N1NORM_VAL_KAPPA:.4f}"
