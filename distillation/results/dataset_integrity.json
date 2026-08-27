@@ -1,0 +1,28 @@
+{
+  "check": "Raw Sleep-EDFx download at F:/sleep edf signals",
+  "date": "2026-08-27",
+  "prompted_by": "a question about which dataset to attach, which made it worth checking whether the local mirror was complete at all",
+  "finding": {
+    "problem": "ST7102J0-PSG.edf was listed in RECORDS but absent from disk. Its HYPNOGRAM (ST7102JE-Hypnogram.edf) was present, so nothing looked obviously broken: 196 PSG files against 197 hypnograms.",
+    "cause": "an incomplete wget mirror dropped one signal file",
+    "why_it_was_nearly_invisible": "A recording whose PSG never downloaded is not 'skipped' by the preprocessor - it is never seen, so it cannot appear in the skip list and the run reports complete success. The only symptom was a tensor count of 196 against the 197 the original pipeline produced.",
+    "severity": "ST710 is in the TEST split. A model trained and evaluated on the short set would have had 28 test recordings against the 29 every published number uses - silently incomparable, with no error."
+  },
+  "resolution": {
+    "downloaded": "sleep-telemetry/ST7102J0-PSG.edf, 24,453,936 bytes",
+    "sha256_verified": "e7e39e1064c46d32298a7ae07f1e055e3ccc70ab972715fcc683e6163a00b12d",
+    "matches_official_SHA256SUMS": true,
+    "full_manifest_verification": {
+      "files_listed": 398,
+      "verified_ok": 398,
+      "missing": 0,
+      "corrupt": 0
+    },
+    "reprocessed": "processed_sleepedf_mc regenerated with all 197 recordings"
+  },
+  "not_affected": {
+    "what": "every previously published result",
+    "why": "processed_sleepedf (the original single-channel tensors) already contained all 197 recordings, including a valid 980-epoch ST7102J0 consistent with its index entry. That set was built from a complete download. Only this local raw-EDF mirror was short, and only the new multi-channel preprocessing consumed it."
+  },
+  "guard_added": "preprocess_multichannel.py now checks the produced recording set against splits.json and exits non-zero listing what is missing and which split it belongs to. Counting outputs was not enough - the produced set has to be compared against the set the splits expect."
+}

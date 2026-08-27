@@ -380,6 +380,43 @@ def main() -> int:
     out_root.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(records).to_csv(out_root / "index.csv", index=False)
     print(f"\n{len(records)} recordings written, {len(skipped)} skipped")
+
+    # COMPLETENESS AGAINST splits.json.
+    #
+    # A recording whose PSG file was never downloaded is not "skipped" - it is
+    # never seen, so it cannot appear in the skip list and the run looks
+    # entirely successful. That is how ST7102J0-PSG went missing: an incomplete
+    # wget mirror dropped one signal file while keeping its hypnogram, and the
+    # only symptom was a tensor count of 196 against the 197 the original
+    # pipeline produced. It is a TEST-split recording, so a model trained and
+    # evaluated on the short set would have been silently incomparable to every
+    # published number.
+    #
+    # Counting outputs is not enough; the produced set has to be checked
+    # against the set the splits expect.
+    if not args.limit:
+        sp = json.loads(Path(args.splits).read_text(encoding="utf-8"))
+        expected = {r for recs in sp["recordings_by_subject"].values() for r in recs}
+        produced = {Path(r["tensor_path"]).stem for r in records}
+        missing = sorted(expected - produced)
+        extra = sorted(produced - expected)
+        print(f"\ncompleteness against splits.json ({len(expected)} expected)")
+        if extra:
+            print(f"  {len(extra)} produced but not in any split: {extra[:5]}")
+        if missing:
+            by_split = {}
+            for m in missing:
+                for name, subs in sp["splits"].items():
+                    if m[:5] in subs:
+                        by_split.setdefault(name, []).append(m)
+            print(f"  *** {len(missing)} MISSING: {missing[:8]}")
+            for name, ms in sorted(by_split.items()):
+                print(f"      {name}: {len(ms)}  {ms[:4]}")
+            print(f"  These recordings have no PSG file under --edf-root. Check the\n"
+                  f"  download against RECORDS and SHA256SUMS before training - a\n"
+                  f"  short dataset trains and evaluates without any error.")
+            return 1
+        print(f"  all {len(expected)} present")
     for f, why in skipped[:10]:
         print(f"  skipped {f}: {why}")
 
