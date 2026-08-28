@@ -19,7 +19,7 @@ set, loaded exactly once per model:
 | Model | Params | Test κ | Test macro-F1 |
 |---|---:|---:|---:|
 | Ensemble teacher (3 students averaged) | ~410k | 0.7140 | 0.7542 |
-| **`student_N4kd` — DELIVERED, soft labels** | **139,606** | **0.6993** | **0.7376** |
+| **`student_N4kd` — DELIVERED, soft labels** | **139,606** | **0.7001** | **0.7376** |
 | `student_N2multiscale_fix` — same net, hard labels | 139,606 | 0.6992 | 0.7407 |
 | `student_baseline_E0` — the earlier delivered model | 121,099 | 0.6449 | 0.6915 |
 | Inherited model *(leaky: trained on 14 of these 15 subjects)* | 649,229 | 0.6782 | 0.7080 |
@@ -27,6 +27,11 @@ set, loaded exactly once per model:
 
 The 139K student beats every honest teacher by a wide margin, and beats the
 *contaminated* inherited model too.
+
+Those are the models' raw outputs. The **shipped hypnogram is decoded** (§ below), which
+costs 0.0008 κ and buys a 46% reduction in REM-latency error: **κ 0.6993 as shipped**.
+Bootstrapping over the 29 held-out recordings gives **95% CI [0.6545, 0.7414]** — wide
+enough that none of the top three rows are distinguishable from one another.
 
 Per-class F1 on held-out test: W 0.897 · N1 0.429 · N2 0.805 · N3 0.779 · REM 0.778
 

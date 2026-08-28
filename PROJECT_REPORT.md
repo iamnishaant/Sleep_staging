@@ -7,8 +7,9 @@
 | **Dataset** | Sleep-EDFx — 197 recordings, 100 subjects, 237,950 thirty-second epochs |
 | **Task** | 5-class sleep staging (W, N1, N2, N3, REM) from single-channel EEG |
 | **Goal** | A compact model, small enough to train on Kaggle's free tier, built by distilling Group 48's inherited teacher |
-| **Headline result** | A **121,099**-parameter model reaching **κ = 0.6449** on 15 subjects it never saw — **5.36× smaller** than the teacher and statistically indistinguishable from it |
-| **Secondary result** | Knowledge distillation **hurt** at both teacher-quality levels tested, and the harm scales with the teacher–student gap |
+| **Headline result** | A **139,606**-parameter model reaching **κ = 0.7001** (95% CI 0.6545–0.7414) on 15 subjects it never saw — **4.65× smaller** than the teacher and **0.09 κ above** the best honest teacher |
+| **Secondary result** | Distillation hurt from every single teacher, and stopped hurting once the teacher was an *ensemble* exceeding the student — where what transferred was calibration, not accuracy |
+| **Revised** | 28 August 2026. Sections 1–6 are the historical record of phase one and are left as written; §6b onward covers what followed. |
 | **Evaluation** | Subject-level splits; the test split was loaded exactly once per model and never used for tuning |
 
 > **Who this document is for.** It assumes no prior familiarity with this codebase. Section 13 is a glossary if the sleep-staging terms or metrics are unfamiliar. Companion documents: `README_V2.md` (technical reference — architectures, file inventory, per-phase results) and `update.md` (session audit log). This file is the narrative.
@@ -19,7 +20,9 @@
 
 Automated sleep staging from EEG is typically evaluated with a train/validation split at the recording level, which is invalid whenever a dataset — as Sleep-EDFx does — contains multiple nights per subject: a model can score well by recognising the *person* rather than by learning the *physiology*. This project set out to compress an inherited 649,229-parameter sleep-staging model (5-class: W, N1, N2, N3, REM) into a compact student via knowledge distillation, targeting Kaggle's free-tier compute. Auditing the inherited model first, we found exactly this leak: 86% of its validation subjects also appeared in training, and its published Cohen's κ of 0.6663 fell to 0.5066 when re-measured on the one subject it had genuinely never seen, with N3 recall at zero. This finding forced a rebuild under corrected, subject-level, cohort-stratified splits before any distillation work could be trusted.
 
-Three teacher variants were then trained under the corrected protocol, isolating and fixing a class-reweighting defect in the loss function to reach a final teacher κ of 0.6055 (+0.093 over the honest baseline). A 121,099-parameter student (5.36× smaller) was trained two ways — with distillation and with hard labels alone — from two teachers of different quality. Distillation *reduced* held-out κ at both teacher-quality levels (−0.052 and −0.031 respectively, p = 0.0026), with the harm shrinking as teacher quality improved; the mechanism is traced to the un-distilled student's output distribution diverging further from a teacher weaker than itself as it trains. The un-distilled student reached κ = 0.6449, statistically indistinguishable from the best 649K-parameter teacher (p = 0.135) and a significant improvement over a faithful, leak-free replication of the original architecture (p < 0.001). The deployed model is therefore the compact, un-distilled student, delivered alongside a validated per-recording confidence signal and a pre-registered protocol for testing whether its spectral-feature attributions are physiologically faithful.
+Three teacher variants were then trained under the corrected protocol, isolating and fixing a class-reweighting defect in the loss function to reach a final teacher κ of 0.6055 (+0.093 over the honest baseline). A 121,099-parameter student (5.36× smaller) was trained two ways — with distillation and with hard labels alone — from two teachers of different quality. Distillation *reduced* held-out κ at both teacher-quality levels (−0.052 and −0.031 respectively, p = 0.0026), with the harm shrinking as teacher quality improved; the mechanism is traced to the un-distilled student's output distribution diverging further from a teacher weaker than itself as it trains. The un-distilled student reached κ = 0.6449, statistically indistinguishable from the best 649K-parameter teacher (p = 0.135) and a significant improvement over a faithful, leak-free replication of the original architecture (p < 0.001). The deployed model was therefore, at that stage, the compact un-distilled student.
+
+A second phase overturned two of those conclusions and completed the third. An ablation had suggested the raw EEG waveform carried nothing beyond 34 precomputed band-power features; measuring the encoder's receptive field by backpropagation showed it spanned 25 samples — a quarter of a second — before averaging over the full 30-second epoch, so the experiment had characterised the encoder rather than the signal. A two-branch encoder spanning 8.75 s moved the waveform from contributing nothing to driving 71% of predictions, and produced a student beating every honestly-evaluated teacher. That made distillation possible for the first time: not by training a larger teacher, but by averaging three comparable models into an ensemble exceeding any member, where diversity of input and architecture mattered far more than random seeds. Distilling that ensemble removed the penalty entirely, but the gain appeared on an axis we had not been measuring — accuracy tied, while expected calibration error fell by a third, REM-latency error nearly halved, and the night-level reliability signal sharpened by 43%. The delivered model is that distilled student: **139,606 parameters, κ 0.7001 (95% CI 0.6545–0.7414)**, shipped with a per-night evidence packet in which every derived clinical value travels with its own measured error bound.
 
 ---
 
@@ -41,20 +44,38 @@ That forced a rebuild. From there:
 
 Distillation was tested from two teachers and hurt both times: **−0.0523 κ** from E0 and **−0.0314 κ** from E1b. The harm is statistically significant (p = 0.00262) and **halves as the teacher improves**, which gives a relationship rather than a one-off failure.
 
-**The deliverable was met.** A model 5.36× smaller than the teacher performs as well as it, under evaluation that cannot leak. The method that achieved it was conventional training, not distillation — and we have the evidence for why.
+That is where phase one ended. Phase two continued from the same diagnosis:
+
+6. **Encoder** — the temporal encoder's receptive field, measured rather than assumed, was **0.25 s**; no spindle, K-complex or slow wave fits inside it. Replacing it → **κ 0.6992**, and the raw EEG went from driving 0% of predictions to **71%**
+7. **Channels** — adding EOG and a second EEG derivation, the strongest remaining hypothesis, **failed**: lost on validation, won on test, paired p = 0.865. Noise
+8. **Ensemble** — three comparable models averaged → a teacher at **κ 0.7140** that finally exceeds the student, built with no larger architecture
+9. **Distillation** — from that ensemble the penalty vanished (**+0.0009**), and what transferred was **calibration**: test ECE 0.0359 → 0.0241, REM-latency error 33.7 → 18.3 min
+
+**The deliverable was met, then exceeded.** A model 4.65× smaller than the teacher scores 0.09 κ *above* it, under evaluation that cannot leak — and the technique that was supposed to get us there does work, once its precondition is satisfied, though it buys something other than what we set out to measure.
 
 ---
 
 ## 0.1 M0 — the model everything downstream uses
 
-> **M0 = `distillation/results/students/student_baseline_E0/student_best.pt`**
-> 121,099 parameters · **un-distilled** · held-out test κ 0.6449
+> **M0 = `distillation/results/students/student_N4kd/student_best.pt`**
+> 139,606 parameters · **distilled from a 3-model ensemble** (α = 0.5, T = 3.0)
+> held-out test κ **0.7001** · 95% CI [0.6545, 0.7414] · 4.65× compression
+> κ 0.6993 as the packet ships it, after hypnogram decoding
 
-Stated plainly, without hedging: **the deployed model was not distilled.** We attempted knowledge distillation, measured a statistically significant negative result (p = 0.00262) with a demonstrated mechanism, and deployed the un-distilled compact student.
+M0 has moved twice since the first delivery, and both moves are recorded together with
+the case *against* them: `results/m0_promotion.json` (baseline_E0 → multiscale) and
+`results/kd_result.json` (multiscale → distilled). The superseded artefacts are preserved
+under `results/m0_student_baseline_E0/` and `results/m0_student_N2multiscale/`.
 
-That is a stronger scientific position than a marginal gain would have been. We have a dose–response curve across two teacher-quality levels, a p-value, and a KL trace that explains *why*. A +0.01 improvement with no mechanism would be worth less.
+**On accuracy the distilled model ties its hard-label twin** — 0.7001 against 0.6992,
+paired per-recording p = 0.24. It was promoted on a different basis: calibration,
+night-confidence separation and derived-metric error all improved on *both* splits, with
+zero tier demotions among the sixteen metrics the packet asserts. For a model whose
+downstream consumers read probabilities rather than argmaxes, that is the axis that
+matters.
 
-Every downstream artefact — the evidence packet, attributions, confidence fields, the report generator — is built on M0, not on either distilled variant.
+Every downstream artefact — the evidence packet, attributions, confidence fields, the
+report generator — is built on M0.
 
 ### ⚠ Scope boundary: two different distillations
 
@@ -62,7 +83,7 @@ This project contains **two unrelated distillation questions**. They must not be
 
 | | What | Status |
 |---|---|---|
-| **Staging-model distillation** | Compressing the 649K sleep-staging teacher into a 121K student | **Complete.** Significant negative result with identified mechanism (§6). |
+| **Staging-model distillation** | Compressing the 649K sleep-staging teacher into a compact student | **Complete.** Negative from single teachers with an identified mechanism (§6); resolved once the teacher was an ensemble (§6c). |
 | **Language-model distillation** | O5 / C4 / RQ4 — distillation of the report-generating language model | **Not started.** A separate question on different data with a different objective. |
 
 The negative result on the first says **nothing** about the second. Anyone reading a claim about "distillation" in this project must be told which one is meant.
@@ -396,6 +417,175 @@ Validation understates the penalty roughly **fourfold in both rungs**, because v
 
 ---
 
+## 6b. The encoder could not see what it was classifying
+
+§6 ended with a working negative result and a compact model. Two later audits changed
+both.
+
+The first re-opened a conclusion of our own. An ablation had shown that scaling the raw
+EEG waveform so the network could actually use it — it had been left in volts, ~2e-5,
+against spectral features at ~7, and was provably **inert**: zeroing the entire EEG input
+changed 0.000 κ and 0% of predictions — revived the branch but moved validation macro-F1
+by −0.0060. We concluded the waveform carried nothing beyond the 34 band-power features
+derived from it.
+
+That experiment held the **architecture** fixed, and the architecture was the binding
+constraint. Measuring the encoder's receptive field by backpropagation rather than
+deriving it:
+
+| encoder | receptive field | |
+|---|---:|---|
+| student, `Conv1d(k=7, dilation 1,4)` | 25 samples | **0.25 s** |
+| teacher, `Conv1d(k=7, dilation 1,2,4,8)` | 49 samples | **0.49 s** |
+| replacement, two branches | 875 samples | **8.75 s** |
+
+Then `AdaptiveAvgPool1d(1)` across all 3,000 positions. So the encoder computed the mean,
+over thirty seconds, of a quarter-second texture detector. Every event that defines the
+stages the model was worst at is longer than that: sleep spindles and K-complexes 0.5–2 s
+(N2 against N1), slow waves 0.5–2 s (N3), sawtooth waves 1–3 s (REM). A band-power vector
+beat that encoder because it summarises thirty seconds of structure while the encoder
+summarised 120 repetitions of a quarter-second.
+
+**The −0.0060 was evidence about the encoder, not about the EEG.** The superseded claim is
+marked in place in `results/eeg_normalization_ablation.json` rather than deleted, with the
+lesson attached: a one-variable A/B is only as informative as the variable it holds fixed.
+
+Replacing it with a two-branch encoder — a 0.5 s kernel for spindles and K-complexes, a
+2 s kernel for slow waves, attention-pooled to four sub-epoch tokens instead of one:
+
+| | before | after |
+|---|---:|---:|
+| validation macro-F1 | 0.6821 | **0.7236** |
+| N1 F1 | 0.431 | **0.523** |
+| REM F1 | 0.699 | **0.763** |
+| raw EEG drives | 0% of predictions | **71%** |
+| parameters | 121,099 | 139,606 (4.65× compression) |
+
+Held-out test κ 0.6449 → **0.6992**, every class improved, and the model now exceeds the
+*leaky* inherited teacher (0.6782) as well as every honest one.
+
+---
+
+## 6c. Channels: the strongest remaining hypothesis, and it failed
+
+`separability_verdict.json` had established that N1 is **representation-bound** — no
+decision rule on the existing probabilities improves N1 F1 by more than +0.0086 — so only
+new information could help. The 34 spectral features cannot be that information, being
+computed from the same EEG. EOG can: AASM scoring defines REM by rapid eye movements and
+N1 by slow rolling ones, and those are exactly the two weakest classes.
+
+We re-preprocessed all 197 recordings with EOG horizontal and a second EEG derivation
+(Pz-Oz), verifying that channel 0 reproduced the existing tensors **element-for-element on
+197/197** so that every stored number stayed comparable.
+
+The result was a near-textbook trap:
+
+| | validation | test |
+|---|---:|---:|
+| Δ κ | **−0.0122** | +0.0028 |
+| Δ N1 F1 | −0.0090 | **+0.0264** |
+| Δ REM F1 | −0.0069 | **+0.0367** |
+
+On test the gain sat precisely on the two eye-defined stages — the mechanism we had
+predicted. On validation both went *down*. A paired per-recording test settles it:
+Wilcoxon p = 0.865, better on 15 of 29 recordings, confidence interval spanning zero on
+both splits.
+
+**A mechanism that appears on one split and reverses on the other is noise wearing a
+mechanism's clothes.** Reporting the half that agreed with the hypothesis is exactly what
+the two-split protocol exists to prevent. The extra channels remain in the *teacher*,
+where decorrelated errors are worth something; the shipped student takes one electrode.
+
+---
+
+## 6d. The ensemble, and what distillation actually transfers
+
+§6 established that a teacher must exceed the student. The obvious response — train a
+bigger teacher — is expensive and might still fail. A cheaper route exists: K models of
+comparable quality make partly decorrelated errors, so averaging their probabilities
+produces a teacher that is **better without being bigger**, which is the only property
+distillation requires.
+
+The composition mattered more than the count, and not in the direction we assumed:
+
+| ensemble | val κ (gain over best member) |
+|---|---:|
+| run1 + run2 (differ in input channels) | 0.6796 (+0.0033) |
+| **+ baseline_E0** (different encoder, 0.037 κ *weaker*) | **0.6931 (+0.0168)** |
+| + a near-duplicate of run1 | 0.6845 (+0.0082) |
+
+Adding a **weaker** but architecturally different member gained five times what adding a
+same-architecture variant did. Seeds are the wrong axis: runs differing only in
+initialisation share an architecture, an input and a training set, so their errors are
+correlated and there is little left to cancel. This also refined an earlier warning of
+ours — that members must be comparable in quality. Too simple: a weaker member helps if
+it is *decorrelated enough*.
+
+Distilling that ensemble (α = 0.5, T = 3.0) into a single single-channel student:
+
+| Δ test κ vs the matched hard-label baseline | |
+|---|---:|
+| `student_distilled_E0` | −0.0524 |
+| `student_distilled_E1b` | −0.0315 |
+| **`student_N4kd`** | **+0.0009** |
+
+**The penalty is gone.** But the gain did not arrive where we were watching. On accuracy
+the distilled student ties its hard-label twin (paired p = 0.24 test, p = 0.33
+validation). What moved, consistently on *both* splits:
+
+| | hard labels | distilled |
+|---|---:|---:|
+| uncalibrated ECE, validation / test | 0.0610 / 0.0359 | **0.0463 / 0.0241** |
+| REM-latency error, test | 33.7 min | **18.3 min** |
+| nights off by >60 min | 9 | **6** |
+| night-confidence triage gap | +0.0986 | **+0.1410** |
+| decoder: asserted metrics improved / degraded | 12 / 4 | **13 / 1** |
+
+For a system whose downstream consumers read *probabilities* — the night-confidence tier,
+the `safe_to_assert` flag, every derived value in the evidence packet — that is the axis
+that matters. `fig8_rq3` had extrapolated break-even at teacher κ ≈ 0.75 from two points;
+the ensemble cleared it at 0.7140, so that extrapolation was pessimistic, which is
+unsurprising with n = 2.
+
+---
+
+## 6e. The evaluation is now the binding constraint
+
+Bootstrapping test κ over the 29 held-out **recordings** — the unit of independence, not
+the 33,431 correlated epochs — gives **0.7001, 95% CI [0.6545, 0.7414]**. (Argmax output; the
+decoded figure the packet ships is 0.6993, at the same interval width.)
+
+The previous delivered model (0.6449) sits below the lower bound, so that improvement is
+real. But the interval is ±0.043 wide, and the hard-label twin at 0.6992 is not
+distinguishable from 0.7001 at n = 29 and never will be.
+
+This reframes §6b–6d. Since the encoder change every result has returned a tie, and the
+reason is not that the changes did nothing — **it is that the held-out set cannot resolve
+differences this small.** Further tuning on Sleep-EDFx is optimisation below the noise
+floor. More statistical power requires more subjects, which is the same thing clinical
+credibility requires.
+
+A related measurement changes how N1 should be treated. Asking whether N1 error is
+predictable from the model's own confidence:
+
+| confidence when predicting N1 | accuracy |
+|---|---:|
+| 0.0–0.4 | 22.7% |
+| 0.4–0.5 | 31.8% |
+| 0.5–0.6 | 35.3% |
+| 0.6–0.8 | 41.0% |
+| 0.8–1.0 | **55.1%** |
+
+Monotone. Mean confidence when calling N1 is 0.623 against 0.827 for every other class,
+and true N1 epochs are predicted as N1 48%, N2 32%, REM 12% — the boundaries human
+scorers disagree on. **The model already knows N1 is where it is unsure.** Flagging N1 by
+confidence is more use to a clinical reader than a better N1 classifier would be, and
+with inter-scorer N1 agreement at 25–45% the current F1 of 0.43 may be near the practical
+ceiling. Chasing it as a number treats a labelling-ambiguity problem as a modelling one.
+
+
+---
+
 ## 7. Complete results
 
 ### Every model, held-out test (15 unseen subjects, 33,431 epochs)
@@ -409,7 +599,17 @@ Validation understates the penalty roughly **fourfold in both rungs**, because v
 | **E1b teacher** | 649,229 | 0.7086 | **0.6055** | 0.6548 |
 | Student distilled from E0 | 121,099 | 0.6926 | 0.5925 | 0.6611 |
 | Student distilled from E1b | 121,099 | 0.7123 | 0.6134 | 0.6708 |
-| **Student baseline** ⭐ | **121,099** | **0.7360** | **0.6449** | **0.6915** |
+| Student baseline (phase-one deliverable) | 121,099 | 0.7360 | 0.6449 | 0.6915 |
+| Student, multi-scale encoder | 139,606 | 0.7756 | 0.6992 | 0.7407 |
+| Student, + EOG + Pz-Oz | 151,606 | 0.7757 | 0.7020 | 0.7481 |
+| Ensemble teacher (3 students averaged) | ~410k | 0.7860 | 0.7140 | 0.7542 |
+| **Student, distilled from the ensemble** ⭐ | **139,606** | **0.7773** | **0.7001** | **0.7376** |
+
+> Every κ in this table is the model's **argmax** output, so the rows are comparable. The
+> delivered model ships a **decoded** hypnogram at κ 0.6993 — decoding trades 0.0008 κ for
+> a 46% reduction in REM-latency error (§6d). The bootstrap 95% CI over the 29 held-out
+> recordings is **[0.6545, 0.7414]**, so the three 139–151K rows are not distinguishable
+> from one another at this resolution; see §6e.
 
 > The inherited model's row is its `val_clean` group — the single subject it never trained on. Its apparent "test" score of 0.6782 in the raw artefact is **not** honest, because that model trained on most of those test subjects.
 
@@ -657,31 +857,57 @@ Any further work on the teacher should attack regularisation, not another α var
 
 Stated plainly, because a reviewer will find them anyway:
 
-0. **Every headline figure was produced from 34 spectral features, not from the raw EEG.** The temporal branch was numerically inert in all models (§8.4b). Normalising it to make it live did not improve accuracy, because the spectral features are derived from the same signal. This does not invalidate any κ — the models genuinely achieve them — but "temporal–spectral fusion" describes the architecture rather than the computation, and any write-up should say so.
+0. ~~**Every headline figure was produced from 34 spectral features, not from the raw EEG.**~~ **Resolved in §6b.** This was true of every phase-one model and is false of the delivered one, where zeroing the EEG changes 71% of predictions. The original wording is struck rather than deleted because the reasoning behind it — that features derived from a signal cannot add information the signal lacks — was sound, and only the premise about the encoder was wrong.
 
-1. **The break-even estimate rests on two points.** κ ≈ 0.75 is a direction, not a prediction with an interval. A third teacher would be needed to state it properly.
+0b. **The evaluation, not the model, is now the binding constraint.** The held-out set of 15 subjects gives a 95% CI of ±0.043 κ. Everything since §6b has returned a tie because differences this small cannot be resolved at n = 29, not because the changes did nothing. No further work on this dataset can lift that.
+
+1. ~~**The break-even estimate rests on two points.**~~ **Superseded by §6d.** The extrapolation put break-even at teacher κ ≈ 0.75; the ensemble cleared it at 0.7140 with the penalty already gone, so the two-point line was pessimistic. That is what a two-point extrapolation is worth.
 
 2. **The Sleep Telemetry cohort is under-measured and generalises worse.** Test κ 0.4755 across 3 ST subjects versus 0.6182 across 12 SC subjects. ST is the temazepam cohort — different population, different hardware. Three subjects is not enough to characterise it.
 
 3. **One test subject is an outlier.** SC461 scores κ 0.2378 where the next-worst is 0.4385, and it does so *identically across every model tested*. That pattern indicates a recording-quality artefact rather than a model failure. It pulls the overall mean down by roughly 0.025.
 
-4. **Single-channel EEG caps N1.** See §8.4. Fixing it requires re-preprocessing to add EOG, which was outside scope.
+4. ~~**Single-channel EEG caps N1.**~~ **Tested in §6c and rejected.** EOG and a second EEG derivation were added and measured; the effect is indistinguishable from noise (paired p = 0.865). N1 remains at F1 0.43, but §6e argues that is close to the practical ceiling given inter-scorer agreement of 25–45%, and that the model's own confidence already identifies which N1 calls to distrust.
 
 5. **The teacher overfits.** See §8.5.
 
-6. **Distillation was tested at one α and one T** (0.5 and 3.0). A sweep might find a gentler mix that harms less, though the mechanism in §8.2 suggests it would approach the baseline rather than beat it.
+6. **Distillation is still tested at one α and one T** (0.5 and 3.0), now from an ensemble. The student recovered roughly 28% of its teacher's advantage; a sweep might close more. But per §6e any such gain would fall below what the held-out set can resolve, so it would have to be argued on validation and reported as unresolved on test.
+
+7. **The soft targets come from model disagreement, not scorer disagreement.** The clinical argument for soft labels — that a one-hot "N1" records one technician's opinion as certainty — rests on *inter-scorer* uncertainty. Sleep-EDFx carries one scorer per epoch. Ensemble variance is a proxy for it, not the thing itself.
+
+8. **One cohort.** Every figure rests on Sleep-EDFx: largely healthy adults, one acquisition protocol. No clinical claim survives without external validation.
 
 ---
 
 ## 10. What we would do next
 
-In priority order, with the justification for each:
+Items 1, 2 and 4 of the original list are done (§6d, §6c, §6b). What remains, in priority
+order, with the reason each earns its place:
 
-1. **Regularise the teacher past κ ≈ 0.75.** The RQ3 trend predicts distillation stops hurting there. This is the one experiment that would *extend* the result rather than repeat it.
-2. **Add EOG (E3).** The only intervention with direct evidence behind it for N1 — the pairwise AUC ceiling of ~0.81 did not move across the entire teacher ladder.
-3. **A third RQ3 point**, so break-even can carry a confidence interval.
-4. **Multi-token epoch encoding (E4)**, +129 parameters.
-5. **Apply prior correction to the student.** Likely small — the baseline student's prediction ratios are already within 12% of correct frequency for every class.
+1. **External validation on a second cohort.** MESA and CFS are already on disk. This is the
+   only remaining move that buys statistical power *and* clinical credibility at once, and
+   per §6e power is now the constraint. Expect κ to fall — clinical populations are harder —
+   and a drop measured honestly is worth more than another tie on Sleep-EDFx.
+
+2. **Test whether temperature scaling still earns its place.** It now *hurts* held-out ECE
+   for both recent models (0.0241 → 0.0327 for the delivered one). The raw distilled
+   probabilities are the best-calibrated output the project has produced. Removing a step
+   that makes things worse is a clean simplification, and it is a twenty-minute check.
+
+3. **Flag N1 by confidence in the evidence packet.** §6e shows N1 accuracy rises
+   monotonically with the model's own confidence. Converting that into a per-epoch flag
+   gives a clinical reader something a better N1 classifier would not.
+
+4. **Multi-scorer soft labels.** DOD-H and DOD-O carry five scorers per epoch. Training
+   against a real scorer distribution is the version of §6d that would be a contribution
+   rather than a technique — and it doubles as the second cohort item 1 needs.
+
+5. **An α / T sweep**, reported on validation with the test-resolution caveat from §6e
+   stated explicitly.
+
+Deliberately **not** on this list: more seeds, more ensemble members, more architecture
+search, further EOG work. The encoder question is answered, the channel question is
+answered, and the rest sits below the noise floor.
 
 ---
 
