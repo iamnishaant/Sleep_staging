@@ -889,10 +889,13 @@ order, with the reason each earns its place:
    per §6e power is now the constraint. Expect κ to fall — clinical populations are harder —
    and a drop measured honestly is worth more than another tie on Sleep-EDFx.
 
-2. **Test whether temperature scaling still earns its place.** It now *hurts* held-out ECE
-   for both recent models (0.0241 → 0.0327 for the delivered one). The raw distilled
-   probabilities are the best-calibrated output the project has produced. Removing a step
-   that makes things worse is a clean simplification, and it is a twenty-minute check.
+2. ~~**Test whether temperature scaling still earns its place.**~~ **Done, and the concern
+   was withdrawn.** Bootstrapped over the 29 test recordings, the two most recent models
+   disagree in direction (ΔECE +0.0106 and −0.0067), both intervals span zero, and NLL —
+   which is what scaling optimises, ECE being a coarse binned proxy — moves by under 0.001.
+   On validation, where the temperature is fitted, every measure improves. Kept unchanged.
+   Worth recording that this open item existed at all: it came from one point estimate,
+   without the resampling check §6e argues for. Full workings in `results/kd_result.json`.
 
 3. **Flag N1 by confidence in the evidence packet.** §6e shows N1 accuracy rises
    monotonically with the model's own confidence. Converting that into a per-epoch flag

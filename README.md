@@ -191,9 +191,13 @@ student delivered and promoted to M0 · 29 evidence packets at schema 1.1.
 
 **Open.**
 
-1. **Temperature scaling may no longer earn its place.** It now *hurts* test ECE
-   for both recent models (0.0241 → 0.0327). The raw distilled probabilities are
-   the best-calibrated output the project has produced.
+1. ~~**Temperature scaling may no longer earn its place.**~~ **Investigated 28 Aug,
+   concern withdrawn.** Bootstrapping the test-split effect over 29 recordings, the
+   two most recent models disagree in *direction* (ΔECE +0.0106 and −0.0067) with
+   both intervals spanning zero, and NLL — the quantity scaling actually optimises —
+   moves by under 0.001. On validation, where it is fitted, it helps unambiguously.
+   Kept unchanged. This was a point estimate mistaken for a finding, which is the
+   error the confidence interval below exists to prevent.
 2. **`ABSTRACT.md` and `PROJECT_REPORT.md` carry pre-August numbers** and
    understate the result by ~0.05 κ.
 3. **External validation.** Every figure here is Sleep-EDFx: 78 mostly-healthy

@@ -178,7 +178,7 @@
     "why_promoted_anyway": "Accuracy is a tie, so accuracy cannot decide it. What decides it is that every part of the packet's trust machinery - calibration, night confidence, derived-metric error, the clinical REM-latency failure - improved, and improved on both splits. This is the model that is more honest about what it does not know, which is the property a clinical packet is built to carry."
   },
   "open_items": [
-    "Temperature scaling now HURTS test ECE for both models (0.0241 -> 0.0327 here, 0.0273 -> 0.0350 for the previous M0). The validation-fitted temperature over-corrects on test. The raw distilled probabilities are the best-calibrated output this project has produced, and the calibration step may no longer earn its place - worth testing before relying on it.",
+    "Temperature scaling: investigated 2026-08-28 and the concern was WITHDRAWN - see temperature_scaling_investigated. Kept as is.",
     "The student closed only ~28% of the gap to its teacher. A larger alpha sweep (0.3, 0.7) or a longer schedule might close more.",
     "ABSTRACT.md and PROJECT_REPORT.md still carry the pre-multiscale numbers."
   ],
@@ -213,5 +213,68 @@
       "N3": 0.02
     },
     "implication": "The model already knows N1 is where it is unsure, and the confusion lands on N1/N2 and N1/REM - the boundaries human scorers disagree on too. That is more useful to the packet than a better N1 classifier would be: N1 epochs can be flagged by confidence rather than asserted, which is what a clinical reader needs. Chasing N1 F1 as a number treats a labelling-ambiguity problem as a modelling problem."
+  },
+  "temperature_scaling_investigated": {
+    "date": "2026-08-28",
+    "claim_tested": "Temperature scaling now HURTS test ECE (0.0241 -> 0.0327) and may no longer earn its place. Listed as open item 1 in kd_result.json, the README and PROJECT_REPORT.",
+    "verdict": "WITHDRAWN. The regression does not survive resampling, and it was a point estimate mistaken for a finding - the same error section 6e warns about.",
+    "evidence": {
+      "bootstrap_1000_over_29_test_recordings": {
+        "student_N4kd": {
+          "d_ECE": 0.0106,
+          "ci": [
+            -0.0216,
+            0.0463
+          ],
+          "d_NLL": 0.0013,
+          "worse_in_pct_of_resamples": 68
+        },
+        "student_N2multiscale_fix": {
+          "d_ECE": -0.0067,
+          "ci": [
+            -0.0432,
+            0.0339
+          ],
+          "d_NLL": -0.0072,
+          "worse_in_pct_of_resamples": 35
+        }
+      },
+      "the_decisive_detail": "The two models disagree in DIRECTION - scaling helps one and hurts the other - and both intervals span zero. A systematic defect would not flip sign between two models of the same architecture on the same split.",
+      "proper_scoring_rules": {
+        "note": "ECE is a coarse, binning-dependent summary. Temperature scaling optimises NLL, so NLL and Brier are the criteria that should decide. On test both move by less than 0.001 - a wash.",
+        "test_NLL": {
+          "uncalibrated": 0.5845,
+          "calibrated": 0.5854
+        },
+        "test_Brier": {
+          "uncalibrated": 0.3087,
+          "calibrated": 0.3089
+        }
+      },
+      "validation_where_it_is_fitted": {
+        "ECE": [
+          0.0463,
+          0.0227
+        ],
+        "NLL": [
+          0.6541,
+          0.6342
+        ],
+        "Brier": [
+          0.3449,
+          0.341
+        ],
+        "optimal_T_on_validation": 1.29,
+        "fitted_T": 1.2847,
+        "note": "The fitted temperature is the optimum on the split it was fitted on, and the improvement there is unambiguous."
+      },
+      "optimal_T_per_split": {
+        "validation": 1.29,
+        "test": 1.12,
+        "reading": "The test split needs less softening. That is a difference between two samples of 15-16 subjects, not evidence the method is wrong."
+      }
+    },
+    "decision": "KEEP temperature scaling, unchanged. It is fitted on validation, where it demonstrably helps by every measure, and the test split cannot resolve whether it helps or hurts there - which is exactly what section 6e predicts for any effect of this size.",
+    "lesson": "I raised this as an open item from a single point estimate without checking whether the difference was resolvable at n=29. The same discipline applied to the EOG result should have been applied here before writing it down."
   }
 }
