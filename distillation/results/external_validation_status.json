@@ -1,0 +1,36 @@
+{
+  "goal": "Evaluate the delivered model on a second cohort. Open item 1 in the README and PROJECT_REPORT, and per section 6e the only remaining move that buys statistical power and clinical credibility at once.",
+  "date": "2026-08-28",
+  "status": "BLOCKED on data, not on effort.",
+  "what_is_on_disk": {
+    "data/mesa/features/*.csv": {
+      "n_files": 2059,
+      "shape": "1 row x 133 columns per subject",
+      "content": "DERIVED night-level sleep architecture - TST_sec, Sleep_Efficiency, SOL_sec, WASO_sec, per-stage durations and proportions",
+      "usable_as_model_input": false,
+      "why": "This is the OUTPUT of physiological_features.extract_features, computed from someone else's scoring. It is the same kind of object the evidence packet produces, not the signal a stager consumes. There is no EEG here."
+    },
+    "data/cfs_nsrr/polysomnography/annotations-events-nsrr/*.xml": {
+      "n_files": 730,
+      "content": "expert event and stage annotations",
+      "usable_as_labels": true,
+      "usable_as_signal": false
+    },
+    "cfs_preprocessed/*.pt": {
+      "n_files": 730,
+      "shape": "(7, 3000) float32 per file",
+      "content": "SEVEN channels x 3000 samples = ONE 30-second epoch per subject",
+      "usable": false,
+      "why": "One epoch is not a night. Staging needs the full recording - the model reads 256-epoch windows and every derived metric (sleep efficiency, REM latency, WASO) is defined over a whole night. 82 KB per subject against the ~40 MB a night of 3-channel signal occupies confirms it: this is a sample, probably a preprocessing smoke test."
+    }
+  },
+  "what_is_missing": "The raw PSG recordings. NSRR distributes CFS and MESA polysomnography as EDF, gated behind a data-use agreement; a request appears to have been filed (sleepdata.org_data_requests_27860). Nothing in this repository can substitute for it.",
+  "additional_work_once_the_signal_exists": [
+    "Channel mapping. CFS and MESA use different montages and sampling rates from Sleep-EDFx. The model expects Fpz-Cz at 100 Hz; NSRR cohorts typically provide C3/C4-referenced derivations at 128 or 256 Hz. Resampling and re-referencing is a design decision, not a conversion, and it is the sort of decision that quietly invalidates a comparison if made silently.",
+    "The 34 spectral features must be recomputed by the same code path, or the spectral stream receives something it was never trained on.",
+    "Annotation vocabulary. NSRR XML uses its own stage names; the W/N1/N2/N3/REM mapping must be explicit and asserted, exactly as STAGE_MAP is in preprocess_multichannel.py.",
+    "preprocess_multichannel.py --verify has no counterpart here: there are no existing tensors to reproduce. A different integrity check is needed - most likely comparing derived sleep architecture against the cohort's own published summaries, which for MESA are the feature CSVs already on disk."
+  ],
+  "honest_expectation": "Kappa will fall. CFS and MESA are clinical populations with sleep pathology, recorded on different hardware, against Sleep-EDFx's largely healthy adults. A drop measured properly is a stronger result than another tie on Sleep-EDFx, and the size of the drop is the finding.",
+  "recommendation": "Do not improvise around the missing data. Staging a single epoch, or scoring against MESA's derived features without predictions to compare them to, would produce a number with nothing behind it."
+}
