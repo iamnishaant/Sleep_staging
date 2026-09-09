@@ -1,0 +1,190 @@
+{
+  "purpose": "Roadmap 4.1 - per-epoch confidence flag for N1 predictions.",
+  "model": "student_N4kd",
+  "fitted_on": "validation split, 31 recordings, 34,610 epochs",
+  "never_touched": "the held-out test split - this is a decision rule, and fitting one on test would make test a selection set",
+  "rule": "flag an epoch when the predicted stage is N1 and max probability < 0.5750",
+  "threshold": 0.575,
+  "target_accuracy_unflagged": 0.6,
+  "min_flag_fraction": 0.1,
+  "tradeoff_on_validation": [
+    {
+      "threshold": 0.35,
+      "flagged_fraction": 0.0387,
+      "accuracy_unflagged": 0.5162,
+      "accuracy_flagged": 0.0994
+    },
+    {
+      "threshold": 0.375,
+      "flagged_fraction": 0.0514,
+      "accuracy_unflagged": 0.5217,
+      "accuracy_flagged": 0.1028
+    },
+    {
+      "threshold": 0.4,
+      "flagged_fraction": 0.0646,
+      "accuracy_unflagged": 0.5262,
+      "accuracy_flagged": 0.1227
+    },
+    {
+      "threshold": 0.425,
+      "flagged_fraction": 0.0817,
+      "accuracy_unflagged": 0.5315,
+      "accuracy_flagged": 0.1471
+    },
+    {
+      "threshold": 0.45,
+      "flagged_fraction": 0.1101,
+      "accuracy_unflagged": 0.5388,
+      "accuracy_flagged": 0.1878
+    },
+    {
+      "threshold": 0.475,
+      "flagged_fraction": 0.1442,
+      "accuracy_unflagged": 0.551,
+      "accuracy_flagged": 0.1983
+    },
+    {
+      "threshold": 0.5,
+      "flagged_fraction": 0.199,
+      "accuracy_unflagged": 0.562,
+      "accuracy_flagged": 0.2512
+    },
+    {
+      "threshold": 0.525,
+      "flagged_fraction": 0.273,
+      "accuracy_unflagged": 0.5775,
+      "accuracy_flagged": 0.294
+    },
+    {
+      "threshold": 0.55,
+      "flagged_fraction": 0.342,
+      "accuracy_unflagged": 0.5964,
+      "accuracy_flagged": 0.3148
+    },
+    {
+      "threshold": 0.575,
+      "flagged_fraction": 0.4035,
+      "accuracy_unflagged": 0.6104,
+      "accuracy_flagged": 0.3371
+    },
+    {
+      "threshold": 0.6,
+      "flagged_fraction": 0.4703,
+      "accuracy_unflagged": 0.6293,
+      "accuracy_flagged": 0.3546
+    },
+    {
+      "threshold": 0.625,
+      "flagged_fraction": 0.5379,
+      "accuracy_unflagged": 0.6485,
+      "accuracy_flagged": 0.3727
+    },
+    {
+      "threshold": 0.65,
+      "flagged_fraction": 0.5929,
+      "accuracy_unflagged": 0.67,
+      "accuracy_flagged": 0.3835
+    },
+    {
+      "threshold": 0.675,
+      "flagged_fraction": 0.6513,
+      "accuracy_unflagged": 0.6919,
+      "accuracy_flagged": 0.3974
+    },
+    {
+      "threshold": 0.7,
+      "flagged_fraction": 0.714,
+      "accuracy_unflagged": 0.7134,
+      "accuracy_flagged": 0.4147
+    },
+    {
+      "threshold": 0.725,
+      "flagged_fraction": 0.7702,
+      "accuracy_unflagged": 0.7333,
+      "accuracy_flagged": 0.4306
+    },
+    {
+      "threshold": 0.75,
+      "flagged_fraction": 0.8195,
+      "accuracy_unflagged": 0.7523,
+      "accuracy_flagged": 0.4446
+    },
+    {
+      "threshold": 0.775,
+      "flagged_fraction": 0.8637,
+      "accuracy_unflagged": 0.7672,
+      "accuracy_flagged": 0.458
+    },
+    {
+      "threshold": 0.8,
+      "flagged_fraction": 0.9075,
+      "accuracy_unflagged": 0.8052,
+      "accuracy_flagged": 0.469
+    },
+    {
+      "threshold": 0.825,
+      "flagged_fraction": 0.9469,
+      "accuracy_unflagged": 0.8552,
+      "accuracy_flagged": 0.4802
+    },
+    {
+      "threshold": 0.85,
+      "flagged_fraction": 0.9748,
+      "accuracy_unflagged": 0.8667,
+      "accuracy_flagged": 0.4906
+    }
+  ],
+  "objective": "lowest threshold whose UNFLAGGED N1 predictions reach the target accuracy while the flag still fires on at least min_flag_fraction. An earlier objective targeted accuracy over all retained epochs and was degenerate - overall N1 accuracy already equals the target, so it selected the lowest grid point and flagged 0.4% of epochs.",
+  "validation": {
+    "n1_predictions": 4161,
+    "accuracy_all_n1": 0.5001,
+    "accuracy_unflagged": 0.6104,
+    "accuracy_flagged": 0.3371,
+    "fraction_flagged": 0.4035,
+    "confidence_curve": [
+      {
+        "lo": 0.0,
+        "hi": 0.4,
+        "n": 269,
+        "accuracy": 0.1227
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.6,
+        "n": 1688,
+        "accuracy": 0.3916
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.8,
+        "n": 1819,
+        "accuracy": 0.5921
+      },
+      {
+        "lo": 0.8,
+        "hi": 1.0,
+        "n": 385,
+        "accuracy": 0.8052
+      }
+    ]
+  },
+  "interpretation": "N1 cannot be fixed by a decision rule - it is representation-bound. What the model can do is say which of its N1 calls are the doubtful ones, which is a defensible reason to review specific epochs rather than a claim that N1 was solved.",
+  "test_reported_once": {
+    "note": "Reported after the threshold was fixed on validation. Never used to choose the threshold, and must not be.",
+    "n1_predictions": 4342,
+    "accuracy_all_n1": 0.3871,
+    "accuracy_unflagged": 0.4293,
+    "accuracy_flagged": 0.3191,
+    "fraction_flagged": 0.3825,
+    "separation": 0.1102,
+    "separation_note": "The separation halves relative to validation (0.273 -> 0.110). Overall N1 accuracy also falls (0.500 -> 0.387), so the rule is separating a harder population. It still separates, and it was never fitted on this split, but the validation figures overstate what a reader should expect.",
+    "two_denominators": {
+      "argmax_n1_predictions": 4342,
+      "argmax_fraction_flagged": 0.3825,
+      "decoded_n1_epochs": 4434,
+      "decoded_fraction_flagged": 0.5643,
+      "why": "The threshold was fitted on argmax predictions; the packets apply it to the DECODED hypnogram, which is what a reader sees. The decoder changes which epochs are N1, and the decoded set is lower-confidence, so a larger share of it is flagged. Both numbers are correct for their own denominator; the packet reports the decoded one."
+    }
+  }
+}
