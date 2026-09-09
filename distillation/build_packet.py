@@ -7,9 +7,9 @@ the schema matters more than the code: once the vertical slice is written
 against it, changing a field means changing every consumer.
 
 Fields that are not yet populated are present and null rather than absent, so
-adding them later is not a breaking change. Two are reserved this way:
-`attribution` (pending Gate 3a) and `risk` (pending disorder-detection
-integration).
+adding them later is not a breaking change. `attribution` was reserved this way
+and is now filled from Gate 3a (schema 1.3); `risk` remains reserved, pending
+disorder-detection integration.
 
 WHAT GOES IN, AND WHERE IT COMES FROM
 -------------------------------------
@@ -19,7 +19,8 @@ WHAT GOES IN, AND WHERE IT COMES FROM
   per-stage confidence + tier      distillation/reliability_table.json
   night-level confidence + tier    distillation/results/night_confidence.json
   evidence_items                   assembled here, with stable ids
-  attribution                      null - Gate 3a has not run
+  attribution                      results/_g3a_n4kd.json, per_recording block
+  attribution_quality              same file - the pooled Gate 3a verdict
   risk                             null - not integrated
 
 THREE THINGS THAT WOULD OTHERWISE BITE
@@ -70,7 +71,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 RES = Path(__file__).parent / "results"
 STAGES = ["W", "N1", "N2", "N3", "REM"]
 
-SCHEMA_VERSION = "1.1"
+SCHEMA_VERSION = "1.3"
+
+# The N1 flag, fitted on VALIDATION by fit_n1_flag.py. Loaded rather than
+# hardcoded so the packet cannot drift from the rule that was actually fitted.
+def _load_n1_rule(res_dir):
+    p = Path(res_dir) / "n1_flag.json"
+    if not p.exists():
+        return None
+    return json.loads(p.read_text())
 
 # 1.0 -> 1.1
 #   ADDED    `decoding` (object) - how the hypnogram was produced from the
@@ -80,7 +89,39 @@ SCHEMA_VERSION = "1.1"
 #            renamed, so a 1.0 consumer still parses a 1.1 packet - but one that
 #            recomputes the hypnogram by argmax will now disagree with it, which
 #            is exactly why the version moved.
+# 1.2 -> 1.3
+#   POPULATED `attribution` (null since 1.0) - this night's per-stage
+#            Integrated-Gradients profile over the 34 spectral features.
+#   POPULATED `attribution_quality` - the Gate 3a verdict, with status
+#            moving from "not_run" to "run", plus the two caveats that
+#            bound it.
+#   Both fields were reserved present-and-null precisely so this would be
+#   additive. A 1.2 consumer that checked `attribution is None` now takes
+#   the other branch; one that rendered the field blindly is unaffected.
+# 1.1 -> 1.2
+#   ADDED    `n1_confidence_flag` (object) - per-epoch flags marking the N1
+#            predictions the model is least sure about, with the threshold and
+#            the validation numbers behind it.
+#   Additive only. A 1.1 consumer parses a 1.2 packet unchanged; it simply does
+#   not distinguish flagged N1 epochs from unflagged ones, which is the state
+#   every consumer was in before.
 SCHEMA_CHANGELOG = {
+    "1.3": {
+        "added": [],
+        "changed": ["attribution (null -> object)",
+                    "attribution_quality (status not_run -> run)"],
+        "breaking_for": "a consumer that treated `attribution is None` as "
+                        "permanent. The field was documented as reserved "
+                        "and pending Gate 3a from schema 1.0, so this is "
+                        "the change it was reserved for.",
+    },
+    "1.2": {
+        "added": ["n1_confidence_flag"],
+        "changed": [],
+        "breaking_for": "nothing - additive. Consumers that render all N1 epochs "
+                        "identically now have information they can use, and are "
+                        "not required to.",
+    },
     "1.1": {
         "added": ["decoding"],
         "changed": ["hypnogram.predicted_stages is decoded, not argmax",
@@ -176,6 +217,37 @@ MR: dict = {"metrics": {}}          # populated in main() from the artefact
 DEC = None                          # decode fn, populated in main()
 
 
+# Gate 3a, from the run that produced the committed verdict. Loaded rather
+# than recomputed: recomputing IG per packet would take ~6 min per night and
+# would let the packet drift from the verdict the report cites.
+def _load_gate3a(res_dir, model="student_N4kd"):
+    p = Path(res_dir) / "_g3a_n4kd.json"
+    if not p.exists():
+        return None
+    d = json.loads(p.read_text())
+    m = d.get("models", {}).get(model)
+    if not m or "per_recording" not in m:
+        return None
+
+    # The packet promises `_ground_truth_withheld: true`. A profile grouped by
+    # the annotated stage breaks that promise: per-true-stage epoch counts,
+    # differenced against this packet's own predicted per-stage counts, give a
+    # consumer the night's confusion structure. Hard failure, not a quiet null -
+    # a null would leave the leaky file on disk for the next rebuild to ship.
+    grouped = m.get("grouped_by")
+    if grouped != "predicted":
+        raise SystemExit(
+            f"{p} groups per-recording attribution by {grouped!r}, not 'predicted'.\n"
+            "  A packet that withholds ground truth cannot carry per-true-stage\n"
+            "  counts. Re-run gate3a_attribution.py after the grouping fix, or\n"
+            "  delete the file to build packets without attribution.")
+    return {"gate": d, "model": m}
+
+
+N1_RULE = _load_n1_rule(RES)
+GATE3A = _load_gate3a(RES)
+
+
 def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None:
     d = np.load(cache / f"{rec}.npz")
     P, y = d["probs"], d["labels"]
@@ -205,6 +277,131 @@ def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None
     n_changed = int((pred != argmax_pred).sum())
     ent = -(Pc * np.log(np.clip(Pc, 1e-12, None))).sum(1)
     conf = Pc.max(1)
+
+    # ---- Gate 3a attribution (schema 1.3) ----------------------------------
+    # This night's profile, and the cohort-level verdict, kept apart on purpose.
+    attribution_block, attribution_quality_block = None, {
+        "status": "not_run", "gate": "3a",
+        "preregistration": "distillation/PREREGISTRATION_gate3a.md"}
+    if GATE3A is not None and rec in GATE3A["model"]["per_recording"]:
+        gm, gd = GATE3A["model"], GATE3A["gate"]
+        gv = gm["gate_verdict"]
+        # Every epoch of this night must appear in exactly one stage bucket.
+        # The gate skips trailing chunks shorter than 8 epochs, which silently
+        # drops the tail of any recording whose length mod 256 is small - one
+        # epoch of SC4021E0-PSG, found by this check rather than by reading it.
+        _prof = gm["per_recording"][rec]
+        _acc = sum(v["n_epochs"] for v in _prof.values())
+        if _acc != len(pred_stages):
+            raise SystemExit(
+                f"{rec}: attribution profile covers {_acc} epochs but the packet "
+                f"ships {len(pred_stages)}. A partial profile presented as the "
+                f"night's would misstate which epochs were explained.")
+        attribution_block = {
+            "method": ("Integrated Gradients, 64 steps, midpoint rule, "
+                       "straight-line path"),
+            "baseline": ("as pre-registered, NOT all-zeros: the waveform "
+                         "baseline is this recording's own mean amplitude and "
+                         "the spectral baseline is the per-feature mean over "
+                         "the TRAIN split. Attribution is therefore 'relative "
+                         "to a featureless night', not 'relative to silence', "
+                         "and the numbers are not comparable to a zero-baseline "
+                         "IG run."),
+            "over": ("the 34 derived spectral features. The raw-waveform branch "
+                     "is attributed too, but as 3000 samples it is not "
+                     "interpretable feature-by-feature and is summarised as a "
+                     "branch share, not listed here."),
+            "scope": ("THIS RECORDING. Computed on this night's own epochs, "
+                      "grouped by the stage the model predicted."),
+            "normalisation": ("shares of this stage's total absolute "
+                              "attribution across the 34 spectral features; "
+                              "they sum to the spectral branch share, not to 1"),
+            "per_stage": gm["per_recording"][rec],
+            "cohort_profile": ("distillation/results/_g3a_n4kd.json - the "
+                               "pooled 29-recording profile this night should "
+                               "be read against"),
+            "how_to_read": (
+                "These are the features the model leaned on for this night, not "
+                "the features a clinician would cite. Attribution explains the "
+                "model; it does not validate it. An epoch staged wrongly still "
+                "produces a confident-looking attribution profile."),
+        }
+        attribution_quality_block = {
+            "status": "run",
+            "gate": "3a",
+            "preregistration": gd["preregistration"],
+            "model": gm["model"],
+            "verdict": "PASS" if gv["PASS"] else "FAIL",
+            "criterion": gv["criterion"],
+            "predictions_met": gv["predictions_met"],
+            "n_met": gv["n_met"],
+            "void": gv["void"],
+            "completeness_relative_error": gm["completeness"]["relative"],
+            "scope": (
+                "COHORT, NOT THIS NIGHT. The verdict was evaluated once on the "
+                "pooled test split of "
+                f"{gm['n_test_recordings']} recordings. It is not a quality "
+                "score for this recording's attributions, and no per-night "
+                "version of it was measured."),
+            "caveats": [
+                ("The top-3 feature set is IDENTICAL across all five stages - "
+                 "ratio_delta_beta, ratio_dt_ab and cD1_log_energy, differing "
+                 "only in order. The gate asked whether stage-appropriate "
+                 "features appear in the top 3, and they do, but they appear "
+                 "for every stage. The profile discriminates far less between "
+                 "stages than the per-stage predictions passing suggests."),
+                ("The spectral/waveform branch split is DIMENSION-BIASED. "
+                 "Spectral features take 18.7% of attribution mass on average, "
+                 "which reads as a minor branch; but that mass is spread over "
+                 "34 dimensions against 3000 waveform samples, so per dimension "
+                 "the spectral features carry roughly 20x the attribution. "
+                 "Neither number alone describes the split honestly."),
+            ],
+            "deviation_from_registration": gd["deviation"],
+        }
+
+    # ---- N1 confidence flag (roadmap 4.1, schema 1.2) ----------------------
+    # N1 is representation-bound: no decision rule improves its F1 by more than
+    # +0.0086, and the human-scorer ceiling is itself low. What the model CAN do
+    # is say which of its N1 calls are the doubtful ones. The threshold is
+    # fitted on VALIDATION by fit_n1_flag.py and loaded, never hardcoded here.
+    #
+    # Applied to the SHIPPED hypnogram, not to argmax, because the flag has to
+    # describe the stages a reader is actually looking at. The threshold was
+    # fitted on argmax validation predictions; the decoder changes few epochs
+    # and the provenance below says so rather than glossing it.
+    n1_flag_block = None
+    if N1_RULE is not None:
+        thr = N1_RULE["threshold"]
+        is_n1 = np.array([sname == "N1" for sname in pred_stages])
+        flagged = is_n1 & (conf < thr)
+        n1_flag_block = {
+            "rule": N1_RULE["rule"],
+            "threshold": thr,
+            "applied_to": "hypnogram.predicted_stages (the decoded, shipped stages)",
+            "flagged_epochs": [int(i) for i in np.flatnonzero(flagged)],
+            "n_n1_epochs": int(is_n1.sum()),
+            "n_flagged": int(flagged.sum()),
+            "fraction_of_n1_flagged": (round(float(flagged.sum() / is_n1.sum()), 4)
+                                       if is_n1.sum() else None),
+            "fitted_on": N1_RULE["fitted_on"],
+            "validation_evidence": {
+                "accuracy_unflagged": N1_RULE["validation"]["accuracy_unflagged"],
+                "accuracy_flagged": N1_RULE["validation"]["accuracy_flagged"],
+                "accuracy_all_n1": N1_RULE["validation"]["accuracy_all_n1"],
+            },
+            "how_to_read": (
+                "A flagged epoch is one the model called N1 with low confidence. On "
+                "validation, unflagged N1 calls were right "
+                f"{N1_RULE['validation']['accuracy_unflagged']:.0%} of the time and "
+                f"flagged ones {N1_RULE['validation']['accuracy_flagged']:.0%}. This "
+                "does not make N1 more accurate - it identifies which N1 calls are "
+                "worth a human's time. N1 remains the model's weakest class."),
+            "provenance_caveat": (
+                "The threshold was fitted on argmax validation predictions; it is "
+                "applied here to the decoded hypnogram, which differs on "
+                f"{n_changed} of {len(pred_stages)} epochs in this recording."),
+        }
 
     # ---- derived sleep metrics (R, not REM - see module docstring) ----------
     physio_in = [TO_PHYSIO[s] for s in pred_stages]
@@ -412,6 +609,7 @@ def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None
                                   f"{n_changed} of {n} epochs in this recording.",
         },
 
+        "n1_confidence_flag": n1_flag_block,
         "per_stage": per_stage,
         "derived_metrics": {k: round(float(v), 4) for k, v in metrics.items()},
 
@@ -442,10 +640,9 @@ def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None
 
         "evidence_items": ev,
 
-        # ---- reserved, present-and-null so adding them is not breaking ------
-        "attribution": None,
-        "attribution_quality": {"status": "not_run", "gate": "3a",
-                                "preregistration": "distillation/PREREGISTRATION_gate3a.md"},
+        # ---- Gate 3a (schema 1.3); `risk` stays reserved --------------------
+        "attribution": attribution_block,
+        "attribution_quality": attribution_quality_block,
         "risk": None,
         "risk_available": False,
 
@@ -561,7 +758,8 @@ def main() -> int:
               f" | night confidence {p['night_confidence']['tier']}")
 
     print(f"\n{ok} packets written, {skipped} skipped")
-    print(f"schema {SCHEMA_VERSION} | attribution: null (gate 3a not run) | risk: null (not integrated)")
+    _g3a = "gate 3a wired" if GATE3A is not None else "null (gate 3a output missing)"
+    print(f"schema {SCHEMA_VERSION} | attribution: {_g3a} | risk: null (not integrated)")
     return 0
 
 
