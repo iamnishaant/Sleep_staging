@@ -1,0 +1,406 @@
+{
+  "gate": "3a",
+  "preregistration": "distillation/PREREGISTRATION_gate3a.md (committed 2026-08-10)",
+  "deviation": "The registration names student_baseline_E0. It predates the encoder rebuild and carries eeg_scale=None - the configuration whose temporal branch was measured inert - so its branch-split measurement is degenerate by construction. Both models are run: E0 honours the registration, the delivered model is reported because the packet's attribution field belongs to it.",
+  "models": {
+    "student_baseline_E0": {
+      "model": "student_baseline_E0",
+      "n_parameters": 121099,
+      "encoder": "atrous",
+      "eeg_scale": null,
+      "n_test_recordings": 29,
+      "steps": 64,
+      "completeness": {
+        "mean_abs_error": 0.281021,
+        "mean_abs_reference": 1015.283007,
+        "relative": 0.000277,
+        "void_threshold": 0.05,
+        "VOID": false
+      },
+      "per_stage": {
+        "W": {
+          "n_epochs": 8896,
+          "mean_attribution": {
+            "cA5_energy": 0.0,
+            "cA5_log_energy": 0.02811,
+            "cA5_entropy": 0.01043,
+            "cA5_variance": 0.0,
+            "cD5_energy": 0.0,
+            "cD5_log_energy": 0.03597,
+            "cD5_entropy": 0.01977,
+            "cD5_variance": 0.0,
+            "cD4_energy": 0.0,
+            "cD4_log_energy": 0.05977,
+            "cD4_entropy": 0.03993,
+            "cD4_variance": 0.0,
+            "cD3_energy": 0.0,
+            "cD3_log_energy": 0.02596,
+            "cD3_entropy": 0.01088,
+            "cD3_variance": 0.0,
+            "cD2_energy": 0.0,
+            "cD2_log_energy": 0.02979,
+            "cD2_entropy": 0.01816,
+            "cD2_variance": 0.0,
+            "cD1_energy": 0.0,
+            "cD1_log_energy": 0.11757,
+            "cD1_entropy": 0.0131,
+            "cD1_variance": 0.0,
+            "rel_delta": 0.00907,
+            "rel_theta": 0.00385,
+            "rel_alpha": 0.00198,
+            "rel_beta": 0.00275,
+            "rel_gamma": 0.00572,
+            "spectral_entropy": 0.03021,
+            "sef95": 0.07093,
+            "ratio_delta_beta": 0.21683,
+            "ratio_theta_alpha": 0.04083,
+            "ratio_dt_ab": 0.20838
+          },
+          "top5": [
+            {
+              "feature": "ratio_delta_beta",
+              "share": 0.2168
+            },
+            {
+              "feature": "ratio_dt_ab",
+              "share": 0.2084
+            },
+            {
+              "feature": "cD1_log_energy",
+              "share": 0.1176
+            },
+            {
+              "feature": "sef95",
+              "share": 0.0709
+            },
+            {
+              "feature": "cD4_log_energy",
+              "share": 0.0598
+            }
+          ],
+          "top1_share": 0.2168,
+          "cross_recording_top3_intersection": [
+            "ratio_delta_beta"
+          ],
+          "cross_recording_variance": 0.00025562,
+          "spectral_attribution_share": 1.0
+        },
+        "N1": {
+          "n_epochs": 3503,
+          "mean_attribution": {
+            "cA5_energy": 0.0,
+            "cA5_log_energy": 0.05395,
+            "cA5_entropy": 0.01162,
+            "cA5_variance": 0.0,
+            "cD5_energy": 0.0,
+            "cD5_log_energy": 0.06221,
+            "cD5_entropy": 0.01281,
+            "cD5_variance": 0.0,
+            "cD4_energy": 0.0,
+            "cD4_log_energy": 0.07137,
+            "cD4_entropy": 0.01076,
+            "cD4_variance": 0.0,
+            "cD3_energy": 0.0,
+            "cD3_log_energy": 0.03358,
+            "cD3_entropy": 0.00744,
+            "cD3_variance": 0.0,
+            "cD2_energy": 0.0,
+            "cD2_log_energy": 0.0551,
+            "cD2_entropy": 0.01629,
+            "cD2_variance": 0.0,
+            "cD1_energy": 0.0,
+            "cD1_log_energy": 0.13334,
+            "cD1_entropy": 0.01421,
+            "cD1_variance": 0.0,
+            "rel_delta": 0.01856,
+            "rel_theta": 0.00773,
+            "rel_alpha": 0.0026,
+            "rel_beta": 0.00539,
+            "rel_gamma": 0.00361,
+            "spectral_entropy": 0.03452,
+            "sef95": 0.09164,
+            "ratio_delta_beta": 0.17068,
+            "ratio_theta_alpha": 0.04081,
+            "ratio_dt_ab": 0.14179
+          },
+          "top5": [
+            {
+              "feature": "ratio_delta_beta",
+              "share": 0.1707
+            },
+            {
+              "feature": "ratio_dt_ab",
+              "share": 0.1418
+            },
+            {
+              "feature": "cD1_log_energy",
+              "share": 0.1333
+            },
+            {
+              "feature": "sef95",
+              "share": 0.0916
+            },
+            {
+              "feature": "cD4_log_energy",
+              "share": 0.0714
+            }
+          ],
+          "top1_share": 0.1707,
+          "cross_recording_top3_intersection": [],
+          "cross_recording_variance": 0.00034669,
+          "spectral_attribution_share": 1.0
+        },
+        "N2": {
+          "n_epochs": 12778,
+          "mean_attribution": {
+            "cA5_energy": 0.0,
+            "cA5_log_energy": 0.04024,
+            "cA5_entropy": 0.01065,
+            "cA5_variance": 0.0,
+            "cD5_energy": 0.0,
+            "cD5_log_energy": 0.04205,
+            "cD5_entropy": 0.01521,
+            "cD5_variance": 0.0,
+            "cD4_energy": 0.0,
+            "cD4_log_energy": 0.04818,
+            "cD4_entropy": 0.01435,
+            "cD4_variance": 0.0,
+            "cD3_energy": 0.0,
+            "cD3_log_energy": 0.03698,
+            "cD3_entropy": 0.00581,
+            "cD3_variance": 0.0,
+            "cD2_energy": 0.0,
+            "cD2_log_energy": 0.05055,
+            "cD2_entropy": 0.01672,
+            "cD2_variance": 0.0,
+            "cD1_energy": 0.0,
+            "cD1_log_energy": 0.19626,
+            "cD1_entropy": 0.01286,
+            "cD1_variance": 0.0,
+            "rel_delta": 0.02315,
+            "rel_theta": 0.00881,
+            "rel_alpha": 0.00232,
+            "rel_beta": 0.00592,
+            "rel_gamma": 0.00637,
+            "spectral_entropy": 0.0299,
+            "sef95": 0.0935,
+            "ratio_delta_beta": 0.15162,
+            "ratio_theta_alpha": 0.03732,
+            "ratio_dt_ab": 0.15121
+          },
+          "top5": [
+            {
+              "feature": "cD1_log_energy",
+              "share": 0.1963
+            },
+            {
+              "feature": "ratio_delta_beta",
+              "share": 0.1516
+            },
+            {
+              "feature": "ratio_dt_ab",
+              "share": 0.1512
+            },
+            {
+              "feature": "sef95",
+              "share": 0.0935
+            },
+            {
+              "feature": "cD2_log_energy",
+              "share": 0.0506
+            }
+          ],
+          "top1_share": 0.1963,
+          "cross_recording_top3_intersection": [],
+          "cross_recording_variance": 0.0003568,
+          "spectral_attribution_share": 1.0
+        },
+        "N3": {
+          "n_epochs": 2751,
+          "mean_attribution": {
+            "cA5_energy": 0.0,
+            "cA5_log_energy": 0.03985,
+            "cA5_entropy": 0.01374,
+            "cA5_variance": 0.0,
+            "cD5_energy": 0.0,
+            "cD5_log_energy": 0.0644,
+            "cD5_entropy": 0.01696,
+            "cD5_variance": 0.0,
+            "cD4_energy": 0.0,
+            "cD4_log_energy": 0.02993,
+            "cD4_entropy": 0.01117,
+            "cD4_variance": 0.0,
+            "cD3_energy": 0.0,
+            "cD3_log_energy": 0.04305,
+            "cD3_entropy": 0.0048,
+            "cD3_variance": 0.0,
+            "cD2_energy": 0.0,
+            "cD2_log_energy": 0.03665,
+            "cD2_entropy": 0.00946,
+            "cD2_variance": 0.0,
+            "cD1_energy": 0.0,
+            "cD1_log_energy": 0.1181,
+            "cD1_entropy": 0.00689,
+            "cD1_variance": 0.0,
+            "rel_delta": 0.02507,
+            "rel_theta": 0.00616,
+            "rel_alpha": 0.00124,
+            "rel_beta": 0.0072,
+            "rel_gamma": 0.00432,
+            "spectral_entropy": 0.02842,
+            "sef95": 0.08883,
+            "ratio_delta_beta": 0.22065,
+            "ratio_theta_alpha": 0.02795,
+            "ratio_dt_ab": 0.19518
+          },
+          "top5": [
+            {
+              "feature": "ratio_delta_beta",
+              "share": 0.2207
+            },
+            {
+              "feature": "ratio_dt_ab",
+              "share": 0.1952
+            },
+            {
+              "feature": "cD1_log_energy",
+              "share": 0.1181
+            },
+            {
+              "feature": "sef95",
+              "share": 0.0888
+            },
+            {
+              "feature": "cD5_log_energy",
+              "share": 0.0644
+            }
+          ],
+          "top1_share": 0.2207,
+          "cross_recording_top3_intersection": [
+            "ratio_delta_beta"
+          ],
+          "cross_recording_variance": 0.000941,
+          "spectral_attribution_share": 1.0
+        },
+        "REM": {
+          "n_epochs": 5502,
+          "mean_attribution": {
+            "cA5_energy": 0.0,
+            "cA5_log_energy": 0.08656,
+            "cA5_entropy": 0.01696,
+            "cA5_variance": 0.0,
+            "cD5_energy": 0.0,
+            "cD5_log_energy": 0.04567,
+            "cD5_entropy": 0.00742,
+            "cD5_variance": 0.0,
+            "cD4_energy": 0.0,
+            "cD4_log_energy": 0.05165,
+            "cD4_entropy": 0.00745,
+            "cD4_variance": 0.0,
+            "cD3_energy": 0.0,
+            "cD3_log_energy": 0.02927,
+            "cD3_entropy": 0.00924,
+            "cD3_variance": 0.0,
+            "cD2_energy": 0.0,
+            "cD2_log_energy": 0.09127,
+            "cD2_entropy": 0.0118,
+            "cD2_variance": 0.0,
+            "cD1_energy": 0.0,
+            "cD1_log_energy": 0.1058,
+            "cD1_entropy": 0.01079,
+            "cD1_variance": 0.0,
+            "rel_delta": 0.02466,
+            "rel_theta": 0.00809,
+            "rel_alpha": 0.00212,
+            "rel_beta": 0.00614,
+            "rel_gamma": 0.00241,
+            "spectral_entropy": 0.06307,
+            "sef95": 0.08653,
+            "ratio_delta_beta": 0.16435,
+            "ratio_theta_alpha": 0.0369,
+            "ratio_dt_ab": 0.13187
+          },
+          "top5": [
+            {
+              "feature": "ratio_delta_beta",
+              "share": 0.1643
+            },
+            {
+              "feature": "ratio_dt_ab",
+              "share": 0.1319
+            },
+            {
+              "feature": "cD1_log_energy",
+              "share": 0.1058
+            },
+            {
+              "feature": "cD2_log_energy",
+              "share": 0.0913
+            },
+            {
+              "feature": "cA5_log_energy",
+              "share": 0.0866
+            }
+          ],
+          "top1_share": 0.1643,
+          "cross_recording_top3_intersection": [],
+          "cross_recording_variance": 0.00049724,
+          "spectral_attribution_share": 1.0
+        }
+      },
+      "predictions": {
+        "N3": {
+          "prediction": "a delta-family feature in the top 3",
+          "top3": [
+            "cD1_log_energy",
+            "ratio_delta_beta",
+            "ratio_dt_ab"
+          ],
+          "met": true
+        },
+        "REM": {
+          "prediction": "rel_theta attributed above rel_delta",
+          "rel_theta": 0.00809,
+          "rel_delta": 0.02466,
+          "met": false
+        },
+        "W": {
+          "prediction": "a high-frequency feature in the top 3",
+          "top3": [
+            "cD1_log_energy",
+            "ratio_delta_beta",
+            "ratio_dt_ab"
+          ],
+          "met": true
+        },
+        "N2": {
+          "prediction": "top-1 share lower than N3's (conditional on N3)",
+          "n2_top1": 0.1963,
+          "n3_top1": 0.2207,
+          "met": true,
+          "conditional_on_N3": true
+        },
+        "N1": {
+          "prediction": "incoherent - no feature consistently in the top 3, and the highest cross-recording variance",
+          "top3_intersection": [],
+          "highest_variance": false,
+          "met": false
+        }
+      },
+      "gate_verdict": {
+        "criterion": "N3 must be met AND at least 3 of 5 predictions met; void if completeness error exceeds 5%",
+        "predictions_met": {
+          "N3": true,
+          "REM": false,
+          "W": true,
+          "N2": true,
+          "N1": false
+        },
+        "n_met": 3,
+        "n3_met": true,
+        "void": false,
+        "PASS": true
+      }
+    }
+  }
+}
