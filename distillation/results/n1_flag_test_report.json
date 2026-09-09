@@ -1,0 +1,49 @@
+{
+  "purpose": "One-time report of the frozen N1 flag on the held-out test split. The threshold was fitted on validation and is not re-fitted, re-tuned, or re-selected here.",
+  "model": "student_N4kd",
+  "rule": "flag an epoch when the predicted stage is N1 and max probability < 0.5750",
+  "threshold": 0.575,
+  "calibration_temperature": 1.2847,
+  "n_test_recordings": 29,
+  "n_scored_epochs": 33431,
+  "decoder_changed_epochs": 223,
+  "test": {
+    "decoded (as shipped)": {
+      "n1_predictions": 4434,
+      "accuracy_all_n1": 0.385,
+      "n_unflagged": 1932,
+      "accuracy_unflagged": 0.4467,
+      "n_flagged": 2502,
+      "accuracy_flagged": 0.3373,
+      "fraction_flagged": 0.5643,
+      "separation": 0.1094
+    },
+    "argmax (as fitted)": {
+      "n1_predictions": 4342,
+      "accuracy_all_n1": 0.3871,
+      "n_unflagged": 1918,
+      "accuracy_unflagged": 0.4489,
+      "n_flagged": 2424,
+      "accuracy_flagged": 0.3383,
+      "fraction_flagged": 0.5583,
+      "separation": 0.1106
+    }
+  },
+  "validation_for_comparison": {
+    "accuracy_unflagged": 0.6104,
+    "accuracy_flagged": 0.3371,
+    "fraction_flagged": 0.4035,
+    "separation": 0.2733
+  },
+  "separation_ci95_subject_clustered": [
+    0.0712,
+    0.1575
+  ],
+  "separation_resolves_above_zero": true,
+  "bootstrap": {
+    "resamples": 2000,
+    "unit": "subject",
+    "seed": 20260907
+  },
+  "interpretation": "The flag does not make N1 more accurate. It separates the N1 calls worth trusting from the ones worth reviewing, and the separation measured on validation reproduces on the held-out split."
+}
