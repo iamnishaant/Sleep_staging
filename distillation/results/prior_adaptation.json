@@ -1,0 +1,125 @@
+{
+  "model": "student_N4kd_sc2st",
+  "source_prior": {
+    "W": 0.3355,
+    "N1": 0.1034,
+    "N2": 0.3541,
+    "N3": 0.0718,
+    "REM": 0.1351
+  },
+  "target_prior_true": {
+    "W": 0.099,
+    "N1": 0.086,
+    "N2": 0.4674,
+    "N3": 0.151,
+    "REM": 0.1966
+  },
+  "target_prior_em": {
+    "W": 0.0374,
+    "N1": 0.2727,
+    "N2": 0.342,
+    "N3": 0.179,
+    "REM": 0.169
+  },
+  "em_prior_mae": 0.0859,
+  "variants": {
+    "uncorrected": {
+      "kappa": 0.5516254856082863,
+      "macro_f1": 0.622378901672825,
+      "per_class_f1": {
+        "W": 0.6216,
+        "N1": 0.3576,
+        "N2": 0.7469,
+        "N3": 0.6899,
+        "REM": 0.6959
+      },
+      "predicted_prevalence": {
+        "W": 0.1307,
+        "N1": 0.1004,
+        "N2": 0.4271,
+        "N3": 0.1574,
+        "REM": 0.1843
+      },
+      "kappa_ci_subject": [
+        0.4751,
+        0.6205
+      ]
+    },
+    "em_adapted": {
+      "kappa": 0.47565017956877853,
+      "macro_f1": 0.5407526767566367,
+      "per_class_f1": {
+        "W": 0.2731,
+        "N1": 0.3618,
+        "N2": 0.698,
+        "N3": 0.6901,
+        "REM": 0.6808
+      },
+      "predicted_prevalence": {
+        "W": 0.024,
+        "N1": 0.2613,
+        "N2": 0.3584,
+        "N3": 0.1789,
+        "REM": 0.1774
+      },
+      "kappa_ci_subject": [
+        0.4098,
+        0.5341
+      ]
+    },
+    "oracle_prior": {
+      "kappa": 0.5539324618352448,
+      "macro_f1": 0.6230768254732527,
+      "per_class_f1": {
+        "W": 0.5903,
+        "N1": 0.3812,
+        "N2": 0.7552,
+        "N3": 0.6924,
+        "REM": 0.6963
+      },
+      "predicted_prevalence": {
+        "W": 0.0871,
+        "N1": 0.1088,
+        "N2": 0.4362,
+        "N3": 0.1684,
+        "REM": 0.1996
+      },
+      "kappa_ci_subject": [
+        0.4794,
+        0.6192
+      ]
+    },
+    "em_per_recording": {
+      "kappa": 0.45127347884577984,
+      "macro_f1": 0.5348065720435349,
+      "per_class_f1": {
+        "W": 0.3283,
+        "N1": 0.3379,
+        "N2": 0.6743,
+        "N3": 0.6921,
+        "REM": 0.6414
+      },
+      "predicted_prevalence": {
+        "W": 0.0317,
+        "N1": 0.2707,
+        "N2": 0.3504,
+        "N3": 0.1786,
+        "REM": 0.1686
+      },
+      "kappa_ci_subject": [
+        0.3804,
+        0.5202
+      ]
+    }
+  },
+  "verdict": "PRIOR SHIFT REFUTED as the cause of the cohort gap",
+  "decisive_evidence": {
+    "cohort_gap": 0.1868,
+    "recovered_by_oracle_priors": 0.0023,
+    "fraction_of_gap_explained": 0.0123,
+    "reading": "Perfect knowledge of the target priors recovers 1.2% of the gap. The mechanism worked - oracle correction moved predicted wake from 13.1% to 8.7% against a true 9.9% - and the kappa did not move. So the prior mismatch is real and inconsequential.",
+    "em_failure_is_also_evidence": "Unsupervised EM estimated N1 at 27.3% against a true 8.6%, MAE 8.6pp, and made kappa WORSE by 0.076. Saerens EM recovers priors only when p(x|y) is unchanged across domains. Its divergence here is independent evidence that the class-conditional distributions themselves differ."
+  },
+  "supersedes": "The earlier reading in cohort_transfer.json attributed the wake precision collapse to the 3x prior shift. That attribution is WITHDRAWN: the shift exists but correcting it perfectly buys nothing. The gap is covariate shift.",
+  "consequence": "This REVIVES the amplitude hypothesis (item 1.1), which the restricted-range test could not settle. If p(x|y) has moved, the measured 2x amplitude difference between cohorts is the leading candidate for what moved. Item 1.1 goes from 'hypothesis to test' to 'the leading remaining explanation', and it is one run."
+}
