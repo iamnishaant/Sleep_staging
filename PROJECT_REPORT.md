@@ -7,7 +7,7 @@
 | **Dataset** | Sleep-EDFx — 197 recordings, 100 subjects, 237,950 thirty-second epochs |
 | **Task** | 5-class sleep staging (W, N1, N2, N3, REM) from single-channel EEG |
 | **Goal** | A compact model, small enough to train on Kaggle's free tier, built by distilling Group 48's inherited teacher |
-| **Headline result** | A **139,606**-parameter model reaching **κ = 0.7001** (95% CI 0.6545–0.7414) on 15 subjects it never saw — **4.65× smaller** than the teacher and **0.09 κ above** the best honest teacher |
+| **Headline result** | A **139,606**-parameter model reaching **κ = 0.7001** (95% CI 0.6432–0.7514) on 15 subjects it never saw — **4.65× smaller** than the teacher and **0.09 κ above** the best honest teacher |
 | **Secondary result** | Distillation hurt from every single teacher, and stopped hurting once the teacher was an *ensemble* exceeding the student — where what transferred was calibration, not accuracy |
 | **Revised** | 28 August 2026. Sections 1–6 are the historical record of phase one and are left as written; §6b onward covers what followed. |
 | **Evaluation** | Subject-level splits; the test split was loaded exactly once per model and never used for tuning |
@@ -22,7 +22,7 @@ Automated sleep staging from EEG is typically evaluated with a train/validation 
 
 Three teacher variants were then trained under the corrected protocol, isolating and fixing a class-reweighting defect in the loss function to reach a final teacher κ of 0.6055 (+0.093 over the honest baseline). A 121,099-parameter student (5.36× smaller) was trained two ways — with distillation and with hard labels alone — from two teachers of different quality. Distillation *reduced* held-out κ at both teacher-quality levels (−0.052 and −0.031 respectively, p = 0.0026), with the harm shrinking as teacher quality improved; the mechanism is traced to the un-distilled student's output distribution diverging further from a teacher weaker than itself as it trains. The un-distilled student reached κ = 0.6449, statistically indistinguishable from the best 649K-parameter teacher (p = 0.135) and a significant improvement over a faithful, leak-free replication of the original architecture (p < 0.001). The deployed model was therefore, at that stage, the compact un-distilled student.
 
-A second phase overturned two of those conclusions and completed the third. An ablation had suggested the raw EEG waveform carried nothing beyond 34 precomputed band-power features; measuring the encoder's receptive field by backpropagation showed it spanned 25 samples — a quarter of a second — before averaging over the full 30-second epoch, so the experiment had characterised the encoder rather than the signal. A two-branch encoder spanning 8.75 s moved the waveform from contributing nothing to driving 71% of predictions, and produced a student beating every honestly-evaluated teacher. That made distillation possible for the first time: not by training a larger teacher, but by averaging three comparable models into an ensemble exceeding any member, where diversity of input and architecture mattered far more than random seeds. Distilling that ensemble removed the penalty entirely, but the gain appeared on an axis we had not been measuring — accuracy tied, while expected calibration error fell by a third, REM-latency error nearly halved, and the night-level reliability signal sharpened by 43%. The delivered model is that distilled student: **139,606 parameters, κ 0.7001 (95% CI 0.6545–0.7414)**, shipped with a per-night evidence packet in which every derived clinical value travels with its own measured error bound.
+A second phase overturned two of those conclusions and completed the third. An ablation had suggested the raw EEG waveform carried nothing beyond 34 precomputed band-power features; measuring the encoder's receptive field by backpropagation showed it spanned 25 samples — a quarter of a second — before averaging over the full 30-second epoch, so the experiment had characterised the encoder rather than the signal. A two-branch encoder spanning 8.75 s moved the waveform from contributing nothing to driving 71% of predictions, and produced a student beating every honestly-evaluated teacher. That made distillation possible for the first time: not by training a larger teacher, but by averaging three comparable models into an ensemble exceeding any member, where diversity of input and architecture mattered far more than random seeds. Distilling that ensemble removed the penalty entirely, but the gain appeared on an axis we had not been measuring — accuracy tied, while expected calibration error fell by a third, REM-latency error nearly halved, and the night-level reliability signal sharpened by 43%. The delivered model is that distilled student: **139,606 parameters, κ 0.7001 (95% CI 0.6432–0.7514)**, shipped with a per-night evidence packet in which every derived clinical value travels with its own measured error bound.
 
 ---
 
@@ -49,7 +49,7 @@ That is where phase one ended. Phase two continued from the same diagnosis:
 6. **Encoder** — the temporal encoder's receptive field, measured rather than assumed, was **0.25 s**; no spindle, K-complex or slow wave fits inside it. Replacing it → **κ 0.6992**, and the raw EEG went from driving 0% of predictions to **71%**
 7. **Channels** — adding EOG and a second EEG derivation, the strongest remaining hypothesis, **failed**: lost on validation, won on test, paired p = 0.865. Noise
 8. **Ensemble** — three comparable models averaged → a teacher at **κ 0.7140** that finally exceeds the student, built with no larger architecture
-9. **Distillation** — from that ensemble the penalty vanished (**+0.0009**), and what transferred was **calibration**: test ECE 0.0359 → 0.0241, REM-latency error 33.7 → 18.3 min
+9. **Distillation** — from that ensemble the penalty vanished (**+0.0008**), and what transferred was **calibration**: test ECE 0.0359 → 0.0241, REM-latency error 33.7 → 18.3 min
 
 **The deliverable was met, then exceeded.** A model 4.65× smaller than the teacher scores 0.09 κ *above* it, under evaluation that cannot leak — and the technique that was supposed to get us there does work, once its precondition is satisfied, though it buys something other than what we set out to measure.
 
@@ -59,7 +59,7 @@ That is where phase one ended. Phase two continued from the same diagnosis:
 
 > **M0 = `distillation/results/students/student_N4kd/student_best.pt`**
 > 139,606 parameters · **distilled from a 3-model ensemble** (α = 0.5, T = 3.0)
-> held-out test κ **0.7001** · 95% CI [0.6545, 0.7414] · 4.65× compression
+> held-out test κ **0.7001** · 95% CI [0.6432, 0.7514] · 4.65× compression
 > κ 0.6993 as the packet ships it, after hypnogram decoding
 
 M0 has moved twice since the first delivery, and both moves are recorded together with
@@ -527,7 +527,7 @@ Distilling that ensemble (α = 0.5, T = 3.0) into a single single-channel studen
 |---|---:|
 | `student_distilled_E0` | −0.0524 |
 | `student_distilled_E1b` | −0.0315 |
-| **`student_N4kd`** | **+0.0009** |
+| **`student_N4kd`** | **+0.0008** |
 
 **The penalty is gone.** But the gain did not arrive where we were watching. On accuracy
 the distilled student ties its hard-label twin (paired p = 0.24 test, p = 0.33
@@ -551,13 +551,23 @@ unsurprising with n = 2.
 
 ## 6e. The evaluation is now the binding constraint
 
-Bootstrapping test κ over the 29 held-out **recordings** — the unit of independence, not
-the 33,431 correlated epochs — gives **0.7001, 95% CI [0.6545, 0.7414]**. (Argmax output; the
-decoded figure the packet ships is 0.6993, at the same interval width.)
+Bootstrapping test κ over the 15 held-out **subjects** — the unit of independence — gives
+**0.7001, 95% CI [0.6432, 0.7514]**. (Argmax output; the decoded figure the packet ships
+is 0.6993, at the same interval width.)
+
+> **Corrected 29 August 2026.** This section previously resampled the 29 *recordings* and
+> reported [0.6545, 0.7414], ±0.043 — describing the recording as "the unit of
+> independence." It is not. Sleep-EDFx records two nights per person and **14 of the 15
+> test subjects contribute two recordings**, so that procedure repeated one level up the
+> exact error it was written to avoid: it correctly rejected the epoch as the unit
+> because 33,431 epochs are correlated, then treated two nights of the same person as
+> independent draws. Clustering by subject widens the interval **1.23×**, to ±0.054.
+> The point estimate is unchanged. Method and both intervals:
+> `distillation/results/kd_central_claim.json`.
 
 The previous delivered model (0.6449) sits below the lower bound, so that improvement is
-real. But the interval is ±0.043 wide, and the hard-label twin at 0.6992 is not
-distinguishable from 0.7001 at n = 29 and never will be.
+real. But the interval is ±0.054 wide, and the hard-label twin at 0.6992 is not
+distinguishable from 0.7001 at n = 15 subjects and never will be.
 
 This reframes §6b–6d. Since the encoder change every result has returned a tie, and the
 reason is not that the changes did nothing — **it is that the held-out set cannot resolve
@@ -586,6 +596,581 @@ ceiling. Chasing it as a number treats a labelling-ambiguity problem as a modell
 
 ---
 
+## 6f. The validation split every experiment was judged on was a bad draw
+
+Section 6e established that the *test* split cannot resolve the differences this
+project has been chasing. The same question applies one level up: could the
+**validation** split, on which every model was actually selected, be
+unrepresentative too?
+
+It could, and it was.
+
+Five-fold cross-validation was built over the 85 non-test subjects, drawn at
+**subject** level and stratified by cohort — 5 × 17 subjects, 32–34 recordings
+per fold, with the 15 held-out test subjects asserted absent from every fold
+(`test_cv_folds.py`, 35 assertions). Each fold trains the identical architecture
+on 68 subjects and validates on the remaining 17. All five ran with `ALPHA = 1.0`
+— hard labels, no teacher, for reasons given in §6g.
+
+| fold | best epoch | macro-F1 | κ |
+|---:|---:|---:|---:|
+| 0 | 29 | 0.7259 | 0.6917 |
+| 1 | 63 | 0.7516 | 0.7208 |
+| 2 | 32 | 0.7367 | 0.7136 |
+| 3 | 54 | 0.7678 | **0.7426** |
+| 4 | 56 | 0.7273 | 0.7026 |
+| **mean** | | **0.7419** | **0.7143** |
+| across-fold sd | | 0.0178 | 0.0193 |
+
+**The single original validation split gives κ 0.6763, and all five folds sit
+above it** — the lowest by +0.0154, the mean by +0.0380, which is 2.0 across-fold
+standard deviations.
+
+Every "bar to beat" in this report was set on that split. What this does and does
+not invalidate is worth stating precisely:
+
+- **A/B comparisons stand.** Both sides of every comparison faced the same
+  yardstick, so relative conclusions are unaffected.
+- **Absolute statements were flattered.** Any claim of the form "cleared the
+  baseline" was clearing a baseline set unusually low.
+
+That distinction was not academic. Running the five folds, the trainer printed
+**"BEATS the baseline on validation" five times out of five** — for free, because
+the hardcoded bar came from the harder split. The verdict read as evidence and
+was noise. The trainers now refuse to print a verdict under `CV_FOLD` at all and
+point at `cv_summary.py` instead.
+
+### What the CV can and cannot be used for
+
+The across-fold sd of **0.0193 κ** is the project's working resolution: believe a
+change only if it moves the CV mean by more than that. For scale, the entire
+distillation effect on κ was +0.0008.
+
+It is **not** a standard error, and `cv_summary.py` refuses to turn it into a
+confidence interval. Folds share training data — each model sees 80% of the same
+subjects — so the estimates are correlated, and there is in fact no unbiased
+estimator of k-fold cross-validation variance. An earlier draft of the roadmap
+promised the selection interval would fall to a specific number by 1/√n; that
+claim was withdrawn, and the refusal is coded rather than remembered.
+
+This is also **not nested cross-validation**, and calling it that would not
+survive a viva. It is one 5-fold CV for selection plus a frozen test split for
+the final report. Nested CV runs a CV loop inside each fold of an outer CV loop.
+
+Per class, averaged across folds: W 0.8975 · N1 0.4719 · N2 0.8090 · N3 0.7495 ·
+REM 0.7814. N1 has both the lowest mean and the largest spread (sd 0.0275) of any
+stage — worst and least stable, which is what representation-bound looks like.
+
+---
+
+## 6g. Distillation cannot be tuned under cross-validation
+
+The first CV run was attempted with the distillation trainer and stopped on 21
+training recordings with no cached teacher logits. The missing files were a
+symptom of something worse.
+
+The ensemble teacher was trained on the original 69-subject split. Under any
+fold, **12 to 16 of that fold's 17 validation subjects sit inside the teacher's
+own training set**. A student distilled from it inherits the teacher's
+memorisation of the very subjects it is then scored on. Generating the missing
+logits — the obvious fix, and the one the original error message invited — would
+have completed the run and produced an inflated number that looked entirely
+reasonable.
+
+This is the leakage that invalidated the inherited model (§2), moved one level
+out: not subject-into-split, but subject-into-**teacher**.
+
+The same applies to the cohort split of §6h, and worse: **15 of the 22 held-out
+telemetry subjects are inside the teacher's training set**, 68% of the test
+cohort. The trainer now refuses both combinations and names the reason rather
+than reporting a file count.
+
+The consequence divides the remaining work:
+
+| | needs a teacher? | can run under CV today |
+|---|---|---|
+| normalisation, augmentation, EOG, capacity, cohort transfer | no | yes, with `ALPHA = 1.0` |
+| α and T | yes | no — needs a teacher trained per fold (5 × 3 members) |
+
+Setting `ALPHA = 1.0` disables the soft term entirely, so the CV runs are pure
+hard-label training and are **not** a knowledge-transfer experiment. Using them
+to choose a configuration assumes the best student under hard labels is also the
+best under soft labels. That is plausible and it is untested; the project has one
+supporting data point, in that the distilled and hard-label twins tie on κ at the
+current configuration, so distillation reordered nothing there. Distilling both
+the CV winner and the runner-up would check it for two extra runs.
+
+---
+
+## 6h. Cohort transfer: the strongest generalisation claim available in-dataset
+
+External validation is out of scope (§9). But Sleep-EDFx is two studies, not one:
+
+| cohort | subjects | recordings | population |
+|---|---:|---:|---|
+| **SC** sleep-cassette | 78 | 153 | healthy, ageing study |
+| **ST** sleep-telemetry | 22 | 44 | mild difficulty falling asleep; half on temazepam; different recorder |
+
+They are normally mixed across all three splits, so every κ in this report
+averages over both. Splitting on the cohort boundary instead — train on 62 SC
+subjects, validate on 16 SC, hold out **all 22 ST subjects** — is a genuine
+held-out-population test on a *larger* test set than the headline uses: 44
+recordings, 42,471 epochs.
+
+| | κ |
+|---|---:|
+| held-out SC validation, same model | 0.7384 |
+| **held-out ST cohort** | **0.5516**, 95% CI [0.4751, 0.6205] |
+| **transfer gap** | **−0.1868** |
+
+> The interval clusters by **subject** (22), not recording (44), for the reason
+> given in §6e. This κ is **not comparable to the headline 0.7001**: the main
+> test split is a subset of both cohorts, so the two numbers measure different
+> populations.
+
+The six ST recordings inside the main test split had suggested a gap of 0.106.
+The real gap is **1.76× larger** — small samples understate, which is why the
+experiment existed.
+
+### κ alone would have misread it
+
+| stage | F1 (CV) | F1 (ST) | change | recall | precision |
+|---|---:|---:|---:|---:|---:|
+| **W** | 0.898 | 0.622 | **−0.276** | 72.1% | **54.6%** |
+| N1 | 0.472 | 0.358 | −0.114 | 38.8% | 33.2% |
+| N2 | 0.809 | 0.747 | −0.062 | 71.5% | 78.2% |
+| N3 | 0.750 | 0.690 | −0.060 | 70.4% | 67.6% |
+| REM | 0.781 | 0.696 | −0.086 | 67.4% | 71.9% |
+
+Wake loses 2.4× the next-largest drop, and it is a **precision** failure, not a
+detection failure: wake recall is 72.1%, squarely inside the 67–72% band every
+other stage occupies. The model finds wake on telemetry data perfectly well. It
+calls 2,521 non-wake epochs wake, against 3,032 true positives.
+
+**Sleep-stage discrimination largely survives the cohort boundary. One class's
+behaviour does not.** That is a more useful statement than "κ fell to 0.55", and
+it is only visible because per-class F1 and the confusion matrix were built into
+the evaluation rather than left for the reader to request.
+
+### It is covariate shift, not prior shift
+
+SC is 29.8% wake and ST is 9.9% — a threefold prior shift, the largest of any
+stage, and the obvious explanation for a wake-specific precision collapse. The
+obvious fix is prior adaptation: a classifier's outputs carry the source priors,
+and if only p(y) has moved then reweighting posteriors by p_t(y)/p_s(y) recovers
+the target. The target priors can be estimated from unlabelled target data by EM
+(Saerens, Latinne & Decaestecker, 2002).
+
+Both the explanation and the fix are wrong:
+
+| | κ | vs uncorrected | W F1 |
+|---|---:|---:|---:|
+| uncorrected | 0.5516 | — | 0.622 |
+| unsupervised EM | 0.4757 | **−0.0760** | 0.273 |
+| EM, per recording | 0.4513 | −0.1004 | 0.328 |
+| **oracle — perfect target priors** | **0.5539** | **+0.0023** | 0.590 |
+
+**Perfect knowledge of the target priors recovers 1.2% of the gap.** The
+correction worked mechanically — predicted wake moved from 13.1% to 8.7% against
+a true 9.9% — and κ did not move. The prior mismatch is real and inconsequential.
+
+The EM failure is independent evidence for the same conclusion. It estimated N1
+at **27.3%** against a true 8.6%, a mean absolute error of 8.6 percentage points
+across classes, and made κ worse. Saerens EM recovers priors *only* when p(x|y)
+is unchanged across domains; its divergence here says the class-conditional
+distributions themselves differ.
+
+**The SC→ST gap is covariate shift.** Telemetry epochs genuinely look different;
+they are not merely differently distributed.
+
+### What shifted is not yet identified
+
+The leading candidate is amplitude. ST recordings sit at **1.62–2.63×** the SC
+training median, and the trainers apply one global constant
+(`xt * EEG_SCALE`), which cannot remove a per-cohort difference.
+
+This is recorded as an **untested hypothesis**, not a conclusion. A within-ST
+correlation cannot settle it — every ST recording is displaced, so there is no
+unshifted control, and the measured correlation between per-recording κ and
+amplitude (−0.247) is weak and comparable in size to one pointing elsewhere
+(+0.297 with wake fraction). The clean test is per-recording normalisation, and
+it is deferred on an implementation constraint recorded in §11.
+
+Full output: `results/cv_analysis.json`, `results/cohort_transfer.json`,
+`results/prior_adaptation.json`, `results/amplitude_hypothesis_test.json`.
+
+---
+
+## 6i. Amplitude tested, and excluded
+
+§6h left the cohort gap as covariate shift with one named candidate: the
+telemetry cohort arrives at **1.62–2.63×** the cassette training median, and the
+trainers apply a single global constant that cannot remove a per-cohort
+difference. That was recorded as an untested hypothesis. This section tests it.
+
+### The intervention
+
+A per-recording-normalised copy of the dataset, built by
+`make_pernorm_dataset.py`. Each recording is multiplied by
+`reference_IQR / its own IQR`, where the reference is the median IQR of the **62
+cassette training recordings only** — never validation, never any telemetry
+subject.
+
+The 34 spectral features had to move with the waveform or the experiment would
+be confounded: the model consumes them alongside the signal, and while most are
+scale-invariant (relative band powers, spectral entropy, SEF95, ratios), the DWT
+energy and variance scale as s² and log-energy shifts with 2·ln(s). They are
+adjusted analytically rather than recomputed, and the column layout that depends
+on is verified against the data by two exact relations before anything is
+written — `log_energy == log(energy + 1e-12)`, and `energy/variance` equal to the
+constant coefficient length at each DWT level (101, 101, 194, 382, 755, 1504).
+
+> **This was implemented as a drop-in dataset, not a trainer flag.** An earlier
+> attempt added a `PER_RECORDING_NORM` branch inside the trainers and was
+> reverted: all three generators patch the same `__getitem__` region with
+> contiguous anchors, so inserting a branch there breaks two of them, and each
+> anchor fix broke the next along. The trainers locate their data by glob, so a
+> dataset that occupies the same path needs no code change at all.
+
+### The result
+
+| | κ on the 22 ST subjects |
+|---|---:|
+| baseline, one global scale | 0.5516 |
+| per-recording normalisation | **0.5341** |
+| **paired difference** | **−0.0175**, 95% CI [−0.0318, −0.0033] |
+
+**Normalisation makes transfer worse, and the interval excludes zero.**
+
+The test is **paired** over the same 44 recordings. That matters: the two
+independent intervals — [0.4751, 0.6205] and [0.4565, 0.6034] — overlap so
+heavily that comparing them would have returned "inconclusive". Both models were
+scored on the data they were *trained* with; feeding either the other's inputs
+would have been a preprocessing mismatch rather than a comparison.
+
+It is not an artefact of the three degenerate telemetry recordings either:
+excluding them, 0.5882 → 0.5728, CI [−0.0299, −0.0008].
+
+| stage | baseline | per-recording | change |
+|---|---:|---:|---:|
+| **W** | 0.6216 | 0.5455 | **−0.0761** |
+| N1 | 0.3576 | 0.3808 | +0.0232 |
+| N2 | 0.7469 | 0.7586 | +0.0117 |
+| **N3** | 0.6899 | 0.6723 | **−0.0176** |
+| REM | 0.6959 | 0.6766 | −0.0193 |
+
+**N3 fell as predicted.** Before running, §6h recorded that per-recording scaling
+discards absolute amplitude and that slow-wave amplitude is part of what defines
+N3, and named N3 as the thing to watch. The cost arrived where it was expected.
+
+The larger surprise is **W losing 0.076** — wake was the failure this
+intervention was aimed at, and removing the amplitude difference made it worse
+rather than better.
+
+### What the two negatives together establish
+
+| explanation | status | evidence |
+|---|---|---|
+| prior shift | **excluded** | oracle correction with perfect target priors recovers 1.2% of the gap (§6h) |
+| amplitude / input scale | **excluded** | correcting it costs 0.0175 κ, CI [−0.0318, −0.0033] |
+
+Both cheap explanations are measured and gone, each with a quantitative bound
+rather than a failed attempt. The claim this supports is bounded accordingly:
+
+> The measured amplitude shift does not account for the cohort gap, and
+> correcting it makes transfer slightly worse.
+
+Not that the cause is unidentified. Untested here, and still standing: recorder
+hardware and its filter characteristics, montage and electrode placement, the
+temazepam, the population's age and sleep pathology, and temporal structure — a
+lab telemetry night and a ~9-hour home cassette recording are differently shaped.
+
+### A data-quality finding, found on the way
+
+Building the normalised dataset flagged **three telemetry recordings** where more
+than 5% of samples sit at a single value — flat or clipped segments. All three
+are in the ST cohort; no cassette recording trips the same check.
+
+| | κ |
+|---|---:|
+| the 3 flagged recordings | **0.0518** |
+| the other 41 | 0.5882 |
+| all 44, as reported in §6h | 0.5516 |
+
+Individually **−0.0086, −0.0087 and 0.1137** — two below chance. They are in the
+source data and were in the §6h baseline, so this does not overturn that result,
+but it splits it: against the cassette validation figure of 0.7384 the gap is
+−0.1868 over all 44 and **−0.1502** excluding the three. Roughly a fifth of the
+measured cohort gap is data quality rather than cohort difference, and it is a
+data-quality *asymmetry*, which is itself a fourth candidate explanation.
+
+They are flagged in `results/pernorm_manifest.json`, not dropped. Both numbers
+should be reported.
+
+Full output: `results/cohort_transfer_pernorm.json`,
+`results/a1_pernorm_verdict.json`, `results/pernorm_manifest.json`.
+
+---
+
+## 6j. Gate 3a — the attributions are real, and narrower than the pass suggests
+
+Gate 3a is the explainability gate. It was **pre-registered before it was run**
+(`distillation/PREREGISTRATION_gate3a.md`, committed 2026-08-10): five per-stage
+predictions about what the model should be attributing to, a pass criterion, and
+a void condition, all fixed in advance. The point of writing it down first is
+that attribution output is easy to narrate after the fact — almost any profile
+can be made to sound physiologically sensible once you know what it says.
+
+### Method, and the one thing about it that is usually left implicit
+
+Integrated Gradients, 64 steps, midpoint rule, straight-line path, attributing
+the summed target logit so that position *t*'s attribution is read at *t*.
+
+The baselines are **not zeros**, and this matters for how the numbers read:
+
+| branch | baseline | meaning |
+|---|---|---|
+| raw waveform | this recording's own mean amplitude | "relative to a flat night" |
+| 34 spectral features | per-feature mean over the **train** split | "relative to an average night" |
+
+So an attribution here answers *"what made this epoch different from a
+featureless night?"*, not *"what made the model fire at all?"*. Zero-baseline IG
+numbers from another paper are not comparable to these.
+
+### The void condition, checked first
+
+IG satisfies a completeness axiom: attributions must sum to the difference
+between the model's output at the input and at the baseline. If they do not, the
+attribution is arithmetic noise and the gate is void regardless of what the
+predictions say. Registered threshold: 5% relative error.
+
+Measured: **0.03%** (mean absolute error 0.279 against a mean absolute reference
+of 914.98). Not void. The gate is allowed to return a verdict.
+
+### The five pre-registered predictions
+
+| stage | prediction | outcome |
+|---|---|---|
+| N3 | a delta-family feature in the top 3 | **met** — `ratio_delta_beta` is top-1 |
+| W | a high-frequency feature in the top 3 | **met** — `cD1_log_energy` (highest-frequency detail band) |
+| N2 | top-1 share lower than N3's | **met** — 0.2518 vs 0.3268 |
+| REM | `rel_theta` attributed above `rel_delta` | **not met** — 0.00195 vs 0.00970, a 5× miss |
+| N1 | incoherent: nothing consistently top-3, highest cross-recording variance | **not met** — two features are consistently top-3, and its variance is not the highest |
+
+**3 of 5 met, and N3 among them → PASS** on the registered criterion ("N3 must
+be met AND at least 3 of 5").
+
+Two of the failures are worth more than the arithmetic. The REM prediction was
+the most specific physiological claim in the registration and it missed badly:
+the model does not lean on relative theta to call REM. The N1 prediction
+predicted *incoherence* and was wrong in the model's favour — N1 attributions
+are more stable than we expected them to be, which sits oddly beside N1 being
+the weakest class by F1. A model can be consistent about the wrong thing.
+
+### Two caveats, without which the PASS is over-read
+
+**1. The top-3 feature set is identical across all five stages.** Every stage —
+W, N1, N2, N3, REM — has the same three features at the top: `ratio_delta_beta`,
+`ratio_dt_ab`, `cD1_log_energy`. Only the ordering changes.
+
+| stage | top-3 (by share) | top-1 share |
+|---|---|---:|
+| W | ratio_delta_beta, ratio_dt_ab, cD1_log_energy | 0.2476 |
+| N1 | ratio_delta_beta, ratio_dt_ab, cD1_log_energy | 0.2252 |
+| N2 | cD1_log_energy, ratio_dt_ab, ratio_delta_beta | 0.2518 |
+| N3 | ratio_delta_beta, ratio_dt_ab, cD1_log_energy | 0.3268 |
+| REM | ratio_delta_beta, ratio_dt_ab, cD1_log_energy | 0.1915 |
+
+The gate asked whether stage-appropriate features appear in each stage's top 3.
+They do — but they appear for *every* stage, so "a delta feature is top-3 for
+N3" is satisfied partly because that feature is top-3 for Wake as well. The
+per-stage predictions are individually true and jointly much weaker than they
+look. What separates the stages is the *magnitude* of these shared features, not
+which features are used, and the gate did not test magnitude ordering across
+stages.
+
+There is a second-order version of the same problem: the cross-recording top-3
+intersection is thin. W, N2 and N3 share exactly one feature across all 29
+recordings, N1 shares two, and **REM shares none**. The pooled profile is
+steadier than any individual night's.
+
+**2. The branch split is dimension-biased, and neither number describes it
+honestly on its own.** Spectral features take **18.7%** of total attribution
+mass on average (range 14.6% for N3 to 26.2% for N1). Read alone, that says the
+raw waveform dominates and the engineered features are decoration.
+
+But 18.7% is spread over **34 dimensions** and 81.3% over **3000 waveform
+samples**:
+
+| branch | mass | dimensions | mass per dimension |
+|---|---:|---:|---:|
+| spectral | 18.7% | 34 | 0.55% |
+| raw waveform | 81.3% | 3000 | 0.027% |
+
+Per dimension the spectral features carry roughly **20×** the attribution. Both
+framings are arithmetically correct and they support opposite sentences, so the
+report states both and asserts neither alone. What can be said without
+qualification is the earlier ablation result (§6b): zeroing the EEG changes 71%
+of predictions, so the waveform branch is genuinely load-bearing in this model —
+unlike in `student_baseline_E0`, where it was inert.
+
+### The registration run turned the first caveat into a measurement
+
+Running `student_baseline_E0` was meant to be housekeeping &mdash; evidence that the
+registration had been honoured rather than quietly re-pointed. It produced the
+strongest single result in this section.
+
+E0 is the configuration whose temporal branch was measured inert in §6b. Gate 3a
+puts a number on how inert: its spectral attribution share is **exactly 1.000**
+in all five stages. The raw waveform attracts *literally zero* attribution. The
+delivered model's waveform branch, by contrast, drives 71% of its predictions and
+takes 74&ndash;85% of attribution mass.
+
+| | `student_baseline_E0` | `student_N4kd` |
+|---|---|---|
+| encoder | atrous, 121,099 params | multiscale, 139,606 params |
+| raw-EEG pathway | **inert** (zeroing it changes nothing) | drives 71% of predictions |
+| spectral attribution share | **1.000** in every stage | 0.146 &ndash; 0.262 |
+| completeness error | 0.03% | 0.03% |
+| N3 / W / N2 predictions | met | met |
+| REM / N1 predictions | not met | not met |
+| **Gate 3a verdict** | **PASS, 3/5** | **PASS, 3/5** |
+
+The two models agree on every one of the five pre-registered outcomes, and give
+the same top-3 feature set for all five stages &mdash; the same three features, in
+all but one case in the same order.
+
+These two models differ about as much as two models in this project can differ on
+exactly the axis a branch-split criterion exists to measure. The gate cannot tell
+them apart. So the first caveat is not a cautious reading of the PASS; it is a
+measured property of the gate:
+
+> Gate 3a's five predictions are satisfied by a model that does not use the raw
+> EEG at all. Passing them is evidence that the spectral features are used
+> sensibly, and is **not** evidence about the architecture, the branch balance,
+> or whether stages are distinguished by different evidence.
+
+Full output: `results/_g3a_e0.json`.
+
+### The registration deviation, stated
+
+The registration names `student_baseline_E0`. It predates the encoder rebuild
+and carries `eeg_scale=None` — the configuration whose temporal branch was
+measured inert (§6b) — so its branch-split measurement is degenerate by
+construction: a branch that does nothing attracts no attribution, and the split
+would have read as ~100% spectral for reasons that have nothing to do with
+explainability. Both models are run; the delivered model `student_N4kd` is the
+one reported here. The deviation is recorded in the gate output rather than
+resolved by quietly re-pointing the registration &mdash; and, as the table above
+shows, running the registered model changed no outcome, which is the strongest
+form the integrity claim could take.
+
+### What the pass licenses
+
+It licenses: *the attributions are numerically sound (completeness 0.03%), and
+where the registration made checkable physiological predictions, a majority
+held, including the one about N3 that was made the gating requirement.*
+
+It does not license: *the model uses different evidence for different stages.*
+That was not measured, and the identical top-3 sets are evidence against the
+casual version of it.
+
+Full output: `results/_g3a_n4kd.json`.
+
+---
+
+## 6k. The model knows which of its N1 calls to distrust
+
+N1 has been the floor of every result in this report: F1 0.4719 at CV mean, the
+largest across-fold spread of any stage, 0.358 on the transferred cohort. §3
+established *why* — it is representation-bound, not threshold-bound. No decision
+rule improves N1 F1 by more than **+0.0086**, so re-tuning the decision boundary
+is not the move, and reporting a tuned number would be reporting noise.
+
+What the model can do is say **which** of its N1 calls are the doubtful ones.
+Accuracy when predicting N1 rises monotonically with the model's own confidence:
+
+| confidence | epochs (val) | accuracy |
+|---|---:|---:|
+| 0.0 – 0.4 | 269 | 12.3% |
+| 0.4 – 0.6 | 1,688 | 39.2% |
+| 0.6 – 0.8 | 1,819 | 59.2% |
+| 0.8 – 1.0 | 385 | 80.5% |
+
+That turns the weakest class from a blanket limitation into something a reader
+can act on: not "N1 is unreliable", but "*these* N1 epochs are the unreliable
+ones, review them".
+
+### The rule, and where it was fitted
+
+> flag an epoch when the predicted stage is N1 and max probability < 0.5750
+
+**Fitted on validation** (31 recordings, 34,610 epochs), by
+`fit_n1_flag.py`. A decision rule fitted on the test split would make the test
+split a selection set, which is the exact failure §2 and §6f exist to prevent.
+The objective was the lowest threshold whose *unflagged* N1 calls reach 60%
+accuracy while the flag still fires on at least 10% of N1 predictions.
+
+An earlier version of that objective targeted accuracy over all *retained*
+epochs and was degenerate: overall N1 accuracy on validation is 50.01%, so a
+50% target was satisfied at the lowest grid point, flagging 0.4% of epochs and
+meaning nothing. The objective was retargeted to the unflagged group before the
+threshold was chosen. This is recorded in `n1_flag.json` rather than silently
+fixed.
+
+### What it does on the held-out split — reported once
+
+`report_n1_flag_test.py` applies the frozen threshold to the test split exactly
+once. There is no grid and no objective in that script; nothing it computes can
+change the rule.
+
+| | validation (chosen here) | test (reported once) |
+|---|---:|---:|
+| unflagged N1 accuracy | 61.0% | **44.7%** |
+| flagged N1 accuracy | 33.7% | **33.7%** |
+| share of N1 calls flagged | 40.4% | 56.4% |
+| separation | +27.3% | **+10.9%** |
+
+Separation on test, subject-clustered bootstrap (2,000 resamples, the same unit
+of independence as every other interval in this report): **+10.9%, 95% CI
+[+7.1%, +15.8%]**. It resolves above zero. The flag is doing real work on data
+it was not fitted on.
+
+**But the level does not transfer, and only one side of it moved.** Flagged
+accuracy is 33.7% on both splits — the flag identifies bad N1 calls exactly as
+well as advertised. What collapses is the *unflagged* group, 61.0% → 44.7%. The
+60% target that selected the threshold **is not met on held-out data**, and the
+flag fires on more than half of N1 calls rather than 40%.
+
+So the honest statement is a ranking claim, not a level claim:
+
+> The flag reliably orders N1 predictions by trustworthiness. It does not
+> deliver the 60% unflagged accuracy that its validation fit promised.
+
+This is the same lesson as §6f from the other direction. There, a single
+validation split gave a pessimistically biased view of overall κ; here it gives
+an optimistically biased view of an N1 sub-population. A quantity estimated on
+one split and reported on another moves, and the direction is not predictable
+from the first split alone.
+
+### It ships
+
+Schema **1.2** adds `n1_confidence_flag` to every packet: the per-epoch flag
+list, the threshold, the validation evidence behind it, and a `how_to_read` that
+says in the packet itself that this does not make N1 more accurate.
+
+One provenance caveat travels with it. The threshold was fitted on **argmax**
+validation predictions and is applied to the **decoded** hypnogram, because the
+flag has to describe the stages the reader is actually looking at (schema 1.1, §4b of EVIDENCE_PACKET.md).
+The decoder changes 223 of 33,431 test epochs — **0.67%** — and the packet
+records the per-recording count rather than assuming it is negligible. Applied
+to argmax instead, test separation is +11.1% against +10.9%; the choice does not
+carry the result.
+
+Full output: `results/n1_flag.json`, `results/n1_flag_test_report.json`.
+
+---
+
 ## 7. Complete results
 
 ### Every model, held-out test (15 unseen subjects, 33,431 epochs)
@@ -608,7 +1193,7 @@ ceiling. Chasing it as a number treats a labelling-ambiguity problem as a modell
 > Every κ in this table is the model's **argmax** output, so the rows are comparable. The
 > delivered model ships a **decoded** hypnogram at κ 0.6993 — decoding trades 0.0008 κ for
 > a 46% reduction in REM-latency error (§6d). The bootstrap 95% CI over the 29 held-out
-> recordings is **[0.6545, 0.7414]**, so the three 139–151K rows are not distinguishable
+> subjects is **[0.6432, 0.7514]**, so the three 139–151K rows are not distinguishable
 > from one another at this resolution; see §6e.
 
 > The inherited model's row is its `val_clean` group — the single subject it never trained on. Its apparent "test" score of 0.6782 in the raw artefact is **not** honest, because that model trained on most of those test subjects.
@@ -859,7 +1444,14 @@ Stated plainly, because a reviewer will find them anyway:
 
 0. ~~**Every headline figure was produced from 34 spectral features, not from the raw EEG.**~~ **Resolved in §6b.** This was true of every phase-one model and is false of the delivered one, where zeroing the EEG changes 71% of predictions. The original wording is struck rather than deleted because the reasoning behind it — that features derived from a signal cannot add information the signal lacks — was sound, and only the premise about the encoder was wrong.
 
-0b. **The evaluation, not the model, is now the binding constraint.** The held-out set of 15 subjects gives a 95% CI of ±0.043 κ. Everything since §6b has returned a tie because differences this small cannot be resolved at n = 29, not because the changes did nothing. No further work on this dataset can lift that.
+0a. **Cohort transfer is measured, and it is worse than a small sample suggested.**
+    Crossing between the two studies inside Sleep-EDFx costs **0.187 κ**
+    (§6h) — and that is within one corpus, one country, one annotation
+    protocol. It is direct evidence for how little a single-dataset number
+    should be trusted to transfer, and it makes the external-validation
+    limitation below concrete rather than conventional.
+
+0b. **The evaluation, not the model, is now the binding constraint.** The held-out set of 15 subjects gives a 95% CI of ±0.054 κ, clustering by subject rather than recording. Everything since §6b has returned a tie because differences this small cannot be resolved at n = 15 subjects, not because the changes did nothing. No further work on this dataset can lift that.
 
 1. ~~**The break-even estimate rests on two points.**~~ **Superseded by §6d.** The extrapolation put break-even at teacher κ ≈ 0.75; the ensemble cleared it at 0.7140 with the penalty already gone, so the two-point line was pessimistic. That is what a two-point extrapolation is worth.
 
@@ -867,7 +1459,7 @@ Stated plainly, because a reviewer will find them anyway:
 
 3. **One test subject is an outlier.** SC461 scores κ 0.2378 where the next-worst is 0.4385, and it does so *identically across every model tested*. That pattern indicates a recording-quality artefact rather than a model failure. It pulls the overall mean down by roughly 0.025.
 
-4. ~~**Single-channel EEG caps N1.**~~ **Tested in §6c and rejected.** EOG and a second EEG derivation were added and measured; the effect is indistinguishable from noise (paired p = 0.865). N1 remains at F1 0.43, but §6e argues that is close to the practical ceiling given inter-scorer agreement of 25–45%, and that the model's own confidence already identifies which N1 calls to distrust.
+4. ~~**Single-channel EEG caps N1.**~~ **Tested in §6c and rejected.** EOG and a second EEG derivation were added and measured; the effect is indistinguishable from noise (paired p = 0.865). N1 remains at F1 0.43, but §6e argues that is close to the practical ceiling given inter-scorer agreement of 25–45%. The claim that the model's own confidence identifies which N1 calls to distrust is no longer a promise: it is fitted, shipped and measured on held-out data in §6k — and it holds as a *ranking* (separation +10.9%, CI [+7.1%, +15.8%]) while failing as a *level* (44.7% unflagged accuracy against the 60% its validation fit promised).
 
 5. **The teacher overfits.** See §8.5.
 
@@ -877,9 +1469,38 @@ Stated plainly, because a reviewer will find them anyway:
 
 8. **One cohort.** Every figure rests on Sleep-EDFx: largely healthy adults, one acquisition protocol. No clinical claim survives without external validation.
 
+9. **The attributions do not discriminate between stages.** Gate 3a passed (§6j), but all five stages share the same top-3 features — `ratio_delta_beta`, `ratio_dt_ab`, `cD1_log_energy` — differing only in order. What separates the stages is the magnitude of shared features, not the choice of them, and the registered predictions did not test magnitude ordering across stages. The gate establishes that the attributions are numerically sound and physiologically unembarrassing; it does not establish that the model reasons differently about different stages.
+
+10. **Attribution explains the model, it does not validate it.** An epoch staged wrongly still produces a clean-looking attribution profile. Nothing in §6j is evidence that a prediction is correct, and the packet says so in the field itself rather than leaving the inference to the reader.
+
 ---
 
 ## 10. What we would do next
+
+> **Revised 30 August 2026.** Items 0.1 and 3.1 below are now complete; see
+> §6f–6h. What follows them has been re-ordered by what the results changed.
+
+**Done since this section was written.** Five-fold subject-level CV (§6f), the
+SC→ST cohort transfer with its prior-adaptation control (§6g–6h), the amplitude
+test (§6i), Gate 3a (§6j) and the N1 confidence flag (§6k). Gate 3a and the flag
+are both wired into the evidence packet, so `attribution` is no longer null.
+
+**The one experiment the results point at.** Per-recording normalisation, to test
+whether the 2× cohort amplitude difference is the covariate shift §6h identified.
+It is one run and it is currently blocked on implementation, not on compute: all
+three trainer generators patch the same `__getitem__` region with contiguous
+anchors, so inserting a normalisation branch there breaks two of them. It needs a
+preprocessing-side implementation instead — a flag on
+`preprocess_multichannel.py` producing a second tensor set, which sidesteps the
+generator chain entirely.
+
+**What the results argue against.** Anything prior-based — class rebalancing,
+threshold tuning on wake, posterior reweighting. Measured, with an oracle upper
+bound, they do not work here (§6h).
+
+**What still stands from the original list.**
+
+
 
 Items 1, 2 and 4 of the original list are done (§6d, §6c, §6b). What remains, in priority
 order, with the reason each earns its place:
@@ -897,9 +1518,11 @@ order, with the reason each earns its place:
    Worth recording that this open item existed at all: it came from one point estimate,
    without the resampling check §6e argues for. Full workings in `results/kd_result.json`.
 
-3. **Flag N1 by confidence in the evidence packet.** §6e shows N1 accuracy rises
-   monotonically with the model's own confidence. Converting that into a per-epoch flag
-   gives a clinical reader something a better N1 classifier would not.
+3. ~~**Flag N1 by confidence in the evidence packet.**~~ **Done — §6k.** Fitted on
+   validation at a threshold of 0.575, shipped in schema 1.2 as `n1_confidence_flag`,
+   and reported once on the held-out split. The separation transfers (+10.9%, CI
+   [+7.1%, +15.8%]); the 60% unflagged-accuracy target it was fitted for does not
+   (44.7%). Recorded as a ranking rule, not a level guarantee.
 
 4. **Multi-scorer soft labels.** DOD-H and DOD-O carry five scorers per epoch. Training
    against a real scorer distribution is the version of §6d that would be a contribution
@@ -928,6 +1551,48 @@ Included deliberately. These were real costs, and the guard rails now in the cod
 | Computed distillation gains by subtracting already-rounded κ values (−0.0524 instead of −0.0523) | a wrong 4th decimal in three documents | All figures now derived from full-precision artefacts |
 
 **The lesson that generalises:** every one of these was caught by a check that compared a computed result against an independent expectation — not by reading the code more carefully.
+
+---
+
+### Added 30 August 2026
+
+| Mistake | What it cost | Fix |
+|---|---|---|
+| A CV guard injected at 4-space indent inside an 8-space block, orphaning the teacher-cache completeness check behind its own `raise` | a normal distillation run silently stopped checking its cache, and printed a message saying the soft term was disabled when it was not | guard re-anchored above the structure; `test_no_dead_guards.py` fails any unreachable statement in a generated trainer |
+| An unguarded `str.replace` in `make_kd_trainer.py` stopped matching when a field was inserted ahead of its anchor | the checkpoint recorded a literal `alpha=1.0` instead of `ALPHA`, so an audit that read `ck["alpha"]` to confirm a run used hard labels was reading a constant and would have passed a soft run | anchor fixed and guarded; `test_generated_provenance.py` asserts the trainers record config from *variables*, checking the output rather than the generator |
+| The CV output directory was unsuffixed, so every fold wrote to `student_N4kd` — the delivered model's directory | nothing, caught before running; would have overwritten the shipped checkpoint, and the resume guard could not see it because `eeg_scale` and `schedule_shape` are identical across folds | `EXPERIMENT` suffixed with `_cv{fold}`; `cv_fold` recorded in the checkpoint and compared by the resume guard |
+| Attributing the cohort gap to prior shift from the decomposition alone | one claim published to the roadmap and stated to the supervisor before being tested | oracle prior correction measured; attribution withdrawn in place (§6h) |
+| Declaring the amplitude hypothesis "not supported" on an arbitrary \|r\| < 0.3 threshold | an over-claim on an underpowered test | corrected to inconclusive, with the restricted-range reason recorded |
+
+The pattern in the first two is the same: **a generator that patches source by
+string replacement can stop applying without any error.** Both were found by
+reading generated output, not by reading the generator. The tests added in
+response check the output for that reason.
+
+### Added 8 September 2026
+
+| Mistake | What it cost | Fix |
+|---|---|---|
+| The N1 threshold objective was written as "accuracy over retained epochs reaches 50%" — which overall N1 accuracy on validation already equals (50.01%) | the objective was satisfied at the lowest grid point, selecting a threshold that flagged 0.4% of epochs and separated nothing; it would have shipped in 29 packets as a working flag | objective retargeted to the *unflagged* group before the threshold was chosen, and both the old and new wording recorded in `n1_flag.json` |
+| Drafted the packet's attribution block describing Integrated Gradients as running "from an all-zeros baseline" | nothing — caught before the packets were rebuilt; would have put a false method description in all 29 packets, and a reader comparing against zero-baseline IG numbers elsewhere would have drawn a wrong conclusion from correct data | baselines read from the code and stated explicitly in the packet: per-recording mean amplitude for the waveform, train-split per-feature mean for the spectral branch |
+| Estimated Gate 3a at "~6 minutes" for 29 recordings from a run that had used `--limit-recs` | scheduling only | wall-clock times now taken from full runs, not from limited ones |
+| Wired the gate's per-recording attribution into the packet **keyed by the annotated stage** — the gate groups epochs with `for t, lab in enumerate(y)`, where `y` is ground truth | 29 packets were built and briefly existed on disk carrying per-**true**-stage epoch counts while asserting `_ground_truth_withheld: true`. Differenced against each packet's own predicted per-stage counts, that hands a consumer the night's confusion structure — and it would have silently voided the vertical-slice test, whose whole premise is that the verifier cannot see labels | a second, prediction-keyed accumulator added for the packet, leaving the registered label-keyed cohort statistics untouched; the artefact now declares `grouped_by`, and `build_packet.py` **hard-fails** on anything but `"predicted"` rather than quietly writing null |
+| The gate's chunk loop skips a trailing chunk of fewer than 8 epochs, so a recording whose length mod 256 is small loses its tail | 1 epoch of `SC4021E0-PSG` was missing from a profile presented as covering that night | the packet's accumulator re-attributes the tail inside a full-length window; `build_packet.py` asserts each night's profile covers exactly that night's epoch count |
+
+The pattern in the first three is **descriptions drifting from what the code
+does**. None would have produced a wrong number. All would have produced a
+correct number with a wrong label on it, in a deliverable whose entire purpose is
+to be read by someone who cannot check the code.
+
+The fourth is worse than that and worth separating. It was not a mislabelling:
+the packets really did contain ground truth, in an artefact whose header says
+they do not. It was found by an arithmetic check — do this night's per-stage
+counts sum to this night's epochs? — that was written to catch something else
+entirely, and the off-by-one it flagged was the smaller of the two bugs sitting
+next to each other. That is the third time in this project a consistency check
+has caught a defect that no amount of re-reading the code would have surfaced,
+and it is the argument for writing them even when the code looks obviously
+right.
 
 ---
 
