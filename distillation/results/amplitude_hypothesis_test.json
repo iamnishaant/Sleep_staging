@@ -1,0 +1,20 @@
+{
+  "hypothesis": "Item 1.1's motivation: ST arrives ~2x hotter than SC, a single global EEG_SCALE cannot remove a per-cohort amplitude difference, so per-recording normalisation should close much of the cohort gap.",
+  "test": "Per-recording kappa on the 44 held-out ST recordings against each recording's amplitude relative to the SC training median.",
+  "n_recordings": 44,
+  "n_subjects": 22,
+  "corr_kappa_vs_amplitude_ratio": -0.267,
+  "corr_kappa_vs_abs_log_amplitude": -0.247,
+  "corr_kappa_vs_true_wake_fraction": 0.297,
+  "amplitude_ratio_percentiles": {
+    "p10": 1.618,
+    "p25": 1.805,
+    "p50": 2.052,
+    "p75": 2.39,
+    "p90": 2.634
+  },
+  "verdict": "INCONCLUSIVE - the test has restricted range by construction",
+  "consequence": "Item 1.1 keeps its motivation, but the motivation is now a HYPOTHESIS TO TEST rather than a diagnosis to act on. The measured signature of the cohort gap - a wake-specific precision collapse under a 3x prior shift, with recall intact across stages - is not what an input-scale mismatch would produce.",
+  "why_inconclusive": "Every ST recording sits at 1.62-2.63x the SC training median; none is near 1.0x. So a within-ST correlation can only ask whether MORE shifted is worse, not whether the shift itself hurts - the whole cohort is displaced and there is no unshifted ST recording to contrast against. corr(kappa, |log amplitude|) = -0.247 is in the hypothesised direction but weak, and comparable in size to corr(kappa, wake fraction) = +0.297 pointing elsewhere. An earlier version of this file said NOT SUPPORTED on an arbitrary |r| < 0.3 threshold; that was an over-claim on an underpowered test.",
+  "what_would_settle_it": "Run item 1.1 (per-recording normalisation) and re-measure the cohort gap. If amplitude is a real contributor the gap narrows; if it is not, the gap holds and the wake prior-shift account stands alone. That is one run and it is the only clean test available."
+}

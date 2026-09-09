@@ -1,0 +1,36 @@
+{
+  "item": "roadmap 1.1 / track A1 - per-recording normalisation, SC->ST",
+  "question": "does removing the 2x cohort amplitude difference close the gap?",
+  "answer": "No. It makes the transfer slightly worse.",
+  "all_44": {
+    "baseline_kappa": 0.5516,
+    "pernorm_kappa": 0.5341,
+    "paired_delta": -0.0175,
+    "ci_subject_clustered": [
+      -0.0318,
+      -0.0033
+    ]
+  },
+  "excluding_degenerate": {
+    "n": 41,
+    "baseline_kappa": 0.5882,
+    "pernorm_kappa": 0.5728,
+    "ci_subject_clustered": [
+      -0.0299,
+      -0.0008
+    ]
+  },
+  "per_class_f1_change": {
+    "W": -0.0761,
+    "N1": 0.0232,
+    "N2": 0.0117,
+    "N3": -0.0176,
+    "REM": -0.0193
+  },
+  "n3_note": "N3 was the pre-registered thing to watch: per-recording scaling discards absolute amplitude and slow-wave amplitude is part of what defines N3.",
+  "bootstrap": {
+    "unit": "subject",
+    "n": 10000,
+    "paired": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "item": "roadmap 3.1 - leave-one-cohort-out, SC -> ST",
+  "model": "student_N4pn_sc2st",
+  "n_parameters": 139606,
+  "trained_on": {
+    "cohort": "SC",
+    "subjects": 62
+  },
+  "scored_on": {
+    "cohort": "ST",
+    "subjects": 22,
+    "recordings": 44,
+    "epochs": 42471
+  },
+  "kappa_ST": 0.5341,
+  "kappa_ST_ci_subject_clustered": [
+    0.4565,
+    0.6034
+  ],
+  "macro_f1_ST": 0.6068,
+  "kappa_SC_validation_same_model": 0.7364,
+  "transfer_gap": -0.2023,
+  "per_class_f1_ST": {
+    "W": 0.5455,
+    "N1": 0.3808,
+    "N2": 0.7586,
+    "N3": 0.6723,
+    "REM": 0.6766
+  },
+  "prevalence_ST_true": {
+    "W": 0.099,
+    "N1": 0.086,
+    "N2": 0.4674,
+    "N3": 0.151,
+    "REM": 0.1966
+  },
+  "prevalence_ST_predicted": {
+    "W": 0.0826,
+    "N1": 0.1217,
+    "N2": 0.4654,
+    "N3": 0.132,
+    "REM": 0.1983
+  },
+  "confusion_matrix": [
+    [
+      2103,
+      1079,
+      304,
+      55,
+      662
+    ],
+    [
+      644,
+      1680,
+      615,
+      79,
+      635
+    ],
+    [
+      533,
+      1678,
+      15027,
+      1216,
+      1397
+    ],
+    [
+      67,
+      238,
+      2015,
+      4041,
+      54
+    ],
+    [
+      161,
+      495,
+      1805,
+      215,
+      5673
+    ]
+  ],
+  "bootstrap": {
+    "unit": "subject",
+    "n": 10000,
+    "seed": 20260830
+  },
+  "not_comparable_to": "the headline test kappa 0.7001, which is measured on a 15-subject subset of BOTH cohorts - a different population"
+}
