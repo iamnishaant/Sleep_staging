@@ -1,0 +1,113 @@
+{
+  "item": "roadmap 3.1 - leave-one-cohort-out, SC -> ST",
+  "model": "student_N4kd_sc2st",
+  "n_parameters": 139606,
+  "trained_on": {
+    "cohort": "SC",
+    "subjects": 62
+  },
+  "scored_on": {
+    "cohort": "ST",
+    "subjects": 22,
+    "recordings": 44,
+    "epochs": 42471
+  },
+  "kappa_ST": 0.5516,
+  "kappa_ST_ci_subject_clustered": [
+    0.4751,
+    0.6205
+  ],
+  "macro_f1_ST": 0.6224,
+  "kappa_SC_validation_same_model": 0.7384,
+  "transfer_gap": -0.1868,
+  "per_class_f1_ST": {
+    "W": 0.6216,
+    "N1": 0.3576,
+    "N2": 0.7469,
+    "N3": 0.6899,
+    "REM": 0.6959
+  },
+  "prevalence_ST_true": {
+    "W": 0.099,
+    "N1": 0.086,
+    "N2": 0.4674,
+    "N3": 0.151,
+    "REM": 0.1966
+  },
+  "prevalence_ST_predicted": {
+    "W": 0.1307,
+    "N1": 0.1004,
+    "N2": 0.4271,
+    "N3": 0.1574,
+    "REM": 0.1843
+  },
+  "confusion_matrix": [
+    [
+      3032,
+      549,
+      261,
+      78,
+      283
+    ],
+    [
+      1049,
+      1416,
+      543,
+      104,
+      541
+    ],
+    [
+      853,
+      1739,
+      14187,
+      1731,
+      1341
+    ],
+    [
+      253,
+      116,
+      1492,
+      4519,
+      35
+    ],
+    [
+      366,
+      446,
+      1655,
+      253,
+      5629
+    ]
+  ],
+  "bootstrap": {
+    "unit": "subject",
+    "n": 10000,
+    "seed": 20260830
+  },
+  "not_comparable_to": "the headline test kappa 0.7001, which is measured on a 15-subject subset of BOTH cohorts - a different population",
+  "decomposition": {
+    "per_class_recall_ST": {
+      "W": 0.7214,
+      "N1": 0.3876,
+      "N2": 0.7147,
+      "N3": 0.7044,
+      "REM": 0.6742
+    },
+    "per_class_precision_ST": {
+      "W": 0.546,
+      "N1": 0.3319,
+      "N2": 0.7822,
+      "N3": 0.676,
+      "REM": 0.719
+    },
+    "f1_change_vs_cv": {
+      "W": -0.2759,
+      "N1": -0.1143,
+      "N2": -0.0621,
+      "N3": -0.0596,
+      "REM": -0.0855
+    },
+    "finding": "The 0.187 kappa drop is concentrated in Wake, and is a PRECISION failure rather than a detection failure. Wake recall on ST is 72%, in line with every other stage; wake precision is 55%. SC is 29.8% wake and ST is 9.9%, a 3x prior shift - the largest of any stage - so the SC-trained model over-calls wake by 1.32x. Physiology compounds it: SC is a ~20h cassette recording whose wake is largely daytime, ST is a lab night whose wake is brief arousals.",
+    "how_to_report": "Report kappa WITH this decomposition. Kappa alone reads as 'does not transfer'; the decomposition shows sleep-stage discrimination largely survives and one stage's base rate moved.",
+    "SUPERSEDED_30_AUG": "The 'driven by a 3x prior shift' attribution below is WITHDRAWN. Oracle prior correction recovers only 1.2% of the gap (prior_adaptation.json). The decomposition's FACTS stand - wake precision 55%, recall uniform at 67-72%, priors shifted 3x - but the causal claim does not. The gap is covariate shift."
+  }
+}

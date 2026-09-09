@@ -1,0 +1,49 @@
+{
+  "n_recordings": 197,
+  "stage_fraction_by_cohort": {
+    "SC": {
+      "W": 0.298,
+      "N1": 0.1106,
+      "N2": 0.3765,
+      "N3": 0.075,
+      "REM": 0.1399
+    },
+    "ST": {
+      "W": 0.0995,
+      "N1": 0.0861,
+      "N2": 0.4671,
+      "N3": 0.1512,
+      "REM": 0.1961
+    }
+  },
+  "st_minus_sc_pp": {
+    "W": -19.85,
+    "N1": -2.45,
+    "N2": 9.06,
+    "N3": 7.62,
+    "REM": 5.62
+  },
+  "st_minus_sc_in_sc_sd": {
+    "W": -1.33,
+    "N1": -0.37,
+    "N2": 0.81,
+    "N3": 1.01,
+    "REM": 1.02
+  },
+  "amplitude_ratio_percentiles": {
+    "p5": 0.622,
+    "p10": 0.658,
+    "p25": 0.806,
+    "p50": 1.0,
+    "p75": 1.452,
+    "p90": 1.948,
+    "p95": 2.228
+  },
+  "note": "Amplitude ratios are per-recording IQR of channel 0 divided by the median recording's IQR. Used to set a defensible amplitude-augmentation range.",
+  "normalisation_finding": {
+    "observed": "processed tensors: ST recordings have ~2x the channel-0 IQR of SC (median 1.86x vs 0.91x of the dataset median)",
+    "mechanism": "kaggle_train_student_kd.py:414 applies a SINGLE global EEG_SCALE=15849.46 to every recording, so this cohort-level amplitude difference is not removed by normalisation and reaches the network intact",
+    "status": "MEASURED, not diagnosed - it is a plausible contributor to the 0.106 SC-ST kappa gap, and per-recording robust scaling is the experiment that would test it",
+    "caution": "per-recording scaling discards absolute amplitude, which is physiologically meaningful for N3 slow waves; it is an experiment, not an obvious fix"
+  }
+}
