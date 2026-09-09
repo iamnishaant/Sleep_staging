@@ -89,3 +89,15 @@ credentials.json
 
 # multi-channel tensors (~8 GB, regenerate with preprocess_multichannel.py)
 processed_sleepedf_mc/tensors/
+
+# Per-recording-normalised dataset (roadmap A1, ~3.9 GB on disk).
+#
+# The existing `processed_sleepedf/tensors/` rule contains a slash, so git
+# anchors it to the repo root and it does NOT match the copy nested under
+# processed_sleepedf_pernorm/. That left 1.1 GB reachable by `git add .`.
+# Fully regenerable: python distillation/make_pernorm_dataset.py
+# index.csv and PERNORM_MANIFEST.json are kept - small, and the manifest
+# records the three flagged recordings PROJECT_REPORT.md 6i cites.
+processed_sleepedf_pernorm/**/tensors/
+processed_sleepedf_pernorm/**/spectral/
+processed_sleepedf_pernorm/**/*.zip
