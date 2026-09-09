@@ -170,6 +170,133 @@ SPLITS = {
 }
 
 
+# --------------------------------------------------------------- CV FOLDS ---
+# Roadmap item 0.1. Generated from distillation/cv_folds.json by
+# make_cv_folds.py; see distillation/test_cv_folds.py (35 assertions).
+#
+# CV_FOLD = None  -> the original 69/16 split. Identical behaviour to every
+#                    run before 29 Aug 2026, so existing checkpoints reproduce.
+# CV_FOLD = 0..4  -> that fold's 68/17 subject-level split.
+#
+# Only train and val move. "test" is never touched by any fold, and that is
+# asserted below rather than trusted.
+#
+# This is NOT nested CV: one 5-fold CV for selection, plus the frozen 15-subject
+# test split for the final report.
+CV_FOLD = None
+
+# Each fold's VALIDATION subjects. Train is derived as (train + val) minus
+# these, so the pool is stated once and cannot drift out of step with itself.
+CV_VAL_SUBJECTS = {
+    0: [
+        'SC400', 'SC403', 'SC406', 'SC410', 'SC411', 'SC417', 'SC425',
+        'SC443', 'SC447', 'SC457', 'SC463', 'SC465', 'SC467', 'SC477',
+        'ST701', 'ST713', 'ST720'
+    ],
+    1: [
+        'SC404', 'SC422', 'SC428', 'SC430', 'SC441', 'SC442', 'SC445',
+        'SC450', 'SC459', 'SC471', 'SC473', 'SC481', 'SC482', 'ST708',
+        'ST719', 'ST721', 'ST722'
+    ],
+    2: [
+        'SC413', 'SC415', 'SC418', 'SC427', 'SC434', 'SC435', 'SC436',
+        'SC438', 'SC440', 'SC449', 'SC454', 'SC456', 'SC476', 'ST704',
+        'ST709', 'ST711', 'ST712'
+    ],
+    3: [
+        'SC408', 'SC416', 'SC419', 'SC426', 'SC431', 'SC432', 'SC444',
+        'SC446', 'SC448', 'SC455', 'SC464', 'SC470', 'SC480', 'ST706',
+        'ST707', 'ST715', 'ST717'
+    ],
+    4: [
+        'SC405', 'SC407', 'SC409', 'SC412', 'SC424', 'SC433', 'SC451',
+        'SC458', 'SC460', 'SC462', 'SC466', 'SC472', 'SC475', 'ST702',
+        'ST705', 'ST718', 'ST724'
+    ],
+}
+
+if CV_FOLD is not None:
+    _pool = list(SPLITS["train"]) + list(SPLITS["val"])
+    assert len(_pool) == 85, f"CV pool should be 85 subjects, got {len(_pool)}"
+    _va = CV_VAL_SUBJECTS[CV_FOLD]
+    assert set(_va) <= set(_pool), "fold validation subjects must come from the pool"
+    assert not (set(_va) & set(SPLITS["test"])), "a CV fold may never contain a test subject"
+    SPLITS = {
+        "train": [s for s in _pool if s not in set(_va)],
+        "val":   list(_va),
+        "test":  SPLITS["test"],
+    }
+    # Suffix the experiment name so a fold can never write into the delivered
+    # model's directory, and folds can never overwrite each other. EXPERIMENT is
+    # defined above this block, so every out-dir expression picks this up.
+    EXPERIMENT = f"{EXPERIMENT}_cv{CV_FOLD}"
+    print(f"CV_FOLD={CV_FOLD}: train {len(SPLITS['train'])} subj / "
+          f"val {len(SPLITS['val'])} subj  (test untouched)")
+    print(f"  -> writes to student_{EXPERIMENT}; the un-suffixed directory is untouched")
+
+# ---------------------------------------------------------- COHORT SPLIT ---
+# Roadmap item 3.1. Generated from distillation/cohort_split.json by
+# make_cohort_split.py. Train on the SC cohort, test on the whole ST cohort:
+# different population (mild insomnia, temazepam) on different hardware.
+#
+# COHORT_SPLIT = False -> untouched.
+# COHORT_SPLIT = True  -> train 62 SC / val 16 SC / test 22 ST subjects.
+#
+# NOT comparable to the headline kappa: the main 15-subject test split is a
+# subset of both cohorts, so that number and this one measure different
+# populations. Expect this to be LOWER; the size of the drop is the finding.
+#
+# Do NOT rebalance SC's classes toward the dataset overall - the overall
+# includes ST, the test cohort, so it leaks, and the prior shift is part of
+# what is being measured (ST has ~2x the N3 and ~1/3 the wake).
+COHORT_SPLIT = False
+
+COHORT_TRAIN = [
+        'SC400', 'SC401', 'SC402', 'SC403', 'SC404', 'SC405', 'SC406',
+        'SC407', 'SC409', 'SC410', 'SC411', 'SC412', 'SC413', 'SC414',
+        'SC416', 'SC417', 'SC418', 'SC419', 'SC420', 'SC421', 'SC422',
+        'SC424', 'SC425', 'SC426', 'SC427', 'SC428', 'SC429', 'SC430',
+        'SC431', 'SC432', 'SC434', 'SC435', 'SC436', 'SC437', 'SC438',
+        'SC440', 'SC442', 'SC443', 'SC444', 'SC445', 'SC446', 'SC447',
+        'SC450', 'SC455', 'SC456', 'SC458', 'SC459', 'SC460', 'SC461',
+        'SC463', 'SC464', 'SC465', 'SC466', 'SC467', 'SC472', 'SC473',
+        'SC474', 'SC475', 'SC476', 'SC480', 'SC481', 'SC482'
+]
+COHORT_VAL = [
+        'SC408', 'SC415', 'SC423', 'SC433', 'SC441', 'SC448', 'SC449',
+        'SC451', 'SC452', 'SC453', 'SC454', 'SC457', 'SC462', 'SC470',
+        'SC471', 'SC477'
+]
+COHORT_TEST = [
+        'ST701', 'ST702', 'ST704', 'ST705', 'ST706', 'ST707', 'ST708',
+        'ST709', 'ST710', 'ST711', 'ST712', 'ST713', 'ST714', 'ST715',
+        'ST716', 'ST717', 'ST718', 'ST719', 'ST720', 'ST721', 'ST722',
+        'ST724'
+]
+
+if COHORT_SPLIT:
+    if CV_FOLD is not None:
+        raise SystemExit("Set either CV_FOLD or COHORT_SPLIT, not both - they are "
+                         "different experiments.")
+    assert not (set(COHORT_TRAIN) & set(COHORT_TEST)), "SC train leaked into the ST test set"
+    assert not (set(COHORT_VAL) & set(COHORT_TEST)), "SC val leaked into the ST test set"
+    assert all(s.startswith("ST") for s in COHORT_TEST), "the test cohort must be all ST"
+    assert all(s.startswith("SC") for s in COHORT_TRAIN + COHORT_VAL), "train/val must be all SC"
+    SPLITS = {"train": COHORT_TRAIN, "val": COHORT_VAL, "test": COHORT_TEST}
+    EXPERIMENT = f"{EXPERIMENT}_sc2st"
+    print(f"COHORT_SPLIT: train {len(COHORT_TRAIN)} SC / val {len(COHORT_VAL)} SC "
+          f"-> test {len(COHORT_TEST)} ST subjects (held out, never loaded here)")
+    print(f"  -> writes to student_{EXPERIMENT}")
+    print("  NOTE: not comparable to the headline kappa - different population.")
+
+# The CV reference for a hard-label run of this architecture, measured 30 Aug
+# 2026 over all five folds (results/cv_analysis.json). Use THIS, not
+# BASELINE_VAL_*, when judging anything run under CV_FOLD.
+CV_BASELINE_MACRO_F1 = 0.7419
+CV_BASELINE_KAPPA    = 0.7143
+CV_BASELINE_SD_KAPPA = 0.0193
+
+
 def find_file(pattern, base="/kaggle/input"):
     hits = sorted(Path(base).glob(f"**/{pattern}"))
     if not hits:
@@ -506,6 +633,36 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(SEED); np.random.seed(SEED); torch.cuda.manual_seed_all(SEED)
 
+    # ---- CV / cohort splits and a shared teacher do not mix (roadmap 0.1, 3.1) ----
+    # The ensemble teacher was trained on the ORIGINAL 69-subject train split.
+    #   CV_FOLD:      12-16 of each fold's 17 validation subjects are inside it.
+    #   COHORT_SPLIT: 15 of the 22 held-out ST subjects are inside it (68%).
+    # Either way the student inherits the teacher's memorisation of the very
+    # subjects it is then scored on. Generating the missing logits would hide
+    # that, not fix it.
+    if (CV_FOLD is not None or COHORT_SPLIT) and ALPHA < 1.0:
+        _which = "CV_FOLD" if CV_FOLD is not None else "COHORT_SPLIT"
+        _detail = ("12-16 of this fold's 17 validation subjects"
+                   if CV_FOLD is not None else
+                   "15 of the 22 held-out ST subjects (68% of the test cohort)")
+        raise SystemExit(
+            f"{_which} is set and the soft term is active (ALPHA < 1.0).\n"
+            "\n"
+            f"  Refused. teacher_logits_{TEACHER_TAG} comes from a teacher trained on\n"
+            f"  the original 69-subject split, and {_detail}\n"
+            "  are inside that set. Distilling from it would inflate the result\n"
+            "  through the teacher - the same leakage, one level out, that this\n"
+            "  project was started to correct.\n"
+            "\n"
+            "  Two valid routes:\n"
+            "    (a) student-side questions - normalisation, augmentation, EOG,\n"
+            "        capacity, cohort transfer - need no teacher. Set ALPHA = 1.0.\n"
+            "    (b) KD hyperparameters (alpha, T) need a teacher trained on the\n"
+            "        same split being evaluated. For CV that is 5 folds x 3\n"
+            "        ensemble members; for the cohort split it is an SC-only\n"
+            "        teacher. Until those exist, report alpha/T as selected on\n"
+            "        the original split.\n")
+
     tdir = None
     if ALPHA < 1.0:
         tdir = find_file(f"teacher_logits_{TEACHER_TAG}").resolve()
@@ -574,9 +731,12 @@ def main():
     last = out / "student_last.pt"
     if last.exists():
         ck = torch.load(last, map_location=device, weights_only=False)
-        if ck.get("eeg_scale") != EEG_SCALE or ck.get("schedule_shape") != {"epochs": EPOCHS, "steps": steps}:
+        if (ck.get("eeg_scale") != EEG_SCALE
+                or ck.get("schedule_shape") != {"epochs": EPOCHS, "steps": steps}
+                or ck.get("cv_fold") != CV_FOLD):
             raise SystemExit(f"Cannot resume: config changed "
-                             f"(scale {ck.get('eeg_scale')} -> {EEG_SCALE}). Delete {out}.")
+                             f"(scale {ck.get('eeg_scale')} -> {EEG_SCALE}, "
+                             f"cv_fold {ck.get('cv_fold')} -> {CV_FOLD}). Delete {out}.")
         model.load_state_dict(ck["model"]); opt.load_state_dict(ck["optimizer"])
         sched.load_state_dict(ck["scheduler"]); scaler.load_state_dict(ck["scaler"])
         start, best, since = ck["epoch"]+1, ck["best_macro_f1"], ck.get("since_best", 0)
@@ -630,7 +790,7 @@ def main():
         state = {"experiment": EXPERIMENT, "epoch": ep, "model": model.state_dict(),
                  "optimizer": opt.state_dict(), "scheduler": sched.state_dict(),
                  "scaler": scaler.state_dict(), "best_macro_f1": best, "since_best": since,
-                 "n_parameters": npar, "eeg_scale": EEG_SCALE, "alpha": ALPHA, "T": T,
+                 "n_parameters": npar, "eeg_scale": EEG_SCALE, "cv_fold": CV_FOLD, "alpha": ALPHA, "T": T,
                  "teacher_tag": TEACHER_TAG,
                  "class_weight_power": CLASS_WEIGHT_POWER, "use_spectral": USE_SPECTRAL, "encoder": "multiscale",
                    "n_tokens": N_TOKENS,
@@ -676,8 +836,18 @@ def main():
           f"   ({_mf1 - N1NORM_VAL_MACRO_F1:+.4f})")
     print(f"    kappa    {_kap:.4f} vs {N1NORM_VAL_KAPPA:.4f}"
           f"   ({_kap - N1NORM_VAL_KAPPA:+.4f})")
-    better = m["macro_f1"] > BASELINE_VAL_MACRO_F1
-    print(f"\n  VERDICT: {'BEATS' if better else 'DOES NOT BEAT'} the baseline on validation.")
+    if CV_FOLD is not None:
+        print("\n  NO VERDICT FROM ONE FOLD.")
+        print("    BASELINE_VAL_* were measured on the original 16-subject val")
+        print("    split, which the CV showed to be a pessimistic draw - every")
+        print("    fold clears it for free. A single fold means nothing on its own.")
+        print(f"    This fold: macro-F1 {m['macro_f1']:.4f}, kappa {m['kappa']:.4f}")
+        print("    Run all 5, then: python distillation/cv_summary.py")
+        print(f"    CV reference (hard labels): macro-F1 {CV_BASELINE_MACRO_F1:.4f}, "
+              f"kappa {CV_BASELINE_KAPPA:.4f}, across-fold sd {CV_BASELINE_SD_KAPPA:.4f}")
+    else:
+        better = m["macro_f1"] > BASELINE_VAL_MACRO_F1
+        print(f"\n  VERDICT: {'BEATS' if better else 'DOES NOT BEAT'} the baseline on validation.")
     print("  Test split was NEVER loaded. Evaluate it once, afterwards, only if this passed.")
     print("\nDownload from /kaggle/working:")
     print(f"  student_{EXPERIMENT}/student_best.pt + training_metrics.jsonl")

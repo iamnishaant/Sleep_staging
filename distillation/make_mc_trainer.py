@@ -316,13 +316,15 @@ def build() -> str:
     # argues against everywhere else: a numerically wrong channel goes inert
     # with no error and no warning.
     _old_guard = (
-        '        if ck.get("eeg_scale") != EEG_SCALE or ck.get("schedule_shape") != '
-        '{"epochs": EPOCHS, "steps": steps}:\n'
+        '        if (ck.get("eeg_scale") != EEG_SCALE\n'
+        '                or ck.get("schedule_shape") != {"epochs": EPOCHS, "steps": steps}\n'
+        '                or ck.get("cv_fold") != CV_FOLD):\n'
         '            raise SystemExit(f"Cannot resume: config changed "\n'
-        '                             f"(scale {ck.get(\'eeg_scale\')} -> {EEG_SCALE}). '
-        'Delete {out}.")')
+        '                             f"(scale {ck.get(\'eeg_scale\')} -> {EEG_SCALE}, "\n'
+        '                             f"cv_fold {ck.get(\'cv_fold\')} -> {CV_FOLD}). Delete {out}.")')
     _new_guard = (
         '        _want = {"channels": CHANNELS, "channel_scale": CHANNEL_SCALE,\n'
+        '                 "cv_fold": CV_FOLD,\n'
         '                 "schedule_shape": {"epochs": EPOCHS, "steps": steps}}\n'
         '        _have = {k: ck.get(k) for k in _want}\n'
         '        if _have != _want:\n'

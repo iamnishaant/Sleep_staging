@@ -64,6 +64,8 @@ from pathlib import Path
 HERE = Path(__file__).parent
 SRC = HERE / "kaggle_train_student_v2.py"
 DST = HERE / "kaggle_train_student_kd.py"
+
+CV_TEACHER_GUARD = '\n    # ---- CV / cohort splits and a shared teacher do not mix (roadmap 0.1, 3.1) ----\n    # The ensemble teacher was trained on the ORIGINAL 69-subject train split.\n    #   CV_FOLD:      12-16 of each fold\'s 17 validation subjects are inside it.\n    #   COHORT_SPLIT: 15 of the 22 held-out ST subjects are inside it (68%).\n    # Either way the student inherits the teacher\'s memorisation of the very\n    # subjects it is then scored on. Generating the missing logits would hide\n    # that, not fix it.\n    if (CV_FOLD is not None or COHORT_SPLIT) and ALPHA < 1.0:\n        _which = "CV_FOLD" if CV_FOLD is not None else "COHORT_SPLIT"\n        _detail = ("12-16 of this fold\'s 17 validation subjects"\n                   if CV_FOLD is not None else\n                   "15 of the 22 held-out ST subjects (68% of the test cohort)")\n        raise SystemExit(\n            f"{_which} is set and the soft term is active (ALPHA < 1.0).\\n"\n            "\\n"\n            f"  Refused. teacher_logits_{TEACHER_TAG} comes from a teacher trained on\\n"\n            f"  the original 69-subject split, and {_detail}\\n"\n            "  are inside that set. Distilling from it would inflate the result\\n"\n            "  through the teacher - the same leakage, one level out, that this\\n"\n            "  project was started to correct.\\n"\n            "\\n"\n            "  Two valid routes:\\n"\n            "    (a) student-side questions - normalisation, augmentation, EOG,\\n"\n            "        capacity, cohort transfer - need no teacher. Set ALPHA = 1.0.\\n"\n            "    (b) KD hyperparameters (alpha, T) need a teacher trained on the\\n"\n            "        same split being evaluated. For CV that is 5 folds x 3\\n"\n            "        ensemble members; for the cohort split it is an SC-only\\n"\n            "        teacher. Until those exist, report alpha/T as selected on\\n"\n            "        the original split.\\n")\n\n'
 KD = HERE / "kd_loss.py"
 
 Q = '"' * 3
@@ -371,9 +373,23 @@ def build() -> str:
     src = src.replace('    print(f"  seed      = {SEED}")',
                       '    print(f"  seed      = {SEED}")\n'
                       '    print(f"  alpha     = {ALPHA}   T = {T}   teacher = {TEACHER_TAG}")')
-    src = src.replace('"eeg_scale": EEG_SCALE, "alpha": 1.0, "T": 3.0,',
-                      '"eeg_scale": EEG_SCALE, "alpha": ALPHA, "T": T,\n'
-                      '                 "teacher_tag": TEACHER_TAG,')
+    # Guarded: this replace silently stopped applying on 30 Aug when
+    # '"cv_fold": CV_FOLD' was inserted ahead of it, and the kd trainer
+    # quietly began recording a literal alpha=1.0 instead of ALPHA.
+    _prov = '"eeg_scale": EEG_SCALE, "cv_fold": CV_FOLD, "alpha": 1.0, "T": 3.0,'
+    assert src.count(_prov) == 1, f'provenance anchor not found ({src.count(_prov)})'
+    src = src.replace(_prov,
+                      '"eeg_scale": EEG_SCALE, "cv_fold": CV_FOLD, "alpha": ALPHA, "T": T,\n'
+                      '                 "teacher_tag": TEACHER_TAG,', 1)
+    # ---- refuse CV + shared teacher (roadmap 0.1) ----
+    # Anchor on `tdir = None`, which is at 4-space indent and precedes the
+    # whole `if ALPHA < 1.0: ... else: ...` structure. Anchoring inside that
+    # structure (on the 8-space `have = ...` line) silently orphaned the
+    # cache-completeness check behind the guard's raise.
+    _anchor = '    tdir = None\n'
+    assert src.count(_anchor) == 1, 'tdir anchor not found'
+    src = src.replace(_anchor, CV_TEACHER_GUARD.lstrip('\n') + _anchor, 1)
+
     return src
 
 

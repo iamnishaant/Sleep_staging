@@ -41,6 +41,8 @@ from pathlib import Path
 HERE = Path(__file__).parent
 SRC = HERE / "kaggle_train_student_norm.py"
 DST = HERE / "kaggle_train_student_v2.py"
+
+CV_BLOCK = '\n\n# --------------------------------------------------------------- CV FOLDS ---\n# Roadmap item 0.1. Generated from distillation/cv_folds.json by\n# make_cv_folds.py; see distillation/test_cv_folds.py (35 assertions).\n#\n# CV_FOLD = None  -> the original 69/16 split. Identical behaviour to every\n#                    run before 29 Aug 2026, so existing checkpoints reproduce.\n# CV_FOLD = 0..4  -> that fold\'s 68/17 subject-level split.\n#\n# Only train and val move. "test" is never touched by any fold, and that is\n# asserted below rather than trusted.\n#\n# This is NOT nested CV: one 5-fold CV for selection, plus the frozen 15-subject\n# test split for the final report.\nCV_FOLD = None\n\n# Each fold\'s VALIDATION subjects. Train is derived as (train + val) minus\n# these, so the pool is stated once and cannot drift out of step with itself.\nCV_VAL_SUBJECTS = {\n    0: [\n        \'SC400\', \'SC403\', \'SC406\', \'SC410\', \'SC411\', \'SC417\', \'SC425\',\n        \'SC443\', \'SC447\', \'SC457\', \'SC463\', \'SC465\', \'SC467\', \'SC477\',\n        \'ST701\', \'ST713\', \'ST720\'\n    ],\n    1: [\n        \'SC404\', \'SC422\', \'SC428\', \'SC430\', \'SC441\', \'SC442\', \'SC445\',\n        \'SC450\', \'SC459\', \'SC471\', \'SC473\', \'SC481\', \'SC482\', \'ST708\',\n        \'ST719\', \'ST721\', \'ST722\'\n    ],\n    2: [\n        \'SC413\', \'SC415\', \'SC418\', \'SC427\', \'SC434\', \'SC435\', \'SC436\',\n        \'SC438\', \'SC440\', \'SC449\', \'SC454\', \'SC456\', \'SC476\', \'ST704\',\n        \'ST709\', \'ST711\', \'ST712\'\n    ],\n    3: [\n        \'SC408\', \'SC416\', \'SC419\', \'SC426\', \'SC431\', \'SC432\', \'SC444\',\n        \'SC446\', \'SC448\', \'SC455\', \'SC464\', \'SC470\', \'SC480\', \'ST706\',\n        \'ST707\', \'ST715\', \'ST717\'\n    ],\n    4: [\n        \'SC405\', \'SC407\', \'SC409\', \'SC412\', \'SC424\', \'SC433\', \'SC451\',\n        \'SC458\', \'SC460\', \'SC462\', \'SC466\', \'SC472\', \'SC475\', \'ST702\',\n        \'ST705\', \'ST718\', \'ST724\'\n    ],\n}\n\nif CV_FOLD is not None:\n    _pool = list(SPLITS["train"]) + list(SPLITS["val"])\n    assert len(_pool) == 85, f"CV pool should be 85 subjects, got {len(_pool)}"\n    _va = CV_VAL_SUBJECTS[CV_FOLD]\n    assert set(_va) <= set(_pool), "fold validation subjects must come from the pool"\n    assert not (set(_va) & set(SPLITS["test"])), "a CV fold may never contain a test subject"\n    SPLITS = {\n        "train": [s for s in _pool if s not in set(_va)],\n        "val":   list(_va),\n        "test":  SPLITS["test"],\n    }\n    # Suffix the experiment name so a fold can never write into the delivered\n    # model\'s directory, and folds can never overwrite each other. EXPERIMENT is\n    # defined above this block, so every out-dir expression picks this up.\n    EXPERIMENT = f"{EXPERIMENT}_cv{CV_FOLD}"\n    print(f"CV_FOLD={CV_FOLD}: train {len(SPLITS[\'train\'])} subj / "\n          f"val {len(SPLITS[\'val\'])} subj  (test untouched)")\n    print(f"  -> writes to student_{EXPERIMENT}; the un-suffixed directory is untouched")\n\n# ---------------------------------------------------------- COHORT SPLIT ---\n# Roadmap item 3.1. Generated from distillation/cohort_split.json by\n# make_cohort_split.py. Train on the SC cohort, test on the whole ST cohort:\n# different population (mild insomnia, temazepam) on different hardware.\n#\n# COHORT_SPLIT = False -> untouched.\n# COHORT_SPLIT = True  -> train 62 SC / val 16 SC / test 22 ST subjects.\n#\n# NOT comparable to the headline kappa: the main 15-subject test split is a\n# subset of both cohorts, so that number and this one measure different\n# populations. Expect this to be LOWER; the size of the drop is the finding.\n#\n# Do NOT rebalance SC\'s classes toward the dataset overall - the overall\n# includes ST, the test cohort, so it leaks, and the prior shift is part of\n# what is being measured (ST has ~2x the N3 and ~1/3 the wake).\nCOHORT_SPLIT = False\n\nCOHORT_TRAIN = [\n        \'SC400\', \'SC401\', \'SC402\', \'SC403\', \'SC404\', \'SC405\', \'SC406\',\n        \'SC407\', \'SC409\', \'SC410\', \'SC411\', \'SC412\', \'SC413\', \'SC414\',\n        \'SC416\', \'SC417\', \'SC418\', \'SC419\', \'SC420\', \'SC421\', \'SC422\',\n        \'SC424\', \'SC425\', \'SC426\', \'SC427\', \'SC428\', \'SC429\', \'SC430\',\n        \'SC431\', \'SC432\', \'SC434\', \'SC435\', \'SC436\', \'SC437\', \'SC438\',\n        \'SC440\', \'SC442\', \'SC443\', \'SC444\', \'SC445\', \'SC446\', \'SC447\',\n        \'SC450\', \'SC455\', \'SC456\', \'SC458\', \'SC459\', \'SC460\', \'SC461\',\n        \'SC463\', \'SC464\', \'SC465\', \'SC466\', \'SC467\', \'SC472\', \'SC473\',\n        \'SC474\', \'SC475\', \'SC476\', \'SC480\', \'SC481\', \'SC482\'\n]\nCOHORT_VAL = [\n        \'SC408\', \'SC415\', \'SC423\', \'SC433\', \'SC441\', \'SC448\', \'SC449\',\n        \'SC451\', \'SC452\', \'SC453\', \'SC454\', \'SC457\', \'SC462\', \'SC470\',\n        \'SC471\', \'SC477\'\n]\nCOHORT_TEST = [\n        \'ST701\', \'ST702\', \'ST704\', \'ST705\', \'ST706\', \'ST707\', \'ST708\',\n        \'ST709\', \'ST710\', \'ST711\', \'ST712\', \'ST713\', \'ST714\', \'ST715\',\n        \'ST716\', \'ST717\', \'ST718\', \'ST719\', \'ST720\', \'ST721\', \'ST722\',\n        \'ST724\'\n]\n\nif COHORT_SPLIT:\n    if CV_FOLD is not None:\n        raise SystemExit("Set either CV_FOLD or COHORT_SPLIT, not both - they are "\n                         "different experiments.")\n    assert not (set(COHORT_TRAIN) & set(COHORT_TEST)), "SC train leaked into the ST test set"\n    assert not (set(COHORT_VAL) & set(COHORT_TEST)), "SC val leaked into the ST test set"\n    assert all(s.startswith("ST") for s in COHORT_TEST), "the test cohort must be all ST"\n    assert all(s.startswith("SC") for s in COHORT_TRAIN + COHORT_VAL), "train/val must be all SC"\n    SPLITS = {"train": COHORT_TRAIN, "val": COHORT_VAL, "test": COHORT_TEST}\n    EXPERIMENT = f"{EXPERIMENT}_sc2st"\n    print(f"COHORT_SPLIT: train {len(COHORT_TRAIN)} SC / val {len(COHORT_VAL)} SC "\n          f"-> test {len(COHORT_TEST)} ST subjects (held out, never loaded here)")\n    print(f"  -> writes to student_{EXPERIMENT}")\n    print("  NOTE: not comparable to the headline kappa - different population.")\n\n# The CV reference for a hard-label run of this architecture, measured 30 Aug\n# 2026 over all five folds (results/cv_analysis.json). Use THIS, not\n# BASELINE_VAL_*, when judging anything run under CV_FOLD.\nCV_BASELINE_MACRO_F1 = 0.7419\nCV_BASELINE_KAPPA    = 0.7143\nCV_BASELINE_SD_KAPPA = 0.0193\n'
 ENC = HERE / "student_encoder.py"
 
 MODEL_START = "# ------------------------------------------------------------------- MODEL ---"
@@ -170,6 +172,12 @@ STUDENT_V2 = '''class StudentSleepStagingModel(nn.Module):
 
 def build() -> str:
     src = SRC.read_text(encoding="utf-8")
+
+    # ---- CV folds (roadmap 0.1) ----
+    # Injected after the SPLITS literal so a run can select a subject-level
+    # fold. Inert unless CV_FOLD is set, which keeps prior runs reproducible.
+    _splits_end = src.index('\n}\n', src.index('SPLITS = {')) + len('\n}\n')
+    src = src[:_splits_end] + CV_BLOCK + src[_splits_end:]
 
     # 1. docstring
     end = src.index('"""', src.index('"""') + 3) + 3
@@ -305,6 +313,53 @@ def build() -> str:
     src = src.replace('"use_spectral": USE_SPECTRAL,',
                       '"use_spectral": USE_SPECTRAL, "encoder": "multiscale",\n'
                       '                   "n_tokens": N_TOKENS,', 1)
+    # ---- cv_fold in the checkpoint and the resume guard (roadmap 0.1) ----
+    _old_guard = ('        if ck.get("eeg_scale") != EEG_SCALE or ck.get("schedule_shape")'
+                  ' != {"epochs": EPOCHS, "steps": steps}:\n')
+    _new_guard = ('        if (ck.get("eeg_scale") != EEG_SCALE\n'
+                  '                or ck.get("schedule_shape") != {"epochs": EPOCHS, "steps": steps}\n'
+                  '                or ck.get("cv_fold") != CV_FOLD):\n')
+    assert src.count(_old_guard) == 1, "resume guard not found"
+    src = src.replace(_old_guard, _new_guard, 1)
+
+    _old_msg = '                             f"(scale {ck.get(\'eeg_scale\')} -> {EEG_SCALE}). Delete {out}.")\n'
+    _new_msg = ('                             f"(scale {ck.get(\'eeg_scale\')} -> {EEG_SCALE}, "\n'
+                '                             f"cv_fold {ck.get(\'cv_fold\')} -> {CV_FOLD}). Delete {out}.")\n')
+    assert src.count(_old_msg) == 1, "resume message not found"
+    src = src.replace(_old_msg, _new_msg, 1)
+
+    _old_state = '"n_parameters": npar, "eeg_scale": EEG_SCALE,'
+    assert src.count(_old_state) == 1, "checkpoint state dict not found"
+    src = src.replace(_old_state,
+                      '"n_parameters": npar, "eeg_scale": EEG_SCALE, "cv_fold": CV_FOLD,', 1)
+
+    # ---- the verdict is invalid under CV (measured 30 Aug) ----
+    # BASELINE_VAL_* come from the original 16-subject val split, which the
+    # 5-fold CV showed to be a pessimistic draw (CV mean macro-F1 0.7419 vs a
+    # bar of 0.7249; all five folds cleared it). Comparing one fold to that bar
+    # prints "BEATS the baseline" for free.
+    _old_verdict = (
+        '    better = m["macro_f1"] > BASELINE_VAL_MACRO_F1\n'
+        '    print(f"\\n  VERDICT: {\'BEATS\' if better else \'DOES NOT BEAT\'} '
+        'the baseline on validation.")\n')
+    _new_verdict = (
+        '    if CV_FOLD is not None:\n'
+        '        print("\\n  NO VERDICT FROM ONE FOLD.")\n'
+        '        print("    BASELINE_VAL_* were measured on the original 16-subject val")\n'
+        '        print("    split, which the CV showed to be a pessimistic draw - every")\n'
+        '        print("    fold clears it for free. A single fold means nothing on its own.")\n'
+        '        print(f"    This fold: macro-F1 {m[\'macro_f1\']:.4f}, kappa {m[\'kappa\']:.4f}")\n'
+        '        print("    Run all 5, then: python distillation/cv_summary.py")\n'
+        '        print(f"    CV reference (hard labels): macro-F1 {CV_BASELINE_MACRO_F1:.4f}, "\n'
+        '              f"kappa {CV_BASELINE_KAPPA:.4f}, across-fold sd {CV_BASELINE_SD_KAPPA:.4f}")\n'
+        '    else:\n'
+        '        better = m["macro_f1"] > BASELINE_VAL_MACRO_F1\n'
+        '        print(f"\\n  VERDICT: {\'BEATS\' if better else \'DOES NOT BEAT\'} '
+        'the baseline on validation.")\n')
+    assert src.count(_old_verdict) == 1, "verdict block not found"
+    src = src.replace(_old_verdict, _new_verdict, 1)
+
+
     return src
 
 
