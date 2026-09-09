@@ -1,0 +1,353 @@
+{
+  "question": "Does soft-label KD make the identical 139,606-parameter student better or better calibrated than its hard-label twin, and is the difference resolvable at this sample size?",
+  "models": {
+    "kd": "student_N4kd",
+    "hard": "student_N2multiscale_fix",
+    "note": "identical architecture and parameter count; only the training signal differs"
+  },
+  "probabilities": "uncalibrated model output; reproduces the README ECE table exactly",
+  "method": "Paired bootstrap resampling RECORDINGS with replacement and recomputing the POOLED metric on the concatenated epochs. ECE and kappa are non-linear in the epoch set, so the epoch-weighted mean of per-recording values is a different quantity and would not answer the question the README's table poses.",
+  "authoritative": "subject_clustered_bootstrap",
+  "subject_clustered_bootstrap": {
+    "why": "Sleep-EDFx records two nights per subject: 14 of the 15 test subjects contribute 2 recordings. Resampling recordings treats two nights of the same person as independent evidence and produces intervals that are too narrow. The unit of independence is the SUBJECT.",
+    "method": "Clustered bootstrap: resample subjects with replacement, take all their recordings.",
+    "n_bootstrap": 10000,
+    "seed": 20260829,
+    "results": {
+      "val": {
+        "kappa": {
+          "delta": 0.0047,
+          "ci_recording": [
+            -0.0055,
+            0.0149
+          ],
+          "ci_subject": [
+            -0.0077,
+            0.0159
+          ],
+          "subject_ci_widening": 1.16,
+          "resolved_at_subject_level": false
+        },
+        "ECE": {
+          "delta": -0.0148,
+          "ci_recording": [
+            -0.0227,
+            -0.005
+          ],
+          "ci_subject": [
+            -0.0226,
+            -0.004
+          ],
+          "subject_ci_widening": 1.05,
+          "resolved_at_subject_level": true
+        },
+        "NLL": {
+          "delta": -0.0203,
+          "ci_recording": [
+            -0.0437,
+            0.0
+          ],
+          "ci_subject": [
+            -0.0501,
+            0.0045
+          ],
+          "subject_ci_widening": 1.25,
+          "resolved_at_subject_level": false
+        },
+        "Brier": {
+          "delta": -0.008,
+          "ci_recording": [
+            -0.0175,
+            0.0011
+          ],
+          "ci_subject": [
+            -0.0184,
+            0.0025
+          ],
+          "subject_ci_widening": 1.12,
+          "resolved_at_subject_level": false
+        },
+        "KL all epochs": {
+          "delta": -0.0198,
+          "ci_recording": [
+            -0.0259,
+            -0.0137
+          ],
+          "ci_subject": [
+            -0.0263,
+            -0.0132
+          ],
+          "subject_ci_widening": 1.07,
+          "resolved_at_subject_level": true
+        },
+        "KL teacher-uncertain": {
+          "delta": -0.0486,
+          "ci_recording": [
+            -0.0631,
+            -0.0336
+          ],
+          "ci_subject": [
+            -0.0637,
+            -0.0315
+          ],
+          "subject_ci_widening": 1.1,
+          "resolved_at_subject_level": true
+        }
+      },
+      "test": {
+        "kappa": {
+          "delta": 0.0008,
+          "ci_recording": [
+            -0.0075,
+            0.0089
+          ],
+          "ci_subject": [
+            -0.0107,
+            0.0114
+          ],
+          "subject_ci_widening": 1.34,
+          "resolved_at_subject_level": false
+        },
+        "ECE": {
+          "delta": -0.0118,
+          "ci_recording": [
+            -0.0198,
+            -0.0001
+          ],
+          "ci_subject": [
+            -0.0222,
+            0.0023
+          ],
+          "subject_ci_widening": 1.24,
+          "resolved_at_subject_level": false
+        },
+        "NLL": {
+          "delta": -0.0128,
+          "ci_recording": [
+            -0.0321,
+            0.0039
+          ],
+          "ci_subject": [
+            -0.0355,
+            0.0068
+          ],
+          "subject_ci_widening": 1.17,
+          "resolved_at_subject_level": false
+        },
+        "Brier": {
+          "delta": -0.006,
+          "ci_recording": [
+            -0.013,
+            0.001
+          ],
+          "ci_subject": [
+            -0.015,
+            0.0029
+          ],
+          "subject_ci_widening": 1.27,
+          "resolved_at_subject_level": false
+        },
+        "KL all epochs": {
+          "delta": -0.0264,
+          "ci_recording": [
+            -0.0468,
+            -0.0129
+          ],
+          "ci_subject": [
+            -0.0463,
+            -0.0122
+          ],
+          "subject_ci_widening": 1.01,
+          "resolved_at_subject_level": true
+        },
+        "KL teacher-uncertain": {
+          "delta": -0.0591,
+          "ci_recording": [
+            -0.1072,
+            -0.0268
+          ],
+          "ci_subject": [
+            -0.1015,
+            -0.0277
+          ],
+          "subject_ci_widening": 0.92,
+          "resolved_at_subject_level": true
+        }
+      }
+    }
+  },
+  "soft_target_transfer": {
+    "question": "Is the KD student closer to the TEACHER's full probability distribution than the hard-label twin is? This tests the mechanism, not the outcome.",
+    "metric": "KL(teacher || student), nats per epoch; lower = closer",
+    "caveat": "Closeness to a teacher is imitation, which is only good when the teacher exceeds the student. It did here (ensemble test kappa 0.7140 vs 0.7001). The E0/E1b students imitated weaker teachers closely and lost 0.052 and 0.032 kappa for it.",
+    "results": {
+      "val": {
+        "all epochs": {
+          "kl_kd": 0.0663,
+          "kl_hard": 0.0861,
+          "delta": -0.0198,
+          "ci": [
+            -0.0259,
+            -0.0137
+          ],
+          "crosses_zero": false,
+          "recordings_kd_closer": "28/31"
+        },
+        "top-quartile teacher entropy": {
+          "kl_kd": 0.1299,
+          "kl_hard": 0.1785,
+          "delta": -0.0486,
+          "ci": [
+            -0.063,
+            -0.0332
+          ],
+          "crosses_zero": false,
+          "recordings_kd_closer": "29/31"
+        }
+      },
+      "test": {
+        "all epochs": {
+          "kl_kd": 0.0498,
+          "kl_hard": 0.0761,
+          "delta": -0.0264,
+          "ci": [
+            -0.0469,
+            -0.0127
+          ],
+          "crosses_zero": false,
+          "recordings_kd_closer": "26/29"
+        },
+        "top-quartile teacher entropy": {
+          "kl_kd": 0.1058,
+          "kl_hard": 0.1648,
+          "delta": -0.0591,
+          "ci": [
+            -0.1064,
+            -0.0259
+          ],
+          "crosses_zero": false,
+          "recordings_kd_closer": "26/29"
+        }
+      }
+    }
+  },
+  "headline_kappa_interval": {
+    "model": "student_N4kd",
+    "split": "held-out test",
+    "point_estimate": 0.7001,
+    "note": "PROJECT_REPORT and README describe the recording as 'the unit of independence'. It is not - 14 of 15 test subjects contribute two nights. The subject-clustered interval is the correct one.",
+    "n_bootstrap": 20000,
+    "seed": 20260829,
+    "intervals": {
+      "recording": {
+        "ci": [
+          0.6531,
+          0.7414
+        ],
+        "half_width": 0.0441,
+        "n_units": 29
+      },
+      "subject": {
+        "ci": [
+          0.6432,
+          0.7514
+        ],
+        "half_width": 0.0541,
+        "n_units": 15
+      }
+    }
+  },
+  "n_bootstrap": 10000,
+  "seed": 20260829,
+  "results_SUPERSEDED": {
+    "superseded_on": "2026-08-29",
+    "why": "Recording-level resampling only. Retained because it is the run that reproduces the README's published ECE table, and because the difference between it and the clustered run IS the finding. Do not quote these intervals: use subject_clustered_bootstrap, which is authoritative for every interval in this file.",
+    "note": "Its recording-level CIs differ in the 4th decimal from those in subject_clustered_bootstrap because the two runs drew separate RNG streams. Immaterial, but quote one source.",
+    "values": {
+      "val": {
+        "kappa": {
+          "kd": 0.681,
+          "hard": 0.6763,
+          "delta": 0.0047,
+          "ci": [
+            -0.0055,
+            0.0149
+          ],
+          "crosses_zero": true
+        },
+        "ECE": {
+          "kd": 0.0463,
+          "hard": 0.061,
+          "delta": -0.0148,
+          "ci": [
+            -0.0227,
+            -0.005
+          ],
+          "crosses_zero": false
+        },
+        "NLL": {
+          "kd": 0.6541,
+          "hard": 0.6744,
+          "delta": -0.0203,
+          "ci": [
+            -0.0437,
+            0.0
+          ],
+          "crosses_zero": true
+        },
+        "Brier": {
+          "kd": 0.3449,
+          "hard": 0.3529,
+          "delta": -0.008,
+          "ci": [
+            -0.0175,
+            0.0011
+          ],
+          "crosses_zero": true
+        }
+      },
+      "test": {
+        "kappa": {
+          "kd": 0.7001,
+          "hard": 0.6992,
+          "delta": 0.0008,
+          "ci": [
+            -0.0074,
+            0.009
+          ],
+          "crosses_zero": true
+        },
+        "ECE": {
+          "kd": 0.0241,
+          "hard": 0.0359,
+          "delta": -0.0118,
+          "ci": [
+            -0.0201,
+            -0.0001
+          ],
+          "crosses_zero": false
+        },
+        "NLL": {
+          "kd": 0.5845,
+          "hard": 0.5973,
+          "delta": -0.0128,
+          "ci": [
+            -0.0327,
+            0.0041
+          ],
+          "crosses_zero": true
+        },
+        "Brier": {
+          "kd": 0.3087,
+          "hard": 0.3148,
+          "delta": -0.006,
+          "ci": [
+            -0.0133,
+            0.001
+          ],
+          "crosses_zero": true
+        }
+      }
+    }
+  }
+}

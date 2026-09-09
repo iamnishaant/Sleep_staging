@@ -150,8 +150,8 @@
     "history": {
       "student_distilled_E0": -0.0524,
       "student_distilled_E1b": -0.0315,
-      "student_N4kd": 0.0009,
-      "units": "test kappa against the matched hard-label baseline"
+      "student_N4kd": 0.0008,
+      "units": "test kappa against the matched hard-label baseline, computed at full precision (0.7000850 - 0.6992405). An earlier value of 0.0009 was the difference of the two 4dp displayed kappas; corrected 29 Aug 2026. The conclusion is unchanged - it is a tie either way."
     },
     "fig8_rq3_extrapolation": "put break-even at teacher kappa ~0.75 on test. The ensemble reached 0.7140 and the penalty had already vanished, so the two-point extrapolation was pessimistic - unsurprising, with n=2.",
     "the_transferable_claim": "A teacher must exceed the student before its guidance carries usable information. An ensemble of comparable models reaches that without a larger architecture, and what transfers to the student is calibration rather than accuracy.",
@@ -185,10 +185,10 @@
   "statistical_resolution": {
     "headline_test_kappa": 0.6993,
     "bootstrap_95_ci": [
-      0.6545,
-      0.7414
+      0.6432,
+      0.7514
     ],
-    "method": "2000 resamples over the 29 held-out RECORDINGS, the unit of independence - not over epochs, which would understate the interval by treating 33,431 correlated epochs as independent draws",
+    "method": "20000 resamples clustering by the 15 held-out SUBJECTS, the unit of independence. Corrected 29 Aug 2026: the earlier method resampled the 29 recordings, which treats two nights of one person as independent draws - the same error, one level up, as resampling epochs. Recording-level gave [0.6545, 0.7414] (+/-0.043); subject-clustered gives [0.6432, 0.7514] (+/-0.054), 1.23x wider. Point estimate unchanged.",
     "what_it_resolves": "The previous delivered model (0.6449) sits BELOW the lower bound, so that improvement is real.",
     "what_it_cannot_resolve": "Anything smaller than about 0.04 kappa. The hard-label twin at 0.6992 and this model at 0.6993 are not distinguishable at n=29 and never will be.",
     "implication": "Since the encoder change, every result has been a tie because the test set cannot resolve the differences being made. Further tuning on Sleep-EDF is optimisation below the noise floor. More statistical power requires more subjects, which means a second cohort - the same thing external validation requires for clinical credibility."
