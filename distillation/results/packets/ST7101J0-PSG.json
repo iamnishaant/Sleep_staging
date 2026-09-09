@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.3",
   "recording_id": "ST7101J0-PSG",
   "subject_id": "ST710",
   "cohort": "ST",
@@ -13,8 +13,8 @@
     "model_parameters": 139606,
     "model_encoder": "multiscale",
     "model_eeg_scale": 15849.46,
-    "git_commit": "96ac9fd85c4c47070a690e1cbd032934658cf2f8",
-    "generated_at": "2026-08-27T19:47:47+00:00",
+    "git_commit": "18bddffdf375915e973833f16e3f76687a4ab9bd",
+    "generated_at": "2026-09-08T18:51:02+00:00",
     "calibration_temperature": 1.2847,
     "hypnogram_decoder": "minrun REM L=3",
     "hypnogram_decoder_spec": {
@@ -25,7 +25,7 @@
       ]
     },
     "generator": "distillation/build_packet.py",
-    "schema_version": "1.1"
+    "schema_version": "1.3"
   },
   "hypnogram": {
     "predicted_stages": [
@@ -9296,6 +9296,77 @@
     "calibration_note": "Temperature scaling changes confidence, not decisions; argmax is identical before and after (asserted at build time). The DECODER, by contrast, does change decisions - see the `decoding` block.",
     "argmax_stages_note": "argmax of these probabilities is NOT the shipped hypnogram; it differs on 6 of 1042 epochs in this recording."
   },
+  "n1_confidence_flag": {
+    "rule": "flag an epoch when the predicted stage is N1 and max probability < 0.5750",
+    "threshold": 0.575,
+    "applied_to": "hypnogram.predicted_stages (the decoded, shipped stages)",
+    "flagged_epochs": [
+      61,
+      155,
+      157,
+      158,
+      159,
+      167,
+      171,
+      184,
+      187,
+      191,
+      192,
+      193,
+      194,
+      196,
+      197,
+      201,
+      202,
+      203,
+      204,
+      207,
+      208,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      228,
+      232,
+      238,
+      239,
+      245,
+      326,
+      544,
+      546,
+      547,
+      731,
+      732,
+      733,
+      734,
+      737,
+      738,
+      739,
+      741,
+      745
+    ],
+    "n_n1_epochs": 104,
+    "n_flagged": 53,
+    "fraction_of_n1_flagged": 0.5096,
+    "fitted_on": "validation split, 31 recordings, 34,610 epochs",
+    "validation_evidence": {
+      "accuracy_unflagged": 0.6104,
+      "accuracy_flagged": 0.3371,
+      "accuracy_all_n1": 0.5001
+    },
+    "how_to_read": "A flagged epoch is one the model called N1 with low confidence. On validation, unflagged N1 calls were right 61% of the time and flagged ones 34%. This does not make N1 more accurate - it identifies which N1 calls are worth a human's time. N1 remains the model's weakest class.",
+    "provenance_caveat": "The threshold was fitted on argmax validation predictions; it is applied here to the decoded hypnogram, which differs on 6 of 1042 epochs in this recording."
+  },
   "per_stage": {
     "W": {
       "n_epochs_predicted": 78,
@@ -9918,11 +9989,130 @@
       "basis": "representation-bound: no decision threshold improves N1 by more than +0.0086"
     }
   ],
-  "attribution": null,
+  "attribution": {
+    "method": "Integrated Gradients, 64 steps, midpoint rule, straight-line path",
+    "baseline": "as pre-registered, NOT all-zeros: the waveform baseline is this recording's own mean amplitude and the spectral baseline is the per-feature mean over the TRAIN split. Attribution is therefore 'relative to a featureless night', not 'relative to silence', and the numbers are not comparable to a zero-baseline IG run.",
+    "over": "the 34 derived spectral features. The raw-waveform branch is attributed too, but as 3000 samples it is not interpretable feature-by-feature and is summarised as a branch share, not listed here.",
+    "scope": "THIS RECORDING. Computed on this night's own epochs, grouped by the stage the model predicted.",
+    "normalisation": "shares of this stage's total absolute attribution across the 34 spectral features; they sum to the spectral branch share, not to 1",
+    "per_stage": {
+      "W": {
+        "n_epochs": 78,
+        "top3": [
+          {
+            "feature": "ratio_delta_beta",
+            "share": 0.2139
+          },
+          {
+            "feature": "ratio_dt_ab",
+            "share": 0.2072
+          },
+          {
+            "feature": "cD1_log_energy",
+            "share": 0.1869
+          }
+        ],
+        "top1_share": 0.2139
+      },
+      "N1": {
+        "n_epochs": 104,
+        "top3": [
+          {
+            "feature": "ratio_dt_ab",
+            "share": 0.2577
+          },
+          {
+            "feature": "ratio_delta_beta",
+            "share": 0.2525
+          },
+          {
+            "feature": "sef95",
+            "share": 0.0935
+          }
+        ],
+        "top1_share": 0.2577
+      },
+      "N2": {
+        "n_epochs": 376,
+        "top3": [
+          {
+            "feature": "ratio_delta_beta",
+            "share": 0.1384
+          },
+          {
+            "feature": "ratio_dt_ab",
+            "share": 0.1306
+          },
+          {
+            "feature": "cD5_log_energy",
+            "share": 0.1158
+          }
+        ],
+        "top1_share": 0.1384
+      },
+      "N3": {
+        "n_epochs": 240,
+        "top3": [
+          {
+            "feature": "ratio_delta_beta",
+            "share": 0.3035
+          },
+          {
+            "feature": "cD5_log_energy",
+            "share": 0.146
+          },
+          {
+            "feature": "ratio_dt_ab",
+            "share": 0.1152
+          }
+        ],
+        "top1_share": 0.3035
+      },
+      "REM": {
+        "n_epochs": 244,
+        "top3": [
+          {
+            "feature": "ratio_dt_ab",
+            "share": 0.2034
+          },
+          {
+            "feature": "ratio_delta_beta",
+            "share": 0.1795
+          },
+          {
+            "feature": "sef95",
+            "share": 0.1483
+          }
+        ],
+        "top1_share": 0.2034
+      }
+    },
+    "cohort_profile": "distillation/results/_g3a_n4kd.json - the pooled 29-recording profile this night should be read against",
+    "how_to_read": "These are the features the model leaned on for this night, not the features a clinician would cite. Attribution explains the model; it does not validate it. An epoch staged wrongly still produces a confident-looking attribution profile."
+  },
   "attribution_quality": {
-    "status": "not_run",
+    "status": "run",
     "gate": "3a",
-    "preregistration": "distillation/PREREGISTRATION_gate3a.md"
+    "preregistration": "distillation/PREREGISTRATION_gate3a.md (committed 2026-08-10)",
+    "model": "student_N4kd",
+    "verdict": "PASS",
+    "criterion": "N3 must be met AND at least 3 of 5 predictions met; void if completeness error exceeds 5%",
+    "predictions_met": {
+      "N3": true,
+      "REM": false,
+      "W": true,
+      "N2": true,
+      "N1": false
+    },
+    "n_met": 3,
+    "void": false,
+    "completeness_relative_error": 0.000305,
+    "scope": "COHORT, NOT THIS NIGHT. The verdict was evaluated once on the pooled test split of 29 recordings. It is not a quality score for this recording's attributions, and no per-night version of it was measured.",
+    "caveats": [
+      "The top-3 feature set is IDENTICAL across all five stages - ratio_delta_beta, ratio_dt_ab and cD1_log_energy, differing only in order. The gate asked whether stage-appropriate features appear in the top 3, and they do, but they appear for every stage. The profile discriminates far less between stages than the per-stage predictions passing suggests.",
+      "The spectral/waveform branch split is DIMENSION-BIASED. Spectral features take 18.7% of attribution mass on average, which reads as a minor branch; but that mass is spread over 34 dimensions against 3000 waveform samples, so per dimension the spectral features carry roughly 20x the attribution. Neither number alone describes the split honestly."
+    ],
+    "deviation_from_registration": "The registration names student_baseline_E0. It predates the encoder rebuild and carries eeg_scale=None - the configuration whose temporal branch was measured inert - so its branch-split measurement is degenerate by construction. Both models are run: E0 honours the registration, the delivered model is reported because the packet's attribution field belongs to it."
   },
   "risk": null,
   "risk_available": false,
