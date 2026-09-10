@@ -2,8 +2,8 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A complete — 31 dev packets, 23 new tests, all 93 Phase 1 tests still pass.
-Next: 2B (tier predicates). No model has run.**
+**Status: 2A and 2B complete — 138 tests, all passing. Next: 2C (coverage split
+and oracle). No model has run.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -246,6 +246,86 @@ byte-identical afterwards.
 | cohorts | SC 23 / ST 8 | SC 23 / ST 6 |
 | recording overlap | ∅ | |
 | **subject overlap** | **∅** | |
+
+---
+
+## Part 2 (2B) — tier predicates and the duplication policy
+
+Two keys added to the `text_key` enum, following the existing pattern exactly:
+
+| key | requires | predicate |
+|---|---|---|
+| `tier_is_high` | `night.confidence` | `night_confidence.tier == "high"` |
+| `tier_is_medium` | `night.confidence` | `night_confidence.tier == "medium"` |
+
+Both exact equality against a packet field. The Phase 1 restriction holds.
+
+### The ceiling this removes
+
+`night.confidence` is one of the 5 `safe_to_assert` items and was coverable
+only on a low night:
+
+| | coverable before 2B | after |
+|---|---|---|
+| test | 13 / 29 | **29 / 29** |
+| dev | 10 / 31 | **31 / 31** |
+
+The "before" figures are exactly the low-night counts, which is the artefact
+stated as a measurement: on 16 of 29 test and 21 of 31 dev packets, mandatory
+coverage was capped at 4/5 before a model did anything.
+
+### Mutual exclusivity — 60/60
+
+Exactly one of the three tier predicates is true on every one of the 60 packets
+(29 test + 31 dev). Two true at once would mean a model could cover
+`night.confidence` with a key that does not describe the night. `TIER_TEXT_KEYS`
+names the group so a fourth tier key cannot be added without the check noticing.
+
+### Reason keys are not all tier-gated
+
+Checked, because over-restricting here would have been easy and silent:
+
+| reason key | cites | valid on |
+|---|---|---|
+| `low_night_confidence` | `night.confidence` | low nights only |
+| `n1_low_reliability` | `model.n1_reliability_warning` | **all nights** |
+
+`model.n1_reliability_warning` is `low` on every packet whatever the night tier,
+so a high-confidence night can carry an N1 review flag. Tested on high, medium
+and low explicitly. The repository already had this right — no change needed,
+now asserted.
+
+### The duplication policy: renderer, not verifier
+
+On a low night `night.confidence` is coverable twice: a `review_flag` with
+`low_night_confidence` (mandatory under rule 10) and an `observation` with
+`tier_is_low`. Both verify, both cite the same id, coverage counts it once.
+
+**The verifier permits both**, deliberately unlike rule 8. Rule 8 rejects citing
+both REM latencies because they are two metrics resolving to one value, so
+presenting them jointly is false corroboration. Here it is one fact serving two
+reporting functions: the flag **warns and instructs**, the observation
+**describes what was measured**. Rejecting one would shrink the valid claim
+space for no safety gain.
+
+The separation is textual. The old `tier_is_low` text ended *"...so the whole
+recording warrants review"*, repeating the banner's action almost word for word;
+the observations now give no instruction at all, and a test asserts that by
+checking they contain none of "review", "check", "should", "warrants", "must" —
+while the banner is asserted to contain "review".
+
+The tier templates name the method ("validation-split tertiles"). That is a
+constant of the method, not a fact about one split: `boundaries_fitted_on` is
+identical and `requires_ground_truth` is false on all 60 packets. A test asserts
+the wording still agrees with the packet, so it cannot drift the way the old
+"test split of 29 recordings" literal did.
+
+### The pin
+
+"Does not read like duplication" is a prose criterion and not mechanically
+checkable, so the exact rendered output is pinned instead — on one test packet
+and one dev packet — the same technique the other exact-text render tests use.
+A further test asserts the flag is in the banner and the observation is not.
 
 ---
 
