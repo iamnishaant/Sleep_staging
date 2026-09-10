@@ -148,8 +148,23 @@ def _evidence(packet: dict, eid: str) -> dict | None:
     return None
 
 
+def _night_tier(packet: dict) -> str | None:
+    return packet.get("night_confidence", {}).get("tier")
+
+
+# One predicate per tier, exact equality against the same packet field. They
+# are mutually exclusive by construction - `tier` holds one string - and
+# tests/test_schema.py asserts exactly one is true on each of the 60 packets.
 def _night_tier_is_low(packet: dict) -> bool:
-    return packet.get("night_confidence", {}).get("tier") == "low"
+    return _night_tier(packet) == "low"
+
+
+def _night_tier_is_medium(packet: dict) -> bool:
+    return _night_tier(packet) == "medium"
+
+
+def _night_tier_is_high(packet: dict) -> bool:
+    return _night_tier(packet) == "high"
 
 
 def _n1_reliability_is_low(packet: dict) -> bool:
@@ -182,7 +197,22 @@ TEXT_KEYS: dict[str, KeySpec] = {
         "n1_reliability_is_low", "model.n1_reliability_warning",
         _n1_reliability_is_low,
         "the model.n1_reliability_warning evidence item's value == 'low'"),
+    # Added in 2B. `night.confidence` is one of the 5 safe_to_assert items, and
+    # before these existed the only keys referencing it required tier == "low",
+    # so on a high or medium night it was UNCOVERABLE - capping mandatory
+    # coverage at 4/5 on 16 of 29 test and 21 of 31 dev packets before a model
+    # did anything. That is a measurement artefact on the headline metric.
+    "tier_is_medium": KeySpec(
+        "tier_is_medium", "night.confidence", _night_tier_is_medium,
+        "night_confidence.tier == 'medium'"),
+    "tier_is_high": KeySpec(
+        "tier_is_high", "night.confidence", _night_tier_is_high,
+        "night_confidence.tier == 'high'"),
 }
+
+# The three tier keys, for the mutual-exclusivity check. Kept as a named group
+# so a fourth tier key cannot be added without the check noticing.
+TIER_TEXT_KEYS = ("tier_is_low", "tier_is_medium", "tier_is_high")
 
 REASON_KEYS: dict[str, KeySpec] = {
     "low_night_confidence": KeySpec(

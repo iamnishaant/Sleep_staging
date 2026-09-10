@@ -31,7 +31,7 @@ this-recording ::= "\"subject\"" ws ":" ws "\"this_recording\""
 population ::= "\"subject\"" ws ":" ws "\"population\""
 value-field ::= "\"value\"" ws ":" ws number
 unit-field ::= "\"unit\"" ws ":" ws ("\"minutes\"" | "\"fraction\"" | "\"count\"" | "\"per hour\"" | "\"ratio\"")
-text-key-field ::= "\"text_key\"" ws ":" ws ("\"n1_reliability_is_low\"" | "\"tier_is_low\"")
+text-key-field ::= "\"text_key\"" ws ":" ws ("\"n1_reliability_is_low\"" | "\"tier_is_high\"" | "\"tier_is_low\"" | "\"tier_is_medium\"")
 reason-key-field ::= "\"reason_key\"" ws ":" ws ("\"low_night_confidence\"" | "\"n1_low_reliability\"")
 
 numeric-cites ::= "\"cites\"" ws ":" ws "[" ws numeric-id ws "]"
