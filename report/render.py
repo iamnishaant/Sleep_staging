@@ -101,9 +101,43 @@ def render_hedged_value(claim) -> str:
     return text
 
 
+# THE DUPLICATION POLICY, resolved here rather than in the verifier.
+#
+# On a low night `night.confidence` is coverable twice over: a `review_flag`
+# with `low_night_confidence` (mandatory under rule 10) and an `observation`
+# with `tier_is_low`. Both verify, both cite the same id, and coverage counts
+# the id once - so the metric is unaffected and the verifier permits both.
+#
+# That is deliberately unlike rule 8. Rule 8 rejects citing both REM latencies
+# together because they are two metrics resolving to one value, so presenting
+# them jointly is false corroboration. Here it is one fact serving two
+# reporting functions: the flag WARNS and tells the reader what to do; the
+# observation DESCRIBES what was measured and how. Same evidence is not
+# redundant communication, and rejecting one would shrink the valid claim space
+# for no safety gain.
+#
+# So the separation is textual, and it is the renderer's job. The observations
+# below state the measurement and its provenance and give no instruction; the
+# banner gives the instruction and no method. An earlier `tier_is_low` text
+# ended "...so the whole recording warrants review", which repeated the
+# banner's action almost word for word.
+#
+# The tier is a property of the model's OWN uncertainty - `requires_ground_truth`
+# is false on all 60 packets - and the boundaries are identical across them, so
+# naming the method here is a constant of the method rather than a fact about
+# one split. tests/test_render.py asserts this wording still agrees with the
+# packet's `boundaries_fitted_on`, so it cannot drift the way the old
+# "test split of 29 recordings" literal did.
 OBSERVATION_TEXT = {
-    "tier_is_low": ("Overall prediction confidence for this night is in the "
-                    "low tier, so the whole recording warrants review."),
+    "tier_is_high": ("Night-level confidence is in the high tier - mean "
+                     "prediction entropy at or below the lower of two "
+                     "boundaries fitted as validation-split tertiles."),
+    "tier_is_medium": ("Night-level confidence is in the medium tier - mean "
+                       "prediction entropy between two boundaries fitted as "
+                       "validation-split tertiles."),
+    "tier_is_low": ("Night-level confidence is in the low tier - mean "
+                    "prediction entropy above the upper of two boundaries "
+                    "fitted as validation-split tertiles."),
     "n1_reliability_is_low": ("N1 is a low-reliability stage for this model; "
                               "N1 figures in this report should be read with "
                               "that in mind."),
@@ -189,7 +223,8 @@ def render_report(enriched_claims, packet: dict) -> str:
             lines.append(render_claim(c))
         lines.append("")
 
-    body = [c for c in enriched_claims if c not in banner]
+    banner_ids = {id(c) for c in banner}
+    body = [c for c in enriched_claims if id(c) not in banner_ids]
     for c in body:
         lines.append(render_claim(c))
 
