@@ -159,11 +159,21 @@ def render_attribution_footer(packet: dict) -> str | None:
     aq = packet.get("attribution_quality") or {}
     if aq.get("status") != "run":
         return None
+
+    # No default for either. An earlier version hardcoded "test split of 29
+    # recordings", which is a false sentence on a packet built from any other
+    # split. A packet that cannot say where its verdict came from does not get
+    # a sentence claiming to know.
+    split = aq.get("evaluated_on_split")
+    n_recs = aq.get("evaluated_on_n_recordings")
+    if split is None or n_recs is None:
+        return None
+
     return ("Explainability gate 3a: "
             f"{aq.get('verdict')} ({aq.get('n_met')} of 5 pre-registered "
-            "predictions met). This verdict was measured once over the pooled "
-            "test split of 29 recordings and describes the COHORT, not this "
-            "recording. No per-night version of it was measured.")
+            f"predictions met). This verdict was measured once over the pooled "
+            f"{split} split of {n_recs} recordings and describes the COHORT, "
+            f"not this recording. No per-night version of it was measured.")
 
 
 def render_report(enriched_claims, packet: dict) -> str:
