@@ -1052,6 +1052,42 @@ measured property of the gate:
 
 Full output: `results/_g3a_e0.json`.
 
+### The registered predictions replicate on held-out subjects
+
+Gate 3a was re-run on the 16 **validation** subjects while building the Phase 2
+development packets. The registration was written once, against the test split,
+on 10 August; validation had no opportunity to influence it, and the two subject
+sets are disjoint.
+
+| | test | validation |
+|---|---|---|
+| subjects / recordings | 15 / 29 | 16 / 31 |
+| N3 &middot; W &middot; N2 | **met** | **met** |
+| REM &middot; N1 | **not met** | **not met** |
+| verdict | PASS, 3/5 | **PASS, 3/5** |
+| completeness error | 0.03% | 0.03% |
+
+Not merely the same count &mdash; the same three met and the same two missed. That
+moves two of the section's findings from properties of one draw to properties of
+the model:
+
+- **REM's `rel_theta` prediction misses on both splits.** The model does not
+  lean on relative theta to call REM, and the most specific physiological claim
+  in the registration is wrong about it twice over.
+- **N1's attributions are more coherent than predicted on both splits.** The
+  registration expected incoherence and the highest cross-recording variance;
+  neither holds, on either split. A model can be consistent about the wrong
+  thing, and this is now the second independent look at it.
+
+**What this replication is not.** Both runs use the *same trained model* and the
+*same registration*. It is replication across **subjects**, and says nothing
+about whether another model would attribute the same way, or whether a different
+set of pre-registered predictions would have fared as well. Read as
+subject-level generalisation it is real; read as anything wider it is not
+supported.
+
+Full output: `results/_g3a_n4kd_val.json`.
+
 ### The registration deviation, stated
 
 The registration names `student_baseline_E0`. It predates the encoder rebuild
