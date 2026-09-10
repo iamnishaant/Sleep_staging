@@ -220,8 +220,20 @@ DEC = None                          # decode fn, populated in main()
 # Gate 3a, from the run that produced the committed verdict. Loaded rather
 # than recomputed: recomputing IG per packet would take ~6 min per night and
 # would let the packet drift from the verdict the report cites.
-def _load_gate3a(res_dir, model="student_N4kd"):
-    p = Path(res_dir) / "_g3a_n4kd.json"
+# The locked test packet directory. Named once, so the guard and the tests
+# agree on what "the test set" means rather than each spelling a path.
+TEST_PACKET_DIR = (RES / "packets").resolve()
+
+
+def _gate_artefact_name(split: str) -> str:
+    """One artefact per split. A val run yields a VAL cohort verdict, and
+    putting the test verdict into dev packets would drop a test-derived
+    aggregate into the artefacts being tuned on."""
+    return "_g3a_n4kd.json" if split == "test" else f"_g3a_n4kd_{split}.json"
+
+
+def _load_gate3a(res_dir, model="student_N4kd", split="test"):
+    p = Path(res_dir) / _gate_artefact_name(split)
     if not p.exists():
         return None
     d = json.loads(p.read_text())
@@ -245,7 +257,11 @@ def _load_gate3a(res_dir, model="student_N4kd"):
 
 
 N1_RULE = _load_n1_rule(RES)
-GATE3A = _load_gate3a(RES)
+
+# Populated in main() once --split is known. Loading it at import would bind
+# the test artefact before the flag is read, which is the same silent-default
+# failure --split exists to remove.
+GATE3A = None
 
 
 def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None:
@@ -337,12 +353,19 @@ def build(rec: str, rel: dict, nc: dict, prov: dict, cache: Path) -> dict | None
             "n_met": gv["n_met"],
             "void": gv["void"],
             "completeness_relative_error": gm["completeness"]["relative"],
+            # Which split this verdict describes, and over how many recordings.
+            # Carried explicitly because the renderer used to assert "test
+            # split of 29 recordings" as a literal, which is false for any
+            # packet built from another split.
+            "evaluated_on_split": gm.get("split", "test"),
+            "evaluated_on_n_recordings": gm.get("n_recordings",
+                                                gm.get("n_test_recordings")),
             "scope": (
                 "COHORT, NOT THIS NIGHT. The verdict was evaluated once on the "
-                "pooled test split of "
-                f"{gm['n_test_recordings']} recordings. It is not a quality "
-                "score for this recording's attributions, and no per-night "
-                "version of it was measured."),
+                f"pooled {gm.get('split', 'test')} split of "
+                f"{gm.get('n_recordings', gm.get('n_test_recordings'))} "
+                "recordings. It is not a quality score for this recording's "
+                "attributions, and no per-night version of it was measured."),
             "caveats": [
                 ("The top-3 feature set is IDENTICAL across all five stages - "
                  "ratio_delta_beta, ratio_dt_ab and cD1_log_energy, differing "
@@ -682,11 +705,43 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--model", default="student_baseline_E0")
     ap.add_argument("--splits", default=str(Path(__file__).parent / "splits.json"))
-    ap.add_argument("--out", default=str(RES / "packets"))
+    ap.add_argument("--split", required=True, choices=["train", "val", "test"],
+                    help="which split to build packets for. REQUIRED and with "
+                         "no default: a forgotten flag must error rather than "
+                         "silently select the locked test split.")
+    ap.add_argument("--out", required=True,
+                    help="output directory. Writing into results/packets/ "
+                         "additionally needs --split test and "
+                         "--allow-test-overwrite.")
+    ap.add_argument("--allow-test-overwrite", action="store_true",
+                    help="second key required to rebuild the 29 locked test "
+                         "packets. Regenerating them should take two "
+                         "deliberate flags, not one.")
     ap.add_argument("--limit", type=int, default=None)
     args = ap.parse_args()
 
-    global MR, DEC
+    # ---- guard FIRST, before anything is loaded or written --------------
+    out = Path(args.out).resolve()
+    writing_into_test = out == TEST_PACKET_DIR or TEST_PACKET_DIR in out.parents
+    if writing_into_test:
+        if args.split != "test":
+            raise SystemExit(
+                f"--split {args.split} would write into the locked test packet "
+                f"directory ({TEST_PACKET_DIR}).\n"
+                f"  That is the contamination this guard exists to stop. Point "
+                f"--out somewhere else.")
+        if not args.allow_test_overwrite:
+            raise SystemExit(
+                f"Refusing to overwrite the 29 locked test packets in "
+                f"{TEST_PACKET_DIR}.\n"
+                f"  Rebuilding them requires --split test AND "
+                f"--allow-test-overwrite, deliberately.")
+    elif args.split == "test":
+        print(f"NOTE: building TEST packets into {out}, which is not the test "
+              f"packet directory. Deliberate? --split test was passed "
+              f"explicitly, so proceeding.")
+
+    global MR, DEC, GATE3A
     DEC = load_decoder()
     rel = json.loads((Path(__file__).parent / "reliability_table.json").read_text(encoding="utf-8"))
     nc = json.loads((RES / "night_confidence.json").read_text(encoding="utf-8"))
@@ -696,7 +751,12 @@ def main() -> int:
                          f"the packet cannot mark which derived values are safe to state.")
     MR = json.loads(mrp.read_text(encoding="utf-8"))
     sp = json.loads(Path(args.splits).read_text(encoding="utf-8"))
-    recs = sorted(r for s in sp["splits"]["test"] for r in sp["recordings_by_subject"][s])
+    if args.split not in sp["splits"]:
+        raise SystemExit(f"{args.splits} has no split named {args.split!r}; "
+                         f"it has {sorted(sp['splits'])}.")
+    recs = sorted(r for s in sp["splits"][args.split]
+                  for r in sp["recordings_by_subject"][s])
+    GATE3A = _load_gate3a(RES, args.model, args.split)
     if args.limit:
         recs = recs[:args.limit]
 
@@ -737,14 +797,20 @@ def main() -> int:
     print(f"temperature: {prov['calibration_temperature']}")
     print(f"decoder    : {DEC.artefact['selected_label']}  {DEC.spec}")
     print(f"schema     : {SCHEMA_VERSION}")
+    print(f"split      : {args.split}  ({len(recs)} recordings)")
+    print(f"gate 3a    : {_gate_artefact_name(args.split)} "
+          f"{'loaded' if GATE3A is not None else 'MISSING - attribution will be null'}")
 
-    cache = RES / f"probs_{args.model}"
+    # The convention every other tool already uses: probs_{model} is the test
+    # split, probs_{model}_{split} is anything else.
+    cache = RES / (f"probs_{args.model}" if args.split == "test"
+                   else f"probs_{args.model}_{args.split}")
     if not cache.exists():
         raise SystemExit(f"Missing {cache}. Run evaluate_student.py first.")
 
-    out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    print(f"\nbuilding {len(recs)} packets -> {out.relative_to(REPO_ROOT)}/")
+    print(f"\nbuilding {len(recs)} {args.split.upper()} packets "
+          f"-> {out.relative_to(REPO_ROOT)}/")
     ok = skipped = 0
     for r in recs:
         p = build(r, rel, nc, prov, cache)
