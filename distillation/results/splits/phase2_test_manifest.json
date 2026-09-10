@@ -1,0 +1,176 @@
+[
+  {
+    "recording_id": "SC4011E0-PSG",
+    "subject_id": "SC401",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4012E0-PSG",
+    "subject_id": "SC401",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4021E0-PSG",
+    "subject_id": "SC402",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4022E0-PSG",
+    "subject_id": "SC402",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4141E0-PSG",
+    "subject_id": "SC414",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4142E0-PSG",
+    "subject_id": "SC414",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4201E0-PSG",
+    "subject_id": "SC420",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4202E0-PSG",
+    "subject_id": "SC420",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4211E0-PSG",
+    "subject_id": "SC421",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4212E0-PSG",
+    "subject_id": "SC421",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4231E0-PSG",
+    "subject_id": "SC423",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4232E0-PSG",
+    "subject_id": "SC423",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4291G0-PSG",
+    "subject_id": "SC429",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4292G0-PSG",
+    "subject_id": "SC429",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4371F0-PSG",
+    "subject_id": "SC437",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4372F0-PSG",
+    "subject_id": "SC437",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4522E0-PSG",
+    "subject_id": "SC452",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4531E0-PSG",
+    "subject_id": "SC453",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4532E0-PSG",
+    "subject_id": "SC453",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4611E0-PSG",
+    "subject_id": "SC461",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4612E0-PSG",
+    "subject_id": "SC461",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4741E0-PSG",
+    "subject_id": "SC474",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "SC4742E0-PSG",
+    "subject_id": "SC474",
+    "cohort": "SC",
+    "split": "test"
+  },
+  {
+    "recording_id": "ST7101J0-PSG",
+    "subject_id": "ST710",
+    "cohort": "ST",
+    "split": "test"
+  },
+  {
+    "recording_id": "ST7102J0-PSG",
+    "subject_id": "ST710",
+    "cohort": "ST",
+    "split": "test"
+  },
+  {
+    "recording_id": "ST7141J0-PSG",
+    "subject_id": "ST714",
+    "cohort": "ST",
+    "split": "test"
+  },
+  {
+    "recording_id": "ST7142J0-PSG",
+    "subject_id": "ST714",
+    "cohort": "ST",
+    "split": "test"
+  },
+  {
+    "recording_id": "ST7161J0-PSG",
+    "subject_id": "ST716",
+    "cohort": "ST",
+    "split": "test"
+  },
+  {
+    "recording_id": "ST7162J0-PSG",
+    "subject_id": "ST716",
+    "cohort": "ST",
+    "split": "test"
+  }
+]
