@@ -29,6 +29,7 @@ from report.verify_structure import parse, verify_structure
 from report.violations import V, codes, has
 
 HIGH_NAME, HIGH = packet_with_tier("high")
+MED_NAME, MED = packet_with_tier("medium")
 LOW_NAME, LOW = packet_with_tier("low")
 
 
@@ -236,6 +237,86 @@ class TestLayer2Policy(Base):
                   value=543, unit="minutes")
         r = self.check([c], HIGH)
         self.assertCode(r, V.UNCITED_QUANTITY)
+
+    # ---- 2B: the tier keys ------------------------------------------------
+    # Each key must fail on the two tiers it does not describe, not merely on
+    # one. A key that is only checked against its own tier could be true
+    # everywhere and nobody would notice.
+
+    def test_2b_tier_is_high_on_a_low_night(self):
+        c = claim(claim_type="observation", cites=["night.confidence"],
+                  text_key="tier_is_high")
+        self.assertCode(self.check([c], LOW), V.TEXT_KEY_PREDICATE_FALSE)
+
+    def test_2b_tier_is_high_on_a_medium_night(self):
+        c = claim(claim_type="observation", cites=["night.confidence"],
+                  text_key="tier_is_high")
+        self.assertCode(self.check([c], MED), V.TEXT_KEY_PREDICATE_FALSE)
+
+    def test_2b_tier_is_medium_on_a_high_night(self):
+        c = claim(claim_type="observation", cites=["night.confidence"],
+                  text_key="tier_is_medium")
+        self.assertCode(self.check([c], HIGH), V.TEXT_KEY_PREDICATE_FALSE)
+
+    def test_2b_tier_is_medium_on_a_low_night(self):
+        c = claim(claim_type="observation", cites=["night.confidence"],
+                  text_key="tier_is_medium")
+        self.assertCode(self.check([c], LOW), V.TEXT_KEY_PREDICATE_FALSE)
+
+    def test_2b_tier_is_low_on_a_medium_night(self):
+        c = claim(claim_type="observation", cites=["night.confidence"],
+                  text_key="tier_is_low")
+        self.assertCode(self.check([c], MED), V.TEXT_KEY_PREDICATE_FALSE)
+
+    def test_2b_new_keys_need_their_evidence_dependency(self):
+        for key, pk in (("tier_is_high", HIGH), ("tier_is_medium", MED)):
+            c = claim(claim_type="observation", cites=["arch.waso"], text_key=key)
+            self.assertCode(self.check([c], pk),
+                            V.TEXT_KEY_DEPENDENCY_MISSING, f"key={key}")
+
+    def test_2b_each_key_passes_on_its_own_tier(self):
+        for key, pk in (("tier_is_high", HIGH), ("tier_is_medium", MED)):
+            c = claim(claim_type="observation", cites=["night.confidence"],
+                      text_key=key)
+            r = self.check([c], pk)
+            self.assertEqual(r.violations, [], f"{key}: {r.codes}")
+
+    def test_2b_low_night_confidence_flag_is_rejected_off_a_low_night(self):
+        """The reason key that IS tier-gated."""
+        for pk, tier in ((HIGH, "high"), (MED, "medium")):
+            c = claim(claim_type="review_flag", cites=["night.confidence"],
+                      reason_key="low_night_confidence")
+            self.assertCode(self.check([c], pk),
+                            V.TEXT_KEY_PREDICATE_FALSE, f"tier={tier}")
+
+    def test_2b_n1_review_flag_is_valid_on_every_tier(self):
+        """The reason key that is NOT tier-gated. model.n1_reliability_warning
+        is low on every packet whatever the night tier, so a high-confidence
+        night can and should be able to carry an N1 review flag."""
+        for pk, tier in ((HIGH, "high"), (MED, "medium"), (LOW, "low")):
+            claims = [claim(claim_id="c1", claim_type="review_flag",
+                            cites=["model.n1_reliability_warning"],
+                            reason_key="n1_low_reliability")]
+            if tier == "low":                      # rule 10 still applies
+                claims.append(claim(claim_id="c2", claim_type="review_flag",
+                                    cites=["night.confidence"],
+                                    reason_key="low_night_confidence"))
+            r = self.check(claims, pk)
+            self.assertEqual(r.violations, [], f"tier={tier}: {r.codes}")
+
+    def test_2b_the_duplication_is_permitted_not_rejected(self):
+        """Flag and observation on the same id both verify - deliberately.
+        Unlike rule 8, this is one fact serving two reporting functions."""
+        claims = [
+            claim(claim_id="c1", claim_type="review_flag",
+                  cites=["night.confidence"], reason_key="low_night_confidence"),
+            claim(claim_id="c2", claim_type="observation",
+                  cites=["night.confidence"], text_key="tier_is_low"),
+        ]
+        r = self.check(claims, LOW)
+        self.assertEqual(r.violations, [], r.codes)
+        # and coverage counts the id once, so the metric is unaffected
+        self.assertIn("night.confidence", r.policy.covered)
 
     def test_15_a_valid_schema_constant_passes(self):
         """Rule 11 must not reject closed-enum values."""
