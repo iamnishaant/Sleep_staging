@@ -102,7 +102,7 @@ def integrated_gradients(model, xt, xs, bt, bs, target, steps=STEPS):
     return (xt - bt) * gt / steps, (xs - bs) * gs / steps
 
 
-def run(tag, data_dir, splits, rbs, limit_recs=None):
+def run(tag, data_dir, splits, rbs, limit_recs=None, split_name="test"):
     model, ck = load_model(tag)
     scale = ck.get("eeg_scale") or 1.0
     src = ROOT / data_dir
@@ -119,10 +119,13 @@ def run(tag, data_dir, splits, rbs, limit_recs=None):
     spec_baseline = torch.tensor(acc / n, dtype=torch.float32)
     print(f"  spectral baseline from {len(tr)} TRAIN recordings ({n:,} epochs)")
 
-    test = recs_for(splits["test"], rbs)
+    # NOT hard-coded to "test" any more. The train baseline above stays train
+    # regardless - it is the registered reference, not a property of whatever
+    # split is being attributed.
+    test = recs_for(splits[split_name], rbs)
     if limit_recs:
         test = test[:limit_recs]
-    print(f"  attributing over {len(test)} test recordings")
+    print(f"  attributing over {len(test)} {split_name.upper()} recordings")
 
     per_stage_abs = {s: [] for s in STAGES}       # normalised |attr| per epoch
     per_stage_branch = {s: [] for s in STAGES}    # spectral share of total mass
@@ -223,6 +226,11 @@ def run(tag, data_dir, splits, rbs, limit_recs=None):
         "model": tag, "n_parameters": ck["n_parameters"],
         "encoder": ck.get("encoder") or "atrous",
         "eeg_scale": ck.get("eeg_scale"),
+        "split": split_name,
+        "n_recordings": len(test),
+        # Legacy alias, kept because build_packet.py and the committed test
+        # artefact both read it. It holds the count for whichever split was
+        # attributed, so read `split` beside it rather than trusting the name.
         "n_test_recordings": len(test),
         "steps": STEPS,
         "completeness": {"mean_abs_error": round(ce, 6),
@@ -237,7 +245,7 @@ def run(tag, data_dir, splits, rbs, limit_recs=None):
             "per_recording is grouped by the model's own argmax, so it contains "
             "no ground truth and may ship in a packet that withholds labels. It "
             "is NOT the decoded hypnogram the packet ships - the two differ on "
-            "0.67% of test epochs - so these per-stage counts will not exactly "
+            "0.67% of held-out epochs - so these per-stage counts will not exactly "
             "match the packet's own per_stage counts. The cohort-level "
             "`per_stage` block above is keyed by the ANNOTATED stage, as "
             "pre-registered, and must not be put in a packet."),
@@ -307,6 +315,10 @@ def main() -> int:
     ap.add_argument("--models", nargs="+",
                     default=["student_baseline_E0", "student_N4kd"])
     ap.add_argument("--data", default="processed_sleepedf")
+    ap.add_argument("--split", required=True, choices=["train", "val", "test"],
+                    help="which split to attribute over. REQUIRED and with no "
+                         "default: a forgotten flag must error rather than "
+                         "silently select the locked test split.")
     ap.add_argument("--limit-recs", type=int, default=None)
     ap.add_argument("--out", default=str(RES / "attribution_quality.json"))
     a = ap.parse_args()
@@ -323,11 +335,12 @@ def main() -> int:
                       "measurement is degenerate by construction. Both models are run: "
                       "E0 honours the registration, the delivered model is reported "
                       "because the packet's attribution field belongs to it."),
+        "split": a.split,
         "models": {},
     }
     for tag in a.models:
         print(f"\n{'='*70}\n{tag}\n{'='*70}")
-        r = run(tag, a.data, sp["splits"], rbs, a.limit_recs)
+        r = run(tag, a.data, sp["splits"], rbs, a.limit_recs, a.split)
         r["predictions"] = evaluate_predictions(r)
         pv = r["predictions"]
         met = {k: bool(v["met"]) for k, v in pv.items()}
