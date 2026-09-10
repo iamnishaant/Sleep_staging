@@ -1,4 +1,20 @@
-"""Shared packet loading for the report tests. Reads packets, nothing else."""
+"""Packet loading for the report tests. Manifest-driven, never a glob.
+
+WHY THIS FILE STOPPED GLOBBING. It used to answer "which packets am I looking
+at?" with `PACKET_DIR.glob("*.json")`. A glob answers *what is on disk*, which
+is precisely the wrong question when the thing being guarded against is a stray
+packet landing in the wrong directory - the glob would report the contamination
+as membership and every test would pass on it.
+
+The manifests in `distillation/results/splits/` answer *what belongs here*.
+Disagreement between manifest and disk is then a detectable condition, and
+`tests/test_splits.py` detects it. This is the single line by which a dev packet
+could have entered a test run, or vice versa.
+
+`all_packets()` still yields the 29 TEST packets, so every Phase 1 test keeps
+its meaning unchanged. Dev packets are reached through the explicit `dev_*`
+accessors - there is no default that silently mixes them.
+"""
 from __future__ import annotations
 
 import json
@@ -9,31 +25,70 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-PACKET_DIR = ROOT / "distillation" / "results" / "packets"
+RESULTS = ROOT / "distillation" / "results"
+PACKET_DIR = RESULTS / "packets"                       # locked test set
+DEV_PACKET_DIR = RESULTS / "phase2_dev_packets"
+SPLIT_DIR = RESULTS / "splits"
+
+TEST_MANIFEST = SPLIT_DIR / "phase2_test_manifest.json"
+DEV_MANIFEST = SPLIT_DIR / "phase2_dev_manifest.json"
+
+_DIRS = {"test": PACKET_DIR, "dev": DEV_PACKET_DIR}
+_MANIFESTS = {"test": TEST_MANIFEST, "dev": DEV_MANIFEST}
 
 
-def packet_paths() -> list[Path]:
-    return sorted(PACKET_DIR.glob("*.json"))
+def manifest(split: str = "test") -> list[dict]:
+    """The authority for what belongs in a split. Rows, in manifest order."""
+    p = _MANIFESTS[split]
+    if not p.exists():
+        raise AssertionError(
+            f"missing {p}. Run: python distillation/make_phase2_manifests.py")
+    return json.loads(p.read_text(encoding="utf-8"))
 
 
-def load(name: str) -> dict:
-    return json.loads((PACKET_DIR / f"{name}.json").read_text(encoding="utf-8"))
+def recording_ids(split: str = "test") -> list[str]:
+    return [row["recording_id"] for row in manifest(split)]
 
 
-def all_packets():
-    for p in packet_paths():
-        yield p.stem, json.loads(p.read_text(encoding="utf-8"))
+def subject_ids(split: str = "test") -> set[str]:
+    return {row["subject_id"] for row in manifest(split)}
 
 
-def first_packet() -> dict:
-    return json.loads(packet_paths()[0].read_text(encoding="utf-8"))
+def packet_paths(split: str = "test") -> list[Path]:
+    """Paths named by the MANIFEST, not by what happens to be on disk."""
+    d = _DIRS[split]
+    return [d / f"{rec}.json" for rec in recording_ids(split)]
 
 
-def packet_with_tier(tier: str) -> tuple[str, dict]:
-    for name, pk in all_packets():
+def load(name: str, split: str = "test") -> dict:
+    return json.loads((_DIRS[split] / f"{name}.json").read_text(encoding="utf-8"))
+
+
+def all_packets(split: str = "test"):
+    """(recording_id, packet) for every recording the manifest lists."""
+    for rec in recording_ids(split):
+        yield rec, load(rec, split)
+
+
+def dev_packets():
+    return all_packets("dev")
+
+
+def first_packet(split: str = "test") -> dict:
+    return load(recording_ids(split)[0], split)
+
+
+def packet_with_tier(tier: str, split: str = "test") -> tuple[str, dict]:
+    for name, pk in all_packets(split):
         if pk["night_confidence"]["tier"] == tier:
             return name, pk
-    raise AssertionError(f"no packet with night_confidence tier {tier!r}")
+    raise AssertionError(f"no {split} packet with night_confidence tier {tier!r}")
+
+
+def files_on_disk(split: str = "test") -> list[str]:
+    """What is ACTUALLY there - only for comparing against the manifest."""
+    d = _DIRS[split]
+    return sorted(p.stem for p in d.glob("*.json")) if d.exists() else []
 
 
 # --------------------------------------------------------------------------
