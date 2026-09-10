@@ -16,7 +16,9 @@ from report.render import render_claim, render_report
 from test_adversarial import good_hedged_claim, good_value_claim, val
 
 HIGH_NAME, HIGH = packet_with_tier("high")
+MED_NAME, MED = packet_with_tier("medium")
 LOW_NAME, LOW = packet_with_tier("low")
+DEV_LOW_NAME, DEV_LOW = packet_with_tier("low", "dev")
 
 
 def enriched(claims, packet):
@@ -110,6 +112,117 @@ class TestBannerAndFooter(unittest.TestCase):
         for name, pk in all_packets():
             out = render_report(enriched(valid_claim_set(pk), pk), pk)
             self.assertIn("COHORT, not this recording", out, name)
+
+
+class TestTierObservations(unittest.TestCase):
+    """The 2B keys, and the duplication policy they create."""
+
+    def test_every_tier_key_has_a_template(self):
+        from report.render import OBSERVATION_TEXT
+        for key in ("tier_is_high", "tier_is_medium", "tier_is_low"):
+            self.assertIn(key, OBSERVATION_TEXT)
+
+    def test_each_key_renders_on_its_own_tier(self):
+        for key, pk in (("tier_is_high", HIGH), ("tier_is_medium", MED),
+                        ("tier_is_low", LOW)):
+            cs = [claim(claim_type="observation", cites=["night.confidence"],
+                        text_key=key)]
+            if pk is LOW:
+                cs.append(claim(claim_id="c2", claim_type="review_flag",
+                                cites=["night.confidence"],
+                                reason_key="low_night_confidence"))
+            text = render_claim(enriched(cs, pk)[0])
+            self.assertIn(key.rsplit("_", 1)[-1] + " tier", text, key)
+
+    def test_observations_give_no_instruction(self):
+        """The separation of function the duplication policy rests on: the
+        banner instructs, the observation describes. An earlier tier_is_low
+        text ended '...so the whole recording warrants review', repeating the
+        banner almost word for word."""
+        from report.render import OBSERVATION_TEXT
+        for key in ("tier_is_high", "tier_is_medium", "tier_is_low"):
+            t = OBSERVATION_TEXT[key].lower()
+            for verb in ("review", "check", "should", "warrants", "must"):
+                self.assertNotIn(verb, t, f"{key} instructs: {OBSERVATION_TEXT[key]}")
+
+    def test_the_banner_does_instruct(self):
+        from report.render import REVIEW_TEXT
+        self.assertIn("review", REVIEW_TEXT["low_night_confidence"].lower())
+
+    def test_tier_wording_agrees_with_the_packet(self):
+        """The templates name the method - 'validation-split tertiles'. That is
+        a constant of the method, not a fact about one split, but it is checked
+        against the packet so it cannot drift the way the old 'test split of 29
+        recordings' literal did."""
+        from report.render import OBSERVATION_TEXT
+        for split in ("test", "dev"):
+            for name, pk in all_packets(split):
+                nc = pk["night_confidence"]
+                self.assertEqual(nc["boundaries_fitted_on"],
+                                 "validation split entropy tertiles",
+                                 f"{split} {name}")
+                self.assertFalse(nc["requires_ground_truth"], f"{split} {name}")
+                self.assertIn("validation-split tertiles",
+                              OBSERVATION_TEXT[f"tier_is_{nc['tier']}"])
+
+
+class TestLowNightBothClaims(unittest.TestCase):
+    """The pin. 'Does not read like duplication' is a prose criterion and not
+    mechanically checkable, so the exact output is fixed instead - the same
+    technique the other exact-text tests use."""
+
+    @staticmethod
+    def _claims(pk):
+        idx = {e["id"]: e for e in pk["evidence_items"]}
+        return [
+            claim(claim_id="c1", claim_type="review_flag",
+                  cites=["night.confidence"], reason_key="low_night_confidence"),
+            claim(claim_id="c2", claim_type="value",
+                  cites=["arch.total_sleep_time"],
+                  value=idx["arch.total_sleep_time"]["value"], unit="minutes"),
+            claim(claim_id="c3", claim_type="observation",
+                  cites=["night.confidence"], text_key="tier_is_low"),
+            claim(claim_id="c4", claim_type="observation",
+                  cites=["model.n1_reliability_warning"],
+                  text_key="n1_reliability_is_low"),
+        ]
+
+    def _expected(self, pk, split_word, n_recs):
+        idx = {e["id"]: e for e in pk["evidence_items"]}
+        tst = idx["arch.total_sleep_time"]["value"]
+        return "\n".join([
+            "REVIEW REQUIRED",
+            "This recording falls in the low night-confidence tier. Review "
+            "the full hypnogram before relying on any figure below.",
+            "",
+            f"Total sleep time was estimated at {tst} minutes.",
+            "Night-level confidence is in the low tier - mean prediction "
+            "entropy above the upper of two boundaries fitted as "
+            "validation-split tertiles.",
+            "N1 is a low-reliability stage for this model; N1 figures in this "
+            "report should be read with that in mind.",
+            "",
+            "Explainability gate 3a: PASS (3 of 5 pre-registered predictions "
+            f"met). This verdict was measured once over the pooled "
+            f"{split_word} split of {n_recs} recordings and describes the "
+            "COHORT, not this recording. No per-night version of it was "
+            "measured.",
+        ])
+
+    def test_pinned_on_a_test_packet(self):
+        out = render_report(enriched(self._claims(LOW), LOW), LOW)
+        self.assertEqual(out, self._expected(LOW, "test", 29))
+
+    def test_pinned_on_a_dev_packet(self):
+        out = render_report(enriched(self._claims(DEV_LOW), DEV_LOW), DEV_LOW)
+        self.assertEqual(out, self._expected(DEV_LOW, "val", 31))
+
+    def test_the_flag_is_the_banner_and_the_observation_is_not(self):
+        out = render_report(enriched(self._claims(LOW), LOW), LOW)
+        head, _, body = out.partition("\n\n")
+        self.assertIn("Review the full hypnogram", head)
+        self.assertNotIn("mean prediction entropy", head)
+        self.assertIn("mean prediction entropy", body)
 
 
 class TestExactText(unittest.TestCase):
