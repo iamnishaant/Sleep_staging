@@ -338,12 +338,15 @@ python distillation/metric_reliability.py --model student_N4kd
 # 4. explainability - both inputs the packet needs before it can be built
 #    gate3a is ~2.5 h on CPU for all 29 test recordings; it also emits the
 #    per-recording profile that build_packet attaches to each night.
-python distillation/gate3a_attribution.py --models student_N4kd --out distillation/results/_g3a_n4kd.json
+python distillation/gate3a_attribution.py --models student_N4kd --split test        --out distillation/results/_g3a_n4kd.json
 python distillation/fit_n1_flag.py           # chooses the threshold on VALIDATION
 python distillation/report_n1_flag_test.py   # reports it on test, exactly once
 
 # 5. build the packets (needs 3 and 4 - schema 1.3 refuses to half-populate)
-python distillation/build_packet.py --model student_N4kd
+#    --split and --out are REQUIRED, and the 29 locked test packets need a
+#    second key on top: a forgotten flag must error, never silently select the
+#    split that must not be tuned on.
+python distillation/build_packet.py --model student_N4kd --split test        --out distillation/results/packets --allow-test-overwrite
 
 # 6. cross-validation (roadmap 0.1) - set CV_FOLD=0..4, ALPHA=1.0 in the trainer
 python distillation/make_cv_folds.py

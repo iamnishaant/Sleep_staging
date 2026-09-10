@@ -1,0 +1,269 @@
+# Phase 2 — working notes
+
+**Nishant Shah · Team 40 · Project 48**
+**Started: 11 September 2026**
+**Status: 2A complete — 31 dev packets, 23 new tests, all 93 Phase 1 tests still pass.
+Next: 2B (tier predicates). No model has run.**
+
+Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
+with nothing running; this file records the audit that preceded them, the
+decisions taken, and every access to the locked test set.
+
+---
+
+## The test-set access log
+
+The 29 packets in `distillation/results/packets/` are locked for **selection**
+decisions — model, prompt, K, grammar. They may be accessed for a documented
+**correctness** fix, provided the fix is not chosen because it improves a test
+score. The failure mode being avoided is *undisclosed* iteration, not iteration.
+
+| date | reason | changed model? | prompt? | K? | rerun? |
+|---|---|---|---|---|---|
+| 2026-09-11 | Rebuilt all 29 to add `attribution_quality.evaluated_on_split` and `evaluated_on_n_recordings`. The renderer had `"test split of 29 recordings"` as a **literal**, which is a false sentence on any packet built from another split. Fixing it required the packet to carry its verdict's provenance. Correctness only — no metric was consulted, and no score exists yet to improve. | no | no | no | no |
+
+---
+
+## Part 0 — the audit, and what it found
+
+### The finding that mattered
+
+`build_packet.py` hard-coded the split **inside the recording expression**:
+
+```python
+recs = sorted(r for s in sp["splits"]["test"] for r in sp["recordings_by_subject"][s])
+```
+
+`--splits` chose the *file*; nothing chose the *split*. The dangerous direction
+is not the obvious one:
+
+> `--out devdir` today writes **test** packets into a folder labelled dev. You
+> get 29 files where you expected 31, in the right place, with the right schema,
+> and every subsequent Phase 2 decision is tuned on the locked split. Silent, and
+> it looks correct.
+
+The reverse — a dev run clobbering `results/packets/` — at least destroys files
+you would notice. The first direction leaves no trace at all.
+
+### Audit answers
+
+| # | question | finding |
+|---|---|---|
+| 1 | recording selection | derived from `splits.json`; the key `"test"` hard-coded in the expression |
+| 2 | subject selection | inherited entirely from `splits.json → splits.test` |
+| 3 | split logic | **subject-level**; `granularity: subject`, `subject_key: recording_id[:5]`, stratified by cohort |
+| 4 | seed | 42, recorded in the artefact — randomised but seeded and committed, so fixed |
+| 5 | input manifest | `splits.json` + per-recording `.npz` from `results/probs_{model}/` |
+| 6 | output directory | `--out`, defaulted to `results/packets` |
+| 7 | overwrite | **silent, no guard** |
+| 8 | ordering | deterministic (`sorted`), not filesystem-dependent |
+| 9 | contamination | possible in both directions; the silent one is the worse |
+| 10 | separability | `--out` sufficed; two other blockers did not |
+
+### The splits
+
+| | subjects | recordings |
+|---|---:|---:|
+| test (locked) | 15 | 29 |
+| val (dev candidate) | 16 | 31 |
+
+Disjointness **already holds** in the upstream split: subject overlap ∅,
+recording overlap ∅, val∩train ∅. `SC413` contributes a single night, which is
+why 16 subjects give 31 recordings rather than 32.
+
+Test subjects: `SC401 SC402 SC414 SC420 SC421 SC423 SC429 SC437 SC452 SC453
+SC461 SC474 ST710 ST714 ST716`
+
+Val subjects: `SC408 SC411 SC413 SC417 SC432 SC434 SC435 SC444 SC446 SC456
+SC458 SC467 ST708 ST713 ST715 ST720`
+
+---
+
+## Changes made in 2A
+
+### B1 — `--split`, required, no default
+
+Both `build_packet.py` and `gate3a_attribution.py` had the same hard-coded
+`splits["test"]`. Both now take `--split {train,val,test}` as a **required**
+argument with no default, so a forgotten flag errors rather than silently
+selecting the split that must not be tuned on.
+
+In `gate3a_attribution.py` the **train** baseline stays train whatever is
+attributed. It is the registered reference point, not a property of the split
+under test; moving it with `--split` would silently redefine what every
+attribution is measured against.
+
+### B2 — the `_val` cache convention
+
+`build_packet.py` was the only tool in the pipeline without it. `calibrate.py`,
+`evaluate_student.py`, `fit_n1_flag.py`, `metric_reliability.py` and
+`build_ensemble.py` all use `probs_{model}_val`. Closed the same way:
+`probs_{model}` for test, `probs_{model}_{split}` otherwise.
+
+### The two-key guard
+
+Writing into `results/packets/` now requires **both** `--split test` and
+`--allow-test-overwrite`. `--split` and `--out` are checked for consistency at
+startup, before anything is loaded or written.
+
+Verified by running every dangerous invocation and checking the test packets'
+md5 was unchanged:
+
+| invocation | outcome |
+|---|---|
+| `--out /tmp/x` (no `--split`) | argparse error — the old silent default |
+| `--split val --out results/packets` | refused: names the contamination |
+| `--split test --out results/packets` (one key) | refused: second key required |
+| `--split val --out results/packets/sneaky` | refused — subdirectories too |
+
+### A third blocker the audit surfaced
+
+Gate 3a's `per_recording` covered **0 of 31** val recordings, so dev packets
+would have shipped `attribution: null` while test packets ship it populated —
+and `render_report` emits the gate-3a footer only when
+`attribution_quality.status == "run"`. Dev reports would have had no footer at
+all. Tuning on packets that render differently from the ones you are graded on
+is the exact class of mistake this split discipline exists to prevent, so Gate
+3a is being re-run on val.
+
+Three things checked **before** committing 2.5 hours to that run:
+
+1. The val artefact goes to `_g3a_n4kd_val.json`, never into the test artefact.
+   A val run yields a **val** cohort verdict, and copying the test verdict into
+   dev packets would drop a test-derived aggregate into the artefacts being
+   tuned on.
+2. `test_render.py`'s footer assertions check `"COHORT, not this recording"` and
+   `"gate 3a"` — they do **not** pin the verdict string, so a 4/5 val verdict
+   will not break them.
+3. A 2-recording smoke run confirmed the val artefact carries
+   `grouped_by: "predicted"` — `build_packet.py` exits if it does not, and that
+   is better found in 90 seconds than after 2.5 hours.
+
+### A false sentence in the renderer
+
+`render_attribution_footer` had this as a **literal**:
+
+> "This verdict was measured once over the pooled **test split of 29
+> recordings**…"
+
+True of the only packets that existed; false of any dev packet, whose verdict
+comes from 31 val recordings. The deterministic renderer — the component whose
+whole purpose is that no model can phrase a claim — would have stated it as
+fact.
+
+Fixed by having the packet carry `attribution_quality.evaluated_on_split` and
+`evaluated_on_n_recordings`, and the renderer read them. **No default on
+either**: a packet that cannot say which split its verdict came from gets no
+sentence claiming to know, rather than a plausible guess. Rebuilding the 29 to
+add those fields is the access-log entry above.
+
+---
+
+## Part 1 (2A) — the development packet set
+
+**31 dev packets from the 16 validation subjects, in
+`distillation/results/phase2_dev_packets/`.** The 29 test packets were byte-
+identical before and after (md5 checked around the build).
+
+### Gate 3a on val, and what it turned out to be worth
+
+1h50m, not the 2.5h estimated — the machine was idle this time.
+
+| | test | val |
+|---|---|---|
+| verdict | PASS, 3/5 | **PASS, 3/5** |
+| met | N3, W, N2 | **N3, W, N2** |
+| missed | REM, N1 | **REM, N1** |
+| completeness | 0.03% | 0.03% |
+
+Not just the same count — the same three met and the same two missed, on 16
+disjoint subjects, against a registration written once before either run. That
+is a **held-out confirmation of the registered predictions**, and it moves REM's
+`rel_theta` miss and N1's better-than-predicted coherence from properties of one
+draw to properties of the model. Written into PROJECT_REPORT §6j, with the
+caveat that both runs share one trained model and one registration, so it is
+replication across **subjects** — not across models or registrations.
+
+### The invariant survey — every check that holds on 29, run on 31
+
+| invariant | test (29) | dev (31) |
+|---|---|---|
+| identical 19 evidence ids, identical order | holds | **holds** |
+| exactly 5 `safe_to_assert` | holds | **holds** |
+| every item `assertion_level: "factual"` | holds | **holds** |
+| `light_deep_ratio` int-or-float, never bool | holds (both types seen) | **holds (both types seen)** |
+| the 2 tier items string-valued with `unit: "tier"`, and nothing else is | holds | **holds** |
+| the three N1-tier sources agree (D3) | `(low, low, low)` | **`(low, low, low)`** |
+| every `stage.*` item carries `model_reliability` | holds | **holds** |
+| schema 1.3, `_ground_truth_withheld: true` | holds | **holds** |
+| attribution populated, covering every epoch | holds | **holds** |
+
+Nothing to stop for. The evidence contract behaves identically on the split
+being tuned on.
+
+### Night-confidence tier distribution
+
+| | high | medium | low | n |
+|---|---:|---:|---:|---:|
+| test | 12 | **4** | 13 | 29 |
+| dev | 11 | 10 | 10 | 31 |
+
+**The skew is the opposite of the one worth worrying about, and it lands on
+test.** Dev has 10 low nights (32%), so rule 10 (`missing_review_flag`) and the
+`tier_is_low` predicate get ample exercise there. The thin cell is
+`tier_is_medium` **on test: 4 packets**, against 10 on dev.
+
+So the concern inverts: after 2B, `tier_is_medium` will be well exercised on the
+split being tuned on and barely exercised on the split being graded on. A defect
+in it would have four chances to surface at evaluation. Flagged for 2I; the
+distribution is pinned by a test so it cannot drift unnoticed.
+
+Every tier occurs at least once in both splits, so no 2B predicate has zero
+exercise anywhere.
+
+### The manifests, and the end of globbing
+
+`distillation/results/splits/phase2_{dev,test}_manifest.json`, written by
+`distillation/make_phase2_manifests.py`, which verifies **before** writing —
+a manifest that fails its own invariant must not exist on disk for something
+else to pick up.
+
+`tests/_packets.py` now reads the manifest instead of `PACKET_DIR.glob("*.json")`.
+This was the highest-value line in the change set: a glob answers *what is on
+disk*, which is exactly the wrong question when the hazard is a stray packet in
+the wrong folder — the glob would report the contamination as membership and
+every test would pass on it. The manifest answers *what belongs here*, so
+disagreement becomes detectable.
+
+Verified by planting a dev packet in the test directory: **two independent tests
+failed and named the offending recording**, and the directory was restored
+byte-identical afterwards.
+
+| | dev | test |
+|---|---:|---:|
+| recordings | 31 | 29 |
+| subjects | 16 | 15 |
+| cohorts | SC 23 / ST 8 | SC 23 / ST 6 |
+| recording overlap | ∅ | |
+| **subject overlap** | **∅** | |
+
+---
+
+## Recorded, not fixed: the dev packets' contract was fitted on the dev nights
+
+`metric_reliability`, the decoder temperature and the night-confidence tier
+boundaries were all fitted on the **validation** split. The dev packets are
+built from those same nights. So a dev packet's *contract* — which metrics are
+`safe_to_assert`, what the error bounds are, where the tier boundaries fall —
+was fitted on the night it describes.
+
+This is acceptable here, and the reason is narrow: **Phase 2 measures whether a
+model respects a given contract, not whether the contract is accurate.** A model
+that transcribes a value exactly and hedges what the packet says to hedge scores
+the same however well-calibrated the underlying bound is.
+
+It would **not** be acceptable for any claim about the error bounds themselves.
+If Phase 3 wants to say "the reported bounds hold on unseen data", the dev split
+cannot support it, and this note is the reason.
+
+It is written here rather than left to be discovered.
