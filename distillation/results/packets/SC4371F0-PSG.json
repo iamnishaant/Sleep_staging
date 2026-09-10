@@ -13,8 +13,8 @@
     "model_parameters": 139606,
     "model_encoder": "multiscale",
     "model_eeg_scale": 15849.46,
-    "git_commit": "18bddffdf375915e973833f16e3f76687a4ab9bd",
-    "generated_at": "2026-09-08T18:51:02+00:00",
+    "git_commit": "9c6558cb0ab519f89950d69db47992ecb6463d3f",
+    "generated_at": "2026-09-10T20:23:03+00:00",
     "calibration_temperature": 1.2847,
     "hypnogram_decoder": "minrun REM L=3",
     "hypnogram_decoder_spec": {
@@ -8848,6 +8848,8 @@
     "n_met": 3,
     "void": false,
     "completeness_relative_error": 0.000305,
+    "evaluated_on_split": "test",
+    "evaluated_on_n_recordings": 29,
     "scope": "COHORT, NOT THIS NIGHT. The verdict was evaluated once on the pooled test split of 29 recordings. It is not a quality score for this recording's attributions, and no per-night version of it was measured.",
     "caveats": [
       "The top-3 feature set is IDENTICAL across all five stages - ratio_delta_beta, ratio_dt_ab and cD1_log_energy, differing only in order. The gate asked whether stage-appropriate features appear in the top 3, and they do, but they appear for every stage. The profile discriminates far less between stages than the per-stage predictions passing suggests.",
