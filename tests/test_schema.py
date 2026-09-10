@@ -71,11 +71,49 @@ class TestKeyPredicates(unittest.TestCase):
                 self.assertTrue(spec.why, key)
 
     def test_low_tier_predicate_tracks_the_packet(self):
-        for name, pk in all_packets():
-            expected = pk["night_confidence"]["tier"] == "low"
-            self.assertEqual(S.TEXT_KEYS["tier_is_low"].predicate(pk), expected, name)
-            self.assertEqual(S.REASON_KEYS["low_night_confidence"].predicate(pk),
-                             expected, name)
+        for split in ("test", "dev"):
+            for name, pk in all_packets(split):
+                expected = pk["night_confidence"]["tier"] == "low"
+                self.assertEqual(S.TEXT_KEYS["tier_is_low"].predicate(pk),
+                                 expected, f"{split} {name}")
+                self.assertEqual(S.REASON_KEYS["low_night_confidence"].predicate(pk),
+                                 expected, f"{split} {name}")
+
+    def test_every_tier_predicate_tracks_its_own_tier(self):
+        for split in ("test", "dev"):
+            for name, pk in all_packets(split):
+                tier = pk["night_confidence"]["tier"]
+                for key in S.TIER_TEXT_KEYS:
+                    want = key == f"tier_is_{tier}"
+                    self.assertEqual(S.TEXT_KEYS[key].predicate(pk), want,
+                                     f"{split} {name} tier={tier} key={key}")
+
+    def test_exactly_one_tier_predicate_is_true_on_all_60_packets(self):
+        """Two true at once would mean the predicates are not mutually
+        exclusive, and a model could cover night.confidence with a key that
+        does not describe the night."""
+        seen = 0
+        for split in ("test", "dev"):
+            for name, pk in all_packets(split):
+                true_keys = [k for k in S.TIER_TEXT_KEYS
+                             if S.TEXT_KEYS[k].predicate(pk)]
+                self.assertEqual(len(true_keys), 1,
+                                 f"{split} {name}: {true_keys} true, expected "
+                                 f"exactly one")
+                seen += 1
+        self.assertEqual(seen, 60, "expected 29 test + 31 dev packets")
+
+    def test_all_three_tier_keys_require_the_same_evidence(self):
+        for key in S.TIER_TEXT_KEYS:
+            self.assertEqual(S.TEXT_KEYS[key].requires, "night.confidence", key)
+
+    def test_n1_reason_key_is_not_tier_gated(self):
+        """model.n1_reliability_warning is low on every packet whatever the
+        night tier, so a high-confidence night can still carry an N1 flag."""
+        for split in ("test", "dev"):
+            for name, pk in all_packets(split):
+                self.assertTrue(S.REASON_KEYS["n1_low_reliability"].predicate(pk),
+                                f"{split} {name}")
 
     def test_n1_predicate_true_on_every_packet(self):
         """N1 is low-reliability in every packet; the predicate must say so."""
