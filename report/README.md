@@ -222,6 +222,87 @@ unreachable" would be a tautology rather than a result.
 
 ---
 
+## Serializer (2D)
+
+`report/serialize.py` turns a packet into the model's prompt. It is **context
+budgeting, not evidence selection**: all 19 evidence items go in every time,
+and only fields are removed. Choosing what is worth reporting is the model's
+job and the thing being measured; selecting for it would make coverage
+circular.
+
+| goes in | stays out, and why |
+|---|---|
+| per item: `id`, `label`, `value`, `unit`, `safe_to_assert` | the error bound and the caveat - attached by the verifier; a model that sees a caveat paraphrases it, and a paraphrased caveat is one the packet no longer guarantees |
+| once: `night_confidence.tier` | reliability tiers - forbidden model fields; the renderer attaches them |
+| | everything not citeable, and everything too large to matter |
+
+Values are written with `json.dumps`, so a verbatim transcription parses back to
+the packet's own value and passes rule 2, which has no tolerance.
+
+The schema section is **generated** from `claim_schema.py` and parsed back by
+`test_serialize.py` without trusting the generator - claim types, keys,
+arity, fields, evidence dependencies, both directions. It is the prompt-side
+equivalent of the grammar byte-identity test.
+
+`build_prompt` **refuses** a packet with associative evidence. The prompt tells
+the model `population_association` is reserved because none exists; a fixed
+template stating a packet fact is how the renderer once called a val packet
+"test split of 29 recordings". When risk evidence lands, `PROMPT_VERSION` moves.
+
+Budget, estimated at characters / 3.5 (conservative; exact counts come at 2G):
+
+| | budget | worst case, test | worst case, dev |
+|---|---:|---:|---:|
+| evidence block | 1200 | 413 | 414 |
+| full prompt | 2000 | 1106 | 1106 |
+| a complete 19-claim output | 1200 | 805 | 805 |
+| prompt + complete output | 3500 | 1909 | 1910 |
+
+---
+
+## Evaluator (2E)
+
+`evaluate(outputs_dir, manifest_path) -> EvaluationReport`. **Manifest-driven**:
+only `<recording_id>.json` for ids the manifest lists is ever read, so a stray
+file cannot enter an evaluation. The evaluator contains no glob, and a test
+asserts that.
+
+| family | metrics |
+|---|---|
+| validity | `schema_validity_rate`, `policy_pass_rate` (of schema-valid), `overall_pass_rate` |
+| per rule | count, and outputs affected, for **all 30 codes individually** |
+| coverage | `mandatory_coverage` + packets at 5/5, `discretionary_coverage` (/14), `oracle_recovery`, `unrecovered_available` |
+| fidelity | `numeric_fidelity`, `unsupported_claim_rate` |
+
+**Every metric is reported overall and per night-confidence tier**, with the
+packet `n` beside every cell and `!` on any stratum with fewer than 5 packets.
+Dev (11/10/10) is measurably easier than test (12/4/13), since tier tracks
+staging kappa; whether reporting is tier-invariant is now a measurement.
+
+**`None`, not zero, wherever there is no denominator**: `numeric_fidelity` with
+no value claims, `oracle_recovery` with nothing available,
+`unsupported_claim_rate` with no claims. A model emitting only observations has
+not transcribed perfectly; it has not transcribed.
+
+**Co-occurrence is kept.** One output can violate several rules, so violation
+counts exceed failed-output counts. The invariants are per-rule counts summing
+to total violations, and failed outputs equalling outputs with at least one
+violation - never per-rule rates summing to the failure rate, which could only
+be forced by recording one violation per output.
+
+**`UNSUPPORTED_CODES`**, declared once in `evaluate.py`: a claim is unsupported
+when it asserts content the cited evidence does not back.
+`L1.unknown_evidence_id`, `L2.cited_id_not_in_packet`, `L2.value_mismatch`,
+`L2.unit_mismatch`, `L2.uncited_quantity`, `L2.text_key_predicate_false`,
+`L2.text_key_dependency_missing`, `L2.not_associative_evidence`. Excluded:
+form errors (a malformed claim asserts nothing), confidence-level errors (the
+fact is supported, at the wrong confidence), and presentation rules.
+
+**Calibration**: oracle witnesses score 1.0 on every coverage, fidelity and
+validity metric with zero violations, in every stratum of both splits.
+
+---
+
 ## Where the packet contradicted the build spec
 
 Read from the packets, which are authoritative.
@@ -280,6 +361,8 @@ report/verify_structure.py   Layer 1
 report/verify_policy.py      Layer 2 + enrichment + pooled coverage
 report/coverage.py           mandatory / discretionary / pooled, per-packet records
 report/oracle.py             maximal reachable id set + a witness claim set
+report/serialize.py          packet -> prompt; all 19 items, 5 fields each
+report/evaluate.py           score a manifest's outputs, stratified by tier
 report/render.py             deterministic templates
 report/violations.py         violation codes
 ```
@@ -315,9 +398,11 @@ python test_render.py             # purity, hedging, tiers, banner, exact text
 python test_no_leak.py            # opens no files; messages are packet-derived
 python test_coverage.py           # denominators 5/14 on all 60, empty-set
 python test_oracle.py             # witness verifies on all 60, no ceilings
+python test_serialize.py          # no excluded field, schema agreement
+python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-175 tests.
+234 tests.
 
 Every adversarial case asserts its **specific** expected code. Asserting only
 that something failed would pass even when the wrong rule fired, which would

@@ -2,7 +2,8 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A, 2B and 2C complete — 175 tests, all passing. No model has run.**
+**Status: 2A-2E complete — 234 tests, all passing. The deterministic tier is
+finished; the next step runs a model. No model has run yet.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -412,6 +413,162 @@ defined rather than left to divide by zero.
 
 Neither figure is called a "gap". That name was used earlier in this project and
 is wrong for a ratio.
+
+---
+
+## Carry-overs resolved before 2D
+
+### 0a — the stale hand-written claim set
+
+`tests/_packets.py::valid_claim_set` predates 2B's tier keys and reaches 4/5
+mandatory on non-low nights where the oracle reaches 5/5. **Kept, not
+regenerated**, with a guard.
+
+The reason to keep it is independence. It is the one positive claim set in the
+suite that is not produced by the code under test. Regenerating it from the
+oracle witness would make `test_the_oracle_beats_the_hand_written_set` compare
+the oracle with itself, removing the oracle's only external cross-check. A
+hand-built input that happens to be incomplete is still a correct known-valid
+input; what it must not be is a coverage *reference*.
+
+So: its docstring says so, and `tests/test_coverage.py` fails if any module
+under `report/` references it or imports `_packets`, or if the evaluator or
+serializer tests use it. A third test measures, rather than remembers, that it
+sits below the oracle on every non-low night.
+
+The guard's first version was wrong in a useful way. It searched source text
+for `_packets`, and fired on `evaluate.py` twice - once on a docstring that
+mentions `tests/_packets.py`, once on the directory name `phase2_dev_packets`.
+Neither uses anything. It now checks the AST for what a module actually imports
+and names, and a test feeds it both real uses (which it must catch) and those
+mentions (which it must ignore). A guard that cries wolf gets deleted, which is
+worse than never having it.
+
+### 0b — two coverage call sites, and they compute different things
+
+| call site | computes | status |
+|---|---|---|
+| `report/coverage.py` | mandatory / discretionary / pooled, per-packet `CoverageRecord` with tier | **the authority** for every Phase 2 coverage number |
+| `verify_policy.PolicyResult.coverage` | pooled only, over `reportable_set` (19) | the Phase 1 continuity figure; not the headline |
+
+Both are kept, and **they must not be unified**. They agree on the pooled
+figure by construction — `coverage.pooled_set` is `claim_schema.reportable_set`,
+and `test_coverage.py` asserts pooled equals mandatory ∪ discretionary on all 60
+— but `PolicyResult.coverage` is part of the frozen Phase 1 verifier and its
+tests pin it. A later "cleanup" that routed it through `coverage.py`, or deleted
+it, would be a Phase 1 redesign. The evaluator reads only `coverage.py`.
+
+---
+
+## Part 4 (2D) — the serializer
+
+Context budgeting, not evidence selection: all 19 items in, every time; only
+fields removed. The caveat and error bound are withheld for a reason other than
+size - a model that sees a caveat paraphrases it, and a paraphrased caveat is
+one the packet no longer guarantees.
+
+### Worst-case size, estimated
+
+The estimate is characters / 3.5, rounded up. That is deliberately conservative
+for English-and-identifier text on BPE vocabularies, where around 4 characters
+per token is more typical, so the true counts should come in lower. It is an
+estimate until 2G measures a real tokenizer.
+
+| | budget | test | dev |
+|---|---:|---:|---:|
+| evidence block | 1200 | 413 | 414 |
+| full prompt | 2000 | 1106 (SC4532E0) | 1106 (SC4171E0) |
+| complete 19-claim output (oracle witness) | 1200 | 805 | 805 |
+| prompt + complete output | 3500 | 1909 | 1910 |
+
+Roughly half of every budget is unused. The prompt varies by 5 tokens across
+all 60 packets, because only the evidence values change.
+
+### Three things reading the prompt changed
+
+1. The evidence header said "Night confidence tier" while every key predicate
+   said `night_confidence.tier`. Now one name for one thing.
+2. "cites 1 or more item" - pluralised.
+3. The `population_association` line says "no evidence item here is
+   associative". That is a packet fact in a fixed template - the renderer's
+   "test split of 29 recordings" mistake again. `build_prompt` now **refuses**
+   a packet that makes it false, rather than instructing the model wrongly.
+
+### The exclusion list is derived, not only written
+
+The spec's exclusion table is in the test verbatim, and the test **adds** every
+packet field that is not serialized, read from all 60 packets. So the check
+covers fields the spec did not list - `error_unit`, `error_measured_on`,
+`assertion_level`, `duplicates`, `definition`, `note`, `basis`,
+`mean_entropy_nats`, `model_f1`, and the top-level `recording_id`, `cohort`,
+`subject_id`, `risk` - and a field added to a future packet is checked without
+anyone remembering to add it. The caveats' own text is also searched for, not
+just the key.
+
+---
+
+## Part 5 (2E) — the evaluator
+
+### Calibration: oracle witnesses score perfectly
+
+On both splits, in every stratum: schema validity, policy pass, overall pass,
+mandatory coverage, discretionary coverage, oracle recovery and numeric
+fidelity all 1.000; unsupported claim rate 0.000; unrecovered available 0;
+zero violations; every packet at 5/5. That is the gate - an evaluator that
+cannot score a known-perfect input perfectly reports nothing trustworthy.
+
+### The per-tier table, with the small-n flag
+
+| split | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| dev | n=31 | n=11 | n=10 | n=10 |
+| test | n=29 | n=12 | **n=4 !** | n=13 |
+
+`!` fires on test medium and nowhere else, in the printed table as well as the
+JSON, so a stratified number cannot be quoted at 2I without its warning. The
+flag counts **packets**, the unit of independence. Claim-level metrics such as
+numeric fidelity are flagged by their stratum's packet count too: test medium
+holds ~68 value claims, but they sit inside 4 packets, and 68 does not make
+them 68 independent observations.
+
+### `UNSUPPORTED_CODES`
+
+A claim is unsupported when it asserts content its cited evidence does not back:
+
+`L1.unknown_evidence_id` · `L2.cited_id_not_in_packet` · `L2.value_mismatch` ·
+`L2.unit_mismatch` · `L2.uncited_quantity` · `L2.text_key_predicate_false` ·
+`L2.text_key_dependency_missing` · `L2.not_associative_evidence`
+
+Excluded, each measured elsewhere: **form** errors (every other L1 code - a
+malformed claim asserts nothing); **confidence-level** errors
+(`unsafe_item_not_hedged`, `safe_item_hedged` - the fact is supported, stated at
+the wrong confidence); and **presentation or combination** rules. The spec's
+six candidates are all in; `unit_mismatch` and `not_associative_evidence` are
+added because each asserts something the packet does not say.
+`rem_error_differenced` asserts a derived quantity but always co-fires with
+`uncited_quantity`, so leaving it out loses nothing.
+
+### Where the repository contradicted the prompt
+
+1. **Empty outputs do not score zero violations on low nights.** The prompt
+   expected an empty array to score 0.0 coverage with zero violations. On a
+   low night rule 10 requires a `review_flag`, so an empty array violates it -
+   Phase 1 case 22b. On dev that is exactly 10 `missing_review_flag`
+   violations, one per low night, and zero on high and medium. The test
+   asserts that, rather than the prompt's expectation.
+2. **"Of those reaching Layer 2" is not a per-output concept here.**
+   `verify_report` drops claims that fail Layer 1 and runs Layer 2 on the
+   rest, so an output with one malformed claim still reaches Layer 2 for its
+   other claims. `policy_pass_rate` is therefore defined over **schema-valid**
+   outputs - no Layer 1 violation at all - which is the cleanest reading that
+   keeps the three validity rates nested.
+3. **A missing output is not an empty one**, and the prompt did not say which
+   it was. An empty array is a model that chose to say nothing; a missing file
+   is a model that produced nothing usable. It scores zero coverage and does
+   not pass, but carries no violation, so it is counted as `n_missing` and
+   `passed + failed + missing == n` is asserted.
+4. The dev manifest's rows say `split: "val"`, not `"dev"`, because the dev set
+   is the upstream validation split. `PACKET_DIRS` maps `"val"`.
 
 ---
 
