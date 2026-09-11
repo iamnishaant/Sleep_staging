@@ -191,13 +191,44 @@ class TestStaleBaselineIsNotUsedAsOne(unittest.TestCase):
 
     GUARDED = ("tests/test_evaluate.py", "tests/test_serialize.py")
 
+    # Checked on the AST, not by substring. The first version searched source
+    # text for "_packets" and fired on a docstring that mentioned the file and
+    # on the directory name "phase2_dev_packets" - neither of which uses
+    # anything. A guard that cries wolf gets deleted; this one looks only at
+    # what a module actually imports and names.
+    @staticmethod
+    def _imports_test_helpers(src: str) -> bool:
+        import ast
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.Import):
+                if any(a.name.split(".")[0] == "_packets" for a in node.names):
+                    return True
+            elif isinstance(node, ast.ImportFrom):
+                if (node.module or "").split(".")[0] == "_packets":
+                    return True
+        return False
+
+    @staticmethod
+    def _uses_stale_set(src: str) -> bool:
+        import ast
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.Name) and node.id == "valid_claim_set":
+                return True
+            if isinstance(node, ast.Attribute) and node.attr == "valid_claim_set":
+                return True
+            if isinstance(node, ast.alias) and node.name == "valid_claim_set":
+                return True
+        return False
+
     def test_no_report_module_references_it(self):
         from pathlib import Path
         root = Path(__file__).resolve().parent.parent
         for py in sorted((root / "report").glob("*.py")):
             src = py.read_text(encoding="utf-8")
-            self.assertNotIn("valid_claim_set", src, py.name)
-            self.assertNotIn("_packets", src, py.name)
+            self.assertFalse(self._imports_test_helpers(src),
+                             f"{py.name} imports the test helpers")
+            self.assertFalse(self._uses_stale_set(src),
+                             f"{py.name} uses the stale claim set")
 
     def test_evaluator_and_serializer_tests_do_not_use_it(self):
         from pathlib import Path
@@ -205,8 +236,24 @@ class TestStaleBaselineIsNotUsedAsOne(unittest.TestCase):
         for rel in self.GUARDED:
             f = root / rel
             if f.exists():
-                self.assertNotIn("valid_claim_set", f.read_text(encoding="utf-8"),
+                self.assertFalse(self._uses_stale_set(f.read_text(encoding="utf-8")),
                                  f"{rel} uses the stale set; use the oracle witness")
+
+    def test_the_guard_is_not_vacuous_and_not_trigger_happy(self):
+        """It must catch a real use, and ignore mentions that use nothing."""
+        caught = ("from _packets import valid_claim_set",
+                  "import _packets",
+                  "from _packets import all_packets",
+                  "x = helpers.valid_claim_set(pk)")
+        for src in caught:
+            self.assertTrue(self._imports_test_helpers(src)
+                            or self._uses_stale_set(src), src)
+        ignored = ('"""see tests/_packets.py for why"""',
+                   'D = RES / "phase2_dev_packets"',
+                   '# valid_claim_set is not a baseline')
+        for src in ignored:
+            self.assertFalse(self._imports_test_helpers(src)
+                             or self._uses_stale_set(src), src)
 
     def test_it_really_is_below_the_oracle_on_non_low_nights(self):
         """The reason for the guard, measured rather than asserted from memory."""
