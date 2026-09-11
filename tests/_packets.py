@@ -106,7 +106,20 @@ def claim(**kw) -> dict:
 
 
 def valid_claim_set(packet: dict) -> list[dict]:
-    """Every numeric item stated at its correct safety level, plus the flags."""
+    """Every numeric item stated at its correct safety level, plus the flags.
+
+    NOT A COVERAGE BASELINE. This set predates 2B's tier keys, so on a high or
+    medium night it reaches 4/5 mandatory where the oracle reaches 5/5 - it
+    fossilises the ceiling 2B removed. It is kept, deliberately, as a
+    hand-written KNOWN-VALID INPUT: it is the one positive claim set in the
+    suite that is not produced by the code under test, which is what makes
+    comparing the oracle against it a check rather than a tautology.
+
+    Anything that needs "what a complete report covers" must use
+    `report.oracle.oracle(packet).witness`. tests/test_coverage.py fails if any
+    module under report/, or the evaluator and serializer tests, reference
+    this function.
+    """
     idx = {e["id"]: e for e in packet["evidence_items"]}
     out, n = [], 0
     if packet["night_confidence"]["tier"] == "low":

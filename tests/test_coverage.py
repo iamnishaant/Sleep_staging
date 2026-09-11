@@ -178,5 +178,47 @@ class TestAgainstTheHandWrittenSet(unittest.TestCase):
         self.assertEqual(agg["discretionary_coverage_mean"], 1.0)
 
 
+class TestStaleBaselineIsNotUsedAsOne(unittest.TestCase):
+    """Phase 2D carry-over 0a.
+
+    valid_claim_set reaches 4/5 mandatory on non-low nights; the oracle reaches
+    5/5. Kept as an independent known-valid input rather than regenerated from
+    the oracle, because regenerating it would make the oracle's only external
+    cross-check compare the oracle with itself. The price of keeping it is this
+    guard: it must never become a coverage reference, or whatever uses it
+    silently inherits the ceiling 2B removed.
+    """
+
+    GUARDED = ("tests/test_evaluate.py", "tests/test_serialize.py")
+
+    def test_no_report_module_references_it(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parent.parent
+        for py in sorted((root / "report").glob("*.py")):
+            src = py.read_text(encoding="utf-8")
+            self.assertNotIn("valid_claim_set", src, py.name)
+            self.assertNotIn("_packets", src, py.name)
+
+    def test_evaluator_and_serializer_tests_do_not_use_it(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parent.parent
+        for rel in self.GUARDED:
+            f = root / rel
+            if f.exists():
+                self.assertNotIn("valid_claim_set", f.read_text(encoding="utf-8"),
+                                 f"{rel} uses the stale set; use the oracle witness")
+
+    def test_it_really_is_below_the_oracle_on_non_low_nights(self):
+        """The reason for the guard, measured rather than asserted from memory."""
+        from report.oracle import oracle
+        for split in SPLITS:
+            for name, pk in all_packets(split):
+                if pk["night_confidence"]["tier"] == "low":
+                    continue
+                hand = coverage(pk, verified(pk, valid_claim_set(pk)).enriched)
+                self.assertLess(len(hand.mandatory_covered),
+                                oracle(pk).mandatory, f"{split} {name}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
