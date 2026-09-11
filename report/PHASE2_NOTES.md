@@ -2,8 +2,7 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A and 2B complete — 138 tests, all passing. Next: 2C (coverage split
-and oracle). No model has run.**
+**Status: 2A, 2B and 2C complete — 175 tests, all passing. No model has run.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -326,6 +325,93 @@ the wording still agrees with the packet, so it cannot drift the way the old
 checkable, so the exact rendered output is pinned instead — on one test packet
 and one dev packet — the same technique the other exact-text render tests use.
 A further test asserts the flag is in the banner and the observation is not.
+
+---
+
+## Part 3 (2C) — the coverage split and the oracle
+
+### Why the single metric had to go
+
+Every other metric in this framework improves when the model says less — an
+empty array scores perfectly on violation rate, numeric fidelity and
+unsupported-claim rate alike. Coverage is the only counterweight, which makes
+its definition load-bearing. But 14 of 19 reportable items are
+`safe_to_assert: false` and render with an error bound and a caveat, so a 19/19
+report is mostly hedging and not a better report. Pooling also lets a model hide
+a missing robust fact behind eleven hedged ones.
+
+| metric | denominator | status |
+|---|---:|---|
+| `mandatory_coverage` | 5 | **hard requirement** |
+| `discretionary_coverage` | 14 | descriptive — report, never optimise |
+| `pooled_coverage` | 19 | continuity with the Phase 1 record, not the headline |
+
+Both denominators are 5 and 14 on **all 60 packets**, asserted rather than
+assumed, and `pooled_set` is asserted to be exactly their union rather than
+maintained separately.
+
+One trap the claim types make easy: `night.confidence` and
+`model.n1_reliability_warning` are both mandatory and neither is reachable by
+`value` (deviation D1). Coverage therefore counts a **cited ID**, never a claim
+type — anything filtering by type would score those two permanently uncovered.
+
+`CoverageRecord` carries the packet's tier, cohort and subject, so 2E can
+stratify without re-opening packets.
+
+### The oracle, measured on all 60
+
+| | test (29) | dev (31) |
+|---|---|---|
+| `oracle_mandatory` | **5 on all 29** | **5 on all 31** |
+| `oracle_discretionary` | **14 on all 29** | **14 on all 31** |
+| unreachable items | none | none |
+
+No residual ceiling. `oracle_discretionary == nominal_discretionary` everywhere,
+which is the case where the two denominators coincide — and they are named
+distinctly precisely because that coincidence is a finding, not a guarantee.
+
+So **14 is the real denominator for every model result that follows**, on both
+splits, and it is understood now rather than discovered at 2G.
+
+### The oracle does not assume it is right
+
+Candidates are built per item with the forced claim type, run through the
+**normal** verifier path, and any claim that fails is dropped and the rest
+re-verified to a fixpoint. An oracle verified by its own route would stop being
+an upper bound on what the real pipeline accepts.
+
+And "nothing is unreachable on all 60" would be a tautology if the oracle simply
+returned all 19. Three tests plant a ceiling and check it is **found**: a stage
+item stripped of its `model_reliability` drops out of `oracle_ids` and pushes
+`oracle_discretionary` to 13 while `nominal_discretionary` stays 14; a corrupted
+night tier drops `oracle_mandatory` below 5, which is the condition that stops
+the phase.
+
+### The witness as the strongest positive test
+
+It exercises every coverable item on every packet, rather than the chosen few in
+the hand-written `valid_claim_set`. The difference is visible: on a non-low
+night the hand-written set reaches 4/5 mandatory — it predates 2B's tier keys —
+while the oracle reaches 5/5.
+
+Verification is **set-level**, not per-claim. Rule 10 is a property of the whole
+claim set, so a lone `value` claim checked in isolation would fail it on all 23
+low nights.
+
+### `oracle_recovery` is null, not zero, when nothing was available
+
+```
+oracle_recovery       = |cited ∩ discretionary| / oracle_discretionary   ratio
+unrecovered_available = oracle_discretionary - |cited ∩ discretionary|   count
+```
+
+A null excludes the packet from an aggregate; a zero would drag it down and
+misreport a packet where recovery was never measurable. **No real packet hits
+this case** — a test asserts `oracle_discretionary > 0` on all 60 — but it is
+defined rather than left to divide by zero.
+
+Neither figure is called a "gap". That name was used earlier in this project and
+is wrong for a ratio.
 
 ---
 

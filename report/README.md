@@ -1,4 +1,7 @@
-# Report tier — Phase 1: schema, grammar, verifier, renderer
+# Report tier — schema, grammar, verifier, renderer, coverage, oracle
+
+*Phase 1 built the first four. Phase 2B added the tier predicates; 2C split
+coverage and added the oracle.*
 
 **No language model is involved in this phase.** Every component is testable,
 and tested, with no model running and no network reachable.
@@ -54,9 +57,17 @@ boundary: an attribution-based claim is not rejected, it cannot be constructed.
 | key | kind | requires | predicate |
 |---|---|---|---|
 | `tier_is_low` | text | `night.confidence` | `night_confidence.tier == "low"` |
+| `tier_is_medium` | text | `night.confidence` | `night_confidence.tier == "medium"` |
+| `tier_is_high` | text | `night.confidence` | `night_confidence.tier == "high"` |
 | `n1_reliability_is_low` | text | `model.n1_reliability_warning` | item value `== "low"` |
 | `low_night_confidence` | reason | `night.confidence` | `night_confidence.tier == "low"` |
 | `n1_low_reliability` | reason | `model.n1_reliability_warning` | item value `== "low"` |
+
+Exactly one of the three tier keys is true on each of the 60 packets, asserted.
+The two `review_flag` reason keys have **different scopes**, which is easy to
+over-restrict: `low_night_confidence` is tier-gated, but `n1_low_reliability`
+is valid on **every** night, because `model.n1_reliability_warning` is `low` on
+every packet whatever the night tier.
 
 Every predicate is an **exact equality against a packet field**. No thresholds,
 no clinical norms. "N1 is abnormally low" needs a population norm the verifier
@@ -113,27 +124,101 @@ measures, which is a model recomputing instead of transcribing.
 
 ---
 
-## Coverage
+## Coverage (split in 2C)
+
+The single pooled metric was replaced because **every other metric in this
+framework improves when the model says less** — violation rate, numeric
+fidelity, unsupported-claim rate all score perfectly on an empty array.
+Coverage is the only counterweight, which makes its definition load-bearing.
+
+But 14 of the 19 reportable items are `safe_to_assert: false` and render with an
+error bound and a caveat. A 19/19 report is mostly hedging, and that is not a
+better report. Pooling also lets a model hide a missing robust fact behind
+eleven hedged ones.
 
 ```
-reportable_set = {safe_to_assert == true}
-               ∪ {safe_to_assert == false AND (caveat or mean_abs_error present)}
+mandatory_set     = {safe_to_assert == true}                                n = 5
+discretionary_set = {safe_to_assert == false AND (caveat or mean_abs_error)} n = 14
 
-verified_evidence_coverage = |ids cited by VERIFIED claims ∩ reportable_set|
-                             / |reportable_set|
+mandatory_coverage     = |cited_by_verified ∩ mandatory_set|     / 5
+discretionary_coverage = |cited_by_verified ∩ discretionary_set| / 14
+pooled_coverage        = |cited_by_verified ∩ (both)|            / 19
 ```
 
-The denominator is fixed by the packet — 19 on every current packet — never by
-anything the model chose. **An empty claim set scores 0.0 while passing every
-safety rule**, which is the point of the metric: without that case, "100%
-verifier pass rate" is trivially gamed by emitting nothing.
+| metric | status |
+|---|---|
+| `mandatory_coverage` | **hard requirement** — all five robust items belong in every report; a missing one is a defect, not a stylistic choice |
+| `discretionary_coverage` | **descriptive** — report it, never optimise it, expect a good report well below 1.0 |
+| `pooled_coverage` | kept for continuity with the Phase 1 record. **Not** the headline |
 
-One consequence worth knowing before reading a coverage number: on a
-non-low-confidence night, `night.confidence` is **not coverable**, because the
-only keys that reference it have a `tier == "low"` predicate. Maximum coverage
-is therefore 18/19 on high and medium nights and 19/19 on low nights. That is a
-real ceiling, not a bug, and it is the strongest argument for adding
-`tier_is_high` / `tier_is_medium` keys in Phase 2.
+Both denominators come from the packet, never from anything a model chose, and
+are asserted to be 5 and 14 on all 60 packets. **An empty claim set scores 0.0
+on both** while passing every safety rule.
+
+`night.confidence` and `model.n1_reliability_warning` are both mandatory and
+neither is reachable by `value` (deviation D1) — they carry a string tier. So
+coverage counts a **cited ID**, never a claim type; anything filtering by type
+would score those two permanently uncovered.
+
+Each `CoverageRecord` carries the packet's `night_confidence.tier`, so 2E can
+stratify without recomputing anything.
+
+---
+
+## The oracle
+
+Verification is deterministic and the claim space enumerable, so for any packet
+`report/oracle.py` computes the **maximal set of reportable IDs coverable by
+some verifying claim set**, plus one witness that achieves it.
+
+This separates a **model limitation** from a **contract ceiling**. Raw coverage
+conflates them: an item the model did not report looks identical to an item no
+verifying claim could have reported. 2B removed one such ceiling —
+`night.confidence` was uncoverable on any non-low night.
+
+Per item the claim type is nearly forced, which is what makes the maximal *ID
+set* well defined even where more than one witness exists:
+
+| item | forced type |
+|---|---|
+| numeric + `safe_to_assert` | `value` |
+| numeric + not | `hedged_value` |
+| `night.confidence` | `observation tier_is_<tier>`, or the rule-10 `review_flag` on a low night |
+| `model.n1_reliability_warning` | `observation n1_reliability_is_low` |
+
+**The witness is not assumed to verify.** Candidates are built, run through the
+*normal* verifier path, and any claim that fails is dropped and the rest
+re-verified to a fixpoint. An oracle verified by its own route would stop being
+an upper bound on what the real pipeline accepts.
+
+### Two denominators, named distinctly
+
+They coincide only if the oracle reaches everything, so they must not share a
+name:
+
+```
+nominal_discretionary = 14                                fixed by the packet
+oracle_discretionary  = |oracle_ids ∩ discretionary_set|  what is reachable
+
+oracle_recovery       = |cited ∩ discretionary_set| / oracle_discretionary   ratio
+unrecovered_available = oracle_discretionary - |cited ∩ discretionary_set|   count
+```
+
+The ratio answers *how much of what was available did the model get*; the count
+answers *how many items were left on the table*. Neither is a "gap" — that name
+was used earlier and is wrong for a ratio.
+
+**`oracle_recovery` is `None`, not `0.0`, when `oracle_discretionary == 0`.** A
+null excludes the packet from an aggregate; a zero would drag it down and
+misreport a packet where recovery was never measurable. No real packet hits
+this, and a test asserts that.
+
+### Measured on all 60 packets
+
+`oracle_mandatory == 5` and `oracle_discretionary == 14` everywhere, nothing
+unreachable. Tests plant a ceiling (a stage item stripped of its
+`model_reliability`) and confirm the oracle **finds** it — otherwise "nothing is
+unreachable" would be a tautology rather than a result.
 
 ---
 
@@ -192,7 +277,9 @@ report/claim_schema.py       types, field specs, key predicates, vocabulary
 report/gbnf.py               grammar GENERATOR + a matcher for its GBNF subset
 report/claims.gbnf           GENERATED - do not edit by hand
 report/verify_structure.py   Layer 1
-report/verify_policy.py      Layer 2 + enrichment + coverage
+report/verify_policy.py      Layer 2 + enrichment + pooled coverage
+report/coverage.py           mandatory / discretionary / pooled, per-packet records
+report/oracle.py             maximal reachable id set + a witness claim set
 report/render.py             deterministic templates
 report/violations.py         violation codes
 ```
@@ -220,12 +307,17 @@ explicitly in the agreement test rather than left implicit.
 
 ```bash
 cd tests
-python test_schema.py             # vocabulary vs all 29 packets, predicates
+python test_splits.py             # dev/test disjointness, manifest vs disk
+python test_schema.py             # vocabulary vs all 60 packets, predicates
 python test_grammar_agreement.py  # generated file committed; acceptance agrees
 python test_adversarial.py        # one planted violation per rule, by code
 python test_render.py             # purity, hedging, tiers, banner, exact text
 python test_no_leak.py            # opens no files; messages are packet-derived
+python test_coverage.py           # denominators 5/14 on all 60, empty-set
+python test_oracle.py             # witness verifies on all 60, no ceilings
 ```
+
+175 tests.
 
 Every adversarial case asserts its **specific** expected code. Asserting only
 that something failed would pass even when the wrong rule fired, which would
