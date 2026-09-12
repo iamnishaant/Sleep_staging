@@ -21,6 +21,7 @@ score. The failure mode being avoided is *undisclosed* iteration, not iteration.
 | date | reason | changed model? | prompt? | K? | rerun? |
 |---|---|---|---|---|---|
 | 2026-09-11 | Rebuilt all 29 to add `attribution_quality.evaluated_on_split` and `evaluated_on_n_recordings`. The renderer had `"test split of 29 recordings"` as a **literal**, which is a false sentence on any packet built from another split. Fixing it required the packet to carry its verdict's provenance. Correctness only — no metric was consulted, and no score exists yet to improve. | no | no | no | no |
+| 2026-09-12 | Read (not modified) test packets SC4011E0, SC4022E0 and SC4202E0 to pin the register-A rendering, one per tier, as the pre-2F closeout specified. Rendering is deterministic and involves no model. Renderer wording is not a selection variable, and no score was computed. md5 `050fffe46d035008d643435ee826dd92` before and after. | no | no | no | no |
 
 ---
 
@@ -686,6 +687,169 @@ A note on how this section arrived: commit `898e403` said it recorded this
 check, but the script meant to write it failed on an escape sequence and the
 commit went ahead without it. The section landed in the commit after. The
 message was wrong; nothing else in that commit was.
+
+---
+
+## Canonical register: A (clinician) - decided 12 September 2026
+
+> **Canonical register: A (clinician).** The deciding factor is rule 10, which
+> exists to force a review flag onto low-confidence nights. Register B softens
+> that banner to a plain statement of uncertainty, which would leave the
+> verifier enforcing a signal the reader no longer receives as one. B's other
+> problems are structural rather than stylistic: caveats are the packet's
+> verbatim words, so plain-language rewriting either breaks that guarantee or
+> requires a per-caveat rewrite table that will drift. Register C writes rule
+> numbers and field names into prose, so renumbering a rule would invalidate
+> every report ever rendered.
+>
+> **B is recorded as future work, not rejected.** Verified claims are
+> register-neutral - a claim carries `{claim_id, claim_type, cites, subject,
+> value, unit}` and no prose - so a wellness-facing renderer is a second
+> renderer over the same claim set, not a redesign of anything beneath it.
+>
+> A's cost is that it omits the tier mechanics. Accepted: those remain in the
+> packet, which is where an auditor would look.
+
+The observations that informed this, recorded as part of why B and C were not
+adopted, and not reopened: B rendered caveats verbatim beside plain prose
+(`mean relative error 85% on validation` next to "It took you about 29.5
+minutes to fall asleep"), and could not round `21.5806 minutes` without
+breaking "same numbers". C wrote `[arch.sleep_onset_latency, hedged]` and
+`(rule 10)` into the report text itself.
+
+---
+
+## Renderer provenance audit (12 September 2026)
+
+The property: **a rendered report is derivable from its packet alone** - the
+renderer-side counterpart of rule 11. Anything in the output comes from one of
+three legitimate sources: a packet field; a declared renderer constant, which
+may be wording or a label and never a fact; or a deterministic consequence of a
+verifier rule that already passed. Any other file is illegitimate.
+
+### `open` during rendering: 0 files, on all 60
+
+`builtins.open` and `io.open` were instrumented around `render_report` only.
+Every packet was loaded and every claim set verified beforehand, so only
+rendering is measured. The claim set is the oracle witness plus the N1 review
+flag, which together reach every template a report can hit.
+
+**0 files opened across 60 renders** (29 test, 31 dev). That held on the
+pre-audit renderer, so there was nothing to report before changing anything.
+It holds on the register-A renderer too, where it is now
+`test_render_opens_no_files_on_all_60_packets`.
+
+### Every output-reaching constant in `render.py`, classified
+
+| constant | where | class | rests on |
+|---|---|---|---|
+| `Wake`, `N1`, `N2`, `N3`, `REM` | `STAGE_LABEL` | label | the evidence id it names |
+| `validation`, `test`, `training` | `SPLIT_WORD` | label | `attribution_quality.evaluated_on_split`; an unlisted split passes through as the packet spells it |
+| `: ` ... `.` | value, hedged value | wording | punctuation around the packet's `label` and value |
+| `%` | `_quantity` | wording | display convention for `unit: fraction` |
+| ` minutes` / ` minute` | `_minutes` | wording | the packet's `unit` string; singular only for exactly 1 |
+| `mean absolute error ` | `_error_phrase` | label | names `mean_abs_error` |
+| ` on the ` | `_error_phrase` | wording | joins `error_measured_on`, which is read with no default |
+| ` percentage points`, ` per hour` | `_ERROR_DISPLAY` | **the one declared inference** - see below | the `(unit, error_unit)` pair |
+| ` is a ` ... `-reliability stage for this model` | `_tier_clause` | wording | `model_reliability`, read from the cited item |
+| ` Caveat: ` | hedged value | label | names `caveat`, which follows verbatim |
+| ` is in the ` ... ` tier.` | `OBSERVATION_TEMPLATE` | wording | `label` and `value` of `night.confidence` |
+| `{label}.` | `n1_reliability_is_low` | wording | the item's own label is the whole statement |
+| `This recording falls in the ` ... ` night-confidence tier.` | `REVIEW_TEMPLATE` | wording | `night.confidence` `value` |
+| `Review the full hypnogram before relying on any figure below.` | `REVIEW_TEMPLATE` | rule consequence | rule 10 forces this flag on every low night; "below" holds because `render_report` always places the banner first |
+| `Review N1-scored epochs individually before relying on them.` | `REVIEW_TEMPLATE` | wording: an instruction, asserting nothing | present only once rule 7 has confirmed the key's predicate on the cited N1 item |
+| `REVIEW REQUIRED` | `render_report` | rule consequence | rule 10 |
+| `: associative evidence. It describes an association across a population and is not a statement about this recording.` | `population_association` | rule consequence | rule 12 admits only `associative_only` items; unreachable today |
+| `Explainability check (gate ` | footer | label | names `attribution_quality` |
+| `): `, `, `, ` of `, ` predictions met, across `, ` recordings.` | footer | wording | `gate`, `verdict`, `n_met`, `len(predictions_met)`, `evaluated_on_n_recordings`, split |
+| `pre-registered ` | footer | wording, conditional | emitted only when `preregistration` is present |
+| `It describes the model across that cohort, not this recording.` | footer | packet field, paraphrased | emitted only when `scope` begins `COHORT` |
+
+Out of the table because they cannot reach output: docstrings, exception
+messages, dict keys (claim keys and evidence ids, which are looked up and never
+printed), format specs, and `_num`'s `rstrip("0")`.
+
+`test_no_digit_in_any_output_constant` enforces the digit half of this. It is an
+AST scan of every output-reaching string for a digit that is not part of a stage
+name, because a number the packet did not supply is the commonest disguised
+fact. A second test checks that the scan is not vacuous.
+
+### What resisted classification
+
+Two things. Both are in the table, and neither is hidden.
+
+1. **The error display scale.** `error_unit` is `count_or_ratio` for every
+   item that is not in minutes. The renderer still prints a fraction's error in
+   percentage points and a rate's error per hour, which neither field says on
+   its own. It is an inference: a mean absolute error is in the units of its
+   quantity. It is declared as a five-row table keyed on the `(unit,
+   error_unit)` pair, and any pairing outside the table raises `UndeclaredUnit`.
+   Every pairing in the 60 packets is in the table (tested). The real fix is a
+   packet field (`error_unit: "fraction"`, `"per hour"`). That would rebuild
+   the test packets, so it is recorded here, not done, while the deterministic
+   tier is frozen.
+2. **The cohort sentence keys on a prefix of a prose field.** `scope` reads
+   "COHORT, NOT THIS NIGHT. The verdict was evaluated once...". The renderer
+   reads the `COHORT` token and paraphrases it, and renders no sentence without
+   it. A structured scope field would make this a read rather than a parse.
+
+### Undeclared facts found and removed
+
+All of these were in the pre-audit renderer:
+
+| was | problem | now |
+|---|---|---|
+| "N1 detection is the weakest part of this model." | a comparison across stages; the cited item states N1's reliability, not a ranking | the item's own label |
+| population association: "In population studies, X has been reported as associated with sleep-disorder risk" | a literature claim, and an outcome the packet never names | only what rule 12 guarantees: the item is associative |
+| footer "of 5" | a hardcoded count | `len(predictions_met)` |
+| footer "gate 3a", "pre-registered" | hardcoded | `gate`; conditional on `preregistration` |
+| footer "measured once", "No per-night version of it was measured." | true, but stated only in the `scope` prose, not in a field | removed |
+| `error_measured_on or "validation"` | a default asserting where an error was measured | read, no default; if the field is absent, the clause is dropped |
+| tier observations: the method, "tertiles fitted on validation-split entropy" | a constant stating how the tier was computed; register A drops the mechanics anyway | the tier only |
+| a full stop appended to a caveat without one | an edit to the packet's words (never fired: every caveat ends with one) | verbatim |
+
+### The five A lines
+
+| line | finding | now |
+|---|---|---|
+| "on held-out validation nights" | **hardcoded** in the scratch A render the register was chosen from. "held-out" appears in no packet field, and the committed renderer had the `"validation"` fallback above | `on the {error_measured_on}`, which renders "on the validation split". A sentinel value appears verbatim, and an absent field drops the clause (tested) |
+| "N2 is a high-reliability stage for this model" | read, not inferred | from the cited item's own `model_reliability`. A sentinel appears verbatim; a missing value raises `MissingField` rather than printing a tier the packet does not have |
+| "percentage points" | neither read nor assumed for `stage.*`: it keys on `unit == "fraction"` | the declared inference above. An `arch.*` fraction made hedged in a mutated copy also gets percentage points (tested) |
+| "mean relative error 85% on validation" | verbatim. The renderer *could* append a full stop, though it never did | appended with no edit, asserted on all 840 hedged lines (14 per packet across 60 packets) |
+| "Caveat:" | wording only: a label for the `caveat` field | unchanged |
+
+### Seen while pinning, and what was done
+
+- **"1 minutes" was about to be pinned.** The WASO on dev SC4111E0 is 1.0. I
+  fixed it as wording (grammatical number) before writing the goldens. The
+  digit scan then caught the first version of the fix, which spelled the "1" as
+  a literal; it now formats the packet value.
+- **Two labels for one item.** The packet labels `stage.W.fraction` "W as a
+  fraction of the night", while `STAGE_LABEL` calls it "Wake" in the tier
+  clause. Both are labels and neither is a fact, so it is left as is.
+- **The N1 review flag renders in the body**: an instruction outside the
+  banner. It is kept there because the banner is reserved for the rule-10
+  signal. The pins use the oracle witness, which carries no N1 flag, so this
+  placement is not pinned.
+
+### The six pins
+
+`TestRegisterAPins` compares the rendered oracle witness byte-for-byte against
+`tests/golden/register_a/`. There is one test packet and one dev packet per
+night-confidence tier:
+
+| split | high | medium | low |
+|---|---|---|---|
+| test | SC4011E0 | SC4022E0 | SC4202E0 |
+| dev | SC4081E0 | SC4171E0 | SC4111E0 |
+
+- A mismatch fails with a unified diff.
+- A seventh test asserts that exactly these six files exist, so a stale golden
+  cannot linger.
+- The goldens are regenerated only by `tests/golden/make_register_a.py
+  --write`. Without `--write`, it prints the diff and changes nothing.
+- The 2B low-night pin (`TestLowNightBothClaims`) is rewritten in register A,
+  on the same two packets as before.
 
 ---
 

@@ -378,7 +378,7 @@ report/coverage.py           mandatory / discretionary / pooled, per-packet reco
 report/oracle.py             maximal reachable id set + a witness claim set
 report/serialize.py          packet -> prompt; all 19 items, 5 fields each
 report/evaluate.py           score a manifest's outputs, stratified by tier
-report/render.py             deterministic templates
+report/render.py             deterministic templates, register A; opens no file
 report/violations.py         violation codes
 ```
 
@@ -409,7 +409,7 @@ python test_splits.py             # dev/test disjointness, manifest vs disk
 python test_schema.py             # vocabulary vs all 60 packets, predicates
 python test_grammar_agreement.py  # generated file committed; acceptance agrees
 python test_adversarial.py        # one planted violation per rule, by code
-python test_render.py             # purity, hedging, tiers, banner, exact text
+python test_render.py             # purity, hedging, provenance, six golden pins
 python test_no_leak.py            # opens no files; messages are packet-derived
 python test_coverage.py           # denominators 5/14 on all 60, empty-set
 python test_oracle.py             # witness verifies on all 60, no ceilings
@@ -417,7 +417,13 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-248 tests.
+270 tests.
+
+The renderer's wording is pinned byte-for-byte against six golden reports in
+`tests/golden/register_a/`, one test packet and one dev packet per tier.
+Accepting a wording change means running `tests/golden/make_register_a.py
+--write`. That is deliberate: without `--write` the script prints the diff and
+changes nothing.
 
 Every adversarial case asserts its **specific** expected code. Asserting only
 that something failed would pass even when the wrong rule fired, which would
