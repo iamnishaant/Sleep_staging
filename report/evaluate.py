@@ -37,6 +37,15 @@ CO-OCCURRENCE IS DATA. One output can violate several rules, so violation counts
 legitimately exceed failed-output counts. Every violation is kept. Recording
 only the first per output would make per-rule rates sum neatly to the failure
 rate - and destroy the per-rule breakdown the 30 codes exist to provide.
+
+CITED COVERAGE IS DIAGNOSTIC ONLY. cited_mandatory and cited_discretionary
+count the distinct mandatory / discretionary ids cited by ANY claim, verified
+or not, over 5 and 14; two claims citing one id count it once. Beside the
+verified coverages they separate two failures with different fixes: cited high
+with verified low, the model found the evidence and mis-shaped the claim; both
+low, it did not find the evidence. Split rather than pooled over 19, so a high
+number cannot hide that the misses were the mandatory ones. No other metric
+reads them, and they change no pass, coverage, recovery or fidelity figure.
 """
 from __future__ import annotations
 
@@ -45,7 +54,7 @@ from pathlib import Path
 
 from . import verify_report
 from .claim_schema import evidence_index
-from .coverage import cited_ids, coverage
+from .coverage import cited_ids, coverage, discretionary_set, mandatory_set
 from .oracle import oracle
 from .violations import V
 
@@ -121,13 +130,24 @@ def _div(a, b):
     return (a / b) if b else None
 
 
+def _cited_coverage(claims, packet):
+    """DIAGNOSTIC. Distinct mandatory and discretionary ids cited by ANY claim,
+    verified or not, over the size of each set. See the module docstring."""
+    ids = {ref for c in claims
+           if isinstance(c, dict) and isinstance(c.get("cites"), list)
+           for ref in c["cites"] if isinstance(ref, str)}
+    mand, disc = mandatory_set(packet), discretionary_set(packet)
+    return _div(len(ids & mand), len(mand)), _div(len(ids & disc), len(disc))
+
+
 class OutputResult:
     """One recording's output, scored."""
 
     __slots__ = ("recording_id", "subject_id", "cohort", "tier", "present",
                  "n_claims", "codes", "schema_valid", "passed", "coverage",
                  "oracle_recovery", "unrecovered_available",
-                 "fidelity_matched", "fidelity_total", "unsupported_claims")
+                 "fidelity_matched", "fidelity_total", "unsupported_claims",
+                 "cited_mandatory", "cited_discretionary")
 
     @property
     def failed(self) -> bool:
@@ -148,6 +168,8 @@ class OutputResult:
             "mandatory_coverage": r(self.coverage.mandatory),
             "mandatory_missing": sorted(self.coverage.mandatory_missing),
             "discretionary_coverage": r(self.coverage.discretionary),
+            "cited_mandatory": r(self.cited_mandatory),          # diagnostic
+            "cited_discretionary": r(self.cited_discretionary),  # diagnostic
             "oracle_recovery": r(self.oracle_recovery),
             "unrecovered_available": self.unrecovered_available,
             "fidelity_matched": self.fidelity_matched,
@@ -176,6 +198,7 @@ def score_output(raw, packet: dict) -> OutputResult:
         res.n_claims, res.codes = 0, ()
         res.schema_valid = res.passed = False
         res.coverage = coverage(packet, [])
+        res.cited_mandatory, res.cited_discretionary = _cited_coverage([], packet)
         res.oracle_recovery = o.recovery(set(), packet)
         res.unrecovered_available = o.unrecovered_available(set(), packet)
         res.fidelity_matched = res.fidelity_total = 0
@@ -191,6 +214,7 @@ def score_output(raw, packet: dict) -> OutputResult:
     res.passed = not res.codes
 
     res.coverage = coverage(packet, r.enriched)
+    res.cited_mandatory, res.cited_discretionary = _cited_coverage(claims, packet)
     cited = cited_ids(r.enriched)
     res.oracle_recovery = o.recovery(cited, packet)
     res.unrecovered_available = o.unrecovered_available(cited, packet)
@@ -259,6 +283,11 @@ def stratum_metrics(results) -> dict:
         "n_mandatory_full": sum(1 for x in results
                                 if x.coverage.mandatory_complete),
         "discretionary_coverage": _mean(x.coverage.discretionary for x in results),
+        # diagnostic only - no other metric reads these
+        "cited_mandatory": _mean(x.cited_mandatory for x in results
+                                 if x.cited_mandatory is not None),
+        "cited_discretionary": _mean(x.cited_discretionary for x in results
+                                     if x.cited_discretionary is not None),
         "oracle_recovery": _mean(recov),
         "oracle_recovery_n": len(recov),
         "unrecovered_available": _mean(x.unrecovered_available for x in results),
@@ -315,6 +344,8 @@ class EvaluationReport:
         ("mandatory_coverage", "mandatory coverage"),
         ("n_mandatory_full", "  packets at 5/5"),
         ("discretionary_coverage", "discretionary coverage (/14)"),
+        ("cited_mandatory", "cited mandatory (diag.)"),
+        ("cited_discretionary", "cited discretionary (diag.)"),
         ("oracle_recovery", "oracle recovery"),
         ("unrecovered_available", "unrecovered available (mean)"),
         ("numeric_fidelity", "numeric fidelity"),
@@ -376,6 +407,10 @@ class EvaluationReport:
             "are flagged by their stratum's packet count, because a stratum's "
             "claims are clustered within its packets.",
             "-  no denominator: None, not zero.",
+            "(diag.) cited coverage: distinct mandatory (/5) and discretionary "
+            "(/14) ids cited by ANY claim, verified or not. Diagnostic only - "
+            "cited high beside verified low means the evidence was found and "
+            "the claim mis-shaped.",
             f"unsupported = {', '.join(sorted(UNSUPPORTED_CODES))}",
         ]
         return "\n".join(lines)

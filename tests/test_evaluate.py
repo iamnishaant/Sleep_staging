@@ -19,6 +19,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from _packets import DEV_MANIFEST, TEST_MANIFEST, all_packets
+from report.coverage import mandatory_set
 from report.evaluate import (ALL_CODES, SMALL_N, STRATA, TIERS,
                              UNSUPPORTED_CODES, evaluate, stratum_metrics)
 from report.oracle import oracle
@@ -642,7 +643,8 @@ class TestValidityDenominators(unittest.TestCase):
                 failed=not passed, codes=() if passed else ("L2.value_mismatch",),
                 coverage=cov, oracle_recovery=None, unrecovered_available=0,
                 fidelity_matched=0, fidelity_total=0, unsupported_claims=0,
-                n_claims=0)
+                n_claims=0,
+                cited_mandatory=None, cited_discretionary=None)  # diagnostic: no data
         a = stratum_metrics([outcome(True, True)] * 72 +
                             [outcome(False, True)] * 8 +
                             [outcome(False, False)] * 18)
@@ -656,6 +658,107 @@ class TestValidityDenominators(unittest.TestCase):
                          (72, 80))
         self.assertEqual((b["policy_pass_rate_num"], b["policy_pass_rate_den"]),
                          (88, 98))
+
+
+def _unhedged(pk):
+    """The witness with every hedged_value made a bare value: all 14
+    discretionary claims are rejected by rule 4, and every one still cites."""
+    w = witness(pk)
+    for c in w:
+        if c["claim_type"] == "hedged_value":
+            c["claim_type"] = "value"
+    return w
+
+
+def _no_mandatory(pk):
+    """The witness without any claim citing a mandatory item."""
+    mand = mandatory_set(pk)
+    return [c for c in witness(pk) if not set(c["cites"]) & mand]
+
+
+class TestCitedCoverage(unittest.TestCase):
+    """cited_mandatory / cited_discretionary - DIAGNOSTIC ONLY.
+
+    Distinct ids cited by ANY claim, verified or not, over 5 and 14. Beside the
+    verified coverages they tell 'found the evidence, mis-shaped the claim'
+    (cited high, verified low) from 'did not find it' (both low).
+    """
+
+    @staticmethod
+    def per(rep):
+        return {x["recording_id"]: x for x in rep.as_dict()["per_recording"]}
+
+    def test_the_witness_cites_every_item_on_both_splits(self):
+        for s in MANIFESTS:
+            for rec, x in self.per(run(s, witness)).items():
+                self.assertEqual((x["cited_mandatory"], x["cited_discretionary"]),
+                                 (1.0, 1.0), f"{s} {rec}")
+
+    def test_empty_and_missing_outputs_cite_nothing(self):
+        for make in (lambda pk: [], lambda pk: None):
+            for rec, x in self.per(run("dev", make)).items():
+                self.assertEqual((x["cited_mandatory"], x["cited_discretionary"]),
+                                 (0.0, 0.0), rec)
+
+    def test_rejected_claims_still_count_as_cited(self):
+        for rec, x in self.per(run("dev", _unhedged)).items():
+            self.assertEqual(x["discretionary_coverage"], 0.0, rec)
+            self.assertEqual(x["cited_discretionary"], 1.0, rec)
+            self.assertEqual((x["mandatory_coverage"], x["cited_mandatory"]),
+                             (1.0, 1.0), rec)
+
+    def test_an_id_cited_twice_counts_once(self):
+        def tst_twice(pk):
+            c = next(c for c in witness(pk) if c["cites"] == ["arch.total_sleep_time"])
+            d = copy.deepcopy(c)
+            d["claim_id"] = "c98"
+            return [c, d]
+        for rec, x in self.per(run("dev", tst_twice)).items():
+            self.assertEqual((x["cited_mandatory"], x["cited_discretionary"]),
+                             (0.2, 0.0), rec)
+
+    def test_split_by_set_not_pooled(self):
+        """Every discretionary item cited and no mandatory one. Pooled over 19
+        this would read 14/19 and hide that the misses were the mandatory ones."""
+        for rec, x in self.per(run("dev", _no_mandatory)).items():
+            self.assertEqual((x["cited_mandatory"], x["cited_discretionary"]),
+                             (0.0, 1.0), rec)
+
+    def test_cited_is_never_below_verified(self):
+        """Verified claims are a subset of claims, so cited bounds verified."""
+        for make in (witness, _drift, _unhedged, _no_mandatory, lambda pk: []):
+            for rec, x in self.per(run("dev", make)).items():
+                self.assertGreaterEqual(x["cited_mandatory"], x["mandatory_coverage"], rec)
+                self.assertGreaterEqual(x["cited_discretionary"],
+                                        x["discretionary_coverage"], rec)
+
+    def test_stratified_with_n_and_the_small_n_flag(self):
+        rep = run("test", witness)
+        for s in STRATA:
+            m = rep.strata[s]
+            self.assertEqual((m["cited_mandatory"], m["cited_discretionary"]),
+                             (1.0, 1.0), s)
+        lines = rep.format_table().splitlines()
+        for label in ("cited mandatory (diag.)", "cited discretionary (diag.)"):
+            row = next(ln for ln in lines if ln.startswith(label))
+            self.assertEqual(row.count("n="), len(STRATA), row)
+            self.assertIn("n=4 ", row)               # test medium ...
+            self.assertEqual(row.count("!"), 1, row)  # ... and only it is flagged
+
+    def test_no_other_metric_reads_it(self):
+        """Overwrite the diagnostic on every result: every other figure in the
+        stratum stays exactly as it was."""
+        rep = run("dev", _drift)
+        base = stratum_metrics(rep.results)
+        for x in rep.results:
+            x.cited_mandatory, x.cited_discretionary = 0.123, 0.456
+        moved = stratum_metrics(rep.results)
+        # A mean of identical floats need not be bit-exact (31 x 0.123).
+        self.assertAlmostEqual(moved["cited_mandatory"], 0.123)
+        self.assertAlmostEqual(moved["cited_discretionary"], 0.456)
+        strip = lambda m: {k: v for k, v in m.items()
+                           if k not in ("cited_mandatory", "cited_discretionary")}
+        self.assertEqual(strip(moved), strip(base))
 
 
 if __name__ == "__main__":
