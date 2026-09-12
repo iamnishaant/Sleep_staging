@@ -464,6 +464,22 @@ class TestProvenance(unittest.TestCase):
         pk["attribution_quality"]["scope"] = "THIS NIGHT"
         self.assertIsNone(render_attribution_footer(pk))
 
+    def test_every_scope_still_begins_with_the_cohort_token(self):
+        """The footer keys its cohort sentence on a PREFIX of the prose field
+        `scope` - a parse, not a read. Reworded upstream, the sentence would
+        silently vanish, and a cohort verdict without its scope disclaimer is
+        the misreading the field exists to prevent. Until the packet carries a
+        structured scope field (future work, PHASE2_NOTES), a rewording breaks
+        this test instead of dropping a sentence."""
+        n = 0
+        for split in SPLITS:
+            for name, pk in all_packets(split):
+                scope = pk["attribution_quality"].get("scope", "")
+                self.assertTrue(scope.startswith("COHORT"),
+                                f"{split} {name}: scope begins {scope[:30]!r}")
+                n += 1
+        self.assertEqual(n, 60)
+
     def test_no_disguised_fact_survives_in_any_report(self):
         """The phrases the audit removed, checked on every full report."""
         removed = ("weakest", "sleep-disorder risk", "population studies",

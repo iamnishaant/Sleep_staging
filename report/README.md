@@ -417,7 +417,7 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-270 tests.
+271 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.
