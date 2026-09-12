@@ -275,10 +275,47 @@ PER_CLAIM_RULES = (
 )
 
 
+def _claim_violations(claim: dict, idx: dict, packet: dict) -> list[Violation]:
+    """Every per-claim rule, on one claim - the one place they are applied."""
+    vs: list[Violation] = []
+    for rule in PER_CLAIM_RULES:
+        vs.extend(rule(claim, idx))
+    vs.extend(rule_key_predicate(claim, idx, packet))
+    return vs
+
+
+def surviving_claims(claims: list, idx: dict, packet: dict) -> list[dict]:
+    """The claims that survive every other check: rule 10's claim set.
+
+    The fixpoint pattern report/oracle.py uses - verify, drop what fails,
+    re-verify until stable. Today every rule other than rule 10 judges one
+    claim alone, so the first pass is already stable and this equals the
+    verified set exactly; the loop is what keeps that true if a rule that
+    judges claims jointly is ever added. Each pass drops at least one claim or
+    returns, so len(claims) + 1 passes always suffice.
+    """
+    kept = [c for c in claims if isinstance(c, dict)]
+    for _ in range(len(kept) + 1):
+        failing = {id(c) for c in kept if _claim_violations(c, idx, packet)}
+        if not failing:
+            return kept
+        kept = [c for c in kept if id(c) not in failing]
+    raise AssertionError("unreachable: every pass drops a claim or returns")
+
+
 # --------------------------------------------------------------------------
 # rule 10 - report-level: a low-confidence night must carry a review flag
+#
+# Read against the SURVIVING claims, never the submitted ones. The banner
+# renders from verified claims, so a flag rejected by its own rules - a wrong
+# reason_key, a failed predicate, a missing dependency, a wrong subject -
+# renders nothing, and must not satisfy the rule either. Read against the
+# submitted set, a malformed flag scored better than no flag at all for an
+# identical unsafe report. Found by scoring the step-5 output; PHASE2_NOTES,
+# 12 September 2026. The only set-level rule, so the only one that needs this.
 # --------------------------------------------------------------------------
 def rule_low_night_needs_flag(claims, packet) -> list[Violation]:
+    """`claims` must be the surviving set - see surviving_claims()."""
     if packet.get("night_confidence", {}).get("tier") != "low":
         return []
     for c in claims:
@@ -341,16 +378,13 @@ def verify_policy(claims: list, packet: dict) -> PolicyResult:
     for i, claim in enumerate(claims):
         if not isinstance(claim, dict):
             continue                     # Layer 1 reported it
-        vs: list[Violation] = []
-        for rule in PER_CLAIM_RULES:
-            if rule is rule_key_predicate:
-                continue
-            vs.extend(rule(claim, idx))
-        vs.extend(rule_key_predicate(claim, idx, packet))
+        vs = _claim_violations(claim, idx, packet)
         per_claim[i] = vs
         all_v.extend(vs)
 
-    report_v = rule_low_night_needs_flag(claims, packet)
+    # Rule 10 reads what survived, not what was submitted - see the rule.
+    report_v = rule_low_night_needs_flag(
+        surviving_claims(claims, idx, packet), packet)
     all_v.extend(report_v)
 
     # A claim is verified when NO rule fired on it. Report-level violations

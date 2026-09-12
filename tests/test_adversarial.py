@@ -24,8 +24,9 @@ import unittest
 
 from _packets import (all_packets, first_packet, packet_with_tier,
                       claim, valid_claim_set)
-from report import verify_report
+from report import render_report, verify_report
 from report.claim_schema import evidence_index
+from report.oracle import oracle
 from report.verify_policy import verify_policy
 from report.verify_structure import parse, verify_structure
 from report.violations import V, codes, has
@@ -436,6 +437,127 @@ class TestEmptyClaimSet(Base):
             r = verify_policy([], pk)
             self.assertEqual(len(r.reportable), 19, name)
             self.assertEqual(r.coverage, 0.0, name)
+
+
+# ==========================================================================
+def review_flag(cid="c9", **kw):
+    """A low-night review flag; override any field to make it invalid."""
+    fields = dict(claim_id=cid, claim_type="review_flag",
+                  cites=["night.confidence"], reason_key="low_night_confidence")
+    fields.update(kw)
+    return claim(**fields)
+
+
+# Flags that cite night.confidence (or mean to) and are each rejected by their
+# own rules. Each pairs with the ONE code it must produce.
+INVALID_FLAGS = (
+    ({"reason_key": "not_a_key"}, V.UNKNOWN_REASON_KEY),
+    ({"cites": ["model.n1_reliability_warning"]}, V.TEXT_KEY_DEPENDENCY_MISSING),
+    ({"reason_key": "n1_low_reliability"}, V.TEXT_KEY_DEPENDENCY_MISSING),
+    ({"subject": "population"}, V.BAD_SUBJECT_FOR_TYPE),
+)
+
+
+def low_packets():
+    for split in ("test", "dev"):
+        for name, pk in all_packets(split):
+            if pk["night_confidence"]["tier"] == "low":
+                yield split, name, pk
+
+
+class TestRule10ReadsTheSurvivingSet(Base):
+    """Rule 10 against the claims that survive every other check.
+
+    It used to read the SUBMITTED claims while the banner renders from the
+    VERIFIED ones, so a flag rejected by its own rules satisfied rule 10 and
+    rendered nothing: a malformed flag scored better than no flag, for the
+    same unsafe report. Found by scoring the step-5 output (PHASE2_NOTES).
+
+    Cases 10a and 10b were already caught before the fix - by Layer 1, and by
+    the flag not citing night.confidence at all - and stay as guards. 10c and
+    10c2 are what the fix closes. 10d guards against overcorrecting.
+    """
+
+    def assertFlagRejectedAndRuleFires(self, flag, own_code):
+        r = self.check([good_value_claim(LOW), flag], LOW)
+        self.assertEqual(r.codes, [str(own_code), str(V.MISSING_REVIEW_FLAG)])
+        self.assertNotIn(flag["claim_id"], [c.get("claim_id") for c in r.enriched])
+        self.assertFalse(render_report(r.enriched, LOW).startswith("REVIEW REQUIRED"))
+
+    def test_10a_unknown_reason_key(self):
+        self.assertFlagRejectedAndRuleFires(
+            review_flag(reason_key="not_a_key"), V.UNKNOWN_REASON_KEY)
+
+    def test_10b_low_night_key_without_its_dependency(self):
+        self.assertFlagRejectedAndRuleFires(
+            review_flag(cites=["model.n1_reliability_warning"]),
+            V.TEXT_KEY_DEPENDENCY_MISSING)
+
+    def test_10c_flag_citing_the_wrong_evidence_for_its_key(self):
+        """The step-5 case, and the hole: n1_low_reliability requires
+        model.n1_reliability_warning, but the flag cites night.confidence.
+        Before the fix this satisfied rule 10 and rendered no banner."""
+        self.assertFlagRejectedAndRuleFires(
+            review_flag(reason_key="n1_low_reliability"),
+            V.TEXT_KEY_DEPENDENCY_MISSING)
+
+    def test_10c2_right_key_wrong_subject(self):
+        """Found while probing the fix: a flag failing rule 13 was the same
+        hole by another route."""
+        self.assertFlagRejectedAndRuleFires(
+            review_flag(subject="population"), V.BAD_SUBJECT_FOR_TYPE)
+
+    def test_10d_unrelated_failures_do_not_remove_the_banner(self):
+        """The overcorrection guard: other claims failing must not take a
+        VALID flag down with them. Rule 10 stays silent; the banner stays."""
+        bad = claim(claim_id="c2", claim_type="value",
+                    cites=["arch.time_in_bed"], value=-1.0, unit="minutes")
+        r = self.check([good_value_claim(LOW), review_flag(), bad], LOW)
+        self.assertEqual(r.codes, [str(V.VALUE_MISMATCH), str(V.UNCITED_QUANTITY)])
+        self.assertTrue(render_report(r.enriched, LOW).startswith("REVIEW REQUIRED"))
+
+    def test_10e_all_23_low_nights_with_an_invalid_flag(self):
+        """Exactly the flag's own violation, plus rule 10, on every low night."""
+        n = 0
+        for split, name, pk in low_packets():
+            r = self.check([review_flag(reason_key="n1_low_reliability")], pk)
+            self.assertEqual(r.codes, [str(V.TEXT_KEY_DEPENDENCY_MISSING),
+                                       str(V.MISSING_REVIEW_FLAG)], f"{split} {name}")
+            n += 1
+        self.assertEqual(n, 23)
+
+
+class TestBannerAndRule10Agree(Base):
+    """Couples rule 10 to the thing it protects.
+
+    On every low night, over a spread of claim sets, the verified set renders
+    a banner EXACTLY when rule 10 is silent. Asserted in both directions: no
+    banner without the violation (the defect), and no violation beside a
+    banner (overcorrection). The rule and the renderer read different code, so
+    this is what stops them drifting apart again.
+    """
+
+    def test_banner_iff_rule_10_silent_on_every_low_night(self):
+        bad = claim(claim_id="c98", claim_type="value",
+                    cites=["arch.time_in_bed"], value=-1.0, unit="minutes")
+        n_sets = 0
+        for split, name, pk in low_packets():
+            w = oracle(pk).witness
+            rest = [c for c in w if c["claim_type"] != "review_flag"]
+            self.assertEqual(len(w) - len(rest), 1, f"{split} {name}")
+            invalid = [review_flag("c99", **kw) for kw, _ in INVALID_FLAGS]
+            sets = ([[], w, rest, w + [bad]]
+                    + [rest + [f] for f in invalid]
+                    + [[f] for f in invalid])
+            for i, cs in enumerate(sets):
+                r = self.check(cs, pk)
+                banner = render_report(r.enriched, pk).startswith("REVIEW REQUIRED")
+                fired = str(V.MISSING_REVIEW_FLAG) in r.codes
+                self.assertNotEqual(banner, fired,
+                                    f"{split} {name} set {i}: banner={banner} "
+                                    f"rule10={fired} codes={r.codes}")
+                n_sets += 1
+        self.assertEqual(n_sets, 23 * 12)
 
 
 # ==========================================================================
