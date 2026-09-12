@@ -12,18 +12,25 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 from _packets import DEV_MANIFEST, TEST_MANIFEST, all_packets
 from report.evaluate import (ALL_CODES, SMALL_N, STRATA, TIERS,
-                             UNSUPPORTED_CODES, evaluate)
+                             UNSUPPORTED_CODES, evaluate, stratum_metrics)
 from report.oracle import oracle
 
 MANIFESTS = {"test": TEST_MANIFEST, "dev": DEV_MANIFEST}
 TIER_N = {"test": {"high": 12, "medium": 4, "low": 13},
           "dev": {"high": 11, "medium": 10, "low": 10}}
+
+REM = "arch.rem_latency"
+REM_S = "arch.rem_latency_sustained"
+R9 = "L2.rem_error_differenced"
+R11 = "L2.uncited_quantity"
 
 
 def run(split, make):
@@ -51,6 +58,22 @@ def first(split, tier=None):
         if tier is None or pk["night_confidence"]["tier"] == tier:
             return rec
     raise AssertionError
+
+
+def _errs(pk):
+    idx = {e["id"]: e for e in pk["evidence_items"]}
+    return idx[REM]["mean_abs_error"], idx[REM_S]["mean_abs_error"]
+
+
+def _rem_diff(pk, which=REM, sign=+1):
+    """The witness, with one REM-latency claim's value replaced by the
+    difference of the two errors - the exact float rule 9 looks for."""
+    w = witness(pk)
+    ea, eb = _errs(pk)
+    for c in w:
+        if c["cites"] == [which]:
+            c["value"] = (eb - ea) if sign > 0 else (ea - eb)
+    return w
 
 
 class TestCalibration(unittest.TestCase):
@@ -325,7 +348,8 @@ class TestSmallNFlag(unittest.TestCase):
     def test_n_is_printed_beside_every_cell(self):
         table = run("dev", witness).format_table()
         for ln in table.splitlines():
-            if ln.startswith(("mandatory coverage", "numeric fidelity", "L2.")):
+            if ln.startswith(("mandatory coverage", "numeric fidelity", "L2.",
+                              "schema validity", "overall pass", "policy pass")):
                 self.assertEqual(ln.count("n="), len(STRATA), ln)
 
 
@@ -371,6 +395,267 @@ class TestDeterminismAndOutput(unittest.TestCase):
     def test_unsupported_codes_is_a_named_subset_of_real_codes(self):
         self.assertIsInstance(UNSUPPORTED_CODES, frozenset)
         self.assertTrue(UNSUPPORTED_CODES <= set(ALL_CODES))
+
+
+# ===========================================================================
+# Pre-2F check 2: the exclusion of rem_error_differenced from
+# UNSUPPORTED_CODES rests on it always co-firing with uncited_quantity. That
+# was an assumption; these make it an invariant, and pin the reason it holds.
+# ===========================================================================
+def _drop_mandatory(pk):
+    return [c for c in witness(pk) if c["cites"] != ["arch.total_sleep_time"]]
+
+
+def _drift(pk):
+    w = witness(pk)
+    for c in w:
+        if c["cites"] == ["arch.waso"]:
+            c["value"] += 1.0
+    return w
+
+
+def _unit_swap(pk):
+    w = witness(pk)
+    for c in w:
+        if c["cites"] == ["arch.waso"]:
+            c["unit"] = "hours"
+    return w
+
+
+def _hedge_robust(pk):
+    w = witness(pk)
+    for c in w:
+        if c["cites"] == ["arch.total_sleep_time"]:
+            c["claim_type"] = "hedged_value"
+    return w
+
+
+def _cite_attribution(pk):
+    w = witness(pk)
+    w.append({"claim_id": "c99", "claim_type": "observation",
+              "cites": ["attribution"], "subject": "this_recording",
+              "text_key": "n1_reliability_is_low"})
+    return w
+
+
+def _double_rem(pk):
+    w = witness(pk)
+    w.append({"claim_id": "c98", "claim_type": "observation",
+              "cites": [REM, REM_S, "model.n1_reliability_warning"],
+              "subject": "this_recording", "text_key": "n1_reliability_is_low"})
+    return w
+
+
+def _value_on_tier_item(pk):
+    w = witness(pk)
+    w.append({"claim_id": "c97", "claim_type": "value",
+              "cites": ["night.confidence"], "subject": "this_recording",
+              "value": 1.0, "unit": "minutes"})
+    return w
+
+
+CORRUPTIONS = (
+    ("drop_mandatory", _drop_mandatory),
+    ("drift", _drift),
+    ("unit_swap", _unit_swap),
+    ("hedge_robust", _hedge_robust),
+    ("empty", lambda pk: []),
+    ("missing", lambda pk: None),
+    ("malformed", lambda pk: '[{"claim_id": "c1",'),
+    ("cite_attribution", _cite_attribution),
+    ("double_rem", _double_rem),
+    ("value_on_tier_item", _value_on_tier_item),
+    ("rem_diff", lambda pk: _rem_diff(pk, REM, +1)),
+    ("rem_diff_sustained_negative", lambda pk: _rem_diff(pk, REM_S, -1)),
+)
+
+
+class TestRemErrorCoupling(unittest.TestCase):
+
+    def assertCoupled(self, rep, label):
+        for x in rep.results:
+            if R9 in x.codes:
+                self.assertIn(R11, x.codes,
+                              f"{label} {x.recording_id}: rule 9 fired without "
+                              f"rule 11 - the exclusion of {R9} from "
+                              f"UNSUPPORTED_CODES is no longer justified")
+
+    def test_a_targeted_case_triggers_rule_9_directly(self):
+        target = first("dev", "high")
+        rep = run("dev", lambda pk: _rem_diff(pk) if pk["recording_id"] == target
+                  else witness(pk))
+        pr = rep.strata["overall"]["per_rule"]
+        self.assertEqual(pr[R9]["count"], 1)
+        self.assertEqual(pr[R11]["count"], 1)
+        self.assertEqual(pr["L2.value_mismatch"]["count"], 1)
+        self.assertCoupled(rep, "targeted")
+        # excluded from the set, yet the claim is still counted unsupported -
+        # through rule 11, which is the whole argument for the exclusion
+        self.assertNotIn(R9, UNSUPPORTED_CODES)
+        self.assertEqual(rep.strata["overall"]["unsupported_claims"], 1)
+
+    def test_on_every_packet_both_ids_both_signs(self):
+        for split in MANIFESTS:
+            for which in (REM, REM_S):
+                for sign in (+1, -1):
+                    rep = run(split, lambda pk, w=which, s=sign: _rem_diff(pk, w, s))
+                    o = rep.strata["overall"]
+                    self.assertEqual(o["per_rule"][R9]["count"], o["n"],
+                                     f"{split} {which} {sign}")
+                    self.assertCoupled(rep, f"{split} {which} {sign}")
+
+    def test_the_invariant_holds_across_the_corruption_suite(self):
+        fired = 0
+        for split in MANIFESTS:
+            for label, make in CORRUPTIONS:
+                rep = run(split, make)
+                fired += rep.strata["overall"]["per_rule"][R9]["count"]
+                self.assertCoupled(rep, f"{split} {label}")
+        self.assertGreater(fired, 0, "the suite never fired rule 9, so the "
+                                     "invariant check above was vacuous")
+
+    def test_why_it_holds_on_every_packet(self):
+        """Rules 9 and 11 decouple only if a REM latency EQUALS the difference
+        of the two errors, because then the value is both 'the difference'
+        and 'the cited item's own value'. Latencies are whole 30-second
+        epochs, so they sit on a 0.5-minute grid; the difference (4.8403)
+        does not. If a future packet broke either half of that, this fails
+        and the exclusion has to be revisited."""
+        seen = 0
+        for split in MANIFESTS:
+            for name, pk in all_packets(split):
+                ea, eb = _errs(pk)
+                d = eb - ea
+                self.assertNotEqual(d * 2, int(d * 2),
+                                    f"{split} {name}: difference {d} is on the grid")
+                idx = {e["id"]: e for e in pk["evidence_items"]}
+                for eid in (REM, REM_S):
+                    v = idx[eid]["value"]
+                    self.assertEqual(v * 2, int(v * 2),
+                                     f"{split} {name} {eid}={v} is off the grid")
+                    self.assertNotIn(v, (d, -d), f"{split} {name} {eid}")
+                seen += 1
+        self.assertEqual(seen, 60)
+
+
+# ===========================================================================
+# Pre-2F check 3: policy_pass_rate's denominator varies by model, so it is
+# never emitted without it - in the JSON or in the printed table.
+# ===========================================================================
+def _walk(obj, path=()):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            yield path, obj, k
+            yield from _walk(v, path + (k,))
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            yield from _walk(v, path + (i,))
+
+
+CELL = re.compile(r"(?:\d+\.\d%|-) +\(\d+/\d+\) n=\d+")
+
+
+class TestValidityDenominators(unittest.TestCase):
+    RATES = ("schema_validity_rate", "overall_pass_rate", "policy_pass_rate")
+    N_BROKEN = 5
+
+    @classmethod
+    def setUpClass(cls):
+        # 5 outputs fail Layer 1, so policy pass is computed over 26, not 31;
+        # one schema-valid output also fails Layer 2.
+        recs = [r for r, _ in all_packets("dev")]
+        broken, l2_fail = set(recs[:cls.N_BROKEN]), recs[cls.N_BROKEN]
+
+        def make(pk):
+            if pk["recording_id"] in broken:
+                return '[{"claim_id": "c1",'
+            if pk["recording_id"] == l2_fail:
+                return _drift(pk)
+            return witness(pk)
+        cls.rep = run("dev", make)
+        cls.table = cls.rep.format_table()
+
+    def _row(self, prefix):
+        return next(ln for ln in self.table.splitlines() if ln.startswith(prefix))
+
+    def test_json_carries_the_denominator_wherever_the_rate_is(self):
+        seen = 0
+        for path, parent, key in _walk(self.rep.as_dict()):
+            if key == "policy_pass_rate":
+                seen += 1
+                self.assertIn("policy_pass_rate_num", parent, path)
+                self.assertIn("policy_pass_rate_den", parent, path)
+        self.assertEqual(seen, len(STRATA))
+
+    def test_every_validity_rate_is_its_num_over_its_den(self):
+        for s in STRATA:
+            m = self.rep.strata[s]
+            for r in self.RATES:
+                num, den = m[r + "_num"], m[r + "_den"]
+                if den:
+                    self.assertAlmostEqual(m[r], num / den, msg=f"{s} {r}")
+                else:
+                    self.assertIsNone(m[r], f"{s} {r}")
+
+    def test_the_policy_denominator_is_schema_valid_and_it_shrank(self):
+        o = self.rep.strata["overall"]
+        self.assertEqual(o["policy_pass_rate_den"], o["n_schema_valid"])
+        self.assertEqual(o["policy_pass_rate_den"], o["n"] - self.N_BROKEN)
+        self.assertLess(o["policy_pass_rate_den"], o["overall_pass_rate_den"])
+        self.assertEqual(o["policy_pass_rate_num"], o["n"] - self.N_BROKEN - 1)
+
+    def test_every_validity_cell_prints_its_fraction(self):
+        for prefix in ("schema validity", "overall pass", "policy pass"):
+            cells = CELL.findall(self._row(prefix))
+            self.assertEqual(len(cells), len(STRATA), self._row(prefix))
+
+    def test_the_policy_row_shows_the_shrunken_denominator_beside_n(self):
+        o = self.rep.strata["overall"]
+        self.assertIn(f"({o['policy_pass_rate_num']}/{o['policy_pass_rate_den']}) "
+                      f"n={o['n']}", self._row("policy pass"))
+
+    def test_unconditional_rates_print_above_the_conditional_one(self):
+        lines = self.table.splitlines()
+        at = {p: next(i for i, ln in enumerate(lines) if ln.startswith(p))
+              for p in ("schema validity", "overall pass", "policy pass")}
+        self.assertLess(at["schema validity"], at["policy pass"])
+        self.assertLess(at["overall pass"], at["policy pass"])
+
+    def test_an_empty_policy_population_still_shows_its_denominator(self):
+        rep = run("dev", lambda pk: '[{"claim_id": "c1",')
+        o = rep.strata["overall"]
+        self.assertIsNone(o["policy_pass_rate"])
+        self.assertEqual((o["policy_pass_rate_num"], o["policy_pass_rate_den"]),
+                         (0, 0))
+        row = next(ln for ln in rep.format_table().splitlines()
+                   if ln.startswith("policy pass"))
+        self.assertEqual(len(CELL.findall(row)), len(STRATA), row)
+
+    def test_the_worked_example(self):
+        """72/80 and 88/98: policy rates 0.2 points apart, from models 16
+        points apart overall. Only the fraction tells them apart."""
+        def outcome(passed, schema_valid):
+            cov = SimpleNamespace(mandatory=0.0, mandatory_complete=False,
+                                  discretionary=0.0)
+            return SimpleNamespace(
+                present=True, schema_valid=schema_valid, passed=passed,
+                failed=not passed, codes=() if passed else ("L2.value_mismatch",),
+                coverage=cov, oracle_recovery=None, unrecovered_available=0,
+                fidelity_matched=0, fidelity_total=0, unsupported_claims=0,
+                n_claims=0)
+        a = stratum_metrics([outcome(True, True)] * 72 +
+                            [outcome(False, True)] * 8 +
+                            [outcome(False, False)] * 18)
+        b = stratum_metrics([outcome(True, True)] * 88 +
+                            [outcome(False, True)] * 10)
+        self.assertAlmostEqual(a["policy_pass_rate"], 72 / 80)
+        self.assertAlmostEqual(b["policy_pass_rate"], 88 / 98)
+        self.assertLess(abs(a["policy_pass_rate"] - b["policy_pass_rate"]), 0.005)
+        self.assertGreater(b["overall_pass_rate"] - a["overall_pass_rate"], 0.15)
+        self.assertEqual((a["policy_pass_rate_num"], a["policy_pass_rate_den"]),
+                         (72, 80))
+        self.assertEqual((b["policy_pass_rate_num"], b["policy_pass_rate_den"]),
+                         (88, 98))
 
 
 if __name__ == "__main__":
