@@ -158,6 +158,14 @@ discretionary_coverage = |cited_by_verified ∩ discretionary_set| / 14
 pooled_coverage        = |cited_by_verified ∩ (both)|            / 19
 ```
 
+**Cited coverage** is a diagnostic beside these, and nothing else reads it:
+`cited_mandatory` and `cited_discretionary` count the distinct mandatory (/5)
+and discretionary (/14) ids cited by *any* claim, verified or not. When cited
+coverage is high and verified coverage low, the model found the evidence but
+mis-shaped the claim. When both are low, it did not find the evidence. The two
+failures call for different fixes. Cited coverage is reported per tier, with n
+and the small-n flag, like every other metric.
+
 | metric | status |
 |---|---|
 | `mandatory_coverage` | **hard requirement** — all five robust items belong in every report; a missing one is a defect, not a stylistic choice |
@@ -417,7 +425,7 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-288 tests.
+296 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.

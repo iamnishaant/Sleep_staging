@@ -3,7 +3,8 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result — 288 tests, all passing. The deterministic tier is finished and frozen. One model has
+rendering gated on a clean result, cited coverage added — 296 tests, all
+passing. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -1446,6 +1447,171 @@ only.**
 > free-tier prompts and responses to improve its products. All evidence in
 > those prompts was derived from the public Sleep-EDF Expanded dataset, so no
 > participant privacy was at stake.
+
+---
+
+## `cited_coverage`: a diagnostic in the evaluator (12 September 2026)
+
+```
+cited_mandatory     = |distinct mandatory ids cited by ANY claim|     / 5
+cited_discretionary = |distinct discretionary ids cited by ANY claim| / 14
+```
+
+- **What it counts.** Every claim counts, verified or not. An id cited twice
+  counts once. A missing output cites nothing, so it scores 0.
+- **Why it is split rather than pooled over 19.** Pooled, a high number could
+  hide that the misses were the mandatory ones. Citing all 14 discretionary
+  items and no mandatory one would read 14/19 (tested).
+- **What it separates.** When cited coverage is high and verified coverage
+  low, the model found the evidence and mis-shaped the claim. When both are
+  low, it did not find the evidence. The failures differ, and so do the
+  fixes. Until now the distinction existed only because one output had been
+  traced by hand.
+- **Where it appears:**
+  - on each `OutputResult`;
+  - in the per-recording JSON;
+  - in `stratum_metrics`, overall and per tier, with n and the small-n flag;
+  - in two table rows marked `(diag.)`, with a legend line.
+
+**It is diagnostic only.** It does not alter policy pass, oracle recovery,
+mandatory coverage, numeric fidelity, or any existing metric:
+
+- The 60-packet evaluator snapshot, with the two new keys stripped, is
+  **byte-identical** before and after the addition. Those two keys are the
+  only ones added.
+- `test_no_other_metric_reads_it` overwrites both fields on every result, and
+  every other stratum figure stays the same.
+- Cited coverage always bounds verified coverage from above. That is tested
+  over five claim-set shapes.
+
+**One existing test was made stale by the addition.** In
+`test_the_worked_example`, a `SimpleNamespace` stand-in for an output result
+lacked the new attributes, so `stratum_metrics` raised `AttributeError`. The
+stand-in now carries `cited_mandatory=None, cited_discretionary=None`, meaning
+no data. No assertion in the test changed.
+
+**Tests added: eight, taking the suite from 288 to 296.** They are in
+`tests/test_evaluate.py`, class `TestCitedCoverage`.
+
+---
+
+## EXPLORATORY, NOT A MEASUREMENT: runs A and B on SC4111E0 (12 September 2026)
+
+> One packet, one model, one seed per run, with no API quota used. Three runs
+> on one packet can direct which version of 2F gets written. They cannot
+> settle a prompt format: adopting one would need confirmation across several
+> dev packets first. Nothing here enters a selection decision.
+
+### What was run
+
+**Shared by all three runs:** Qwen2.5-1.5B-Instruct Q4_K_M, dev SC4111E0 (low
+tier), the unchanged `claims.gbnf`, and `--temp 0 --seed 0 -n 3000 -c 12288`.
+
+| run | what differs | prompt tokens | generated |
+|---|---|---|---|
+| raw | the step-5 output, raw completion (`-no-cnv`) | 1,007 | 1,076 |
+| **A** | only change: `build_prompt`'s output placed inside the model's chat template | 1,036 | 353 |
+| **B** | A plus two worked examples | 1,303 | 175 |
+
+**Run A's invocation.** In llama.cpp b10927 the chat template comes from
+`--jinja -cnv -st`, and that works alongside `--grammar-file`: the output is
+constrained JSON and the process exits after one turn.
+
+```
+llama-completion -m <qwen> --jinja -cnv -st -f prompt.txt --grammar-file report/claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt
+```
+
+- `--jinja` applies the GGUF's embedded template, which is ChatML
+  (`<|im_start|>` ... `<|im_end|>`).
+- `-cnv` puts the prompt in a user turn.
+- `-st` ends the run after that turn, without waiting for input.
+- No `-sys` was given, so the template's own default applies.
+
+**Run B's examples** come from a different dev packet, SC4081E0 (high tier).
+They are a `value` claim on `arch.total_sleep_time` (410.0) and a
+`hedged_value` on `arch.sleep_onset_latency` (28.5). Both passed full
+verification against SC4081E0, singly and together, before use. They are
+inserted between the rules and the target's evidence, under a heading saying
+they show format and claim-type choice only.
+
+**Where Run B departs from the brief, and why.** All 60 packets share one
+evidence-ID set. That had two consequences:
+
+1. The requested instruction, that "no evidence ID from the example packet may
+   appear", would have forbidden the target's own items, including the
+   mandatory `arch.total_sleep_time`. The prompt instead forbids any value or
+   `text_key` from the examples, and explains that ids recur across
+   recordings while their values differ.
+2. An ID leak check is empty by construction, because `cited_id_not_in_packet`
+   cannot fire for an example id. The leak check was run on values instead.
+   Both example values differ from the target's (433.5 and 29.5), so a copied
+   value would be caught.
+
+### Results
+
+| figure | raw | A | B |
+|---|---|---|---|
+| claims | 18 | 5 | 3 |
+| claim types | value 11, observation 6, flag 1 | value 2, observation 2, flag 1 | value 1, **hedged_value 1**, flag 1 |
+| `hedged_value` used | 0 | 0 | **1** |
+| violations, per rule | 9 unsafe_item_not_hedged, 7 text_key_dependency_missing, 1 missing_review_flag | 2 text_key_dependency_missing, 1 rem_latency_double_count | **none** |
+| claims verified | 2 / 18 | 3 / 5 | 3 / 3 |
+| `mandatory_coverage` | 2/5: TST, TIB | **3/5**: TST, TIB, night.confidence | 2/5: TST, night.confidence |
+| `cited_mandatory` | 4/5 | 4/5 | 2/5 |
+| `discretionary_coverage` | 0/14 | 0/14 | 1/14 (SOL) |
+| `cited_discretionary` | 14/14 | 8/14 | 1/14 |
+| `oracle_recovery` | 0.0 | 0.0 | 0.071 |
+| `numeric_fidelity` | 11/11 | 2/2 | 2/2 |
+| `render_report` | refused, 17 violations | refused, 3 violations | **renders** |
+
+Cited versus verified, per item. **V** = verified, **R** = cited but rejected,
+**–** = never cited.
+
+| item | raw | A | B |
+|---|---|---|---|
+| `arch.total_sleep_time` (mandatory) | V | V | V |
+| `arch.time_in_bed` (mandatory) | V | V | – |
+| `arch.sleep_efficiency` (mandatory) | R: observation, N1 key | R: observation, N1 key | – |
+| `night.confidence` (mandatory) | R: flag, N1 reason | **V**: flag, `low_night_confidence` | V |
+| `model.n1_reliability_warning` (mandatory) | – | – | – |
+| `arch.sleep_onset_latency` | R: bare value | R: in c4 | **V**: hedged |
+| `arch.waso` | R: bare value | – | – |
+| 7 more `arch.*` items | R: bare values | R: all in c4 | – |
+| 5 stage fractions | R: observation, N1 key | – | – |
+
+"c4" in Run A is one observation (`tier_is_low`) citing eight `arch.*` items
+at once. It fails rule 7, because it lacks `night.confidence`, and rule 8,
+because it cites both REM latencies.
+
+**Leakage in Run B:**
+
+- **Example-packet ids not in the target:** none. This is impossible by
+  construction, as explained above.
+- **Example values:** none. No claim carries 410.0 or 28.5.
+- **What did carry over is the examples' selection.** B's only two numeric
+  claims cite exactly the two example ids, with the target's values, and
+  nothing else numeric. Cited coverage fell to 2/5 and 1/14, both low, so B
+  did not attempt the rest of the evidence.
+
+### What this shows, for framing 2F only
+
+- **The failure moves with the prompt.**
+  - *Raw* is broad and mis-shaped: it cited 18 of 19 items and verified 2.
+  - *A* got the review flag right, satisfying rule 10 and reaching 3/5
+    mandatory. But it narrowed to 5 claims and lumped eight items into one
+    observation.
+  - *B* produced the first `hedged_value` of any run and a fully clean,
+    renderable report. But it covered only the examples' two items plus the
+    flag.
+- **No run reached 5/5.** No run ever cited
+  `model.n1_reliability_warning`.
+- **The model can do each part, but no single prompt got all of them.** It can
+  locate the evidence (raw, 18/19 cited). It can emit each correct claim shape
+  (B's hedged value, A's and B's flag). On one packet at one seed, no single
+  prompt did both at once. That says the prompt matters a great deal; it does
+  not show the prompt is sufficient.
+- **A candidate mechanism for B's narrowing, not tested:** an examples block
+  of exactly two claims may anchor the output's scope.
 
 ---
 
