@@ -5,8 +5,9 @@
 **Status: 2A-2E complete, register A pinned, local runtime verified — 271
 tests, all passing. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
-been scored as an exploratory reading, not a measurement. The reference-model
-facts are pending a key.**
+been scored as an exploratory reading, not a measurement. The reference model
+is chosen (the key is Flash-class only); its rate limits are still to be read
+from AI Studio.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -1082,20 +1083,33 @@ the contract's *policy*, not its *format*. That is a framing, not a result.
 notes. The specific model is named in **one place only**: the
 `reference model string` row below. A later change is then a one-line edit.
 
-**Status: not yet checked. No key is available in this environment.**
-`GEMINI_API_KEY` and `GOOGLE_API_KEY` are unset in the process, user and
-machine scopes. Nothing was sent to any API. The rate limits have to be read
-from AI Studio for the key's Google Cloud project, which needs the owner's
-browser session. Documentation and blogs are not a source for them.
+**Status: checked 12 September 2026, except the rate limits.** The key is in
+the repository-root `.env` as `GEMINI_API_KEY`. `.env` is git-ignored
+(`.gitignore` line 74) and has never been committed. Nothing in `report/` reads
+it.
 
 | fact | status |
 |---|---|
-| models the key reaches | pending |
-| active RPM / TPM / RPD, with the date read | pending (AI Studio, for this project) |
-| reference model string | pending: the strongest model the key reaches |
-| structured output (`responseSchema`) on that model | pending |
-| connectivity check: invocation and result | pending |
-| Flash-class only? | pending |
+| models the key reaches | `models.list` returns 55, of which 40 support `generateContent`. **Being listed does not mean the key can use it:** one of the two Pro models has a free-tier quota of zero, and the other is closed to new users (probe log below). **Flash-class only.** |
+| active RPM / TPM / RPD | **pending: to be read from AI Studio for this project.** The API's only statement about limits so far is the Pro 429: `generate_content_free_tier_requests, limit: 0, model: gemini-3.1-pro` |
+| **reference model string** | **`gemini-3.8-flash`**: the highest-numbered Flash model listed, and one that answered. The response's `modelVersion` is `gemini-3.8-flash`. It is a thinking model, using 147 thought tokens on a trivial call. |
+| structured output | **yes.** `responseMimeType: application/json` with a `responseSchema` returned `{"ok":true}`, which parses and matches the schema. This parallels GBNF, so the reference model and the local candidates are both constrained |
+| connectivity check | `python reference_check.py call <model>` sends `POST https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent` with the key in the `x-goog-api-key` header. The body is the prompt "Reply with ok set to true.", temperature 0 and a one-field boolean schema. Result: HTTP 200, `finishReason: STOP`, 7 prompt tokens, 5 output tokens |
+| Flash-class only? | **yes** |
+
+Probe log, 12 September 2026. One trivial call each, strongest first. This is
+a dated record of the calls made; it is not where the reference model is
+named.
+
+| call | HTTP | result |
+|---|---|---|
+| `gemini-3.1-pro-preview` | 429 | `RESOURCE_EXHAUSTED`: free-tier requests `limit: 0` for gemini-3.1-pro |
+| `gemini-2.5-pro` | 404 | "no longer available to new users" |
+| `gemini-3.8-flash` | 200 | `{"ok":true}`, schema-valid |
+
+The `-latest` aliases were not considered. `gemini-pro-latest` reports itself
+only as "Latest release of Gemini Pro", and a reference whose identity can
+change under the same string cannot anchor a comparison.
 
 **Prepared, outside the repository.** A standard-library script,
 `reference_check.py`:
@@ -1109,7 +1123,8 @@ browser session. Documentation and blogs are not a source for them.
 **Framing, decided before any number exists.** If the key reaches only
 Flash-class models, the comparison is "gap to a strong hosted model", not "gap
 to a frontier model". A local 3B landing close to it would then be a finding,
-not a disappointment.
+not a disappointment. **This framing now applies: the key is Flash-class
+only.**
 
 **For the paper's methods section:**
 
