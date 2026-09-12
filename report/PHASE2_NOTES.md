@@ -2,10 +2,11 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A-2E complete, register A pinned, local runtime verified — 270
+**Status: 2A-2E complete, register A pinned, local runtime verified — 271
 tests, all passing. The deterministic tier is finished and frozen. One model has
-run, once, to confirm the grammar holds mechanically; no model has been
-evaluated.**
+run, once, to confirm the grammar holds mechanically. That single output has
+been scored as an exploratory reading, not a measurement. The reference-model
+facts are pending a key.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -798,6 +799,19 @@ Two things. Both are in the table, and neither is hidden.
    "COHORT, NOT THIS NIGHT. The verdict was evaluated once...". The renderer
    reads the `COHORT` token and paraphrases it, and renders no sentence without
    it. A structured scope field would make this a read rather than a parse.
+   **Pinned since.** `test_every_scope_still_begins_with_the_cohort_token`
+   asserts the prefix on all 60 packets. If the wording changes, a test breaks
+   instead of a sentence silently disappearing.
+
+### Future work: two structured packet fields
+
+Both fixes belong in the packet builder, and each would rebuild the test
+packets. They are deferred while the deterministic tier is frozen, not dropped.
+
+| field | today | the fix | until then |
+|---|---|---|---|
+| `error_unit` | `count_or_ratio` for every item not in minutes | the unit the error is actually in: `fraction`, `per hour`, `count`, `ratio` | `_ERROR_DISPLAY` stays as it is. It is declared, exhaustive over the 60 packets, and raises `UndeclaredUnit` rather than guessing |
+| `attribution_quality.scope` | prose beginning "COHORT, NOT THIS NIGHT..." | a structured field, e.g. `scope_level: "cohort"`, with the prose kept beside it | the prefix pin above |
 
 ### Undeclared facts found and removed
 
@@ -931,6 +945,179 @@ it.
 | Phi-3.5-mini-instruct | `bartowski/Phi-3.5-mini-instruct-GGUF` | 2,282.4 | `e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5` |
 
 All five are in `C:\Users\shahn\models\`, outside the repository.
+
+---
+
+## The grammar/verifier boundary is deliberate (12 September 2026)
+
+The runtime check showed two behaviours. **Neither is to be fixed.**
+
+1. The grammar permits `population_association`, although no packet carries
+   associative evidence. Every such claim is therefore guaranteed to fail
+   rule 12.
+2. The grammar permits `text_key` / `cites` pairings that do not agree. Rule 7
+   catches them.
+
+Making the grammar packet-conditional, for example by dropping
+`population_association` when no item is associative, or constraining which
+ids each key may cite, would stop a measurable model failure from being
+measured. A model that emits a claim it had every means to know was
+unsupported is showing a real behaviour: the prompt says the type is reserved,
+the verifier catches the claim, and the per-rule count shows it. Constraining
+it away would raise policy pass rates for reasons that have nothing to do with
+the model.
+
+The line, stated once:
+
+- **The grammar enforces syntax:** claim types, field sets and order, enums,
+  and the per-type id vocabulary. It is the same grammar for every packet.
+- **The verifier enforces evidence policy:** anything that needs the packet,
+  or agreement between two fields.
+- **The line between them is where model behaviour becomes visible.** Whatever
+  the grammar makes ungeneratable, the evaluator never sees; whatever is left
+  to the verifier gets counted.
+
+`claims.gbnf` stays packet-independent and generated from the schema
+constants. Neither this step nor this decision changes it.
+
+---
+
+## EXPLORATORY, NOT A MEASUREMENT: the step-5 output, scored (12 September 2026)
+
+> **One packet, one model, one seed.** This is not a measurement, and it must
+> not enter any selection decision: not model choice, not prompt design, not
+> K. It may inform only the *shape* of small-model failure under this contract,
+> and through that, how 2F is framed. SC4111E0 is a dev packet, so the
+> test-set access log does not apply.
+
+**Input.** The step-5 output as saved to disk, not regenerated:
+Qwen2.5-1.5B-Instruct Q4_K_M on dev SC4111E0-PSG (low tier), with
+`claims.gbnf`, temp 0, seed 0 and raw completion. The only change was removing
+llama.cpp's `[end of text]` display marker and the surrounding whitespace.
+
+**Scoring.** The output went through `verify_report`, then `evaluate`. The
+manifest was one row, copied from `phase2_dev_manifest.json`, so no other
+night counts as missing.
+
+| metric | result |
+|---|---|
+| claims | 18 |
+| Layer 1 | pass, 0 violations |
+| **Layer 2** | **fail: 16 violations**, one on each of 16 claims |
+| overall pass | no |
+| `mandatory_coverage` | **2/5** (0.4). Covered: `arch.total_sleep_time`, `arch.time_in_bed`. Missing: `arch.sleep_efficiency`, `model.n1_reliability_warning`, `night.confidence` |
+| `discretionary_coverage` | 0/14 |
+| `oracle_recovery` | 0.0; `unrecovered_available` 14 |
+| `numeric_fidelity` | **11/11 exact** |
+| `unsupported_claim_rate` | 7/18 = 0.389 |
+
+**Per rule:**
+
+| count | code | where |
+|---|---|---|
+| 9 | `L2.unsafe_item_not_hedged` | Nine `safe_to_assert: false` items emitted as bare `value` claims: sleep onset latency, WASO, REM latency, sustained REM latency, REM periods, stage transitions, transition rate, light-to-deep ratio, and wake interruptions per hour |
+| 7 | `L2.text_key_dependency_missing` (unsupported) | Every key-bearing claim uses a key whose required item it does not cite. Six observations use `n1_reliability_is_low` on `arch.sleep_efficiency` and on each of the five stage fractions. The one review flag cites `night.confidence` with `reason_key: n1_low_reliability` |
+
+**What would render.** Only c1 and c2 verify, so the rendered report is just
+this:
+
+```
+Total sleep time: 433.5 minutes.
+Time in bed: 464 minutes.
+
+Explainability check (gate 3a): PASS, 3 of 5 pre-registered predictions met, across 31 validation recordings. It describes the model across that cohort, not this recording.
+```
+
+It has no REVIEW REQUIRED banner, although this is a low-confidence night.
+That exposes the next finding.
+
+### Found, not fixed: an invalid flag satisfies rule 10
+
+`rule_low_night_needs_flag` is satisfied by **any** `review_flag` that cites
+`night.confidence`, whether or not that flag itself verifies. Here, c18 cites
+`night.confidence` with the wrong reason key. It fails rule 7 and is dropped
+from the enriched set, yet its presence still suppresses
+`L2.missing_review_flag`. A controlled check on the same packet:
+
+| claims | codes | banner |
+|---|---|---|
+| a TST value only | `L2.missing_review_flag` | no |
+| + a flag with `reason_key: n1_low_reliability` | `L2.text_key_dependency_missing` | no |
+| + a flag with `reason_key: low_night_confidence` | none | yes |
+
+The report still fails, so overall pass is unaffected. Two things are affected:
+
+1. **The per-rule count misattributes the failure.** It shows zero low nights
+   left unflagged and puts the failure under rule 7. That is exactly the shape
+   this section exists to show, and rule 10 is the rule the canonical register
+   was chosen to protect.
+2. **Nothing gates rendering on a clean report.** If a failing report were
+   rendered, a low night would reach its reader without the banner, and no
+   rule-10 violation would say so.
+
+The tier is frozen, so nothing was changed. The candidate fix is for rule 10 to
+count only flags that verify, or only flags with `reason_key:
+low_night_confidence`. Either is a rule change and needs a decision before 2F,
+as does whether a report with any violation renders at all.
+
+### The shape, for framing 2F only
+
+- **Syntax is not the bottleneck.** The grammar made Layer 1 free, and every
+  number was transcribed exactly (11/11).
+- **The failures are policy failures:**
+  - choosing the claim type by hedging status: 9 of 11 numeric claims needed
+    `hedged_value`;
+  - matching a key to its evidence: 7 of 7 key-bearing claims got it wrong.
+- **Coverage collapses as a consequence.** Two verified claims leave
+  mandatory coverage at 2/5 and discretionary coverage at 0/14.
+
+So on this single output, 2F's question reads as whether a small model follows
+the contract's *policy*, not its *format*. That is a framing, not a result.
+
+---
+
+## Reference model for 2F - setup (12 September 2026)
+
+**Terminology.** "Reference model" is the term throughout the code and these
+notes. The specific model is named in **one place only**: the
+`reference model string` row below. A later change is then a one-line edit.
+
+**Status: not yet checked. No key is available in this environment.**
+`GEMINI_API_KEY` and `GOOGLE_API_KEY` are unset in the process, user and
+machine scopes. Nothing was sent to any API. The rate limits have to be read
+from AI Studio for the key's Google Cloud project, which needs the owner's
+browser session. Documentation and blogs are not a source for them.
+
+| fact | status |
+|---|---|
+| models the key reaches | pending |
+| active RPM / TPM / RPD, with the date read | pending (AI Studio, for this project) |
+| reference model string | pending: the strongest model the key reaches |
+| structured output (`responseSchema`) on that model | pending |
+| connectivity check: invocation and result | pending |
+| Flash-class only? | pending |
+
+**Prepared, outside the repository.** A standard-library script,
+`reference_check.py`:
+
+- `list` enumerates the models the key can reach, with no generation;
+- `call MODEL` makes one trivial call carrying a one-field `responseSchema`,
+  which checks connectivity and structured output in the same call;
+- the key is read from the environment and sent as the `x-goog-api-key`
+  header, never in a URL.
+
+**Framing, decided before any number exists.** If the key reaches only
+Flash-class models, the comparison is "gap to a strong hosted model", not "gap
+to a frontier model". A local 3B landing close to it would then be a finding,
+not a disappointment.
+
+**For the paper's methods section:**
+
+> Reference claim sets were generated by a hosted model accessed through
+> Google's free-tier Gemini API, whose terms permit the provider to use
+> free-tier prompts and responses to improve its products. All evidence in
+> those prompts was derived from the public Sleep-EDF Expanded dataset, so no
+> participant privacy was at stake.
 
 ---
 
