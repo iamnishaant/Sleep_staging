@@ -26,6 +26,13 @@ with no claims. A model that emits only observations has not transcribed
 perfectly; it has not transcribed. A null leaves the output out of the mean; a
 zero or a one would misreport it.
 
+EVERY VALIDITY RATE CARRIES ITS DENOMINATOR. policy_pass_rate is computed over
+schema-valid outputs only, so its denominator varies by model: a model that
+fails Layer 1 constantly hands Layer 2 a smaller, easier population and can
+look strong on it. 72/80 = 90.0% and 88/98 = 89.8% are near-identical policy
+rates from models 16 points apart overall. The metric is right; showing it
+without its (num/den) is what would mislead, so it is never shown without one.
+
 CO-OCCURRENCE IS DATA. One output can violate several rules, so violation counts
 legitimately exceed failed-output counts. Every violation is kept. Recording
 only the first per output would make per-rule rates sum neatly to the failure
@@ -78,9 +85,16 @@ VALUE_TYPES = ("value", "hedged_value")
 #     supported; it is stated at the wrong confidence.
 #   - PRESENTATION / COMBINATION: stage_tier_unavailable, rem_latency_double_
 #     count, rem_error_differenced, missing_review_flag, bad_subject_for_type,
-#     tier_item_not_valuable. rem_error_differenced asserts a derived quantity,
-#     but it always co-fires with uncited_quantity, so leaving it out loses
-#     nothing and keeps the set to one idea.
+#     tier_item_not_valuable.
+#
+# rem_error_differenced asserts a derived quantity, so its exclusion needs
+# justifying: it co-fires with uncited_quantity on every output, which is
+# TESTED in test_evaluate.TestRemErrorCoupling rather than assumed. The two
+# could only decouple if a REM latency equalled the difference of the two
+# errors. Latencies sit on the 0.5-minute epoch grid; the difference (4.8403)
+# does not, so with this pipeline it cannot happen - and that property is
+# itself a test, so if packets ever change enough to break it, the test fails
+# and this exclusion has to be revisited rather than silently going wrong.
 # ---------------------------------------------------------------------------
 UNSUPPORTED_CODES = frozenset({
     str(V.UNKNOWN_EVIDENCE_ID),
@@ -217,19 +231,29 @@ def stratum_metrics(results) -> dict:
     ft = sum(x.fidelity_total for x in results)
     uc = sum(x.unsupported_claims for x in results)
     nc = sum(x.n_claims for x in results)
+    n_sv = len(schema_valid)
+    n_pass = sum(1 for x in results if x.passed)
+    n_pol = sum(1 for x in schema_valid if x.passed)
     return {
         "n": n,
         "small_n": n < SMALL_N,
         "n_missing": n - len(present),
-        "n_passed": sum(1 for x in results if x.passed),
+        "n_passed": n_pass,
         "n_failed": sum(1 for x in results if x.failed),
-        "n_schema_valid": len(schema_valid),
+        "n_schema_valid": n_sv,
         "total_violations": sum(len(x.codes) for x in results),
-        # validity
-        "schema_validity_rate": _div(len(schema_valid), n),
-        "policy_pass_rate": _div(sum(1 for x in schema_valid if x.passed),
-                                 len(schema_valid)),
-        "overall_pass_rate": _div(sum(1 for x in results if x.passed), n),
+        # validity - each rate with its numerator and denominator, always.
+        # policy_pass_rate_den is the schema-valid count and SHRINKS as Layer 1
+        # failures grow; a rate emitted without it hides exactly that.
+        "schema_validity_rate": _div(n_sv, n),
+        "schema_validity_rate_num": n_sv,
+        "schema_validity_rate_den": n,
+        "overall_pass_rate": _div(n_pass, n),
+        "overall_pass_rate_num": n_pass,
+        "overall_pass_rate_den": n,
+        "policy_pass_rate": _div(n_pol, n_sv),
+        "policy_pass_rate_num": n_pol,
+        "policy_pass_rate_den": n_sv,
         # coverage
         "mandatory_coverage": _mean(x.coverage.mandatory for x in results),
         "n_mandatory_full": sum(1 for x in results
@@ -280,10 +304,14 @@ class EvaluationReport:
         return path
 
     # ------------------------------------------------------------------ table
+    # Schema validity and overall pass print ABOVE policy pass. The policy rate
+    # is conditional on the first, and read on its own it flatters a model that
+    # fails Layer 1 often; with the unconditional rates above it and its own
+    # (num/den) beside it, the shrinkage is visible at a glance.
     ROWS = (
         ("schema_validity_rate", "schema validity"),
-        ("policy_pass_rate", "policy pass (of schema-valid)"),
         ("overall_pass_rate", "overall pass"),
+        ("policy_pass_rate", "policy pass (of schema-valid)"),
         ("mandatory_coverage", "mandatory coverage"),
         ("n_mandatory_full", "  packets at 5/5"),
         ("discretionary_coverage", "discretionary coverage (/14)"),
@@ -295,41 +323,53 @@ class EvaluationReport:
         ("n_failed", "failed outputs"),
         ("n_missing", "missing outputs"),
     )
+    FRACTION_ROWS = ("schema_validity_rate", "overall_pass_rate",
+                     "policy_pass_rate")
+    LABEL_W = 30
+    COL_W = 26
 
     def _cell(self, stratum: str, key: str) -> str:
         m = self.strata[stratum]
         v = m[key]
+        flag = " !" if m["small_n"] else "  "
+        if key in self.FRACTION_ROWS:
+            pct = "     -" if v is None else f"{v * 100:5.1f}%"
+            frac = f"({m[key + '_num']}/{m[key + '_den']})"
+            return f"{pct} {frac:>9} n={m['n']:<3}{flag}"
         if v is None:
-            val = "   -  "
+            val = "     -"
         elif isinstance(v, float):
             val = f"{v:6.3f}"
         else:
             val = f"{v:6d}"
-        flag = " !" if m["small_n"] else "  "
         return f"{val} n={m['n']:<3}{flag}"
 
     def format_table(self) -> str:
-        w = 30
-        head = f"{'metric':<{w}}" + "".join(f"{s:>16}" for s in STRATA)
+        w, c = self.LABEL_W, self.COL_W
+        head = f"{'metric':<{w}}" + "".join(f"{s:>{c}}" for s in STRATA)
+        rule = "-" * len(head)
         lines = [f"evaluation of {len(self.results)} outputs "
-                 f"({Path(self.manifest_path).name})", "", head, "-" * len(head)]
+                 f"({Path(self.manifest_path).name})", "", head, rule]
         for key, label in self.ROWS:
             lines.append(f"{label:<{w}}" +
-                         "".join(f"{self._cell(s, key):>16}" for s in STRATA))
+                         "".join(f"{self._cell(s, key):>{c}}" for s in STRATA))
         lines += ["", "violations by rule (count; every co-occurring violation "
-                      "is kept)", f"{'code':<{w}}" +
-                  "".join(f"{s:>16}" for s in STRATA),
-                  "-" * len(head)]
+                      "is kept)",
+                  f"{'code':<{w}}" + "".join(f"{s:>{c}}" for s in STRATA),
+                  rule]
         for code in ALL_CODES:
             row = f"{code:<{w}}"
             for s in STRATA:
                 m = self.strata[s]
-                c = m["per_rule"][code]["count"]
+                cnt = m["per_rule"][code]["count"]
                 flag = " !" if m["small_n"] else "  "
-                row += f"{c:>6d} n={m['n']:<3}{flag}".rjust(16)
+                row += f"{cnt:>6d} n={m['n']:<3}{flag}".rjust(c)
             lines.append(row)
         lines += [
             "",
+            "(n/d) policy pass counts only schema-valid outputs, so its denominator "
+            "shrinks as Layer 1 failures grow. Read its (num/den) against n, "
+            "and against schema validity above it.",
             f"!  stratum has fewer than {SMALL_N} packets - too few to quote "
             f"without this warning attached.",
             "n  counts PACKETS, the unit of independence. Claim-level metrics "
