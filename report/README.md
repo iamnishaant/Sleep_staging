@@ -423,9 +423,10 @@ python test_coverage.py           # denominators 5/14 on all 60, empty-set
 python test_oracle.py             # witness verifies on all 60, no ceilings
 python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
+python test_reference_schema.py   # 2F responseSchema: generated, agrees with the grammar
 ```
 
-296 tests.
+311 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.

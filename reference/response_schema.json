@@ -1,0 +1,348 @@
+{
+  "type": "ARRAY",
+  "items": {
+    "anyOf": [
+      {
+        "type": "OBJECT",
+        "properties": {
+          "claim_id": {
+            "type": "STRING",
+            "pattern": "^c[0-9]+$"
+          },
+          "claim_type": {
+            "type": "STRING",
+            "enum": [
+              "value"
+            ]
+          },
+          "cites": {
+            "type": "ARRAY",
+            "items": {
+              "type": "STRING",
+              "enum": [
+                "arch.total_sleep_time",
+                "arch.time_in_bed",
+                "arch.sleep_efficiency",
+                "arch.sleep_onset_latency",
+                "arch.waso",
+                "arch.rem_latency",
+                "arch.rem_latency_sustained",
+                "arch.rem_periods",
+                "arch.stage_transitions",
+                "arch.transition_rate",
+                "arch.light_deep_ratio",
+                "arch.wake_interruptions_per_hour",
+                "stage.W.fraction",
+                "stage.N1.fraction",
+                "stage.N2.fraction",
+                "stage.N3.fraction",
+                "stage.REM.fraction"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "subject": {
+            "type": "STRING",
+            "enum": [
+              "this_recording"
+            ]
+          },
+          "value": {
+            "type": "NUMBER"
+          },
+          "unit": {
+            "type": "STRING",
+            "enum": [
+              "minutes",
+              "fraction",
+              "count",
+              "per hour",
+              "ratio"
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "value",
+          "unit"
+        ],
+        "propertyOrdering": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "value",
+          "unit"
+        ]
+      },
+      {
+        "type": "OBJECT",
+        "properties": {
+          "claim_id": {
+            "type": "STRING",
+            "pattern": "^c[0-9]+$"
+          },
+          "claim_type": {
+            "type": "STRING",
+            "enum": [
+              "hedged_value"
+            ]
+          },
+          "cites": {
+            "type": "ARRAY",
+            "items": {
+              "type": "STRING",
+              "enum": [
+                "arch.total_sleep_time",
+                "arch.time_in_bed",
+                "arch.sleep_efficiency",
+                "arch.sleep_onset_latency",
+                "arch.waso",
+                "arch.rem_latency",
+                "arch.rem_latency_sustained",
+                "arch.rem_periods",
+                "arch.stage_transitions",
+                "arch.transition_rate",
+                "arch.light_deep_ratio",
+                "arch.wake_interruptions_per_hour",
+                "stage.W.fraction",
+                "stage.N1.fraction",
+                "stage.N2.fraction",
+                "stage.N3.fraction",
+                "stage.REM.fraction"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "subject": {
+            "type": "STRING",
+            "enum": [
+              "this_recording"
+            ]
+          },
+          "value": {
+            "type": "NUMBER"
+          },
+          "unit": {
+            "type": "STRING",
+            "enum": [
+              "minutes",
+              "fraction",
+              "count",
+              "per hour",
+              "ratio"
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "value",
+          "unit"
+        ],
+        "propertyOrdering": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "value",
+          "unit"
+        ]
+      },
+      {
+        "type": "OBJECT",
+        "properties": {
+          "claim_id": {
+            "type": "STRING",
+            "pattern": "^c[0-9]+$"
+          },
+          "claim_type": {
+            "type": "STRING",
+            "enum": [
+              "observation"
+            ]
+          },
+          "cites": {
+            "type": "ARRAY",
+            "items": {
+              "type": "STRING",
+              "enum": [
+                "arch.total_sleep_time",
+                "arch.time_in_bed",
+                "arch.sleep_efficiency",
+                "arch.sleep_onset_latency",
+                "arch.waso",
+                "arch.rem_latency",
+                "arch.rem_latency_sustained",
+                "arch.rem_periods",
+                "arch.stage_transitions",
+                "arch.transition_rate",
+                "arch.light_deep_ratio",
+                "arch.wake_interruptions_per_hour",
+                "stage.W.fraction",
+                "stage.N1.fraction",
+                "stage.N2.fraction",
+                "stage.N3.fraction",
+                "stage.REM.fraction",
+                "night.confidence",
+                "model.n1_reliability_warning"
+              ]
+            },
+            "minItems": 1
+          },
+          "subject": {
+            "type": "STRING",
+            "enum": [
+              "this_recording"
+            ]
+          },
+          "text_key": {
+            "type": "STRING",
+            "enum": [
+              "n1_reliability_is_low",
+              "tier_is_high",
+              "tier_is_low",
+              "tier_is_medium"
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "text_key"
+        ],
+        "propertyOrdering": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "text_key"
+        ]
+      },
+      {
+        "type": "OBJECT",
+        "properties": {
+          "claim_id": {
+            "type": "STRING",
+            "pattern": "^c[0-9]+$"
+          },
+          "claim_type": {
+            "type": "STRING",
+            "enum": [
+              "review_flag"
+            ]
+          },
+          "cites": {
+            "type": "ARRAY",
+            "items": {
+              "type": "STRING",
+              "enum": [
+                "night.confidence",
+                "model.n1_reliability_warning"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "subject": {
+            "type": "STRING",
+            "enum": [
+              "this_recording"
+            ]
+          },
+          "reason_key": {
+            "type": "STRING",
+            "enum": [
+              "low_night_confidence",
+              "n1_low_reliability"
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "reason_key"
+        ],
+        "propertyOrdering": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject",
+          "reason_key"
+        ]
+      },
+      {
+        "type": "OBJECT",
+        "properties": {
+          "claim_id": {
+            "type": "STRING",
+            "pattern": "^c[0-9]+$"
+          },
+          "claim_type": {
+            "type": "STRING",
+            "enum": [
+              "population_association"
+            ]
+          },
+          "cites": {
+            "type": "ARRAY",
+            "items": {
+              "type": "STRING",
+              "enum": [
+                "arch.total_sleep_time",
+                "arch.time_in_bed",
+                "arch.sleep_efficiency",
+                "arch.sleep_onset_latency",
+                "arch.waso",
+                "arch.rem_latency",
+                "arch.rem_latency_sustained",
+                "arch.rem_periods",
+                "arch.stage_transitions",
+                "arch.transition_rate",
+                "arch.light_deep_ratio",
+                "arch.wake_interruptions_per_hour",
+                "stage.W.fraction",
+                "stage.N1.fraction",
+                "stage.N2.fraction",
+                "stage.N3.fraction",
+                "stage.REM.fraction",
+                "night.confidence",
+                "model.n1_reliability_warning"
+              ]
+            },
+            "minItems": 1
+          },
+          "subject": {
+            "type": "STRING",
+            "enum": [
+              "population"
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject"
+        ],
+        "propertyOrdering": [
+          "claim_id",
+          "claim_type",
+          "cites",
+          "subject"
+        ]
+      }
+    ]
+  }
+}

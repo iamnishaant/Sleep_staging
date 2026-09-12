@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added — 296 tests, all
+rendering gated on a clean result, cited coverage added, 2F preflight done — 311 tests, all
 passing. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
@@ -1772,6 +1772,186 @@ This bears on the gate. `render_report`'s condition is zero violations, as
 specified, so a B-shaped output renders. Completeness is measured by the
 evaluator's coverage; it is not enforced at render time. This is recorded, not
 changed.
+
+---
+
+## 2F Item 0: structured-output preflight (13 September 2026)
+
+**This is a gate. No request carrying packet content has been sent.**
+Everything below either ran locally or sent a synthetic prompt: a packet built
+from the schema's own vocabulary with invented values. None of its 19 evidence
+lines matches a line from any real packet.
+
+### 0a: the schema, generated rather than written by hand
+
+`reference/schema.py` builds the reference model's `responseSchema` from the
+same constants as `claims.gbnf`:
+
+- from `claim_schema.py`: `CLAIM_TYPES` (field sets, `cites` arity, subject),
+  `BASE_FIELDS` (field order), `CLAIM_ID_RE`, `TEXT_KEYS` and `REASON_KEYS`;
+- from `gbnf.py`: `NUMERIC_IDS`, `TIER_IDS` and `NUMERIC_UNITS`.
+
+**Which ids each claim type may cite** is the one mapping the constants do not
+carry, so it lives in `CITE_SCOPE`, a five-row table mirroring the grammar's
+three cite rules: numeric ids, tier ids, or any id. It is guarded two ways:
+
+- it fails loudly if a claim type is added without a scope;
+- it is checked against the grammar for all 95 (type, id) pairs.
+
+The committed `reference/response_schema.json` is asserted to be
+byte-identical to the generator's output.
+
+**Its shape.** A top-level `ARRAY` whose items are `anyOf` five `OBJECT`
+branches, one per claim type. Each branch has:
+
+- `claim_type` as a one-value enum;
+- its own `properties`, all of them `required`;
+- a `propertyOrdering` in the grammar's field order.
+
+**Nothing frozen was modified.** `claim_schema.py`, `claims.gbnf`, the
+verifier, the evaluator and the packet format are untouched. The reference tier
+lives in a new top-level `reference/` package, where the model string is named
+in one constant (`reference/config.py`), and a test fails if anything under
+`report/` imports it.
+
+### 0b: the constraint mapping
+
+| constraint | `claims.gbnf` (local candidates) | `responseSchema` (reference model) | bucket |
+|---|---|---|---|
+| top-level array | `root ::= "[" ... "]"`, empty allowed | `type: ARRAY`, no `minItems` | **matches** |
+| allowed claim types | a union of 5 per-type productions | `anyOf` of 5 branches, each with a one-value `claim_type` enum | **matches** |
+| per-type field set (presence) | each production's fixed field sequence | each branch's `properties` | **matches** |
+| required vs optional | every field required | every field in `required` | **matches** |
+| field order | fixed by the production | `propertyOrdering` | **matches** as generation order; no layer treats order as meaningful |
+| `claim_id` syntax | `"c" digits` | `pattern: ^c[0-9]+$` | **matches** as declared, and accepted by the API; enforcement during decoding is the provider's claim, not verified here |
+| `cites` cardinality per type | exactly 1 for value, hedged_value and review_flag; 1 or more for observation and population_association | `minItems` / `maxItems` from `cites_min` / `cites_max` | **matches** |
+| `cites` vocabulary per type | 17 numeric / 2 tier / all 19 ids | per-branch `items.enum` from the same tuples | **matches** |
+| `text_key` enum | 4 alternatives | `enum` of the same 4 | **matches** |
+| `reason_key` enum | 2 alternatives | `enum` of the same 2 | **matches** |
+| `subject` per type | the literal `this_recording` or `population` | a one-value `enum` | **matches** |
+| `unit` enum | the 5 numeric units | `enum` of the same 5 | **matches** |
+| `value` type | a number, with no exponent | `NUMBER`, exponent allowed | **weaker, harmless**: the same float after parsing |
+| type-specific field exclusion (a `value` claim with no `text_key`) | ungeneratable: nothing outside the production can be emitted | **not expressible.** The dialect cannot say "no other properties". That the decoder emits only declared properties is provider behaviour, not a declared constraint | **weaker**: Layer 1's unknown-field check enforces it |
+| `claim_id` uniqueness | not expressible | not expressible | **neither**: Layer 1 |
+| a cited id is in *this* packet | – | – | **neither**: Layer 2, rule 1 |
+| value equals the packet's value | – | – | **neither**: rule 2 |
+| unit matches the cited item | – | – | **neither**: rule 3 |
+| safe/unsafe decides value vs hedged_value | – | – | **neither**: rules 4 and 5 |
+| a key's evidence dependency and predicate | – | – | **neither**: rule 7 |
+| both REM latencies in one claim | – | – | **neither**: rule 8 |
+| rules 6, 9, 10, 11 and 12 | – | – | **neither**: Layer 2 |
+
+Rule 13 (subject matches type) and "no value claim on a tier item" are
+enforced by both mechanisms and re-checked by the verifier anyway. No Layer 2
+policy was put into the schema to close a gap: a `value` claim may cite any of
+the 17 numeric ids, unsafe ones included, exactly as the grammar allows
+(tested). The local GBNF was not weakened to match.
+
+> The local candidates generated under GBNF constraints derived from the frozen
+> claim grammar, while the reference model used the provider's structured-output
+> schema. Where that mechanism could not express equivalent production-level
+> constraints, semantic equivalence was enforced downstream by the common
+> deterministic verifier.
+
+### 0d: local validation, zero quota
+
+`tests/test_reference_schema.py` holds 15 tests:
+
+- the committed schema equals the generator's output;
+- every constraint traces to a schema constant;
+- no Layer 2 policy is encoded;
+- `report/` never imports `reference/`;
+- grammar and schema agree on all 95 (type, id) pairs and on every unit and
+  key; on cites cardinality (including empty cites); on the closed-world
+  rejections (unknown type, uncitable object, wrong subject, bad `claim_id`,
+  string value, missing field); and on the empty array;
+- each of the four documented asymmetries is asserted together with the check
+  that catches it;
+- every oracle witness on all 60 packets validates against the schema.
+
+**The API accepted the full schema**, including `anyOf`, `pattern`,
+`propertyOrdering` and `minItems`/`maxItems`: HTTP 200 on every completed
+call. All 39 claims in the two complete responses conformed to it.
+
+### 0c: thinking tokens
+
+Three completed calls, all on the same synthetic prompt of 1,126 tokens (by
+the provider's count), with `temperature` 0, `seed` 0 and `maxOutputTokens`
+8,192:
+
+| `thinkingConfig` | HTTP (attempt) | thinking tokens | output tokens | total | finish | output |
+|---|---|---:|---:|---:|---|---|
+| unset (the model's default) | 200 (after one 503) | **7,860** | 318 | 9,304 | **MAX_TOKENS** | truncated. The 5 claims before the cut were well-shaped; the JSON as a whole did not parse |
+| `thinkingBudget: 0` | 200 (attempt 3) | none reported | 1,457 | 2,583 | STOP | 20 claims; schema-valid; Layer 1 clean |
+| `thinkingBudget: 512` | 200 (attempt 4) | none reported | 1,387 | 2,513 | STOP | 19 claims; schema-valid; Layer 1 clean |
+
+**1. Can thinking be disabled or budgeted?**
+
+- **Disabled: yes.** `thinkingBudget: 0` is accepted, and no thinking tokens
+  were used.
+- **Budgeted: accepted, and respected.** Under a 512-token budget, thinking
+  stayed within it, at zero. One call cannot tell whether a small budget acts
+  as a ceiling the model chose not to reach or suppresses thinking outright.
+- `thinkingLevel` was not tried, to save quota.
+
+**2. Does structured output work with thinking on, off, or both?**
+
+- **Off: yes.** Both budgeted calls produced complete, schema-valid,
+  Layer-1-clean output.
+- **On (the default): the structure held up to the cut.** But thinking
+  consumed 7,860 of the 8,192 `maxOutputTokens`, which truncated the answer.
+  **Thinking tokens count against `maxOutputTokens`.**
+
+**3. What does thinking cost at realistic length?**
+
+- At the default, about 7.9K thinking tokens per request: roughly 9.3K tokens
+  in total, 3.6 times the cost without thinking.
+- Latency was about 24 s, against 5–6 s with thinking off.
+- At 5 RPM that is about 47K TPM, far under the 250K limit. **TPM does not
+  bind; RPD does.**
+
+**Availability.** 10 of the 13 attempts returned HTTP 503 UNAVAILABLE ("high
+demand") over about 15 minutes, and the retry client absorbed all of them. It
+is not known whether 503s count against the daily request quota. The calls ran
+around 20:00 UTC, which is still 12 September on Pacific time, the day the
+quota is counted on.
+
+### What Item 2 needs decided first
+
+These decisions are not taken here.
+
+- **Thinking on or off.** The local candidates do not think: Qwen2.5 has no
+  reasoning mode. Thinking *off* makes the reference model decode the way the
+  candidates do. Thinking *on* measures the reference model at its default
+  capability, which is arguably what "can a strong hosted model satisfy the
+  contract" asks. Either is defensible, but it has to be fixed and recorded
+  before the first packet is sent.
+- **If thinking is on, `maxOutputTokens` must rise well above 8,192** (the
+  model allows 65,536). Otherwise responses risk the default call's
+  truncation. A truncated response is an unusable response, and under the
+  retry policy it is not retried.
+- **Temperature.** The preflight used 0, with seed 0, to mirror the local
+  runs. Google's Gemini 3 guide recommends leaving temperature at its default
+  of 1.0, warning that lower values can degrade output; whether that applies
+  to this model is unverified.
+
+### Does the asymmetry materially affect the comparison?
+
+**No, for the policy and coverage comparison.** The two weaker constraints,
+field exclusion and number format, can only produce one of two things:
+
+- an output that Layer 1 rejects (an undeclared field), or
+- an output that parses to the same value (an exponent).
+
+So the asymmetry can lower the reference model's schema-validity rate. It
+cannot raise any of its policy or coverage figures, and so it cannot flatter
+the reference model. If the provider did not enforce `pattern` or `anyOf`
+during decoding, the effect would run the same way: Layer 1 catches a bad
+`claim_id` or a malformed branch.
+
+Any effect would therefore show up in one direction only, in schema validity,
+which is reported separately with its denominator. In the synthetic responses,
+no undeclared field appeared.
 
 ---
 
