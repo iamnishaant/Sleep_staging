@@ -2,8 +2,8 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed —
-278 tests, all passing. The deterministic tier is finished and frozen. One model has
+**Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
+rendering gated on a clean result — 288 tests, all passing. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -1063,7 +1063,8 @@ as does whether a report with any violation renders at all.
 
 **Fixed the same day** as a documented correctness fix: rule 10 now reads the
 claims that survive every other check. See *Rule 10 read the wrong claim set*
-below. Whether a report with any violation renders at all is still open.
+below. Whether a report with any violation renders at all was closed the same
+day: it does not (see *Rendering is gated on a clean verification result*).
 
 ### The shape, for framing 2F only
 
@@ -1162,6 +1163,119 @@ they test the fix rather than merely agreeing with it.
 The last test couples the rule to the thing it protects. The rule and the
 renderer read different code, so this test is what stops them drifting apart
 again.
+
+---
+
+## Rendering is gated on a clean verification result (12 September 2026)
+
+This is a gate-only change inside the frozen tier. Of the tier's modules, only
+`report/render.py` changed. No rule, schema, coverage definition, oracle,
+evaluator, grammar, packet, wording, ordering, whitespace or template changed.
+
+**The rule.** A report renders only from a verification result with exactly
+zero violations: `len(violations) == 0`. That does not mean schema-valid,
+policy-pass, "some claims survived", or a coverage threshold. Anything else
+raises `RenderRefused`, which carries the complete violation list in the
+verifier's order. Failing claims are never filtered out so that the survivors
+can be rendered.
+
+**Why.** Mandatory coverage is a property of the claim set, not of individual
+claims. Rendering a subset produces an apparently authoritative report that
+silently omits facts the contract requires. This is the failure the rule-10 fix
+closed, one level up: rule 10 stopped an invalid flag from hiding a missing
+banner, and the gate stops a failing set from rendering as though it were
+complete. Fail closed, consistent with the gate-3a HTTP 503 path.
+
+A caveat on that last sentence: no HTTP 503 path exists anywhere under
+`F:\Sleep_project`, across every text file. If the gate-3a serving path lives
+in another repository, the consistency should be checked there.
+
+### Signature: `render_report(result, packet)`
+
+The explicit form consumes the result that was already computed. The renderer
+never verifies, so there is one verification path.
+
+- **The claims are not a separate argument.** The result already holds them,
+  raw and enriched, and a second copy could disagree with what was verified.
+  Rendering `result.enriched` makes "render what was verified" true by
+  construction. That is the only reason this departs from the
+  `render_report(claims, verify_result)` form in the brief.
+- **`packet` stays an argument.** `VerifyReport` does not carry it, and the
+  footer reads it. Adding it to `VerifyReport` would have changed the
+  verification result object, which is outside a gate-only change. The
+  residual risk: a caller could pair a result with another packet's footer,
+  and nothing checks for that.
+- **Only a `VerifyReport` is accepted.** A Layer 2 `PolicyResult` has the same
+  two attributes but has skipped Layer 1. On a flag with a nonexistent
+  `reason_key` it is clean while `verify_report` is not, so accepting it would
+  have been a bypass. A bare list, the old signature, also raises `TypeError`.
+- **Internal verification was not needed.** The existing API made the
+  explicit form no worse.
+
+### What the signature enforces, and what the guard can check
+
+- **The signature enforces passing.** No caller can get a rendered report out
+  of a result with a violation.
+- **The AST guard answers only the syntactic question:** nothing under
+  `report/` calls, imports or `getattr()`s `render_unverified`. A self-test
+  shows it catches each of those forms. It does not check, and cannot, that
+  `render_report` was handed an honestly produced result; that is dataflow. A
+  hand-built `VerifyReport` with an empty violation list would pass the gate,
+  and only tests build one.
+- **`render_unverified(enriched_claims, packet)` is the named escape hatch.**
+  It and `render_report` both call `_assemble`, the unchanged former body, so
+  they are one renderer.
+
+Observed, not changed: `render_claim` is also public and ungated. It renders a
+single enriched claim, and nothing under `report/` outside `render.py` calls
+it today. If a second guard is wanted, it is the same AST check with a
+different name.
+
+### Callers migrated
+
+- **`tests/golden/make_register_a.py` and `tests/test_no_leak.py`** go
+  through `render_report` with a real, clean result.
+- **`tests/test_render.py`:** 25 tests render.
+  - 23 go through `render_report` only, each with a real, clean
+    `VerifyReport`. That includes all 17 tests that existed before.
+  - 2 also use `render_unverified`, both new and both by design. Test 4
+    compares the two functions' bytes, which needs both. Test 4b deliberately
+    renders a non-clean set to show what the gate stops.
+  - No existing test was moved to the escape hatch.
+- **`tests/test_adversarial.py`:** the 6 rule-10 tests deliberately inspect
+  the verified subset of a non-clean set, which the gate now refuses. They
+  read that subset through `render_unverified`, and they now also assert that
+  `render_report` refuses.
+
+### Tests added: ten, taking the suite from 278 to 288
+
+| test | asserts |
+|---|---|
+| 1 | a set with one violation is refused although a claim survived; the exception carries `result.violations` |
+| 1b | the refusal carries all four violations in order, not just the first |
+| 2 | the oracle witness renders through the gate on all 60 packets, with a banner exactly on low nights |
+| 3 | the empty array is refused on all 23 low nights, with codes `[missing_review_flag]` |
+| 3b | the empty array renders on all 37 clean nights as a blank line then the footer, the same bytes as before |
+| 4 | `render_unverified` and `render_report` produce the same bytes on 60 clean sets |
+| 4b | the escape hatch is ungated: it renders the lone TST line that the gate refuses |
+| type | a `PolicyResult` and a bare list are refused with `TypeError` |
+| 5 | nothing under `report/` calls `render_unverified` |
+| 5b | the guard catches a call, an attribute call, an import-as and a `getattr`, but not a definition |
+
+### Nothing moved
+
+- **Golden pins.** The golden script's dry run reports all six unchanged, and
+  no golden file was touched.
+- **Renders.** 180 renders were captured before the change: the witness, the
+  witness plus the N1 flag, and the empty array, on all 60 packets.
+  Recomputed afterwards, all 180 are byte-identical. 157 are clean and now
+  render through the gate. The other 23, the empty array on a low night, are
+  refused with exactly their one rule-10 violation.
+- **Evaluator.** The 60-packet snapshot is byte-identical before and after.
+  It covers the oracle, coverage, and `score_output` for the witness, the
+  empty array and a missing file, plus the strata.
+- **Test packets.** The md5, `050fffe46d035008d643435ee826dd92`, is
+  unchanged.
 
 ---
 

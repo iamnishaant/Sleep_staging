@@ -378,7 +378,7 @@ report/coverage.py           mandatory / discretionary / pooled, per-packet reco
 report/oracle.py             maximal reachable id set + a witness claim set
 report/serialize.py          packet -> prompt; all 19 items, 5 fields each
 report/evaluate.py           score a manifest's outputs, stratified by tier
-report/render.py             deterministic templates, register A; opens no file
+report/render.py             deterministic templates, register A; clean results only
 report/violations.py         violation codes
 ```
 
@@ -417,13 +417,20 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-278 tests.
+288 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.
 Accepting a wording change means running `tests/golden/make_register_a.py
 --write`. That is deliberate: without `--write` the script prints the diff and
 changes nothing.
+
+Rendering is gated on a clean verification result. `render_report(result,
+packet)` takes the `VerifyReport` that `verify_report` returned. If the result
+has even one violation, it raises `RenderRefused`, which carries the complete
+list. It never renders the claims that survived. `render_unverified` is an
+escape hatch for tests and debugging, and a test fails if anything under
+`report/` calls it.
 
 Every adversarial case asserts its **specific** expected code. Asserting only
 that something failed would pass even when the wrong rule fired, which would
