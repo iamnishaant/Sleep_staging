@@ -1080,6 +1080,60 @@ day: it does not (see *Rendering is gated on a clean verification result*).
 So on this single output, 2F's question reads as whether a small model follows
 the contract's *policy*, not its *format*. That is a framing, not a result.
 
+### Re-read after the rule-10 fix and the render gate (12 September 2026)
+
+**Still exploratory.** One packet, one model, one seed, raw completion. It
+must not enter any selection decision. The output on disk was re-scored; it was
+not regenerated.
+
+| figure | value |
+|---|---|
+| violations | 17: 9 × `L2.unsafe_item_not_hedged`, 7 × `L2.text_key_dependency_missing`, and 1 × `L2.missing_review_flag` (report-level, new since the rule-10 fix) |
+| claims verified | 2 of 18: c1 (total sleep time) and c2 (time in bed) |
+| `mandatory_coverage` | **2/5**. Covered: `arch.total_sleep_time`, `arch.time_in_bed` |
+| `discretionary_coverage` | 0/14 |
+| `oracle_recovery` | 0.0 |
+| `numeric_fidelity` | 11/11 |
+| `unsupported_claim_rate` | 7/18 |
+| rendered | no: `render_report` refuses, carrying all 17 violations |
+
+**Where the three mandatory misses come from.** This is a read of the
+verifier's output, not an evaluator metric. Each item was verified, cited but
+rejected, or never cited:
+
+| mandatory item | outcome |
+|---|---|
+| `arch.total_sleep_time` | verified |
+| `arch.time_in_bed` | verified |
+| `arch.sleep_efficiency` | cited, rejected: emitted as an `observation` with key `n1_reliability_is_low` (rule 7), where a `value` was needed |
+| `night.confidence` | cited, rejected: a `review_flag` with reason `n1_low_reliability` (rule 7), where `low_night_confidence` was needed |
+| `model.n1_reliability_warning` | never cited |
+
+**The discretionary items.** All 14 were cited, and all 14 rejected:
+
+- The nine `arch.*` items came as bare `value` claims where `hedged_value` is
+  required, with every number exact. The model emitted no `hedged_value` claim
+  at all.
+- The five stage fractions came as observations carrying the N1 key.
+
+**Overall.** Of the 19 reportable items, the model cited 18. The one it never
+touched is `model.n1_reliability_warning`, which is the very item that the key
+it applied everywhere depends on.
+
+So the number is 2/5, but its anatomy is mostly claim shape:
+
+- Of the three mandatory misses, two are items the model found and cited with
+  the wrong claim type or key. Only one is a true omission.
+- Every rejection among the 16 failing claims is one of two policy errors:
+  hedging, or key/evidence agreement.
+- None is a transcription error or a failure to locate the evidence.
+
+**One confound,** recorded because it bears on exactly this question. Step 5
+was a grammar-mechanics check, so it used raw completion with no chat
+template. An instruct model outside its chat format may follow policy worse
+than it would inside it. The prompt format is a 2F selection decision, so the
+confound is named here, not tested.
+
 ---
 
 ## Rule 10 read the wrong claim set - fixed (12 September 2026)
@@ -1226,10 +1280,33 @@ never verifies, so there is one verification path.
   It and `render_report` both call `_assemble`, the unchanged former body, so
   they are one renderer.
 
-Observed, not changed: `render_claim` is also public and ungated. It renders a
-single enriched claim, and nothing under `report/` outside `render.py` calls
-it today. If a second guard is wanted, it is the same AST check with a
-different name.
+**`render_claim` is guarded too** (added the same day). It is public and
+ungated, and it renders a single claim, so it is the same bypass as
+`render_unverified` under another name. The guard now covers both names:
+
+- Nothing under `report/` may use `render_unverified`. `render.py` stays
+  checked for it, which is stricter than "outside `render.py`" and keeps the
+  original promise.
+- Nothing under `report/` outside `render.py` may use `render_claim`.
+  `render.py` keeps that exemption because `_assemble` is built from
+  `render_claim`. The test also asserts the exemption is still in use, so it
+  cannot linger as an unused hole.
+
+For each name, the self-test plants a direct call, an attribute call, an
+import-as and a `getattr`.
+
+### Known gap, not fixed: a result is not bound to its packet
+
+Nothing checks that a `VerifyReport` was produced from the packet it is
+rendered against. `render_report(result_for_A, packet_B)` would pair A's
+verified claims with B's footer. Today the footer differs between packets only
+in split and cohort size, so the visible damage would be small. The point is
+that nothing would catch it.
+
+The fix is a `recording_id` on the verification object, which `render_report`
+would check against the packet. That changes the verification object, which is
+outside the frozen tier, so it is deferred. **This is a candidate for the next
+non-frozen window.**
 
 ### Callers migrated
 
