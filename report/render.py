@@ -1,27 +1,60 @@
-"""Deterministic rendering. The model contributes no prose, only a key.
+"""Deterministic rendering, in register A (clinician). The model contributes no
+prose, only keys.
+
+REGISTER A, decided 12 September 2026 (report/PHASE2_NOTES.md): a reader who can
+act on a hypnogram. The review instruction and the tier stay; the tier's
+mechanics do not - they remain in the packet, which is where an auditor looks.
+
+PROVENANCE. A rendered report must be derivable from its packet alone - the
+renderer-side counterpart of rule 11. Anything that reaches the output comes
+from exactly one of three places:
+
+    a packet field            read from the cited evidence item, or from
+                              attribution_quality for the footer
+    a declared constant       WORDING or a LABEL - never a fact. A constant that
+                              asserts a threshold, a statistic or a domain claim
+                              is a packet fact in disguise.
+    a rule consequence        text whose truth is guaranteed by a verifier rule
+                              that already passed - e.g. REVIEW REQUIRED, which
+                              exists because rule 10 forces the flag
+
+The renderer opens no file. tests/test_render.py instruments `open` across all
+60 packets, and a separate test fails on any digit in an output constant, since
+a number the packet did not supply is the commonest disguised fact.
 
 PURE: same enriched claims in, byte-identical prose out. No clock, no locale, no
-dict-ordering dependence, no randomness. `tests/test_render.py` renders twice
-and compares bytes.
+dict-ordering dependence, no randomness.
 
 The renderer receives claims already ENRICHED by the verifier - the claim plus
 the packet fields the verifier looked up. That is what lets a hedged value carry
 its measured error and its caveat even though the model never saw either, and it
 is why a caveat cannot be softened or dropped: the model was never holding it.
 
-One display convention, and it is the only place any conversion happens: items
-whose packet unit is `fraction` are shown as percentages, because a clinical
-reader expects "92.7%" and not "0.9273". The verifier compares raw packet units
-with no conversion whatsoever (rule 3); this is presentation, applied after
-verification, and pinned by a byte-exact test so it cannot drift.
+Display conventions, the only conversions anywhere, applied after verification:
+a `fraction` is shown as a percentage to one decimal; an error bound is shown on
+the scale of the value it measures (see _ERROR_DISPLAY, the one declared
+inference). The verifier compares raw packet values with no conversion at all.
 """
 from __future__ import annotations
 
+from .claim_schema import REASON_KEYS, TEXT_KEYS
+
+# ---- LABELS: names for things, asserting nothing ---------------------------
 STAGE_LABEL = {"stage.W.fraction": "Wake", "stage.N1.fraction": "N1",
                "stage.N2.fraction": "N2", "stage.N3.fraction": "N3",
                "stage.REM.fraction": "REM"}
 
-TIER_WORD = {"high": "high", "medium": "medium", "low": "low"}
+# attribution_quality.evaluated_on_split -> the word a clinician reads. An
+# unlisted split is shown as the packet spells it, never guessed.
+SPLIT_WORD = {"val": "validation", "test": "test", "train": "training"}
+
+
+class UndeclaredUnit(ValueError):
+    """An error bound whose unit pairing the renderer has not declared."""
+
+
+class MissingField(ValueError):
+    """The packet lacks a field a template needs. The renderer does not guess."""
 
 
 def _num(x) -> str:
@@ -31,140 +64,156 @@ def _num(x) -> str:
     if isinstance(x, float):
         if x == int(x):
             return str(int(x))
-        s = f"{x:.4f}".rstrip("0").rstrip(".")
-        return s
+        return f"{x:.4f}".rstrip("0").rstrip(".")
     return str(x)
+
+
+def _minutes(x) -> str:
+    """WORDING: grammatical number. The packet's unit is the string "minutes";
+    "1 minutes" reads as a typo in a clinical report, and pinning it would
+    lock the typo in. Singular only for exactly one - and the digit is still
+    the packet's, formatted, never a literal."""
+    return f"{_num(x)} minute" if x == 1 else f"{_num(x)} minutes"
 
 
 def _quantity(value, unit) -> str:
     if unit == "fraction":
         return f"{value * 100:.1f}%"
+    if unit == "minutes":
+        return _minutes(value)
     if unit in ("count", "ratio"):
-        # "0 ratio" reads as a typo; the label already says it is a ratio.
+        # "0 ratio" reads as a typo; the label already names the quantity.
         return _num(value)
     if unit == "tier":
         return str(value)
     return f"{_num(value)} {unit}"
 
 
+# ---- THE ONE DECLARED INFERENCE --------------------------------------------
+# The packet's `error_unit` is "minutes" for minute items and "count_or_ratio"
+# for everything else. The renderer shows an error on the scale of the value it
+# measures - a fraction's error in percentage points, a per-hour rate's error
+# per hour - because a mean absolute error is in the units of its quantity.
+# That is read from neither field alone, so it is declared here as a table
+# keyed on the (unit, error_unit) PAIR, and any pairing outside the table
+# raises rather than being guessed at.
+_ERROR_DISPLAY = {
+    ("minutes", "minutes"): _minutes,
+    ("fraction", "count_or_ratio"): lambda e: f"{e * 100:.1f} percentage points",
+    ("per hour", "count_or_ratio"): lambda e: f"{_num(e)} per hour",
+    ("count", "count_or_ratio"): _num,
+    ("ratio", "count_or_ratio"): _num,
+}
+
+
 def _error_phrase(ev) -> str | None:
-    mae, unit = ev.get("mean_abs_error"), ev.get("unit")
+    mae = ev.get("mean_abs_error")
     if mae is None:
         return None
-    where = ev.get("error_measured_on") or "validation"
-    if unit == "fraction":
-        return f"mean absolute error {mae * 100:.1f} percentage points on the {where}"
-    if unit in ("minutes", "per hour"):
-        return f"mean absolute error {_num(mae)} {unit} on the {where}"
-    return f"mean absolute error {_num(mae)} on the {where}"
+    pair = (ev.get("unit"), ev.get("error_unit"))
+    if pair not in _ERROR_DISPLAY:
+        raise UndeclaredUnit(f"{ev.get('id')}: no declared display for "
+                             f"(unit, error_unit) = {pair}")
+    phrase = f"mean absolute error {_ERROR_DISPLAY[pair](mae)}"
+    # Read, with NO default. An earlier version fell back to "validation" when
+    # the field was absent - a default asserting where an error was measured.
+    where = ev.get("error_measured_on")
+    return f"{phrase} on the {where}" if where else phrase
 
 
 def _tier_clause(ev) -> str:
-    """Stage claims always carry the model's reliability tier (policy rule 6)."""
+    """Stage claims always carry the model's reliability tier (policy rule 6).
+
+    Read from the evidence item's own `model_reliability`, not inferred from
+    anything. Rule 6 guarantees it for a verified claim; if it is somehow
+    absent, the renderer refuses rather than printing a tier it does not have.
+    """
     tier = ev.get("model_reliability")
-    stage = STAGE_LABEL.get(ev.get("id"), ev.get("label"))
-    return f"{stage} is a {TIER_WORD.get(tier, tier)}-reliability stage for this model"
+    if tier is None:
+        raise MissingField(f"{ev.get('id')}: no model_reliability")
+    return f"{STAGE_LABEL[ev['id']]} is a {tier}-reliability stage for this model"
 
 
-# --------------------------------------------------------------------------
-# one template per claim type
-# --------------------------------------------------------------------------
+def _cited(claim, eid) -> dict:
+    for ev in claim["_evidence"]:
+        if ev.get("id") == eid:
+            return ev
+    raise MissingField(f"{claim.get('claim_id')}: {eid} not among its evidence")
+
+
+# ---- one template per claim type -------------------------------------------
 def render_value(claim) -> str:
     ev = claim["_evidence"][0]
-    return f"{ev['label']} was estimated at {_quantity(claim['value'], claim['unit'])}."
+    return f"{ev['label']}: {_quantity(claim['value'], claim['unit'])}."
 
 
 def render_hedged_value(claim) -> str:
     """Value, then measured error, then caveat. Never a bare number."""
     ev = claim["_evidence"][0]
-    parts = [f"{ev['label']} was estimated at "
-             f"{_quantity(claim['value'], claim['unit'])}"]
+    text = f"{ev['label']}: {_quantity(claim['value'], claim['unit'])}"
     err = _error_phrase(ev)
     if err:
-        parts.append(f", with {err}")
-    parts.append(".")
-    text = "".join(parts)
+        text += f", {err}"
+    text += "."
     if ev.get("id") in STAGE_LABEL:
         text += f" {_tier_clause(ev)}."
     caveat = ev.get("caveat")
     if caveat:
-        # Caveats in the packet are grammatically heterogeneous: some are verb
-        # phrases ("depends on a single epoch"), some noun phrases ("mean
-        # relative error 85% on validation."), one is a full sentence. An
-        # earlier template prefixed "This figure ", which produced "This figure
-        # mean relative error 85% on validation." A labelled clause is the only
-        # form that composes correctly with all three, and it also makes the
-        # caveat visually unmissable, which is the point of carrying it.
+        # VERBATIM - the packet's own words, nothing appended or trimmed. An
+        # earlier version added a full stop when a caveat lacked one; none of
+        # the 60 packets' caveats does, so it never fired, but a caveat the
+        # renderer can edit is not the packet's caveat any more.
         text += f" Caveat: {caveat}"
-        if not text.endswith("."):
-            text += "."
     return text
 
 
-# THE DUPLICATION POLICY, resolved here rather than in the verifier.
-#
-# On a low night `night.confidence` is coverable twice over: a `review_flag`
-# with `low_night_confidence` (mandatory under rule 10) and an `observation`
-# with `tier_is_low`. Both verify, both cite the same id, and coverage counts
-# the id once - so the metric is unaffected and the verifier permits both.
-#
-# That is deliberately unlike rule 8. Rule 8 rejects citing both REM latencies
-# together because they are two metrics resolving to one value, so presenting
-# them jointly is false corroboration. Here it is one fact serving two
-# reporting functions: the flag WARNS and tells the reader what to do; the
-# observation DESCRIBES what was measured and how. Same evidence is not
-# redundant communication, and rejecting one would shrink the valid claim space
-# for no safety gain.
-#
-# So the separation is textual, and it is the renderer's job. The observations
-# below state the measurement and its provenance and give no instruction; the
-# banner gives the instruction and no method. An earlier `tier_is_low` text
-# ended "...so the whole recording warrants review", which repeated the
-# banner's action almost word for word.
-#
-# The tier is a property of the model's OWN uncertainty - `requires_ground_truth`
-# is false on all 60 packets - and the boundaries are identical across them, so
-# naming the method here is a constant of the method rather than a fact about
-# one split. tests/test_render.py asserts this wording still agrees with the
-# packet's `boundaries_fitted_on`, so it cannot drift the way the old
-# "test split of 29 recordings" literal did.
-OBSERVATION_TEXT = {
-    "tier_is_high": ("Night-level confidence is in the high tier - mean "
-                     "prediction entropy at or below the lower of two "
-                     "boundaries fitted as validation-split tertiles."),
-    "tier_is_medium": ("Night-level confidence is in the medium tier - mean "
-                       "prediction entropy between two boundaries fitted as "
-                       "validation-split tertiles."),
-    "tier_is_low": ("Night-level confidence is in the low tier - mean "
-                    "prediction entropy above the upper of two boundaries "
-                    "fitted as validation-split tertiles."),
-    "n1_reliability_is_low": ("N1 is a low-reliability stage for this model; "
-                              "N1 figures in this report should be read with "
-                              "that in mind."),
+# Observations DESCRIBE and give no instruction; the banner instructs. Every
+# placeholder is filled from the evidence item the key requires (rule 7 has
+# already confirmed it is cited and its predicate holds). Register A keeps the
+# tier and drops its mechanics, so these state what the packet says and nothing
+# about how it was computed.
+OBSERVATION_TEMPLATE = {
+    "tier_is_high": "{label} is in the {value} tier.",
+    "tier_is_medium": "{label} is in the {value} tier.",
+    "tier_is_low": "{label} is in the {value} tier.",
+    # The packet's own label for this item is the whole statement.
+    "n1_reliability_is_low": "{label}.",
 }
 
-REVIEW_TEXT = {
-    "low_night_confidence": ("This recording falls in the low night-confidence "
-                             "tier. Review the full hypnogram before relying "
-                             "on any figure below."),
-    "n1_low_reliability": ("N1 detection is the weakest part of this model. "
-                           "Review N1-scored epochs individually."),
+REVIEW_TEMPLATE = {
+    "low_night_confidence": ("This recording falls in the {value} "
+                             "night-confidence tier. Review the full hypnogram "
+                             "before relying on any figure below."),
+    # Was "N1 detection is the weakest part of this model" - a comparison across
+    # stages that the cited evidence does not make. Now the evidence's own label.
+    "n1_low_reliability": ("{label}. Review N1-scored epochs individually "
+                           "before relying on them."),
 }
 
 
 def render_observation(claim) -> str:
-    return OBSERVATION_TEXT[claim["text_key"]]
+    ev = _cited(claim, TEXT_KEYS[claim["text_key"]].requires)
+    return OBSERVATION_TEMPLATE[claim["text_key"]].format(label=ev["label"],
+                                                          value=ev["value"])
 
 
 def render_review_flag(claim) -> str:
-    return REVIEW_TEXT[claim["reason_key"]]
+    ev = _cited(claim, REASON_KEYS[claim["reason_key"]].requires)
+    return REVIEW_TEMPLATE[claim["reason_key"]].format(label=ev["label"],
+                                                       value=ev["value"])
 
 
 def render_population_association(claim) -> str:
+    """Unreachable today - no packet has associative evidence.
+
+    Was "In population studies, X has been reported as associated with
+    sleep-disorder risk": a literature claim and an association target, neither
+    of which the packet states. What rule 12 does guarantee is that the cited
+    item is associative, so that is all this says.
+    """
     labels = ", ".join(e["label"] for e in claim["_evidence"])
-    return (f"In population studies, {labels} has been reported as associated "
-            f"with sleep-disorder risk. This is an association across groups "
-            f"and is not a statement about this individual.")
+    return (f"{labels}: associative evidence. It describes an association "
+            f"across a population and is not a statement about this recording.")
 
 
 RENDERERS = {
@@ -183,35 +232,43 @@ def render_claim(claim) -> str:
 # --------------------------------------------------------------------------
 # The attribution footer.
 #
-# `attribution_quality` is NOT citeable by any claim type in Phase 1, so no
-# claim can produce this text and no model can phrase it. It is emitted
-# straight from the packet when present, and it states the cohort scope
-# explicitly, because a reader who sees "PASS" next to one night's report will
-# otherwise take it as a statement about that night.
+# `attribution_quality` is not citeable by any claim type, so no claim produces
+# this text and no model can phrase it. Every fact in it is read: the gate id,
+# the verdict, how many predictions were met OUT OF HOW MANY (was a hardcoded
+# "of 5"), whether they were pre-registered (was asserted unconditionally), the
+# split and its size (was once "test split of 29" for every packet).
+#
+# The cohort-scope sentence is emitted only when the packet itself declares
+# cohort scope. Two sentences that used to follow - "measured once" and "no
+# per-night version was measured" - are gone: the packet states them only in
+# free prose, not as fields, so a constant repeating them was asserting facts
+# the renderer could not read.
 # --------------------------------------------------------------------------
 def render_attribution_footer(packet: dict) -> str | None:
     aq = packet.get("attribution_quality") or {}
     if aq.get("status") != "run":
         return None
-
-    # No default for either. An earlier version hardcoded "test split of 29
-    # recordings", which is a false sentence on a packet built from any other
-    # split. A packet that cannot say where its verdict came from does not get
-    # a sentence claiming to know.
-    split = aq.get("evaluated_on_split")
-    n_recs = aq.get("evaluated_on_n_recordings")
-    if split is None or n_recs is None:
+    gate, verdict = aq.get("gate"), aq.get("verdict")
+    n_met, predictions = aq.get("n_met"), aq.get("predictions_met")
+    split, n_recs = aq.get("evaluated_on_split"), aq.get("evaluated_on_n_recordings")
+    if None in (gate, verdict, n_met, split, n_recs) or not predictions:
         return None
-
-    return ("Explainability gate 3a: "
-            f"{aq.get('verdict')} ({aq.get('n_met')} of 5 pre-registered "
-            f"predictions met). This verdict was measured once over the pooled "
-            f"{split} split of {n_recs} recordings and describes the COHORT, "
-            f"not this recording. No per-night version of it was measured.")
+    if not str(aq.get("scope", "")).startswith("COHORT"):
+        return None
+    registered = "pre-registered " if aq.get("preregistration") else ""
+    return (f"Explainability check (gate {gate}): {verdict}, {n_met} of "
+            f"{len(predictions)} {registered}predictions met, across {n_recs} "
+            f"{SPLIT_WORD.get(split, split)} recordings. It describes the model "
+            f"across that cohort, not this recording.")
 
 
 def render_report(enriched_claims, packet: dict) -> str:
-    """Assemble the report. Banner first, then claims in the order given."""
+    """Assemble the report. Banner first, then claims in the order given.
+
+    REVIEW REQUIRED is a rule consequence: it appears exactly when a review
+    flag on night.confidence is present, which rule 10 forces on every
+    low-confidence night.
+    """
     lines: list[str] = []
 
     banner = [c for c in enriched_claims
