@@ -6,8 +6,8 @@
 tests, all passing. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
-is chosen (the key is Flash-class only); its rate limits are still to be read
-from AI Studio.**
+is chosen (the key is Flash-class only); its rate limits,
+read from AI Studio, allow 20 requests a day.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -1091,7 +1091,7 @@ it.
 | fact | status |
 |---|---|
 | models the key reaches | `models.list` returns 55, of which 40 support `generateContent`. **Being listed does not mean the key can use it:** one of the two Pro models has a free-tier quota of zero, and the other is closed to new users (probe log below). **Flash-class only.** |
-| active RPM / TPM / RPD | **pending: to be read from AI Studio for this project.** The API's only statement about limits so far is the Pro 429: `generate_content_free_tier_requests, limit: 0, model: gemini-3.1-pro` |
+| active RPM / TPM / RPD | **The reference model: 5 RPM, 250K TPM, 20 RPD**, read from AI Studio's "Rate limits by model" page for this project on 12 September 2026 (full table below). This agrees with the API's own Pro 429, `generate_content_free_tier_requests, limit: 0, model: gemini-3.1-pro` |
 | **reference model string** | **`gemini-3.8-flash`**: the highest-numbered Flash model listed, and one that answered. The response's `modelVersion` is `gemini-3.8-flash`. It is a thinking model, using 147 thought tokens on a trivial call. |
 | structured output | **yes.** `responseMimeType: application/json` with a `responseSchema` returned `{"ok":true}`, which parses and matches the schema. This parallels GBNF, so the reference model and the local candidates are both constrained |
 | connectivity check | `python reference_check.py call <model>` sends `POST https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent` with the key in the `x-goog-api-key` header. The body is the prompt "Reply with ok set to true.", temperature 0 and a one-field boolean schema. Result: HTTP 200, `finishReason: STOP`, 7 prompt tokens, 5 output tokens |
@@ -1110,6 +1110,40 @@ named.
 The `-latest` aliases were not considered. `gemini-pro-latest` reports itself
 only as "Latest release of Gemini Pro", and a reference whose identity can
 change under the same string cannot anchor a comparison.
+
+**Active free-tier limits for this project**, as read from AI Studio's "Rate
+limits by model" page on 12 September 2026. Text-generation models are shown.
+Image, audio, TTS, live, embedding and agent models are omitted, because none
+is a candidate for generating claims.
+
+| model (AI Studio name) | RPM | TPM | RPD |
+|---|---|---|---|
+| Gemini 3.8 Flash | 5 | 250K | 20 |
+| Gemini 3.7 Flash | 5 | 250K | 20 |
+| Gemini 3.6 Flash | 5 | 250K | 20 |
+| Gemini 3.5 Flash | 5 | 250K | 20 |
+| Gemini 3 Flash | 5 | 250K | 20 |
+| Gemini 2.5 Flash | 5 | 250K | 20 |
+| Gemini 3.5 Flash Lite | 15 | 250K | 500 |
+| Gemini 3.1 Flash Lite | 15 | 250K | 500 |
+| Gemini 2.5 Flash Lite | 10 | 250K | 20 |
+| Gemma 4 31B | 30 | 16K | 14.4K |
+| Gemma 4 26B | 30 | 16K | 14.4K |
+| Gemini 3.1 Pro | 0 | 0 | 0 |
+| Gemini 2.5 Pro | 0 | 0 | 0 |
+| Gemini 2 Flash, Gemini 2 Flash Lite | 0 | 0 | 0 |
+
+**What 20 RPD means for 2F. This is recorded as a constraint, not a design.**
+One pass over the 60 packets, at one request per packet, needs at least three
+days of the reference model's quota. RPM and TPM do not bind at that rate. Any
+design that samples each packet more than once multiplies the number of days.
+The Flash Lite and Gemma rows have far more headroom, but they are weaker, so
+choosing one would trade reference strength for throughput. That choice
+belongs to 2F, and it would change the name in the reference-model row.
+
+The AI Studio peak-usage column read 0 for every model over the last 28 days,
+including the Flash model that answered the connectivity call above. The
+dashboard appears to lag. The call itself is recorded above.
 
 **Prepared, outside the repository.** A standard-library script,
 `reference_check.py`:
