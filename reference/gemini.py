@@ -40,7 +40,9 @@ def api_key() -> str:
 def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | None = None,
              thinking: dict | None = None, temperature: float | None = 0.0,
              seed: int | None = 0, max_output_tokens: int = 8192,
-             timeout: float = 300.0) -> dict:
+             timeout: float = 300.0, extra: dict | None = None) -> dict:
+    """One request. `extra` fields (packet, prompt id, attempt, retry cause)
+    are written into the log record alongside the provider's figures."""
     config: dict = {"maxOutputTokens": max_output_tokens}
     if temperature is not None:
         config["temperature"] = temperature
@@ -79,6 +81,7 @@ def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | Non
     record = {
         "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "request_id": request_id,
+        **(extra or {}),
         "model": REFERENCE_MODEL,
         "http_status": status,
         "prompt_tokens": usage.get("promptTokenCount"),
@@ -98,7 +101,8 @@ def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | Non
     text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", [])
                    if not p.get("thought"))
     return record | {"text": text, "finish_reason": cand.get("finishReason"),
-                     "model_version": data.get("modelVersion")}
+                     "model_version": data.get("modelVersion"),
+                     "prompt_feedback": data.get("promptFeedback")}
 
 
 # Transport and API failures - the ONLY things ever retried.

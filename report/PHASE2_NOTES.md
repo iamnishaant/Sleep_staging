@@ -3,8 +3,8 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done — 311 tests, all
-passing. The deterministic tier is finished and frozen. One model has
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 330
+tests, all passing. No packet has been sent to the reference model yet. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -1952,6 +1952,105 @@ during decoding, the effect would run the same way: Layer 1 catches a bad
 Any effect would therefore show up in one direction only, in schema validity,
 which is reported separately with its denominator. In the synthetic responses,
 no undeclared field appeared.
+
+---
+
+## 2F Item 2: the runner is built, and failed attempts cost quota (13 September 2026)
+
+**Nothing has been generated. No packet has been sent to the reference model.**
+
+### 2a: failed attempts count against the daily quota
+
+On 12 September (Pacific) the request log holds 13 attempts to the reference
+model: 3 returned HTTP 200 and 10 returned HTTP 503. AI Studio's rate-limit
+page shows **13–14 consumed** for that day. The 14th would be the connectivity
+check, if it fell on the same Pacific day. **A 503 costs a request.**
+
+**The consequence.** At the preflight's failure rate, 10 of 13, a day's 20
+requests could yield as few as 5 responses. So the four-day plan does not hold.
+
+**The plan now:**
+
+- P1 alone across all 31 dev packets first, with P2 on later days.
+- The runner is prompt-major, so that order is its default.
+- Its daily budget counts every attempt, which is also its default.
+  `--successes-only` exists only for the case 2a ruled out, and must not be
+  used.
+- A session stops after one packet exhausts its 4 attempts. A bad hour of
+  provider availability therefore costs at most 4 requests before the run
+  halts, rather than draining the day.
+
+### 2b: generation settings, fixed before any packet is sent
+
+| setting | value |
+|---|---|
+| thinking | off (`thinkingBudget: 0`) |
+| `maxOutputTokens` | 16,384 |
+| temperature | 0 |
+| seed | 0 |
+| structured output | on, using the Item 0 schema |
+
+> The reference model was run with thinking disabled, matching the local
+> candidates' generation regime. The reference therefore measures the ceiling
+> for comparable single-pass generation rather than the provider's maximum
+> capability.
+
+> Unlike llama.cpp, the provider does not guarantee bit-identical output at
+> temperature 0, so reference generations are not reproducible in the way the
+> local runs are.
+
+### 2c: the two prompts
+
+Both wrap the frozen `build_prompt`. Each inserts one claim-shape block between
+the rules and the evidence, as run C did. Neither contains a demonstration, an
+evidence id or a key.
+
+**P1 is run C's block, verbatim.**
+
+**A premise correction on P2.** P2 was framed as "C with the obligation stated
+positively". But C's hedging line already reads "must be claimed with
+claim_type hedged_value, never value": the positive obligation plus the
+prohibition. So a positive-versus-negative contrast was not available. What C
+actually did was cover the obligation by bundling 13 items into one
+observation. P2 therefore makes each unsafe item's own hedged claim explicit
+(chosen 13 September 2026).
+
+**The diff between P1 and P2** is one line, asserted by
+`tests/test_reference_run.py` on the full prompt text:
+
+```
+P1: - Every evidence item whose safe_to_assert is false must be claimed with claim_type hedged_value, never value.
+P2: - Every evidence item whose safe_to_assert is false must be claimed, each in its own hedged_value claim.
+```
+
+### 2d: the runner, built and tested before any live request
+
+The runner is `reference/run.py`, and the scorer is `reference/score.py`.
+
+- **Order.** Prompt-major: the 31 dev packets in manifest order under P1, then
+  under P2. A manifest row that is not dev, or that appears in the test
+  manifest, stops the run.
+- **Cache.** One file per HTTP 200, keyed by `(recording_id, prompt_id,
+  prompt_hash, model)` and written atomically. A cached key is never
+  requested again. A changed prompt or model misses the cache.
+- **Budget.** Before every attempt, retries included, the runner counts the
+  attempts made on the current Pacific date across every request log. At the
+  limit it stops before sending. A packet cut off mid-retry stays uncached
+  and becomes the next session's first job.
+- **Logging.** Every attempt records the timestamp, packet, prompt id, prompt
+  hash, attempt number, retry flag, retry cause, HTTP status, token counts
+  (prompt, output and thinking) and latency. The record is written before the
+  response is processed.
+- **Pacing and retries.** Attempts are at least 12.5 s apart (5 RPM). Only
+  429, 5xx, timeouts and connection errors are retried, with exponential
+  backoff and jitter, up to 4 attempts. Any other non-200 stops the run for
+  inspection. A completed response is cached as it is and never retried.
+- **Tests.** 19 offline tests, all against a fake transport, cover every
+  point above, plus the Pacific-date boundaries across DST and the scoring
+  path: 5/5 counts, and a reference set built from passing responses only.
+
+**To run,** once per Pacific day (the quota resets at 07:00 UTC):
+`python -m reference.run --go`. Then score with `python -m reference.score`.
 
 ---
 
