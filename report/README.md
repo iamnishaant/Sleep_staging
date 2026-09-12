@@ -153,7 +153,9 @@ pooled_coverage        = |cited_by_verified ∩ (both)|            / 19
 
 Both denominators come from the packet, never from anything a model chose, and
 are asserted to be 5 and 14 on all 60 packets. **An empty claim set scores 0.0
-on both** while passing every safety rule.
+on both** and passes every safety rule **except rule 10 on a low-confidence
+night**, where the missing `review_flag` is itself the violation - once per low
+night, pinned on all 23 of them.
 
 `night.confidence` and `model.n1_reliability_warning` are both mandatory and
 neither is reachable by `value` (deviation D1) — they carry a string tier. So
@@ -269,7 +271,7 @@ asserts that.
 
 | family | metrics |
 |---|---|
-| validity | `schema_validity_rate`, `policy_pass_rate` (of schema-valid), `overall_pass_rate` |
+| validity | `schema_validity_rate` and `overall_pass_rate`, then `policy_pass_rate` (of schema-valid) - each printed as `88.7% (71/80) n=98`, because the policy denominator shrinks as Layer 1 failures grow |
 | per rule | count, and outputs affected, for **all 30 codes individually** |
 | coverage | `mandatory_coverage` + packets at 5/5, `discretionary_coverage` (/14), `oracle_recovery`, `unrecovered_available` |
 | fidelity | `numeric_fidelity`, `unsupported_claim_rate` |
@@ -402,7 +404,7 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-234 tests.
+247 tests.
 
 Every adversarial case asserts its **specific** expected code. Asserting only
 that something failed would pass even when the wrong rule fired, which would
@@ -411,7 +413,9 @@ make per-rule violation rates meaningless.
 Two cases carry more weight than the rest. `cites: ["attribution"]` must fail at
 **Layer 1** — if it reaches Layer 2 the boundary was built as a blocklist, and a
 blocklist has to anticipate every forbidden name. And the **empty claim set**
-must pass every safety rule while scoring 0.0 coverage.
+must score 0.0 coverage and pass every safety rule except rule 10 on a
+low-confidence night, where it fails exactly once - asserted on all 60 packets,
+so the tier-dependence is pinned rather than implicit.
 
 `test_no_leak.py` instruments `open` and asserts the verifier and renderer open
 **nothing** — a stronger invariant than a path allowlist. It also checks that

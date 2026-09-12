@@ -2,7 +2,7 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A-2E complete — 234 tests, all passing. The deterministic tier is
+**Status: 2A-2E complete — 247 tests, all passing. The deterministic tier is
 finished; the next step runs a model. No model has run yet.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
@@ -569,6 +569,77 @@ added because each asserts something the packet does not say.
    `passed + failed + missing == n` is asserted.
 4. The dev manifest's rows say `split: "val"`, not `"dev"`, because the dev set
    is the upstream validation split. `PACKET_DIRS` maps `"val"`.
+
+---
+
+## Three checks before 2F (12 September 2026)
+
+### 1. The empty-array contradiction - a wording defect, not a code defect
+
+The Phase 1 record said "the empty claim set passes every safety rule at 0.0
+coverage", and 2E found an empty array violating rule 10 on every low night.
+Both cannot be unconditionally true.
+
+The Phase 1 case, `test_22_empty_set_is_safe_and_scores_zero`, runs on
+`SC4011E0-PSG` - a **high**-confidence night. It asserted zero violations and
+0.0 coverage, and it passes. So there was no defect: rule 10 was never being
+skipped. Both tests were right about their own packets. What was wrong was the
+**wording** - the test's name and three sentences in `PHASE1_REPORT.md` (sections
+7, 9 and 14) and two in `README.md` described one tier as if it were all of
+them.
+
+The low-night half already existed as `test_22b`, but it only asserted the
+rule-10 code was *present*. Now:
+
+- `test_22` is renamed `..._on_a_non_low_night_...` and asserts its packet's tier
+- `test_22b` asserts **exactly one** violation, that it is
+  `L2.missing_review_flag`, and that it is report-level (no claim id - there
+  are no claims)
+- `test_22d` sweeps all 60 packets: all 23 low nights fail exactly once, all 37
+  others are clean
+
+The documents now state the behaviour as it is, with a dated correction note in
+the Phase 1 record rather than a silent rewrite of it.
+
+### 2. The rem_error_differenced coupling - holds, and now tested
+
+`UNSUPPORTED_CODES` excludes `L2.rem_error_differenced` because it co-fires with
+`L2.uncited_quantity`. That is now an invariant, checked on every output of
+twelve corruption types on both splits, on every one of the 60 packets with
+both REM ids and both signs, and in a targeted single-packet case. **It holds
+everywhere.**
+
+It holds for a reason that is a property of the data, not of the code, and
+that reason is tested too. Rule 9 fires when a claim's value equals the exact
+difference of the two errors; rule 11 stays silent only if that value also
+equals the cited REM latency. So they could decouple only if a REM latency
+equalled 4.8403 minutes. Latencies are whole 30-second epochs, so they sit on a
+0.5-minute grid, and 4.8403 does not. The test asserts both halves on all 60
+packets - so if a future packet broke either, the test fails and the exclusion
+has to be revisited, instead of quietly becoming unjustified.
+
+One thing this surfaced and did not change, since rule semantics are frozen:
+rule 9 only fires on the **exact float** `53.05 - 48.2097`. A model that writes
+the difference rounded - `4.84`, or `4.8403` - evades rule 9. Nothing unsupported
+escapes, because the same claim still trips `value_mismatch` and
+`uncited_quantity`, both in the unsupported set. But rule 9's own per-rule count
+will under-report differencing, and should be read that way at 2G.
+
+### 3. The policy_pass_rate denominator - presentation fixed, metric unchanged
+
+`policy_pass_rate` is computed over schema-valid outputs, so its denominator
+varies by model: 72/80 = 90.0% and 88/98 = 89.8% are near-identical rates from
+models 16 points apart overall. The metric is right; showing it without its
+denominator is what misleads.
+
+- Every validity rate now carries `_num` and `_den` in the JSON, beside the
+  rate, in every stratum
+- The printed cell is `88.7% (71/80) n=98` - the fraction and the stratum's
+  packet count side by side, so a shrunken denominator is visible against `n`
+- Schema validity and overall pass print **above** policy pass
+- Tests walk the whole JSON and fail if `policy_pass_rate` appears anywhere
+  without its numerator and denominator, parse every validity cell for its
+  fraction, and encode the 72/80-vs-88/98 example directly
 
 ---
 
