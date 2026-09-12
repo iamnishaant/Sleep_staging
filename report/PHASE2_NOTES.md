@@ -2,8 +2,10 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A-2E complete — 248 tests, all passing. The deterministic tier is
-finished; the next step runs a model. No model has run yet.**
+**Status: 2A-2E complete, register A pinned, local runtime verified — 270
+tests, all passing. The deterministic tier is finished and frozen. One model has
+run, once, to confirm the grammar holds mechanically; no model has been
+evaluated.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
 with nothing running; this file records the audit that preceded them, the
@@ -688,6 +690,10 @@ check, but the script meant to write it failed on an escape sequence and the
 commit went ahead without it. The section landed in the commit after. The
 message was wrong; nothing else in that commit was.
 
+**Superseded the same day.** On instruction, a prebuilt llama.cpp binary was
+installed and all five steps now pass - see *Local runtime* below. This section
+stays as the record of what was present before.
+
 ---
 
 ## Canonical register: A (clinician) - decided 12 September 2026
@@ -850,6 +856,81 @@ night-confidence tier:
   --write`. Without `--write`, it prints the diff and changes nothing.
 - The 2B low-night pin (`TestLowNightBothClaims`) is rewritten in register A,
   on the same two packets as before.
+
+---
+
+## Local runtime: llama.cpp b10927, grammar verified (12 September 2026)
+
+This supersedes the negative check above. On instruction, I installed a
+prebuilt llama.cpp release binary outside the repository and drove it by
+subprocess: not `llama-cpp-python`, and with no fallback to Transformers.
+Nothing in `report/` imports it or calls it. The only callers are scratch
+scripts outside the repository.
+
+### Why llama.cpp for deployment measurements
+
+The deployment experiment targets quantized GGUF inference, so deployment measurements are performed with the corresponding llama.cpp runtime rather than an fp16 Transformers configuration. Throughput figures are analytical bandwidth-bound estimates rather than on-device measurements; peak resident memory and quantized model size are measured directly.
+
+### Install
+
+- **Build:** `llama-b10927-bin-win-cpu-x64.zip`, from the `ggml-org/llama.cpp`
+  GitHub release `b10927`. The release tagged "latest" is a nightly marker,
+  not a build.
+- **sha256:** `ec597a9ba17e48256138377c22a8004f38b9634d5feaacdb7269bab5d03bf6c1`
+- **Location:** unpacked to `C:\Users\shahn\tools\llama.cpp\b10927\`
+- **Download:**
+
+  ```
+  Invoke-WebRequest https://github.com/ggml-org/llama.cpp/releases/download/b10927/llama-b10927-bin-win-cpu-x64.zip
+  ```
+
+  followed by `Expand-Archive`.
+
+### The five steps, in order - all pass
+
+Generation uses `llama-completion.exe` from the same build. In this build
+`llama-cli` has no `-no-cnv` option, whereas `llama-completion` has one, and
+its own help gives it as the text-generation form. In the invocations below,
+`$L` is `C:\Users\shahn\tools\llama.cpp\b10927\llama-completion.exe` and `$M`
+is `C:\Users\shahn\models\qwen2.5-1.5b-instruct-q4_k_m.gguf`.
+
+| step | invocation | result |
+|---|---|---|
+| 1. runtime version | `llama-cli.exe --version` | `version: 0.4.0-dev (build 10927, commit 718f7b417)`, `built with Clang 20.1.8 for Windows x86_64` |
+| 2. trivial grammar `root ::= "yes" \| "no"` | `$L -m $M -p "Is the sky blue on a clear day? Answer:" --grammar-file yesno.gbnf -n 8 --temp 0 --seed 0 -no-cnv --no-display-prompt` | `yes`, then end of text; exit 0. **Control:** with `-p "The capital of France is"`, the output is `no` with the grammar and ` Paris. The capital of Italy` without it. The grammar constrains; it is not merely accepted. |
+| 3. `claims.gbnf` loads | `$L -m $M -p "Output:" --grammar-file report/claims.gbnf -n 24 --temp 0 --seed 0 -no-cnv --no-display-prompt` | **no parse error**. Exit 0, and no stderr line mentions grammar, parse or error. The 24 tokens begin `[` `{"claim_id":  "c1", "claim_type": "population_association",`, truncated by `-n` as intended |
+| 4. one model | Qwen2.5-1.5B-Instruct Q4_K_M, from `Qwen/Qwen2.5-1.5B-Instruct-GGUF` | 1,065.6 MiB; sha256 matches Hugging Face (table below) |
+| 5. constrained generation | `$L -m $M -f step5_prompt.txt --grammar-file report/claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 -no-cnv --no-display-prompt` | dev SC4111E0 (low tier), `build_prompt` at prompt version 2D.1: 3,856 characters, 1,007 tokens. Exit 0 after 60 s wall. Prompt eval ran at 109.9 tok/s, and generation produced 1,076 tokens at 22.75 tok/s, reaching end of text within the cap. **`json.loads` gives a list of 18 claims, and Layer 1 finds 0 violations.** |
+
+This was a mechanical check only. Layer 2 was not run and output quality was
+not evaluated. It used raw completion with no chat template, because the prompt
+format is a 2F selection decision. One claim from the output, verbatim apart
+from whitespace:
+
+```json
+{"claim_id": "c1", "claim_type": "value", "cites": ["arch.total_sleep_time"], "subject": "this_recording", "value": 433.5, "unit": "minutes"}
+```
+
+The output also contained what the grammar is documented *not* to prevent:
+`text_key` / `cites` pairings that do not agree, which rule 7 exists to catch.
+That is the grammar boundary stated in the README, observed, not a result.
+
+### The five candidates, all Q4_K_M
+
+The other four were fetched only after step 5 passed, and none has been run.
+The three that had no ungated official GGUF come from bartowski's
+quantizations. Every file's sha256 matches the value Hugging Face publishes for
+it.
+
+| model | repository | MiB | sha256 |
+|---|---|---|---|
+| Qwen2.5-1.5B-Instruct | `Qwen/Qwen2.5-1.5B-Instruct-GGUF` | 1,065.6 | `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e` |
+| Llama-3.2-3B-Instruct | `bartowski/Llama-3.2-3B-Instruct-GGUF` | 1,925.8 | `6c1a2b41161032677be168d354123594c0e6e67d2b9227c84f296ad037c728ff` |
+| SmolLM2-1.7B-Instruct | `HuggingFaceTB/SmolLM2-1.7B-Instruct-GGUF` | 1,006.7 | `decd2598bc2c8ed08c19adc3c8fdd461ee19ed5708679d1c54ef54a5a30d4f33` |
+| Gemma-2-2b-it | `bartowski/gemma-2-2b-it-GGUF` | 1,629.4 | `e0aee85060f168f0f2d8473d7ea41ce2f3230c1bc1374847505ea599288a7787` |
+| Phi-3.5-mini-instruct | `bartowski/Phi-3.5-mini-instruct-GGUF` | 2,282.4 | `e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5` |
+
+All five are in `C:\Users\shahn\models\`, outside the repository.
 
 ---
 
