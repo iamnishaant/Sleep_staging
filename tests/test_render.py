@@ -698,24 +698,38 @@ class TestRenderGate(unittest.TestCase):
         self.assertRaises(TypeError, render_report, policy, HIGH)
         self.assertRaises(TypeError, render_report, policy.enriched, HIGH)
 
-    def test_5_nothing_under_report_calls_render_unverified(self):
+    # The ungated ways to turn claims into text, and the only files under
+    # report/ allowed to use each. render_unverified renders a whole report
+    # and render_claim a single claim - the same bypass by another name.
+    # render.py may use render_claim, because _assemble is built from it; no
+    # file, render.py included, may use render_unverified.
+    UNGATED = {"render_unverified": set(), "render_claim": {"render.py"}}
+
+    def test_5_nothing_under_report_uses_an_ungated_renderer(self):
         files = sorted(REPORT_DIR.rglob("*.py"))
-        self.assertIn(REPORT_DIR / "render.py", files)
-        for p in files:
-            hits = uses_of(p.read_text(encoding="utf-8"), "render_unverified")
-            self.assertEqual(hits, [], f"{p.relative_to(REPORT_DIR.parent)} "
-                                       f"lines {hits}")
+        render_py = REPORT_DIR / "render.py"
+        self.assertIn(render_py, files)
+        # The exemption must still be needed, or it is a hole nobody uses.
+        self.assertTrue(uses_of(render_py.read_text(encoding="utf-8"), "render_claim"))
+        for name, allowed in self.UNGATED.items():
+            for p in files:
+                if p.parent == REPORT_DIR and p.name in allowed:
+                    continue
+                hits = uses_of(p.read_text(encoding="utf-8"), name)
+                self.assertEqual(hits, [], f"{p.relative_to(REPORT_DIR.parent)} "
+                                           f"uses {name} at lines {hits}")
 
     def test_5b_the_guard_is_not_vacuous(self):
-        planted = {
-            "render_unverified(cs, pk)": 1,
-            "render.render_unverified(cs, pk)": 1,
-            "from .render import render_unverified as ru": 1,
-            "getattr(render, 'render_unverified')(cs, pk)": 1,
-            "def render_unverified(cs, pk):\n    return _assemble(cs, pk)": 0,
-        }
-        for src, want in planted.items():
-            self.assertEqual(len(uses_of(src, "render_unverified")), want, src)
+        for name in self.UNGATED:
+            planted = {
+                f"{name}(cs, pk)": 1,
+                f"render.{name}(cs, pk)": 1,
+                f"from .render import {name} as ru": 1,
+                f"getattr(render, '{name}')(cs, pk)": 1,
+                f"def {name}(cs, pk):\n    return _assemble(cs, pk)": 0,
+            }
+            for src, want in planted.items():
+                self.assertEqual(len(uses_of(src, name)), want, src)
 
 
 if __name__ == "__main__":
