@@ -91,8 +91,15 @@ def last_attempt(log_dir: Path) -> datetime | None:
     return max(stamps) if stamps else None
 
 
+# What the live run is scheduled to send. P1 alone answers the 2F question;
+# P2 stays built and tested, and is scheduled only if P1's result is
+# ambiguous (decided 13 September 2026 - PHASE2_NOTES).
+SCHEDULED_PROMPTS = ("P1",)
+
+
 def dev_jobs(dev_manifest: Path = DEV_MANIFEST, test_manifest: Path = TEST_MANIFEST,
-             packet_dir: Path = PACKET_DIRS["val"]) -> list[tuple[str, dict]]:
+             packet_dir: Path = PACKET_DIRS["val"],
+             prompts: tuple[str, ...] = PROMPT_IDS) -> list[tuple[str, dict]]:
     """(prompt_id, packet) in run order. Refuses anything that is not dev."""
     rows = json.loads(dev_manifest.read_text(encoding="utf-8"))
     test_ids = {r["recording_id"] for r in json.loads(test_manifest.read_text(encoding="utf-8"))}
@@ -105,7 +112,7 @@ def dev_jobs(dev_manifest: Path = DEV_MANIFEST, test_manifest: Path = TEST_MANIF
         if pk.get("recording_id") != rec:
             raise SystemExit(f"{packet_dir / rec}.json holds {pk.get('recording_id')!r}")
         packets.append(pk)
-    return [(pid, pk) for pid in PROMPT_IDS for pk in packets]
+    return [(pid, pk) for pid in prompts for pk in packets]
 
 
 def cache_key(rec: str, prompt_id: str, phash: str, model: str = REFERENCE_MODEL) -> dict:
@@ -145,7 +152,7 @@ class Runner:
         self.transport, self.clock, self.sleep, self.rand = transport, clock, sleep, rand
         self.cache_dir, self.log_dir = cache_dir, log_dir
         self.log_path = log_dir / "run.jsonl"
-        self.jobs = dev_jobs() if jobs is None else jobs
+        self.jobs = dev_jobs(prompts=SCHEDULED_PROMPTS) if jobs is None else jobs
         self.schema = build_response_schema()
         self.model = model
 
@@ -168,7 +175,7 @@ class Runner:
                            model=self.model)
 
     def status(self) -> dict:
-        done = {pid: 0 for pid in PROMPT_IDS}
+        done = {pid: 0 for pid in dict.fromkeys(p for p, _ in self.jobs)}
         pending = []
         for prompt_id, pk, _, key in self.keyed_jobs():
             if load_cached(self.cache_dir, key):

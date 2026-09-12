@@ -25,8 +25,9 @@ from report import render_report, verify_report
 from report.evaluate import TIERS, evaluate
 from report.oracle import oracle
 from report.render import RenderRefused
-from .prompts import PROMPT_IDS, build, prompt_hash
-from .run import CACHE_DIR, DEV_MANIFEST, cache_key, dev_jobs, load_cached
+from .prompts import build, prompt_hash
+from .run import (CACHE_DIR, DEV_MANIFEST, SCHEDULED_PROMPTS, cache_key, dev_jobs,
+                  load_cached)
 
 HERE = Path(__file__).resolve().parent
 RESULTS_DIR = HERE / "results"
@@ -127,7 +128,7 @@ def score_prompt(prompt_id: str, *, jobs=None, cache_dir: Path = CACHE_DIR,
 
 
 def main() -> int:
-    for prompt_id in PROMPT_IDS:
+    for prompt_id in SCHEDULED_PROMPTS:          # an unscheduled prompt has nothing to score
         s = score_prompt(prompt_id)
         print(f"\n===== {prompt_id}: {s['n_cached']} cached responses =====")
         print(s["table"])

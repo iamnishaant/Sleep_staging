@@ -130,6 +130,14 @@ class TestJobs(unittest.TestCase):
         self.assertEqual([pk["recording_id"] for _, pk in JOBS[31:]], dev)
         self.assertFalse({pk["recording_id"] for _, pk in JOBS} & test)
 
+    def test_the_live_schedule_is_p1_only(self):
+        """P1 alone answers the 2F question; P2 is scheduled only if P1's
+        result is ambiguous. A default Runner stops at 31."""
+        self.assertEqual(R.SCHEDULED_PROMPTS, ("P1",))
+        with tempfile.TemporaryDirectory() as d:
+            jobs = R.Runner(transport=None, cache_dir=Path(d), log_dir=Path(d)).jobs
+        self.assertEqual([p for p, _ in jobs], ["P1"] * 31)
+
     def test_a_test_packet_is_refused(self):
         with tempfile.TemporaryDirectory() as d:
             bad = Path(d) / "m.json"

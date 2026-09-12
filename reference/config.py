@@ -4,6 +4,8 @@ REFERENCE_MODEL = "gemini-3.8-flash"
 
 # Candidates for the reference model, piloted but not adopted. Named here so
 # every model string lives in this one file.
+#   flash_lite - REJECTED 13 September 2026: it refuses thinkingBudget 0 (HTTP
+#   400), so it cannot run with thinking off to match the local candidates.
 CANDIDATE_MODELS = {"flash_lite": "gemini-3.5-flash-lite"}
 
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
