@@ -17,8 +17,10 @@ from report.claim_schema import EVIDENCE_ID_VOCAB, REASON_KEYS, TEXT_KEYS
 from report.oracle import oracle
 from report.serialize import build_prompt
 from reference import run as R
+from reference.config import REFERENCE_MODEL
+from reference.gemini import build_body
 from reference.prompts import HEDGE_RULE, PROMPT_IDS, build, prompt_hash, shape_block
-from reference.schema import build_response_schema
+from reference.schema import SCHEMA_PATH, build_response_schema
 from reference.score import score_prompt
 
 C_BLOCK = "\n".join([          # run C, as recorded in PHASE2_NOTES
@@ -146,6 +148,17 @@ class TestCacheAndResume(Case):
         self.assertEqual((call["max_output_tokens"], call["temperature"], call["seed"]),
                          (16384, 0.0, 0))
         self.assertEqual(call["schema"], build_response_schema())
+        self.assertEqual(call["model"], REFERENCE_MODEL)
+
+    def test_the_resolved_request_body_is_the_item_2b_config(self):
+        kw = self.runner(FakeTransport(self.clock), jobs=JOBS[:1]).request_kwargs()
+        body = build_body("x", **{k: v for k, v in kw.items() if k != "model"})
+        self.assertEqual(kw["model"], REFERENCE_MODEL)
+        self.assertEqual(body["generationConfig"], {
+            "maxOutputTokens": 16384, "temperature": 0.0, "seed": 0,
+            "responseMimeType": "application/json",
+            "responseSchema": json.loads(SCHEMA_PATH.read_text(encoding="utf-8")),
+            "thinkingConfig": {"thinkingBudget": 0}})
 
     def test_a_cached_response_is_never_requested_again(self):
         t = FakeTransport(self.clock)
@@ -181,6 +194,18 @@ class TestBudget(Case):
         s = self.runner(t, limit=20).run()
         self.assertEqual(len(t.calls), 2)                                # 18 + 2 = 20
         self.assertEqual((s["sent"], s["stopped"]), (1, "budget"))
+
+    def test_another_models_attempts_never_count(self):
+        """Quotas are per model: a pilot's attempts must not spend the
+        reference model's budget."""
+        when = self.clock.now() - timedelta(hours=1)
+        p = self.dir / "logs" / "other.jsonl"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("".join(json.dumps({"ts": when.isoformat(), "http_status": 200,
+                                         "model": "some-other-model"}) + "\n"
+                             for _ in range(18)), encoding="utf-8")
+        s = self.runner(FakeTransport(self.clock), limit=2, jobs=JOBS[:2]).run()
+        self.assertEqual((s["sent"], s["stopped"]), (2, None))
 
     def test_successes_only_when_2a_says_failures_are_free(self):
         self.seed_log(18, self.clock.now() - timedelta(hours=1))

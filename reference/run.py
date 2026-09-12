@@ -31,6 +31,7 @@ run, for inspection. A completed response is never retried.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import random
@@ -40,10 +41,10 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from report.evaluate import PACKET_DIRS
-from .config import RATE_LIMIT_RPD, REFERENCE_MODEL
-from .gemini import generate, is_retryable
+from .config import API_BASE, RATE_LIMIT_RPD, REFERENCE_MODEL
+from .gemini import build_body, generate, is_retryable
 from .prompts import PROMPT_IDS, build, prompt_hash
-from .schema import build_response_schema
+from .schema import SCHEMA_PATH, build_response_schema
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -74,9 +75,14 @@ def _log_records(log_dir: Path) -> list[dict]:
     return out
 
 
-def attempts_on(day: date, log_dir: Path, successes_only: bool = False) -> int:
+def attempts_on(day: date, log_dir: Path, successes_only: bool = False,
+                model: str = REFERENCE_MODEL) -> int:
+    """Attempts to `model` on the Pacific `day`. Quotas are per model, so another
+    model's attempts never count; a record that names no model is counted, to
+    stay conservative."""
     return sum(1 for r in _log_records(log_dir)
                if pacific_date(datetime.fromisoformat(r["ts"])) == day
+               and r.get("model", model) == model
                and (not successes_only or r.get("http_status") == 200))
 
 
@@ -133,7 +139,7 @@ class Runner:
                  successes_only: bool = False, transport=generate,
                  clock=lambda: datetime.now(timezone.utc), sleep=time.sleep,
                  rand=random.random, cache_dir: Path = CACHE_DIR,
-                 log_dir: Path = LOG_DIR, jobs=None):
+                 log_dir: Path = LOG_DIR, jobs=None, model: str = REFERENCE_MODEL):
         self.max_attempts_today = max_attempts_today
         self.successes_only = successes_only
         self.transport, self.clock, self.sleep, self.rand = transport, clock, sleep, rand
@@ -141,15 +147,25 @@ class Runner:
         self.log_path = log_dir / "run.jsonl"
         self.jobs = dev_jobs() if jobs is None else jobs
         self.schema = build_response_schema()
+        self.model = model
+
+    def request_kwargs(self) -> dict:
+        """Exactly what every live attempt passes to the transport. One source,
+        so what --show-request prints is what is sent."""
+        return {"model": self.model, "schema": self.schema,
+                "thinking": SETTINGS["thinking"], "temperature": SETTINGS["temperature"],
+                "seed": SETTINGS["seed"], "max_output_tokens": SETTINGS["max_output_tokens"]}
 
     # ---- state ----------------------------------------------------------------
     def keyed_jobs(self):
         for prompt_id, pk in self.jobs:
             text = build(prompt_id, pk)
-            yield prompt_id, pk, text, cache_key(pk["recording_id"], prompt_id, prompt_hash(text))
+            yield prompt_id, pk, text, cache_key(pk["recording_id"], prompt_id,
+                                                 prompt_hash(text), model=self.model)
 
     def used_today(self) -> int:
-        return attempts_on(pacific_date(self.clock()), self.log_dir, self.successes_only)
+        return attempts_on(pacific_date(self.clock()), self.log_dir, self.successes_only,
+                           model=self.model)
 
     def status(self) -> dict:
         done = {pid: 0 for pid in PROMPT_IDS}
@@ -178,9 +194,7 @@ class Runner:
             self._pace()
             r = self.transport(
                 text, request_id=f"{key['prompt_id']}/{key['recording_id']}#{attempt}",
-                log_path=self.log_path, schema=self.schema,
-                thinking=SETTINGS["thinking"], temperature=SETTINGS["temperature"],
-                seed=SETTINGS["seed"], max_output_tokens=SETTINGS["max_output_tokens"],
+                log_path=self.log_path, **self.request_kwargs(),
                 extra={"recording_id": key["recording_id"], "prompt_id": key["prompt_id"],
                        "prompt_hash": key["prompt_hash"], "attempt": attempt,
                        "retry": attempt > 1, "retry_cause": causes[-1] if causes else None})
@@ -223,8 +237,24 @@ def main(argv=None) -> int:
     ap.add_argument("--go", action="store_true", help="actually send requests")
     ap.add_argument("--max-attempts-today", type=int, default=RATE_LIMIT_RPD)
     ap.add_argument("--successes-only", action="store_true")
+    ap.add_argument("--show-request", action="store_true",
+                    help="print the resolved request for the next job; sends nothing")
     a = ap.parse_args(argv)
     runner = Runner(max_attempts_today=a.max_attempts_today, successes_only=a.successes_only)
+    if a.show_request:
+        prompt_id, pk, text, key = next(runner.keyed_jobs())
+        kw = runner.request_kwargs()
+        body = build_body(text, **{k: v for k, v in kw.items() if k != "model"})
+        cfg = dict(body["generationConfig"])
+        schema_json = json.dumps(cfg.pop("responseSchema"), indent=2) + "\n"
+        print(f"POST {API_BASE}/models/{kw['model']}:generateContent")
+        print(f"generationConfig (responseSchema shown below): {json.dumps(cfg)}")
+        print(f"responseSchema: sha256 {hashlib.sha256(schema_json.encode()).hexdigest()[:16]}, "
+              f"identical to reference/response_schema.json: "
+              f"{schema_json == SCHEMA_PATH.read_text(encoding='utf-8')}")
+        print(f"contents: one user turn of {len(text)} chars - {prompt_id} on "
+              f"{pk['recording_id']}, prompt_hash {key['prompt_hash'][:16]}")
+        return 0
     st = runner.status()
     print(f"Pacific date {st['pacific_date']}: {st['used_today']} of {st['limit']} attempts "
           f"used ({'successes only' if a.successes_only else 'every attempt counts'})")

@@ -2,6 +2,10 @@
 
 REFERENCE_MODEL = "gemini-3.8-flash"
 
+# Candidates for the reference model, piloted but not adopted. Named here so
+# every model string lives in this one file.
+CANDIDATE_MODELS = {"flash_lite": "gemini-3.5-flash-lite"}
+
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
 # Free-tier limits for this project, read from AI Studio on 12 September 2026

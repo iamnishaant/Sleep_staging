@@ -6,6 +6,8 @@ x-goog-api-key header - never in a URL, never written to a log.
 
 Every request appends one JSON line to its log BEFORE the response body is
 parsed, so a crash while processing still leaves the record of what was spent.
+Each record also names its caller - process id, parent process id, command line
+and working directory - so a request can always be traced to what started it.
 """
 from __future__ import annotations
 
@@ -13,6 +15,7 @@ import json
 import os
 import random
 import socket
+import sys
 import time
 import urllib.error
 import urllib.request
@@ -37,12 +40,10 @@ def api_key() -> str:
     return key
 
 
-def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | None = None,
-             thinking: dict | None = None, temperature: float | None = 0.0,
-             seed: int | None = 0, max_output_tokens: int = 8192,
-             timeout: float = 300.0, extra: dict | None = None) -> dict:
-    """One request. `extra` fields (packet, prompt id, attempt, retry cause)
-    are written into the log record alongside the provider's figures."""
+def build_body(prompt: str, *, schema: dict | None = None, thinking: dict | None = None,
+               temperature: float | None = 0.0, seed: int | None = 0,
+               max_output_tokens: int = 8192) -> dict:
+    """The request body, exactly as generate() sends it."""
     config: dict = {"maxOutputTokens": max_output_tokens}
     if temperature is not None:
         config["temperature"] = temperature
@@ -53,10 +54,26 @@ def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | Non
         config["responseSchema"] = schema
     if thinking is not None:
         config["thinkingConfig"] = thinking
-    body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
+    return {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
             "generationConfig": config}
+
+
+def caller() -> dict:
+    return {"pid": os.getpid(), "ppid": os.getppid(), "argv": sys.argv, "cwd": os.getcwd()}
+
+
+def generate(prompt: str, *, request_id: str, log_path: Path, model: str = REFERENCE_MODEL,
+             schema: dict | None = None, thinking: dict | None = None,
+             temperature: float | None = 0.0, seed: int | None = 0,
+             max_output_tokens: int = 8192, timeout: float = 300.0,
+             extra: dict | None = None) -> dict:
+    """One request. `extra` fields (packet, prompt id, attempt, retry cause)
+    are written into the log record alongside the provider's figures."""
+    body = build_body(prompt, schema=schema, thinking=thinking, temperature=temperature,
+                      seed=seed, max_output_tokens=max_output_tokens)
+    config = body["generationConfig"]
     req = urllib.request.Request(
-        f"{API_BASE}/models/{REFERENCE_MODEL}:generateContent", method="POST",
+        f"{API_BASE}/models/{model}:generateContent", method="POST",
         data=json.dumps(body).encode("utf-8"),
         headers={"x-goog-api-key": api_key(), "Content-Type": "application/json"})
 
@@ -82,7 +99,7 @@ def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | Non
         "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "request_id": request_id,
         **(extra or {}),
-        "model": REFERENCE_MODEL,
+        "model": model,
         "http_status": status,
         "prompt_tokens": usage.get("promptTokenCount"),
         "output_tokens": usage.get("candidatesTokenCount"),
@@ -92,6 +109,7 @@ def generate(prompt: str, *, request_id: str, log_path: Path, schema: dict | Non
         "generation_config": {k: v for k, v in config.items() if k != "responseSchema"}
                              | ({"responseSchema": "<schema>"} if schema else {}),
         "error": error,
+        "caller": caller(),
     }
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("a", encoding="utf-8") as f:            # logged before parsing
