@@ -2,7 +2,7 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A-2E complete — 247 tests, all passing. The deterministic tier is
+**Status: 2A-2E complete — 248 tests, all passing. The deterministic tier is
 finished; the next step runs a model. No model has run yet.**
 
 Phase 2 adds the language-model tier. Steps 2A–2C are deterministic and testable
@@ -655,6 +655,37 @@ denominator is what misleads.
 - Tests walk the whole JSON and fail if `policy_pass_rate` appears anywhere
   without its numerator and denominator, parse every validity cell for its
   fraction, and encode the 72/80-vs-88/98 example directly
+
+---
+
+## GBNF runtime check (12 September 2026) - negative, and it changes 2F
+
+The 2G ablation compares grammar-constrained with unconstrained generation, so
+it needs a runtime that can apply a GBNF grammar. Checked before 2F rather than
+discovered in it. **Step 1 failed, so steps 2, 3 and 5 were not run** - nothing
+was installed and nothing downloaded to work around it.
+
+| step | result |
+|---|---|
+| 1. runtime present | **absent.** No `llama-cli` / `llama-server` on PATH (`main` resolves to Windows' `main.cpl`, unrelated). No `llama-cpp-python`: `pip show` finds nothing and `import llama_cpp` raises `ModuleNotFoundError`. No Ollama executable in its three standard install locations; `~/.ollama` holds only keys and an empty `models/`, a leftover. No LM Studio. `transformers` 5.10 and `torch` 2.10 are installed, but neither applies GBNF natively. |
+| 2. grammar accepted | not run - no runtime |
+| 3. `claims.gbnf` loads | not run - no runtime |
+| 4. model available | **one GGUF, unsuitable.** `F:\NLU result\nepglish-nlu-v3-q8.gguf`: 8.1 GB, llama architecture, `general.name` "Nepglish Merged", 8.0B parameters, Q8_0, context 8192 - read from the GGUF header, no runtime needed. An unrelated project's fine-tune, and twice the 1-4B target. Usable to test grammar mechanics once a runtime exists; not a 2F candidate. |
+| 5. constrained output well-formed | not run - no runtime |
+
+What installing would involve, recorded for the decision rather than acted on:
+Python is 3.14.0, recent enough that prebuilt `llama-cpp-python` wheels may not
+exist, which would mean a source build - `cmake` and MSVC `cl` are absent,
+MinGW `gcc`/`g++` present, CUDA 12.9 `nvcc` present. A prebuilt llama.cpp
+release binary driven by subprocess (`--grammar-file`) would avoid the binding
+entirely. Ollama would not satisfy this check as specified: as far as is known
+here, its API constrains through a JSON schema passed as `format`, not an
+arbitrary GBNF file.
+
+A note on how this section arrived: commit `898e403` said it recorded this
+check, but the script meant to write it failed on an escape sequence and the
+commit went ahead without it. The section landed in the commit after. The
+message was wrong; nothing else in that commit was.
 
 ---
 

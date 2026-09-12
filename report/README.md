@@ -417,7 +417,7 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-247 tests.
+248 tests.
 
 Every adversarial case asserts its **specific** expected code. Asserting only
 that something failed would pass even when the wrong rule fired, which would
