@@ -73,7 +73,7 @@ class TestOpensNothing(unittest.TestCase):
         try:
             for name, pk, cs, raw in cases:
                 r = verify_report(raw, pk)
-                render_report(r.enriched, pk)
+                render_report(r, pk)                           # clean: it renders
                 verify_report([good_value_claim(pk)], pk)      # a failing set too
         finally:
             builtins.open, io.open = real_open, real_io

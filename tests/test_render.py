@@ -26,9 +26,11 @@ from report import verify_report
 from report.claim_schema import REASON_KEYS, TEXT_KEYS, evidence_index
 from report.oracle import oracle
 from report.render import (_ERROR_DISPLAY, OBSERVATION_TEMPLATE,
-                           REVIEW_TEMPLATE, MissingField, UndeclaredUnit,
-                           render_attribution_footer, render_claim,
-                           render_report)
+                           REVIEW_TEMPLATE, MissingField, RenderRefused,
+                           UndeclaredUnit, render_attribution_footer,
+                           render_claim, render_report, render_unverified)
+from report.verify_policy import verify_policy
+from report.violations import V
 from test_adversarial import good_hedged_claim, good_value_claim, val
 
 HIGH_NAME, HIGH = packet_with_tier("high")
@@ -64,20 +66,20 @@ def n1_flag(cid="c99"):
 
 def full_report(pk):
     """The oracle witness plus the N1 flag: every template a report can hit."""
-    return render_report(enriched(oracle(pk).witness + [n1_flag()], pk), pk)
+    return render_report(verify_report(oracle(pk).witness + [n1_flag()], pk), pk)
 
 
 class TestPurity(unittest.TestCase):
     def test_same_input_same_bytes(self):
         for name, pk in all_packets():
             cs = valid_claim_set(pk)
-            a = render_report(enriched(cs, pk), pk)
-            b = render_report(enriched(cs, pk), pk)
+            a = render_report(verify_report(cs, pk), pk)
+            b = render_report(verify_report(cs, pk), pk)
             self.assertEqual(a, b, name)
 
     def test_no_empty_report_from_a_valid_set(self):
         for name, pk in all_packets():
-            out = render_report(enriched(valid_claim_set(pk), pk), pk)
+            out = render_report(verify_report(valid_claim_set(pk), pk), pk)
             self.assertTrue(out.strip(), name)
 
 
@@ -123,24 +125,24 @@ class TestHedging(unittest.TestCase):
 class TestBannerAndFooter(unittest.TestCase):
     def test_low_confidence_flag_is_a_banner_at_the_top(self):
         cs = valid_claim_set(LOW)
-        out = render_report(enriched(cs, LOW), LOW)
+        out = render_report(verify_report(cs, LOW), LOW)
         self.assertTrue(out.startswith("REVIEW REQUIRED"), out[:80])
 
     def test_high_confidence_night_has_no_banner(self):
-        out = render_report(enriched(valid_claim_set(HIGH), HIGH), HIGH)
+        out = render_report(verify_report(valid_claim_set(HIGH), HIGH), HIGH)
         self.assertFalse(out.startswith("REVIEW REQUIRED"))
 
     def test_attribution_footer_states_cohort_scope(self):
         """`attribution_quality` is uncitable, so this text comes from the
         packet directly and no model can phrase it."""
-        out = render_report(enriched(valid_claim_set(HIGH), HIGH), HIGH)
+        out = render_report(verify_report(valid_claim_set(HIGH), HIGH), HIGH)
         self.assertIn("across that cohort, not this recording", out)
         self.assertIn("(gate 3a)", out)
 
     def test_footer_present_on_every_packet(self):
         for split in SPLITS:
             for name, pk in all_packets(split):
-                out = render_report(enriched(valid_claim_set(pk), pk), pk)
+                out = render_report(verify_report(valid_claim_set(pk), pk), pk)
                 self.assertIn("across that cohort, not this recording", out,
                               f"{split} {name}")
 
@@ -225,15 +227,15 @@ class TestLowNightBothClaims(unittest.TestCase):
         ])
 
     def test_pinned_on_a_test_packet(self):
-        out = render_report(enriched(self._claims(LOW), LOW), LOW)
+        out = render_report(verify_report(self._claims(LOW), LOW), LOW)
         self.assertEqual(out, self._expected(LOW, "test", 29))
 
     def test_pinned_on_a_dev_packet(self):
-        out = render_report(enriched(self._claims(DEV_LOW), DEV_LOW), DEV_LOW)
+        out = render_report(verify_report(self._claims(DEV_LOW), DEV_LOW), DEV_LOW)
         self.assertEqual(out, self._expected(DEV_LOW, "validation", 31))
 
     def test_the_flag_is_the_banner_and_the_observation_is_not(self):
-        out = render_report(enriched(self._claims(LOW), LOW), LOW)
+        out = render_report(verify_report(self._claims(LOW), LOW), LOW)
         head, _, body = out.partition("\n\n")
         self.assertIn("Review the full hypnogram", head)
         self.assertNotIn("Night-level confidence is in", head)
@@ -361,14 +363,14 @@ class TestProvenance(unittest.TestCase):
         cases = []
         for split in SPLITS:
             for name, pk in all_packets(split):
-                cases.append((pk, enriched(oracle(pk).witness + [n1_flag()], pk)))
+                cases.append((pk, verify_report(oracle(pk).witness + [n1_flag()], pk)))
         opened = []
         real_open, real_io = builtins.open, io.open
         builtins.open = lambda f, *a, **k: (opened.append(str(f)), real_open(f, *a, **k))[1]
         io.open = lambda f, *a, **k: (opened.append(str(f)), real_io(f, *a, **k))[1]
         try:
-            for pk, enr in cases:
-                render_report(enr, pk)
+            for pk, res in cases:
+                render_report(res, pk)
         finally:
             builtins.open, io.open = real_open, real_io
         self.assertEqual(len(cases), 60)
@@ -523,7 +525,7 @@ class TestRegisterAPins(unittest.TestCase):
         rec, pk = packet_with_tier(tier, split)
         golden = GOLDEN / f"{split}_{tier}_{rec}.txt"
         self.assertTrue(golden.exists(), f"missing pin {golden.name}")
-        out = render_report(enriched(oracle(pk).witness, pk), pk) + "\n"
+        out = render_report(verify_report(oracle(pk).witness, pk), pk) + "\n"
         want = golden.read_text(encoding="utf-8")
         if out != want:
             diff = "".join(difflib.unified_diff(want.splitlines(True),
@@ -554,6 +556,166 @@ class TestRegisterAPins(unittest.TestCase):
         want = {f"{s}_{t}_{packet_with_tier(t, s)[0]}.txt" for s, t in PIN_CASES}
         have = {p.name for p in GOLDEN.glob("*.txt")}
         self.assertEqual(have, want)
+
+
+# ===========================================================================
+# The render gate: a report renders only from a clean verification result.
+# ===========================================================================
+REPORT_DIR = HERE.parent / "report"
+
+
+def uses_of(src: str, name: str) -> list[int]:
+    """Lines where `src` calls `name`, imports it, or getattr()s it by string.
+
+    Syntax only. Whether render_report was handed a PASSING result is dataflow,
+    which no AST check can see - the signature enforces that instead, by
+    raising. This answers the one question that is syntactic.
+    """
+    hits = []
+    for node in ast.walk(ast.parse(src)):
+        if isinstance(node, ast.Call):
+            f = node.func
+            if ((isinstance(f, ast.Name) and f.id == name)
+                    or (isinstance(f, ast.Attribute) and f.attr == name)):
+                hits.append(node.lineno)
+            elif (isinstance(f, ast.Name) and f.id == "getattr"
+                  and len(node.args) > 1 and isinstance(node.args[1], ast.Constant)
+                  and node.args[1].value == name):
+                hits.append(node.lineno)
+        elif isinstance(node, ast.ImportFrom):
+            if any(a.name == name for a in node.names):
+                hits.append(node.lineno)
+    return hits
+
+
+def unhedged(packet, eid, cid):
+    """A `value` claim on an unsafe item: exactly one violation, rule 4."""
+    return claim(claim_id=cid, claim_type="value", cites=[eid],
+                 value=val(packet, eid), unit=val(packet, eid, "unit"))
+
+
+class TestRenderGate(unittest.TestCase):
+    """Clean means exactly len(violations) == 0. Anything else is refused,
+    with every violation; failing claims are never filtered out."""
+
+    def test_1_one_violation_refuses_the_whole_set(self):
+        """A survivor exists - the TST value verifies on its own - and still
+        nothing renders: the gate refuses the SET, it does not filter it."""
+        r = verify_report([good_value_claim(HIGH),
+                           unhedged(HIGH, "arch.waso", "c2")], HIGH)
+        self.assertEqual(r.codes, [str(V.UNSAFE_ITEM_NOT_HEDGED)])
+        self.assertEqual(len(r.enriched), 1)
+        with self.assertRaises(RenderRefused) as cm:
+            render_report(r, HIGH)
+        self.assertEqual(cm.exception.violations, list(r.violations))
+        self.assertEqual(cm.exception.codes, r.codes)
+
+    def test_1b_the_refusal_carries_every_violation_not_the_first(self):
+        cs = [unhedged(LOW, "arch.waso", "c1"),
+              unhedged(LOW, "arch.sleep_onset_latency", "c2"),
+              claim(claim_id="c3", claim_type="review_flag",
+                    cites=["night.confidence"], reason_key="n1_low_reliability")]
+        r = verify_report(cs, LOW)
+        with self.assertRaises(RenderRefused) as cm:
+            render_report(r, LOW)
+        self.assertEqual(cm.exception.codes,
+                         [str(V.UNSAFE_ITEM_NOT_HEDGED)] * 2
+                         + [str(V.TEXT_KEY_DEPENDENCY_MISSING),
+                            str(V.MISSING_REVIEW_FLAG)])
+        self.assertEqual(cm.exception.violations, list(r.violations))
+
+    def test_2_the_oracle_witness_renders_through_the_gate_on_all_60(self):
+        """The six golden pins also go through render_report, byte-exact."""
+        n = 0
+        for split in SPLITS:
+            for name, pk in all_packets(split):
+                out = render_report(verify_report(oracle(pk).witness, pk), pk)
+                low = pk["night_confidence"]["tier"] == "low"
+                self.assertEqual(out.startswith("REVIEW REQUIRED"), low,
+                                 f"{split} {name}")
+                n += 1
+        self.assertEqual(n, 60)
+
+    def test_3_empty_array_on_a_low_night_is_refused_by_rule_10(self):
+        n = 0
+        for split in SPLITS:
+            for name, pk in all_packets(split):
+                if pk["night_confidence"]["tier"] != "low":
+                    continue
+                with self.assertRaises(RenderRefused) as cm:
+                    render_report(verify_report([], pk), pk)
+                self.assertEqual(cm.exception.codes, [str(V.MISSING_REVIEW_FLAG)],
+                                 f"{split} {name}")
+                n += 1
+        self.assertEqual(n, 23)
+
+    def test_3b_empty_array_on_a_clean_night_renders_exactly_as_before(self):
+        """No claims on a high or medium night is clean, so it renders: a
+        blank line, then the footer - the same bytes the pre-gate renderer
+        produced (checked against a capture taken before the change)."""
+        n = 0
+        for split in SPLITS:
+            for name, pk in all_packets(split):
+                if pk["night_confidence"]["tier"] == "low":
+                    continue
+                self.assertEqual(render_report(verify_report([], pk), pk),
+                                 "\n" + render_attribution_footer(pk),
+                                 f"{split} {name}")
+                n += 1
+        self.assertEqual(n, 37)
+
+    def test_4_render_unverified_is_not_a_second_renderer(self):
+        """Needs both functions by definition: same bytes for a clean set."""
+        for split in SPLITS:
+            for name, pk in all_packets(split):
+                r = verify_report(oracle(pk).witness + [n1_flag()], pk)
+                self.assertEqual(render_unverified(r.enriched, pk),
+                                 render_report(r, pk), f"{split} {name}")
+
+    def test_4b_the_escape_hatch_really_is_ungated(self):
+        """Deliberately non-clean: the step-5 shape on a low night. The gate
+        refuses it; the escape hatch renders exactly the subset the gate
+        exists to stop - a lone TST line, no banner."""
+        r = verify_report([good_value_claim(LOW),
+                           claim(claim_id="c2", claim_type="review_flag",
+                                 cites=["night.confidence"],
+                                 reason_key="n1_low_reliability")], LOW)
+        self.assertRaises(RenderRefused, render_report, r, LOW)
+        out = render_unverified(r.enriched, LOW)
+        self.assertTrue(out.startswith("Total sleep time:"), out[:40])
+        self.assertNotIn("REVIEW REQUIRED", out)
+
+    def test_only_a_verify_report_is_accepted(self):
+        """A bare list is the old signature. A Layer 2 PolicyResult has
+        `violations` and `enriched` too, but has skipped Layer 1: here it is
+        clean on a flag whose reason_key does not exist."""
+        cs = [good_value_claim(HIGH),
+              claim(claim_id="c2", claim_type="review_flag",
+                    cites=["night.confidence"], reason_key="not_a_key")]
+        policy = verify_policy(cs, HIGH)
+        self.assertEqual(policy.violations, [])
+        self.assertEqual(verify_report(cs, HIGH).codes, [str(V.UNKNOWN_REASON_KEY)])
+        self.assertRaises(TypeError, render_report, policy, HIGH)
+        self.assertRaises(TypeError, render_report, policy.enriched, HIGH)
+
+    def test_5_nothing_under_report_calls_render_unverified(self):
+        files = sorted(REPORT_DIR.rglob("*.py"))
+        self.assertIn(REPORT_DIR / "render.py", files)
+        for p in files:
+            hits = uses_of(p.read_text(encoding="utf-8"), "render_unverified")
+            self.assertEqual(hits, [], f"{p.relative_to(REPORT_DIR.parent)} "
+                                       f"lines {hits}")
+
+    def test_5b_the_guard_is_not_vacuous(self):
+        planted = {
+            "render_unverified(cs, pk)": 1,
+            "render.render_unverified(cs, pk)": 1,
+            "from .render import render_unverified as ru": 1,
+            "getattr(render, 'render_unverified')(cs, pk)": 1,
+            "def render_unverified(cs, pk):\n    return _assemble(cs, pk)": 0,
+        }
+        for src, want in planted.items():
+            self.assertEqual(len(uses_of(src, "render_unverified")), want, src)
 
 
 if __name__ == "__main__":

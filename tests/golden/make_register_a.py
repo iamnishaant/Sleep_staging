@@ -37,9 +37,8 @@ def golden_path(split, tier, rec) -> Path:
 
 def render_case(split, tier):
     rec, pk = packet_with_tier(tier, split)
-    r = verify_report(oracle(pk).witness, pk)
-    assert not r.violations, (rec, r.codes)
-    return rec, render_report(r.enriched, pk) + "\n"
+    # render_report refuses anything but a clean result, with every violation.
+    return rec, render_report(verify_report(oracle(pk).witness, pk), pk) + "\n"
 
 
 def main() -> int:

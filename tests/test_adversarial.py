@@ -27,6 +27,7 @@ from _packets import (all_packets, first_packet, packet_with_tier,
 from report import render_report, verify_report
 from report.claim_schema import evidence_index
 from report.oracle import oracle
+from report.render import RenderRefused, render_unverified
 from report.verify_policy import verify_policy
 from report.verify_structure import parse, verify_structure
 from report.violations import V, codes, has
@@ -482,7 +483,10 @@ class TestRule10ReadsTheSurvivingSet(Base):
         r = self.check([good_value_claim(LOW), flag], LOW)
         self.assertEqual(r.codes, [str(own_code), str(V.MISSING_REVIEW_FLAG)])
         self.assertNotIn(flag["claim_id"], [c.get("claim_id") for c in r.enriched])
-        self.assertFalse(render_report(r.enriched, LOW).startswith("REVIEW REQUIRED"))
+        # Non-clean by construction: the gate refuses it outright, and the
+        # verified subset - what used to render - carries no banner.
+        self.assertRaises(RenderRefused, render_report, r, LOW)
+        self.assertFalse(render_unverified(r.enriched, LOW).startswith("REVIEW REQUIRED"))
 
     def test_10a_unknown_reason_key(self):
         self.assertFlagRejectedAndRuleFires(
@@ -514,7 +518,10 @@ class TestRule10ReadsTheSurvivingSet(Base):
                     cites=["arch.time_in_bed"], value=-1.0, unit="minutes")
         r = self.check([good_value_claim(LOW), review_flag(), bad], LOW)
         self.assertEqual(r.codes, [str(V.VALUE_MISMATCH), str(V.UNCITED_QUANTITY)])
-        self.assertTrue(render_report(r.enriched, LOW).startswith("REVIEW REQUIRED"))
+        # Still non-clean (the bad claim), so the gate refuses the report. The
+        # verified subset keeps its banner, which is what rule 10 tracks.
+        self.assertRaises(RenderRefused, render_report, r, LOW)
+        self.assertTrue(render_unverified(r.enriched, LOW).startswith("REVIEW REQUIRED"))
 
     def test_10e_all_23_low_nights_with_an_invalid_flag(self):
         """Exactly the flag's own violation, plus rule 10, on every low night."""
@@ -551,11 +558,15 @@ class TestBannerAndRule10Agree(Base):
                     + [[f] for f in invalid])
             for i, cs in enumerate(sets):
                 r = self.check(cs, pk)
-                banner = render_report(r.enriched, pk).startswith("REVIEW REQUIRED")
+                # Most sets here are non-clean on purpose, so the subset is
+                # inspected through the escape hatch; the gate refuses them all.
+                banner = render_unverified(r.enriched, pk).startswith("REVIEW REQUIRED")
                 fired = str(V.MISSING_REVIEW_FLAG) in r.codes
                 self.assertNotEqual(banner, fired,
                                     f"{split} {name} set {i}: banner={banner} "
                                     f"rule10={fired} codes={r.codes}")
+                if r.codes:
+                    self.assertRaises(RenderRefused, render_report, r, pk)
                 n_sets += 1
         self.assertEqual(n_sets, 23 * 12)
 

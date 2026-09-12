@@ -262,7 +262,62 @@ def render_attribution_footer(packet: dict) -> str | None:
             f"across that cohort, not this recording.")
 
 
-def render_report(enriched_claims, packet: dict) -> str:
+# --------------------------------------------------------------------------
+# The gate.
+#
+# A report renders only from a CLEAN verification result: exactly
+# len(result.violations) == 0. Not schema-valid, not policy-pass, not "some
+# claims survived", not a coverage threshold. Failing claims are never filtered
+# out and the survivors rendered - mandatory coverage is a property of the SET,
+# so a rendered subset is an apparently authoritative report that silently
+# omits facts the contract requires. Fail closed.
+# --------------------------------------------------------------------------
+class RenderRefused(ValueError):
+    """render_report was handed a verification result with violations.
+
+    Carries the COMPLETE violation list, in the verifier's order, so a caller
+    can report every one of them - not just the first.
+    """
+
+    def __init__(self, violations):
+        self.violations = list(violations)
+        self.codes = [str(v.code) for v in self.violations]
+        super().__init__(f"refusing to render: {len(self.violations)} "
+                         f"violation(s) {self.codes}")
+
+
+def render_report(result, packet: dict) -> str:
+    """Render a clean verification result, or raise RenderRefused.
+
+    `result` is the VerifyReport that report.verify_report returned. The
+    renderer does not verify: it consumes the result already computed, so
+    there is one verification path, and what it renders is the result's own
+    enriched claims - never a second argument that could disagree with what
+    was verified. `packet` is still passed because the result does not carry
+    it and the footer reads it.
+    """
+    from . import VerifyReport       # deferred: report/__init__ imports this module
+    if not isinstance(result, VerifyReport):
+        # A Layer 2 PolicyResult has `violations` and `enriched` too, but it
+        # has not been through Layer 1 - accepting it would open a bypass.
+        raise TypeError(f"render_report takes the VerifyReport from "
+                        f"report.verify_report, not {type(result).__name__}")
+    if len(result.violations) != 0:
+        raise RenderRefused(result.violations)
+    return _assemble(result.enriched, packet)
+
+
+def render_unverified(enriched_claims, packet: dict) -> str:
+    """ESCAPE HATCH: render with no gate. For tests and debugging only.
+
+    Never call this from report/ - tests/test_render.py fails if any module
+    there does. It is not a second renderer: it and render_report share
+    _assemble, so a clean set gives identical bytes through either.
+    """
+    return _assemble(enriched_claims, packet)
+
+
+def _assemble(enriched_claims, packet: dict) -> str:
     """Assemble the report. Banner first, then claims in the order given.
 
     REVIEW REQUIRED is a rule consequence: it appears exactly when a review
