@@ -2,8 +2,8 @@
 
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
-**Status: 2A-2E complete, register A pinned, local runtime verified — 271
-tests, all passing. The deterministic tier is finished and frozen. One model has
+**Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed —
+278 tests, all passing. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -1061,6 +1061,10 @@ count only flags that verify, or only flags with `reason_key:
 low_night_confidence`. Either is a rule change and needs a decision before 2F,
 as does whether a report with any violation renders at all.
 
+**Fixed the same day** as a documented correctness fix: rule 10 now reads the
+claims that survive every other check. See *Rule 10 read the wrong claim set*
+below. Whether a report with any violation renders at all is still open.
+
 ### The shape, for framing 2F only
 
 - **Syntax is not the bottleneck.** The grammar made Layer 1 free, and every
@@ -1074,6 +1078,90 @@ as does whether a report with any violation renders at all.
 
 So on this single output, 2F's question reads as whether a small model follows
 the contract's *policy*, not its *format*. That is a framing, not a result.
+
+---
+
+## Rule 10 read the wrong claim set - fixed (12 September 2026)
+
+This is a correctness fix inside the frozen tier, found by the exploratory
+step-5 score above. It changes how rule 10 is evaluated and nothing else: no
+other rule, claim type, coverage definition, schema or grammar.
+
+**The defect.** Rule 10 requires a `review_flag` citing `night.confidence` on
+a low-confidence night. It checked the **submitted** claims, but the banner
+renders from the **verified** ones. A flag rejected by its own rules therefore
+satisfied rule 10 while contributing no banner. The night rendered without its
+safety signal, and no violation was recorded. It was exploitable in the wrong
+direction: a malformed flag scored better than no flag, for an identical unsafe
+report.
+
+**Which flags got through.** Not every invalid flag did. Probed before the fix:
+
+| flag | before the fix | why |
+|---|---|---|
+| unknown `reason_key` | caught | Layer 1 rejects it, and `verify_report` re-runs policy without the claim |
+| `low_night_confidence` without its dependency | caught | without `night.confidence` in `cites` it never looked like a rule-10 flag |
+| `n1_low_reliability` citing `night.confidence` (the step-5 flag) | **satisfied rule 10** | a Layer 2 per-claim failure |
+| valid key, `subject: population` | **satisfied rule 10** | a Layer 2 per-claim failure, found while probing |
+
+So the hole was any flag citing `night.confidence` that failed a Layer 2
+per-claim rule.
+
+**The fix,** in `report/verify_policy.py`. Rule 10 now reads
+`surviving_claims()`, which uses the fixpoint pattern of `report/oracle.py`:
+verify, drop what fails, re-verify until stable, then test rule 10 against what
+survived.
+
+- **Why a fixpoint at all.** Every other rule judges one claim on its own, so
+  the first pass is already stable, and the surviving set equals the verified
+  set exactly. The loop keeps that true if a rule that judges claims jointly
+  is ever added.
+- **The loop is bounded.** It runs at most `len(claims) + 1` passes, because
+  each pass either drops a claim or returns.
+- **One copy of the rule list.** The per-claim rules are now applied by a
+  single helper, `_claim_violations()`, which both the main pass and the
+  fixpoint use, so the two cannot apply different lists.
+- **Scope.** The change is not generalised: rule 10 is the only set-level
+  rule.
+
+**Blast radius: nil, as expected.**
+
+- All 271 existing tests passed unchanged with the fix in place, before any
+  new test was added. There was nothing to stop and report.
+- **Oracle, coverage and evaluator numbers.** A snapshot was taken on all 60
+  packets before and after the fix, and the two are **byte-identical**. It
+  covered:
+  - every oracle witness and its id set;
+  - the witness's coverage;
+  - `score_output` for the witness, the empty array and a missing file;
+  - the per-split strata.
+- The oracle witness carries a valid flag. The empty array still violates
+  rule 10 exactly once on each of the 23 low nights (`test_22d` is
+  unchanged).
+- The step-5 output now scores 17 violations: the same 16, plus
+  `L2.missing_review_flag`. Its exploratory record above stays as it was
+  scored at the time.
+
+**Tests added: seven, taking the suite from 271 to 278.** All are in
+`tests/test_adversarial.py`.
+
+| test | asserts | against the pre-fix rule |
+|---|---|---|
+| 10a: unknown `reason_key` | the flag is rejected, `missing_review_flag` fires, and there is no banner | passes (a guard) |
+| 10b: `low_night_confidence` with its dependency absent | the same | passes (a guard) |
+| 10c: `n1_low_reliability` citing `night.confidence` | the same | **fails**: the hole |
+| 10c2: valid key, wrong subject | the same | **fails**: the second route in |
+| 10d: a valid flag plus failing claims | rule 10 is silent and the banner stays | passes (the overcorrection guard) |
+| 10e: all 23 low nights, each with an invalid flag | exactly the flag's own code plus `missing_review_flag` on each | **fails** |
+| banner if and only if rule 10 is silent | 12 claim sets on each of the 23 low nights (276 checks), in both directions | **fails** |
+
+The "against the pre-fix rule" column comes from running the new tests with
+only `verify_policy.py` reverted. They fail exactly where the fix matters, so
+they test the fix rather than merely agreeing with it.
+
+The last test couples the rule to the thing it protects. The rule and the
+renderer read different code, so this test is what stops them drifting apart
+again.
 
 ---
 

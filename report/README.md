@@ -111,7 +111,7 @@ derived. Such keys can be added later with a citable reference attached.
 | 7 | `L2.text_key_dependency_missing` / `L2.text_key_predicate_false` | key's evidence cited, and predicate true |
 | 8 | `L2.rem_latency_double_count` | the two REM latencies are not two findings |
 | 9 | `L2.rem_error_differenced` | their errors use different references |
-| 10 | `L2.missing_review_flag` | a low-confidence night must carry a flag |
+| 10 | `L2.missing_review_flag` | a low-confidence night must carry a flag that itself verifies |
 | 11 | `L2.uncited_quantity` | no factual quantity without cited evidence |
 | 12 | `L2.not_associative_evidence` | `population_association` needs `associative_only` |
 | 13 | `L2.bad_subject_for_type` | subject matches the type |
@@ -417,7 +417,7 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 ```
 
-271 tests.
+278 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.
