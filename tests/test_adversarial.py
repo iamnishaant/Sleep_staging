@@ -10,9 +10,11 @@ Two cases carry more weight than the rest:
     safety boundary has been built as a blocklist rather than a closed schema,
     and the difference is not stylistic - a blocklist has to anticipate every
     forbidden name, a closed schema does not.
-  * The EMPTY claim set must pass every safety rule while scoring 0.0 coverage.
-    Without that case, "100% verifier pass rate" is trivially gamed by emitting
-    nothing.
+  * The EMPTY claim set scores 0.0 coverage and passes every safety rule -
+    EXCEPT rule 10 on a low-confidence night, where the missing review_flag
+    is itself the violation. Without the case, "100% verifier pass rate" is
+    trivially gamed by emitting nothing; with only its high-night half, the
+    tier-dependence would be implicit. Both halves are pinned, on all 60.
 """
 from __future__ import annotations
 
@@ -357,18 +359,48 @@ class TestLayer2Policy(Base):
 
 # ==========================================================================
 class TestEmptyClaimSet(Base):
-    """Case 22 - the one people forget."""
+    """Case 22 - the one people forget, and its behaviour is tier-dependent.
 
-    def test_22_empty_set_is_safe_and_scores_zero(self):
+    The Phase 1 case ran on a HIGH-confidence packet and was named and
+    documented as if it described every packet. It did not: on a low night
+    the empty set violates rule 10. Not a defect - both tests were right about
+    their own packets - but the unconditional wording was wrong, and 2E found
+    the other half. The tier condition is now in the names and asserted.
+    """
+
+    def test_22_empty_set_on_a_non_low_night_is_safe_and_scores_zero(self):
+        """The Phase 1 case. Its packet is high-confidence, which is why it
+        passes cleanly - the precondition is asserted, not assumed."""
+        self.assertEqual(HIGH["night_confidence"]["tier"], "high")
         r = self.check([], HIGH)
         self.assertEqual(r.violations, [], r.codes)
         self.assertEqual(r.coverage, 0.0)
 
-    def test_22b_but_a_low_night_still_demands_its_flag(self):
-        """Emitting nothing is safe only where nothing was required."""
+    def test_22b_on_a_low_night_it_fails_rule_10_exactly_once(self):
+        """Emitting nothing is safe only where nothing was required. Exactly
+        one violation, it is the rule 10 code, and it is report-level - there
+        is no claim to attach it to, because there are no claims."""
+        self.assertEqual(LOW["night_confidence"]["tier"], "low")
         r = self.check([], LOW)
-        self.assertCode(r, V.MISSING_REVIEW_FLAG)
+        self.assertEqual(r.codes, [str(V.MISSING_REVIEW_FLAG)])
+        self.assertIsNone(r.violations[0].claim_id)
         self.assertEqual(r.coverage, 0.0)
+
+    def test_22d_the_tier_dependence_holds_on_all_60_packets(self):
+        """23 low nights fail exactly once each; 37 others are clean."""
+        n_low = n_other = 0
+        for split in ("test", "dev"):
+            for name, pk in all_packets(split):
+                r = self.check([], pk)
+                if pk["night_confidence"]["tier"] == "low":
+                    n_low += 1
+                    self.assertEqual(r.codes, [str(V.MISSING_REVIEW_FLAG)],
+                                     f"{split} {name}")
+                else:
+                    n_other += 1
+                    self.assertEqual(r.codes, [], f"{split} {name}")
+                self.assertEqual(r.coverage, 0.0, f"{split} {name}")
+        self.assertEqual((n_low, n_other), (23, 37))
 
     def test_22c_coverage_denominator_is_packet_fixed(self):
         for name, pk in all_packets():

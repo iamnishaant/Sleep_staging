@@ -250,9 +250,14 @@ verified_evidence_coverage = |ids cited by VERIFIED claims ∩ reportable_set|
 ```
 
 The denominator is fixed by the packet — 19 on every current packet — never by
-anything the model chose. **An empty claim set scores 0.0 while passing every
-safety rule**, which is the point: without that, "100% verifier pass rate" is
-trivially gamed by emitting nothing.
+anything the model chose. **An empty claim set scores 0.0 and passes every
+safety rule except rule 10 on a low-confidence night**, where the missing
+`review_flag` is itself the violation. The exception is part of the point, not
+a flaw in it: without the empty-set case, "100% verifier pass rate" is
+trivially gamed by emitting nothing - and on a low night emitting nothing is
+not safe. *(Corrected 12 September 2026. The original sentence was
+unconditional; the test it described runs on a high-confidence packet, and
+Phase 2E showed the behaviour is tier-dependent.)*
 
 **One ceiling to know before reading a coverage number.** On a
 non-low-confidence night, `night.confidence` is **not coverable** — the only
@@ -334,7 +339,10 @@ Two carry more weight than the rest:
 - **`cites: ["attribution"]` must fail at Layer 1.** The test asserts not just
   the code but that *no policy rule fired at all*. If a policy rule fires, the
   boundary was built as a blocklist.
-- **The empty claim set** passes every safety rule at 0.0 coverage.
+- **The empty claim set** scores 0.0 coverage. It passes every safety rule on a
+  high or medium night, and fails rule 10 exactly once on a low night. Both
+  halves are asserted on all 60 packets. *(Corrected 12 September 2026 - first
+  written without the tier condition.)*
 
 Also here: a **positive suite** that builds a valid claim set from each packet's
 own values and asserts it passes cleanly on all 29.
@@ -457,7 +465,7 @@ print(result.coverage, result.codes)
 |---|---|---|
 | 1 | every adversarial case fails with its **specific** code | met |
 | 2 | positive cases pass and render identically across runs | met |
-| 3 | empty claim set passes safety, scores 0.0 coverage | met |
+| 3 | empty claim set scores 0.0 coverage; passes safety except rule 10 on low nights | met - tier-dependence pinned on all 60 (corrected 12 Sep 2026) |
 | 4 | grammar accepts exactly the syntactically valid space | met, with the two stated limits (§4) |
 | 5 | runs on all 29 packets without error | met |
 | 6 | no model, no network, no ground-truth file touched | met — stdlib only, `open` asserted shut |
