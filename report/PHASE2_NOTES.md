@@ -1615,6 +1615,166 @@ because it cites both REM latencies.
 
 ---
 
+## EXPLORATORY, NOT A MEASUREMENT: the N1 inspection, runs B′ and C (13 September 2026)
+
+> The same terms as runs A and B apply: one packet (dev SC4111E0), one model,
+> one seed per run, local only. With B′ and C there are five generations on
+> this packet, which is already more than one packet supports. **No further
+> prompt variants are run here.** The next information comes from breadth, the
+> 31-packet dev population. Nothing here selects a prompt format, a model or K.
+
+**What the five runs establish, stated no more strongly than this:**
+
+- The failures are sensitive to how the prompt is worded.
+- The model demonstrates each required behaviour somewhere across the runs.
+- No run has shown those behaviours combining.
+
+Whether the residual cause is prompt design, instruction-following, context
+competition, decoding, model capacity or an interaction is **not yet
+determined**.
+
+### Item 1: the N1 item, inspected without generation
+
+`model.n1_reliability_warning` was never cited in raw, A or B. It was the only
+mandatory item that nothing had reached. The prompt inspected is byte-identical
+to the one the model saw: `build_prompt(SC4111E0)`, prompt version 2D.1.
+
+| question | finding |
+|---|---|
+| serialized line | `model.n1_reliability_warning \| N1 is low-reliability in this model \| "low" \| tier \| true` |
+| fields as serialized | label "N1 is low-reliability in this model"; value `"low"`, a quoted string; unit `tier`; `safe_to_assert` true |
+| position | 19 of 19: the last evidence line, directly after `night.confidence` |
+| the other 18 items | 17 carry a numeric value; 1 carries a string (`night.confidence`, `"low"`) |
+| is a non-numeric value still claimable? | **Yes.** The prompt names both tier items as the only non-numeric ones, and its coverage rule reads: "Every item with safe_to_assert true must be covered: numeric ones by a value claim, tier items by an observation or review_flag." |
+| legal claim shapes, and are they reachable? | An `observation` with text_key `n1_reliability_is_low`, or a `review_flag` with reason_key `n1_low_reliability`, each citing this id. `value` and `hedged_value` are illegal, because they take numeric items only. The prompt's key tables spell out both keys as "cite model.n1_reliability_warning". **Reachable as written.** |
+
+**Correct as it stands, so the serializer is left alone.** That moves the miss
+from presentation to model behaviour, and the runs show which behaviour. The
+model *uses* the key: `n1_reliability_is_low` appears in raw (six
+observations, plus the flag reason `n1_low_reliability`), in A, in B′ and in C.
+It is always attached to the wrong evidence and never to
+`model.n1_reliability_warning`. The model has the key but does not bind it to
+the item the key requires.
+
+The inspection surfaced two related facts, recorded because they bear on C:
+
+- The prompt already pairs `hedged_value` with `safe_to_assert: false` in its
+  claim-type list, but only as a description ("use when"), not as a rule.
+- It says an observation "cites 1 or more items", which licensed A's
+  eight-item bundle.
+
+### Item 2: run B′, with only the example IDs changed
+
+**The hypothesis:** B's examples anchored *which items to report*, not only
+how to shape a claim.
+
+**How B′ differs from B.** Only the two example claims changed:
+
+- **In B:** `arch.total_sleep_time` (410.0) and `arch.sleep_onset_latency`
+  (28.5).
+- **In B′:** `arch.time_in_bed` (537.0) and `arch.waso` (98.5).
+
+Both new items are in minutes, like B's pair, so the ids and values are the
+only change. The prompt builder asserts that B and B′ differ in exactly those
+two lines. Everything else stayed the same:
+
+- The source packet is still SC4081E0.
+- Both examples verified clean against it, singly and together.
+- Both values differ from the target's (464.0 and 1.0).
+- B cited neither of the new ids.
+
+**Verdict: selection anchoring confirmed, for this one generation.**
+
+- B′'s only two numeric claims cite exactly the new example ids:
+  `arch.time_in_bed` as a `value` and `arch.waso` as a `hedged_value`, both
+  with the target's values.
+- Neither of B's example ids appears in a numeric claim.
+  `arch.total_sleep_time`, cited by every earlier run, appears only inside a
+  mis-shaped observation.
+- No example value leaked.
+
+This is one generation per condition, so it is not over-read.
+
+### Item 3: run C, with explicit claim-shape rules and no demonstrations
+
+C is A plus the block below, placed where B put its examples, between the
+rules and the evidence. It names no evidence id and no key (asserted). Its
+second rule acknowledges the schema's "1 or more" for observations instead of
+contradicting it silently.
+
+```
+CLAIM-SHAPE RULES
+- Every evidence item whose safe_to_assert is false must be claimed with claim_type hedged_value, never value.
+- Each claim cites exactly one evidence item. An observation may cite more than one item, but in this report every claim, observations included, cites exactly one.
+```
+
+**Result.** C reached the best mandatory coverage of any run, 4/5: every
+mandatory item except the N1 warning. Neither rule held as intended:
+
+- **No `hedged_value` at all.** No unsafe item went into a `value` claim, which
+  is the first rule's letter. But instead of being hedged, 13 of the 14
+  discretionary items were bundled into one observation.
+- **That observation cites 13 items,** against the second rule. It also
+  carries the N1 key and cites both REM latencies, which is 2 violations.
+
+### Scoring: B′ and C
+
+**Per-rule breakdown.**
+
+| run | violations |
+|---|---|
+| B′ | 1 × `L2.text_key_dependency_missing`, on c3: an observation on total sleep time carrying the N1 key |
+| C | 1 × `L2.text_key_dependency_missing` and 1 × `L2.rem_latency_double_count`, both on c4, the 13-item observation |
+
+**Cited versus verified, per item.** V = verified, R = cited but rejected,
+– = never cited.
+
+| item | B′ | C |
+|---|---|---|
+| `arch.total_sleep_time` (mandatory) | R: observation, N1 key | V |
+| `arch.time_in_bed` (mandatory) | V | V |
+| `arch.sleep_efficiency` (mandatory) | – | **V**, the first verified claim on it in any run |
+| `night.confidence` (mandatory) | V: low-night flag | V: low-night flag |
+| `model.n1_reliability_warning` (mandatory) | – | – |
+| `arch.waso` | V: hedged | – |
+| the other 13 discretionary items | – | R: all in c4 |
+
+### The five runs together
+
+All five used dev SC4111E0, Qwen2.5-1.5B-Instruct Q4_K_M, `claims.gbnf`, temp
+0 and seed 0. **Exploratory.**
+
+| run | prompt | claims | violations | mandatory verified | cited mand. | disc. verified | cited disc. | `hedged_value` | numeric fidelity | renders |
+|---|---|---:|---:|---|---:|---:|---:|---:|---:|---|
+| raw | raw completion | 18 | 17 | 2/5: TST, TIB | 4/5 | 0/14 | 14/14 | 0 | 11/11 | no |
+| A | chat template | 5 | 3 | 3/5: TST, TIB, NC | 4/5 | 0/14 | 8/14 | 0 | 2/2 | no |
+| B | A + two examples (TST, SOL) | 3 | 0 | 2/5: TST, NC | 2/5 | 1/14 | 1/14 | 1 | 2/2 | **yes** |
+| B′ | A + two examples (TIB, WASO) | 4 | 1 | 2/5: TIB, NC | 3/5 | 1/14 | 1/14 | 1 | 2/2 | no |
+| C | A + claim-shape rules | 5 | 2 | **4/5**: TST, TIB, SE, NC | 4/5 | 0/14 | 13/14 | 0 | 3/3 | no |
+
+Key: TST = total sleep time, TIB = time in bed, SE = sleep efficiency, NC =
+night confidence, SOL = sleep onset latency, WASO = wake after sleep onset.
+Across all five runs, every number was transcribed exactly (19 of 19 numeric
+claims). No run cited `model.n1_reliability_warning`.
+
+### Reading B correctly
+
+Operationally, a clean but incomplete report is the dangerous case: it reads as
+complete and is not. B was exactly that. It had zero violations, `render_report`
+rendered it, and it carried two of the five mandatory items.
+
+Scientifically, B is a valuable result. **It demonstrates that a model can
+produce a zero-violation subset while failing completeness.** That is exactly
+why this architecture carries coverage alongside verification rather than
+verification alone.
+
+This bears on the gate. `render_report`'s condition is zero violations, as
+specified, so a B-shaped output renders. Completeness is measured by the
+evaluator's coverage; it is not enforced at render time. This is recorded, not
+changed.
+
+---
+
 ## Recorded, not fixed: the dev packets' contract was fitted on the dev nights
 
 `metric_reliability`, the decoder temperature and the night-confidence tier
