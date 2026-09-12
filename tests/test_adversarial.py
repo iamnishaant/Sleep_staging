@@ -222,6 +222,35 @@ class TestLayer2Policy(Base):
                   value=eb - ea, unit="minutes")
         self.assertCode(self.check([c], LOW), V.REM_ERROR_DIFFERENCED)
 
+    def test_12b_a_rounded_difference_is_rejected_but_not_attributed_to_rule_9(self):
+        """Rule 9 is an exact-value detector, not a rounded-value classifier.
+
+        A differenced error written to fewer decimal places is still rejected -
+        value_mismatch and uncited_quantity both fire - so the safety property
+        holds. What it is NOT is attributed to rule 9, so rule 9's per-rule
+        count is a lower bound on differencing attempts. Pinned here so the
+        blind spot is known rather than accidental. Widening rule 9 to a
+        tolerance band would contradict the no-tolerance principle rule 2
+        rests on, and two numeric rules disagreeing is worse than one
+        documented blind spot.
+        """
+        ea = val(LOW, "arch.rem_latency", "mean_abs_error")
+        eb = val(LOW, "arch.rem_latency_sustained", "mean_abs_error")
+        exact = eb - ea
+        flag = claim(claim_id="c2", claim_type="review_flag",
+                     cites=["night.confidence"], reason_key="low_night_confidence")
+        for rounded in (4.84, 4.8403, round(exact, 2), round(exact, 4)):
+            self.assertNotEqual(rounded, exact, "not actually a rounded value")
+            c = claim(claim_type="hedged_value", cites=["arch.rem_latency"],
+                      value=rounded, unit="minutes")
+            r = self.check([c, flag], LOW)
+            self.assertFalse(r.ok, rounded)
+            self.assertIn(str(V.VALUE_MISMATCH), r.codes, rounded)
+            self.assertIn(str(V.UNCITED_QUANTITY), r.codes, rounded)
+            self.assertNotIn(str(V.REM_ERROR_DIFFERENCED), r.codes,
+                             f"{rounded}: rule 9 now catches rounded values - "
+                             f"update the lower-bound note in PHASE2_NOTES")
+
     def test_13_low_confidence_night_without_a_review_flag(self):
         r = self.check([good_value_claim(LOW)], LOW)
         self.assertCode(r, V.MISSING_REVIEW_FLAG)
