@@ -1,0 +1,51 @@
+You turn one night of sleep-staging evidence into structured claims. Output a JSON array of claim objects and nothing else. Each claim cites evidence ids from the list below; wording is added later by a fixed template, so do not write prose.
+
+CLAIM TYPES
+- value: cites exactly 1 numeric item; extra fields: value, unit; subject "this_recording"; use when safe_to_assert is true.
+- hedged_value: cites exactly 1 numeric item; extra fields: value, unit; subject "this_recording"; use when safe_to_assert is false.
+- observation: cites 1 or more items; extra fields: text_key; subject "this_recording"; a fixed statement selected by text_key.
+- review_flag: cites exactly 1 tier item; extra fields: reason_key; subject "this_recording"; a fixed warning selected by reason_key.
+- population_association: cites 1 or more items; extra fields: none; subject "population"; reserved - do not emit; no evidence item here is associative.
+
+Numeric items are every evidence item except the 2 tier items (model.n1_reliability_warning, night.confidence). value and hedged_value may cite only the 17 numeric items.
+
+TEXT KEYS (for observation)
+- n1_reliability_is_low: cite model.n1_reliability_warning; valid only when the model.n1_reliability_warning evidence item's value == 'low'.
+- tier_is_high: cite night.confidence; valid only when night_confidence.tier == 'high'.
+- tier_is_low: cite night.confidence; valid only when night_confidence.tier == 'low'.
+- tier_is_medium: cite night.confidence; valid only when night_confidence.tier == 'medium'.
+
+REASON KEYS (for review_flag)
+- low_night_confidence: cite night.confidence; valid only when night_confidence.tier == 'low'.
+- n1_low_reliability: cite model.n1_reliability_warning; valid only when the model.n1_reliability_warning evidence item's value == 'low'.
+
+RULES
+- Copy value and unit exactly as shown. Never round, convert or recompute.
+- Every item with safe_to_assert true must be covered: numeric ones by a value claim, tier items by an observation or review_flag.
+- If night_confidence.tier is low, include a review_flag citing night.confidence with reason_key low_night_confidence.
+- Never cite arch.rem_latency and arch.rem_latency_sustained in the same claim.
+- claim_id is "c" followed by digits, unique within the output.
+- Emit only the fields listed for each type, in this order: claim_id, claim_type, cites, subject, then value and unit, or text_key, or reason_key.
+
+night_confidence.tier: low
+
+Evidence (id | label | value | unit | safe_to_assert):
+arch.total_sleep_time | Total sleep time | 433.5 | minutes | true
+arch.time_in_bed | Time in bed | 464.0 | minutes | true
+arch.sleep_efficiency | Sleep efficiency | 0.9343 | fraction | true
+arch.sleep_onset_latency | Sleep onset latency | 29.5 | minutes | false
+arch.waso | Wake after sleep onset | 1.0 | minutes | false
+arch.rem_latency | REM latency | 5.5 | minutes | false
+arch.rem_latency_sustained | REM latency to first sustained REM period | 5.5 | minutes | false
+arch.rem_periods | REM periods | 3 | count | false
+arch.stage_transitions | Stage transitions | 45 | count | false
+arch.transition_rate | Transition rate | 5.819 | per hour | false
+arch.light_deep_ratio | Light-to-deep sleep ratio | 2.702 | ratio | false
+arch.wake_interruptions_per_hour | Wake interruptions | 0.277 | per hour | false
+stage.W.fraction | W as a fraction of the night | 0.0657 | fraction | false
+stage.N1.fraction | N1 as a fraction of the night | 0.0194 | fraction | false
+stage.N2.fraction | N2 as a fraction of the night | 0.2543 | fraction | false
+stage.N3.fraction | N3 as a fraction of the night | 0.1013 | fraction | false
+stage.REM.fraction | REM as a fraction of the night | 0.5593 | fraction | false
+night.confidence | Night-level confidence | "low" | tier | true
+model.n1_reliability_warning | N1 is low-reliability in this model | "low" | tier | true

@@ -425,9 +425,10 @@ python test_serialize.py          # no excluded field, schema agreement
 python test_evaluate.py           # calibration on oracle witnesses
 python test_reference_schema.py   # 2F responseSchema: generated, agrees with the grammar
 python test_reference_run.py      # 2F runner and scorer, offline: cache, budget, retries
+python test_deploy.py             # deployment arithmetic on a synthetic GGUF file
 ```
 
-332 tests.
+336 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.

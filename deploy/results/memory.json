@@ -1,0 +1,96 @@
+{
+ "workload": {
+  "packet": "SC4111E0-PSG",
+  "context": 4096,
+  "n_predict": 512,
+  "runtime": "b10927",
+  "mmap": "default (on)"
+ },
+ "models": [
+  {
+   "model": "Qwen2.5-1.5B-Instruct",
+   "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+   "exit_code": 0,
+   "wall_s": 17.6,
+   "file_bytes": 1117320736,
+   "peak_working_set_bytes": 1900130304,
+   "peak_private_bytes": 1225457664,
+   "load_breakdown": [
+    "0.02.342.976 I generate: n_ctx = 4096, n_batch = 2048, n_predict = 512, n_keep = 0"
+   ],
+   "timings": [
+    "0.17.246.396 I common_perf_print: prompt eval time =    4334.31 ms /  1036 tokens (    4.18 ms per token,   239.02 tokens per second)",
+    "0.17.246.397 I common_perf_print:        eval time =   10356.95 ms /   353 runs   (   29.34 ms per token,    34.08 tokens per second)"
+   ],
+   "command": "-m C:\\Users\\shahn\\models\\qwen2.5-1.5b-instruct-q4_k_m.gguf --jinja -cnv -st -f F:\\Sleep_project\\Sleep-Staging\\deploy\\results\\workload_prompt.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 512 -c 4096 --temp 0 --seed 0 --no-display-prompt"
+  },
+  {
+   "model": "SmolLM2-1.7B-Instruct",
+   "file": "smollm2-1.7b-instruct-q4_k_m.gguf",
+   "exit_code": 0,
+   "wall_s": 33.3,
+   "file_bytes": 1055609536,
+   "peak_working_set_bytes": 2742104064,
+   "peak_private_bytes": 1764007936,
+   "load_breakdown": [
+    "0.02.011.597 I generate: n_ctx = 4096, n_batch = 2048, n_predict = 512, n_keep = 0"
+   ],
+   "timings": [
+    "0.32.986.325 I common_perf_print: prompt eval time =    6269.46 ms /  1170 tokens (    5.36 ms per token,   186.62 tokens per second)",
+    "0.32.986.328 I common_perf_print:        eval time =   24607.26 ms /   511 runs   (   48.16 ms per token,    20.77 tokens per second)"
+   ],
+   "command": "-m C:\\Users\\shahn\\models\\smollm2-1.7b-instruct-q4_k_m.gguf --jinja -cnv -st -f F:\\Sleep_project\\Sleep-Staging\\deploy\\results\\workload_prompt.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 512 -c 4096 --temp 0 --seed 0 --no-display-prompt"
+  },
+  {
+   "model": "Gemma-2-2b-it",
+   "file": "gemma-2-2b-it-Q4_K_M.gguf",
+   "exit_code": 0,
+   "wall_s": 27.8,
+   "file_bytes": 1708582752,
+   "peak_working_set_bytes": 3303731200,
+   "peak_private_bytes": 2121281536,
+   "load_breakdown": [
+    "0.03.426.914 I generate: n_ctx = 4096, n_batch = 2048, n_predict = 512, n_keep = 0"
+   ],
+   "timings": [
+    "0.27.461.527 I common_perf_print: prompt eval time =    7727.90 ms /  1114 tokens (    6.94 ms per token,   144.15 tokens per second)",
+    "0.27.461.529 I common_perf_print:        eval time =   16084.37 ms /   298 runs   (   53.97 ms per token,    18.53 tokens per second)"
+   ],
+   "command": "-m C:\\Users\\shahn\\models\\gemma-2-2b-it-Q4_K_M.gguf --jinja -cnv -st -f F:\\Sleep_project\\Sleep-Staging\\deploy\\results\\workload_prompt.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 512 -c 4096 --temp 0 --seed 0 --no-display-prompt"
+  },
+  {
+   "model": "Llama-3.2-3B-Instruct",
+   "file": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+   "exit_code": 0,
+   "wall_s": 44.9,
+   "file_bytes": 2019377696,
+   "peak_working_set_bytes": 4026937344,
+   "peak_private_bytes": 2267262976,
+   "load_breakdown": [
+    "0.04.001.577 I generate: n_ctx = 4096, n_batch = 2048, n_predict = 512, n_keep = 0"
+   ],
+   "timings": [
+    "0.44.470.846 I common_perf_print: prompt eval time =    8955.77 ms /  1017 tokens (    8.81 ms per token,   113.56 tokens per second)",
+    "0.44.470.855 I common_perf_print:        eval time =   31328.91 ms /   511 runs   (   61.31 ms per token,    16.31 tokens per second)"
+   ],
+   "command": "-m C:\\Users\\shahn\\models\\Llama-3.2-3B-Instruct-Q4_K_M.gguf --jinja -cnv -st -f F:\\Sleep_project\\Sleep-Staging\\deploy\\results\\workload_prompt.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 512 -c 4096 --temp 0 --seed 0 --no-display-prompt"
+  },
+  {
+   "model": "Phi-3.5-mini-instruct",
+   "file": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+   "exit_code": 0,
+   "wall_s": 32.2,
+   "file_bytes": 2393232672,
+   "peak_working_set_bytes": 5351374848,
+   "peak_private_bytes": 3077820416,
+   "load_breakdown": [
+    "0.04.041.107 I generate: n_ctx = 4096, n_batch = 2048, n_predict = 512, n_keep = 0"
+   ],
+   "timings": [
+    "0.31.558.897 I common_perf_print: prompt eval time =   20326.89 ms /  1238 tokens (   16.42 ms per token,    60.90 tokens per second)",
+    "0.31.558.899 I common_perf_print:        eval time =    7171.90 ms /    72 runs   (   99.61 ms per token,    10.04 tokens per second)"
+   ],
+   "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f F:\\Sleep_project\\Sleep-Staging\\deploy\\results\\workload_prompt.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 512 -c 4096 --temp 0 --seed 0 --no-display-prompt"
+  }
+ ]
+}

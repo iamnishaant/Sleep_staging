@@ -3,9 +3,10 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 332
-tests, all passing. Reference run: 3 of 62 responses cached (P1). The choice of
-reference model is open. The deterministic tier is finished and frozen. One model has
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 336
+tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
+reserve; the reference model is Gemini 3.8 Flash. Deployment size, peak memory
+and throughput bounds are done for all five local candidates. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -2153,6 +2154,118 @@ setting for one model, which is a decision not taken here.
 **Availability.** 7 Flash-Lite attempts: 4 returned 400, 3 returned 200, and
 **none returned 503**. Seven attempts, six of them trivial, are far too few to
 estimate a failure rate.
+
+---
+
+## 2F: the plan after the pilot (13 September 2026)
+
+**The reference model stays Gemini 3.8 Flash, at the fixed settings.**
+
+**Flash-Lite was investigated and rejected.** It refuses `thinkingBudget: 0`
+(HTTP 400). The nearest setting it accepts, `thinkingLevel: "minimal"`, is not
+zero, so the reference model would reason where no local candidate does, and
+the gap measurement would absorb that difference. It would also be a third
+asymmetry, stacked on the weaker structured-output constraint and the
+non-reproducible temperature 0, against candidates that have none of them.
+Each is defensible alone; together they erode what the comparison means. This
+is a finding about free-tier constraints in its own right: **the free tier's
+higher-quota model cannot be run with reasoning fully off.**
+
+**P1 only, stopping at 31.** P1 across the 31 dev packets answers the 2F
+question. P2, the prompt-design comparison, is held in reserve. The decision
+rule is fixed now, before any results:
+
+- **25 or more of 31 at 5/5 mandatory:** the contract is satisfiable. The
+  question is answered, P2 is unnecessary, and the work moves to 2G.
+- **Near zero:** the contract is the ceiling. That is the finding, and P2
+  would not change it.
+- **Mid-range, around 12 of 31:** P2 earns its days, because prompt design
+  plausibly explains the gap.
+
+The runner's default schedule is now P1 only (`SCHEDULED_PROMPTS`), so it
+sends nothing once the 31 are cached. 28 remain. At the observed success rate
+of about 30%, that is roughly five days.
+
+**Launching.** A person starts each day's session, after 07:00 UTC, with
+`python -m reference.run --go`. A timer does not, because a scheduled launch
+would be exactly the unattended start the 21:07 investigation was about. If a
+session stops as unavailable (4 consecutive 503s on one packet), the rest of
+that day's budget is intact, and a later session the same day resumes where it
+stopped.
+
+---
+
+## Deployment numbers for the five local candidates (13 September 2026)
+
+As 2c set out, quantized size and peak resident memory are **measured**, with
+the llama.cpp runtime the deployment targets (b10927, CPU build, on this
+machine). Decode throughput is an **analytical bandwidth-bound estimate**. No
+API quota was used. The code is `deploy/`: `measure.py`, `throughput.py`, and
+a standard-library GGUF reader. The results are in `deploy/results/`.
+
+**The memory workload.**
+
+- The input is dev SC4111E0, through the frozen `build_prompt`, in each
+  model's own chat template (`--jinja -cnv -st`), under `claims.gbnf`.
+- Context is 4,096 tokens, the budgeted window in `report/serialize.py`.
+- Generation runs to at most 512 tokens, at temperature 0 and seed 0.
+- Runtime defaults apply: weights are memory-mapped, and the thread count is
+  llama.cpp's own.
+- Peak memory is read from the finished process's handle
+  (`GetProcessMemoryInfo`), so it is the exact peak, not a sample. The output
+  is not scored.
+
+| model | params (GGUF tensors) | quantized size (file) | peak working set | peak private | KV cache per position | decode tokens/s bound at 25 / 50 GB/s |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen2.5-1.5B-Instruct | 1.78B | 1,065.6 MiB | **1,812.1 MiB** | 1,168.7 MiB | 28 KiB | 23.8 / 47.7 |
+| SmolLM2-1.7B-Instruct | 1.71B | 1,006.7 MiB | **2,615.1 MiB** | 1,682.3 MiB | 192 KiB | 16.4 / 32.8 |
+| Gemma-2-2b-it | 2.61B | 1,629.4 MiB | **3,150.7 MiB** | 2,023.0 MiB | 104 KiB | 12.8 / 25.5 |
+| Llama-3.2-3B-Instruct | 3.21B | 1,925.8 MiB | **3,840.4 MiB** | 2,162.2 MiB | 112 KiB | 10.9 / 21.9 |
+| Phi-3.5-mini-instruct | 3.82B | 2,282.4 MiB | **5,103.5 MiB** | 2,935.2 MiB | 384 KiB | 7.6 / 15.2 |
+
+The throughput bounds are taken at 2,400 cached positions: the prompt plus a
+full report's output. The full grid, at 10, 25, 50 and 100 GB/s and at 1,200
+and 2,400 positions, is in `deploy/results/throughput.json`.
+
+**How the throughput bound is built.** Decode tokens/s ≤ B / (W + K·L):
+
+- **W** is the weight bytes read per token, from the GGUF tensor table. The
+  token-embedding table is excluded when a separate output matrix exists.
+- **K** is the f16 KV-cache bytes per cached position.
+- **L** is the number of positions cached.
+- **B** is the device's memory bandwidth.
+
+It is an upper bound on decode rate; prefill is compute-bound and is not
+estimated.
+
+**What the numbers show:**
+
+- **Peak memory is 1.7 to 2.2 times the file size.** Quantized size alone
+  understates what a device must hold.
+- **The KV cache, not the file size, separates the candidates.** SmolLM2 and
+  Phi-3.5 have no grouped-query attention, so they cache 192 and 384 KiB per
+  position, against Qwen's 28 KiB. SmolLM2 has the smallest file of the five
+  yet peaks about 800 MiB above Qwen. At the 4,096-token context, their cache
+  reservations are 768 MiB and 1,536 MiB, against Qwen's 112 MiB.
+- **Cache traffic is also a large share of decode bandwidth.** At 2,400
+  positions it is about 31% of the bytes SmolLM2 reads per token and 29% of
+  Phi-3.5's, against 7% for Qwen and about 12–13% for Gemma and Llama.
+- **The parameter count comes from the tensors, not the model card.** Qwen's
+  GGUF stores its output matrix separately although the model ties it to the
+  embeddings, so it counts 1.78B against the card's 1.54B. Decoding reads that
+  output copy, which is what W counts.
+
+**Open input: the deployment device.** The project has not fixed a target
+device, so the throughput bounds are given per bandwidth, and they scale
+linearly with it. Choosing the device, and so B, is a decision still to take.
+
+**Caveats.**
+
+- There is one run per model. The peak working set is Windows' resident set on
+  this machine, with memory-mapping on. `--no-mmap`, `--mlock` or another OS
+  would change how memory is accounted.
+- Timings from the runs are not reported as throughput. 2c makes throughput an
+  analytical figure.
 
 ---
 
