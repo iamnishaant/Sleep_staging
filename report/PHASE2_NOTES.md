@@ -3,8 +3,9 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 330
-tests, all passing. No packet has been sent to the reference model yet. The deterministic tier is finished and frozen. One model has
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 332
+tests, all passing. Reference run: 3 of 62 responses cached (P1). The choice of
+reference model is open. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -2051,6 +2052,107 @@ The runner is `reference/run.py`, and the scorer is `reference/score.py`.
 
 **To run,** once per Pacific day (the quota resets at 07:00 UTC):
 `python -m reference.run --go`. Then score with `python -m reference.score`.
+
+---
+
+## 2F: the unattended launch, the thinking check, the Flash-Lite pilot (13 September 2026)
+
+### Step 1: what started the 21:07 UTC run
+
+A `reference.run --go` began at 21:07:06 UTC on 12 September and spent the
+day's remaining 7 attempts. Its seven log records carried request data only,
+with no process id, working directory or caller. The other traces identify it:
+
+- **Shell history.** PowerShell's interactive history (`PSReadLine`,
+  `ConsoleHost_history.txt`) ends with `python -m reference.run --go`, and the
+  file was last written at 21:07:02 UTC, four seconds before the first logged
+  attempt. PSReadLine records only interactive consoles; this session's shell
+  tools run non-interactively. The lines just before it are `pandoc` builds of
+  the paper (`sn-article.tex`), in the same terminal.
+- **The IDE.** Antigravity's extension log records `[Terminal] Command
+  completed: python -m reference.run --go exit code 0` at 21:09:55 UTC. The
+  command ran in **Antigravity's integrated PowerShell terminal**.
+- **Not Antigravity's agent.** Its language server failed every second with
+  "certificate has expired" TLS errors throughout the window, and the log
+  holds no agent or tool-call entry.
+- **Not a Claude session.** No transcript in this project has a tool call that
+  executed `--go`. The Claude Code log shows this session running only the
+  dry-run form, at 20:46:52 and 21:10:14 UTC.
+- **Not scheduled or triggered.** No Task Scheduler entry, watcher process,
+  IDE run configuration, task-runner file or git hook refers to it. No test
+  reaches the live path: every `Runner` built in the tests is given a fake
+  transport.
+
+**Cause: a manual invocation, typed or recalled in Antigravity's integrated
+terminal.** A cause was found, so per the instruction no live-run guard was
+added. What changed is that every attempt now logs its caller (pid, parent
+pid, argv, cwd), so the log alone identifies what started any future run.
+
+### Step 2: the three cached responses ran with thinking off
+
+| request | prompt tokens | output tokens | thinking tokens | total | prompt + output = total |
+|---|---:|---:|---|---:|---|
+| P1/SC4081E0 | 1,171 | 1,586 | none reported | 2,757 | yes |
+| P1/SC4082E0 | 1,169 | 1,393 | none reported | 2,562 | yes |
+| P1/SC4111E0 | 1,165 | 1,391 | none reported | 2,556 | yes |
+
+All three are comparable to the rest of the run.
+
+**The resolved request,** printed from the objects the runner sends rather
+than from its intended settings (`python -m reference.run --show-request`):
+
+- `POST .../models/gemini-3.8-flash:generateContent`
+- `generationConfig`: `{"maxOutputTokens": 16384, "temperature": 0.0, "seed": 0,
+  "responseMimeType": "application/json", "thinkingConfig": {"thinkingBudget": 0}}`
+- a `responseSchema` byte-identical to `reference/response_schema.json`
+
+A test asserts the same body.
+
+**The daily budget now counts per model,** because quotas are per model. A
+candidate model's attempts can never spend the reference model's budget
+(tested).
+
+### Step 3: the Flash-Lite pilot (`gemini-3.5-flash-lite`)
+
+The pilot is exploratory. It selects a reference model; it is not a
+measurement, and nothing from it enters the reference set.
+
+**The zero-cost check.** The metadata reports `thinking: true` and supports
+`generateContent`. `countTokens` accepted the full configuration (HTTP 200).
+That proved insufficient, because `countTokens` does not validate generation
+settings.
+
+**The pilot.** P1 on SC4111E0, at the fixed settings, returned **HTTP 400
+INVALID_ARGUMENT** on its first attempt. It was not retried, which is correct
+for a 400. Nothing was cached, so nothing was scored.
+
+**Diagnosis,** from six synthetic calls with no packet content:
+
+| configuration | HTTP |
+|---|---|
+| the full fixed configuration | 400 |
+| without `thinkingConfig` | **200** |
+| without `seed` | 400 |
+| without `responseSchema` | 400 |
+| `thinkingLevel: "minimal"` in place of `thinkingBudget: 0` | **200** |
+| `thinkingLevel: "low"` in place of `thinkingBudget: 0` | **200** |
+
+**The rejected setting is `thinkingBudget: 0`.**
+
+- Flash-Lite **supports `responseSchema`.** The full Item 0 schema, with seed
+  and temperature 0, was accepted.
+- It **does not accept a zero thinking budget.** It does accept
+  `thinkingLevel` "minimal" and "low".
+- None of the accepted calls reported thinking tokens, but on a trivial
+  synthetic prompt that says nothing about a real one.
+
+**So the option is not dead, but it cannot run at the reference run's fixed
+settings.** Running it at `thinkingLevel: "minimal"` would change a fixed
+setting for one model, which is a decision not taken here.
+
+**Availability.** 7 Flash-Lite attempts: 4 returned 400, 3 returned 200, and
+**none returned 503**. Seven attempts, six of them trivial, are far too few to
+estimate a failure rate.
 
 ---
 
