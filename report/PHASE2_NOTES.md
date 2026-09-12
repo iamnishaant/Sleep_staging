@@ -625,6 +625,21 @@ escapes, because the same claim still trips `value_mismatch` and
 `uncited_quantity`, both in the unsupported set. But rule 9's own per-rule count
 will under-report differencing, and should be read that way at 2G.
 
+**Reading the per-rule table, from 2G onwards:**
+
+> `L2.rem_error_differenced` is an exact-value detector, not a rounded-value
+> classifier. A differenced error written to fewer decimal places is still
+> rejected, via `L2.value_mismatch` and `L2.uncited_quantity`, but is not
+> attributed to this rule. Its per-rule count is therefore a lower bound on
+> differencing attempts.
+
+Pinned by `test_adversarial.py::test_12b_a_rounded_difference_is_rejected_but_not_attributed_to_rule_9`:
+`4.84`, `4.8403` and both `round()`ed forms are rejected, and
+`rem_error_differenced` is not among their codes. The rule is deliberately not
+widened - a tolerance band would contradict the no-tolerance principle rule 2
+rests on, and two numeric rules disagreeing is worse than one documented blind
+spot.
+
 ### 3. The policy_pass_rate denominator - presentation fixed, metric unchanged
 
 `policy_pass_rate` is computed over schema-valid outputs, so its denominator

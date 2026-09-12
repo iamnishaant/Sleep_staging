@@ -117,6 +117,19 @@ derived. Such keys can be added later with a citable reference attached.
 | 13 | `L2.bad_subject_for_type` | subject matches the type |
 | — | `L2.tier_item_not_valuable` | forced by the packet's shape; see D1 below |
 
+> `L2.rem_error_differenced` is an exact-value detector, not a rounded-value
+> classifier. A differenced error written to fewer decimal places is still
+> rejected, via `L2.value_mismatch` and `L2.uncited_quantity`, but is not
+> attributed to this rule. Its per-rule count is therefore a lower bound on
+> differencing attempts.
+
+Pinned by `test_adversarial.py::test_12b_a_rounded_difference_is_rejected_but_not_attributed_to_rule_9`:
+`4.84`, `4.8403` and both `round()`ed forms are rejected, and
+`rem_error_differenced` is not among their codes. The rule is deliberately not
+widened - a tolerance band would contradict the no-tolerance principle rule 2
+rests on, and two numeric rules disagreeing is worse than one documented blind
+spot.
+
 **Rule 2 has no tolerance of any kind.** No epsilon, no rounding, no
 significant-figure allowance, no unit conversion. Both sides come from the same
 JSON parser, so `==` is exact; an epsilon would hide exactly what this rule
