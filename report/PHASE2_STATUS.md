@@ -20,16 +20,16 @@ fully clean claim set is rendered into fixed clinician-register wording.
 Phase 2 asks how well a model can fill that contract.
 
 The deterministic tier is **finished, frozen and tested** (368 tests). The
-**local small-model tier** is being measured. Qwen2.5-1.5B has now been run
-on all 31 dev nights: 0 of 31 at 5/5 mandatory, with no hedged values. The
-other four candidates are running. The
+**local small-model tier** has been measured: all five candidates, on all
+31 dev nights, under P1. None reaches the contract. The best is 4 of 31
+nights at 5/5 (Llama-3.2-3B), and none of those passes. The
 **reference run** with a strong hosted model (Gemini 3.8 Flash) is **in
 progress**, at 8 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
 5-class target are done: measured memory and analytical throughput.
 
 Next:
 
-- finish the reference run and the five-model measurement;
+- finish the reference run;
 - apply the pre-registered rule.
 
 The 2G grammar ablation is designed and waiting in
@@ -58,7 +58,7 @@ schema, and prompt P1.
 nights, one medium and one low, in manifest order, so the harder tiers are
 under-sampled. The pre-registered decision rule applies at 31 nights (§6).
 
-### 2.2 The local small model does not: one night, then all 31
+### 2.2 The local small models do not: one night, then all 31, then all five
 
 This was Qwen2.5-1.5B-Instruct (Q4_K_M, llama.cpp, grammar-constrained,
 temperature 0) on dev night SC4111E0, run under five prompt variants. It is
@@ -99,6 +99,35 @@ On the same night, the reference model scored 5/5 with zero violations.
 
 So the one-night diagnostic generalises: the model never learns the hedged
 form. See PHASE2_NOTES, "Local candidates on the dev population".
+
+**All five local candidates** were run at the same settings on 13 and 14
+September 2026:
+
+| model | nights at 5/5 | mandatory mean | hedged packets | hedged claims | rendered | hit the cap |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen2.5-1.5B | 0/31 | 0.497 | 0/31 | 0/434 | 0/31 | 1/31 |
+| SmolLM2-1.7B | 0/31 | 0.019 | 0/31 | 0/434 | 0/31 | 30/31 |
+| Gemma-2-2b | 0/31 | 0.219 | 31/31 | 50/434 | 1/31 | 0/31 |
+| Llama-3.2-3B | 4/31 | 0.310 | 11/31 | 156/434 | 0/31 | 20/31 |
+| Phi-3.5-mini | 0/31 | 0.348 | 20/31 | 102/434 | 9/31 | 0/30 |
+
+- **No candidate satisfies the contract on any night.** Llama's four 5/5
+  nights also restate the hedged items as plain values. Phi's nine clean
+  reports stop at 4 of 5 facts.
+- **Each fails differently:**
+  - **Qwen** never hedges.
+  - **SmolLM2** loops to the token cap.
+  - **Gemma** hedges only the REM-latency pair, and omits most facts.
+  - **Llama** hedges all 14 items but duplicates each as a plain value.
+  - **Phi** hedges the safe facts on medium and low nights.
+- **Numbers are never the problem:** numeric fidelity is 1.000 for four of
+  the five.
+- **One Phi packet (SC4081E0) failed on host memory** before generating a
+  token. It counts as missing here, pending a decision.
+- **The reference model, for contrast:** on its 8 nights so far, it scored
+  5/5, with 14 hedged values and a rendered report, every night.
+
+See PHASE2_NOTES, "all five models under P1".
 
 ### 2.3 Deployment: plausible within a Raspberry Pi 5 envelope, for batch use
 
@@ -230,13 +259,12 @@ A person starts each session; nothing runs on a timer.
    - **near zero:** the contract itself is the ceiling;
    - **mid-range, around 12 of 31:** run P2, because prompt design plausibly
      explains the gap.
-3. **Under way: the five local models on the same 31 dev nights, under P1.**
-   The runs are grammar-constrained, at temperature 0, with one generation per
-   packet. This is the gap measurement 2F exists for.
-   - Qwen2.5-1.5B is done: 0 of 31 at 5/5 and no hedged values (§2.2).
-   - SmolLM2-1.7B is running. Gemma-2-2b, Llama-3.2-3B and Phi-3.5-mini
-     follow.
-   - Each generation now logs whether it hit the 3,000-token cap.
+3. **Done: the five local models on the same 31 dev nights, under P1**
+   (§2.2).
+   - No candidate reaches the contract on any night.
+   - The best is Llama-3.2-3B, at 4 of 31 nights at 5/5, none of which
+     passes.
+   - One Phi packet failed on host memory, and awaits a decision.
 
 ### Then: 2G
 

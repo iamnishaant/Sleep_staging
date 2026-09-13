@@ -1,0 +1,31 @@
+{
+ "ts": "2026-09-13T21:21:20+00:00",
+ "key": {
+  "recording_id": "SC4341F0-PSG",
+  "model": "Phi-3.5-mini-instruct",
+  "model_file": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+  "prompt_id": "P1",
+  "prompt_hash": "777507b58df4b7b51cc6efc5b50919d938cd664f718d16831c97e55a5dae70a7"
+ },
+ "exit_status": 0,
+ "wall_s": 171.1,
+ "prompt_tokens": 1308,
+ "output_tokens": 308,
+ "hit_token_limit": false,
+ "peak_working_set_bytes": 7249108992,
+ "peak_private_bytes": 6292602880,
+ "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+ "extraction": "ok",
+ "runtime": "b10927",
+ "settings": {
+  "n_predict": 3000,
+  "context": 12288,
+  "temperature": 0,
+  "seed": 0,
+  "template": "--jinja -cnv -st",
+  "grammar": "report/claims.gbnf"
+ },
+ "text": "[\r\n  {\r\n    \"claim_id\": \"c001\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\"arch.total_sleep_time\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 430.5,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c002\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\"arch.time_in_bed\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 716.0,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c003\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\"arch.sleep_efficiency\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 0.6013,\r\n    \"unit\": \"fraction\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c004\",\r\n    \"claim_type\": \"observation\",\r\n    \"cites\": [\"night.confidence\"],\r\n    \"subject\": \"this_recording\",\r\n    \"text_key\": \"tier_is_high\"\r\n  }\r\n]",
+ "stderr_tail": "llama_completion: chat template example:\r\n<|system|>\r\nYou are a helpful assistant<|end|>\r\n<|user|>\r\nHello<|end|>\r\n<|assistant|>\r\nHi there<|end|>\r\n<|user|>\r\nHow are you?<|end|>\r\n<|assistant|>\r\n\r\n0.21.654.801 I \r\n0.21.657.734 I system_info: n_threads = 8 (n_threads_batch = 8) / 16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | \r\n0.21.657.751 I \r\n0.21.746.798 I sampler seed: 0\r\n0.21.747.349 I sampler params: \r\n\trepeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000\r\n\tdry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 64\r\n\ttop_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000\r\n\tmirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900\r\n0.21.747.864 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist \r\n0.21.747.878 I generate: n_ctx = 12288, n_batch = 2048, n_predict = 3000, n_keep = 0\r\n0.21.747.879 I \r\n2.50.246.170 I common_perf_print:    sampling time =     188.75 ms\r\n2.50.246.185 I common_perf_print:    samplers time =      24.42 ms /  1617 tokens\r\n2.50.246.189 I common_perf_print:        load time =   21358.55 ms\r\n2.50.247.051 I common_perf_print: prompt eval time =   67388.10 ms /  1308 tokens (   51.52 ms per token,    19.41 tokens per second)\r\n2.50.247.068 I common_perf_print:        eval time =   80692.46 ms /   308 runs   (  261.99 ms per token,     3.82 tokens per second)\r\n2.50.247.078 I common_perf_print:       total time =  148611.15 ms /  1616 tokens\r\n2.50.247.082 I common_perf_print: unaccounted time =     341.84 ms /   0.2 %      (total - sampling - prompt eval - eval) / (total)\r\n2.50.247.089 I common_perf_print:    graphs reused =        306\r\n",
+ "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f C:\\Users\\shahn\\AppData\\Local\\Temp\\tmpsu44f4v8\\SC4341F0-PSG.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt"
+}

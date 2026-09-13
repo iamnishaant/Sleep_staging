@@ -1,0 +1,31 @@
+{
+ "ts": "2026-09-13T18:47:49+00:00",
+ "key": {
+  "recording_id": "SC4172E0-PSG",
+  "model": "Gemma-2-2b-it",
+  "model_file": "gemma-2-2b-it-Q4_K_M.gguf",
+  "prompt_id": "P1",
+  "prompt_hash": "f6ce2e7bc3875bd0b39a0ed49281fbd7090074aa0237dbd21a6590d2754c6ca7"
+ },
+ "exit_status": 0,
+ "wall_s": 32.99,
+ "prompt_tokens": 1188,
+ "output_tokens": 383,
+ "hit_token_limit": false,
+ "peak_working_set_bytes": 3768709120,
+ "peak_private_bytes": 2581606400,
+ "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+ "extraction": "ok",
+ "runtime": "b10927",
+ "settings": {
+  "n_predict": 3000,
+  "context": 12288,
+  "temperature": 0,
+  "seed": 0,
+  "template": "--jinja -cnv -st",
+  "grammar": "report/claims.gbnf"
+ },
+ "text": "[\r\n  {\r\n    \"claim_id\": \"c001\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\r\n      \"arch.rem_latency\"\r\n    ],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 445.5,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c002\",\r\n    \"claim_type\": \"observation\",\r\n    \"cites\": [\r\n      \"night.confidence\"\r\n    ],\r\n    \"subject\": \"this_recording\",\r\n    \"text_key\": \"tier_is_high\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c003\",\r\n    \"claim_type\": \"hedged_value\",\r\n    \"cites\": [\r\n      \"arch.rem_latency\"\r\n    ],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 445.5,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c004\",\r\n    \"claim_type\": \"observation\",\r\n    \"cites\": [\r\n      \"night.confidence\"\r\n    ],\r\n    \"subject\": \"this_recording\",\r\n    \"text_key\": \"tier_is_high\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c005\",\r\n    \"claim_type\": \"hedged_value\",\r\n    \"cites\": [\r\n      \"arch.rem_latency\"\r\n    ],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 445.5,\r\n    \"unit\": \"minutes\"\r\n  }\r\n]",
+ "stderr_tail": "mple:\r\n<start_of_turn>user\r\nYou are a helpful assistant\r\nHello<end_of_turn>\r\n<start_of_turn>model\r\nHi there<end_of_turn>\r\n<start_of_turn>user\r\nHow are you?<end_of_turn>\r\n<start_of_turn>model\r\n\r\n0.01.851.692 I \r\n0.01.851.711 I system_info: n_threads = 8 (n_threads_batch = 8) / 16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | \r\n0.01.851.711 I \r\n0.01.857.891 I sampler seed: 0\r\n0.01.857.907 I sampler params: \r\n\trepeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000\r\n\tdry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 64\r\n\ttop_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000\r\n\tmirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900\r\n0.01.857.917 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist \r\n0.01.857.917 I generate: n_ctx = 12288, n_batch = 2048, n_predict = 3000, n_keep = 0\r\n0.01.857.918 I \r\n0.32.627.292 I common_perf_print:    sampling time =     418.67 ms\r\n0.32.627.294 I common_perf_print:    samplers time =      71.34 ms /  1572 tokens\r\n0.32.627.303 I common_perf_print:        load time =    1287.92 ms\r\n0.32.627.306 I common_perf_print: prompt eval time =    8131.54 ms /  1188 tokens (    6.84 ms per token,   146.10 tokens per second)\r\n0.32.627.308 I common_perf_print:        eval time =   22206.43 ms /   383 runs   (   57.98 ms per token,    17.25 tokens per second)\r\n0.32.627.309 I common_perf_print:       total time =   30778.01 ms /  1571 tokens\r\n0.32.627.311 I common_perf_print: unaccounted time =      21.37 ms /   0.1 %      (total - sampling - prompt eval - eval) / (total)\r\n0.32.627.312 I common_perf_print:    graphs reused =        380\r\n",
+ "command": "-m C:\\Users\\shahn\\models\\gemma-2-2b-it-Q4_K_M.gguf --jinja -cnv -st -f C:\\Users\\shahn\\AppData\\Local\\Temp\\tmpfp5ej_vd\\SC4172E0-PSG.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt"
+}

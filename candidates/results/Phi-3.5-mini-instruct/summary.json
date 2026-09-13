@@ -1,0 +1,1650 @@
+{
+ "model": "Phi-3.5-mini-instruct",
+ "prompt_id": "P1",
+ "n_cached": 31,
+ "n_failed_processes": 1,
+ "strata": {
+  "overall": {
+   "n": 31,
+   "small_n": false,
+   "n_missing": 1,
+   "n_passed": 9,
+   "n_failed": 21,
+   "n_schema_valid": 30,
+   "total_violations": 93,
+   "schema_validity_rate": 0.967742,
+   "schema_validity_rate_num": 30,
+   "schema_validity_rate_den": 31,
+   "overall_pass_rate": 0.290323,
+   "overall_pass_rate_num": 9,
+   "overall_pass_rate_den": 31,
+   "policy_pass_rate": 0.3,
+   "policy_pass_rate_num": 9,
+   "policy_pass_rate_den": 30,
+   "mandatory_coverage": 0.348387,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.096774,
+   "cited_mandatory": 0.774194,
+   "cited_discretionary": 0.156682,
+   "oracle_recovery": 0.096774,
+   "oracle_recovery_n": 31,
+   "unrecovered_available": 12.645161,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 132,
+   "unsupported_claim_rate": 0.165829,
+   "unsupported_claims": 33,
+   "n_claims": 199,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 60,
+     "outputs": 20,
+     "output_rate": 0.645161
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 26,
+     "outputs": 6,
+     "output_rate": 0.193548
+    },
+    "L2.text_key_predicate_false": {
+     "count": 7,
+     "outputs": 7,
+     "output_rate": 0.225806
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "high": {
+   "n": 11,
+   "small_n": false,
+   "n_missing": 1,
+   "n_passed": 9,
+   "n_failed": 1,
+   "n_schema_valid": 10,
+   "total_violations": 2,
+   "schema_validity_rate": 0.909091,
+   "schema_validity_rate_num": 10,
+   "schema_validity_rate_den": 11,
+   "overall_pass_rate": 0.818182,
+   "overall_pass_rate_num": 9,
+   "overall_pass_rate_den": 11,
+   "policy_pass_rate": 0.9,
+   "policy_pass_rate_num": 9,
+   "policy_pass_rate_den": 10,
+   "mandatory_coverage": 0.709091,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.727273,
+   "cited_discretionary": 0.006494,
+   "oracle_recovery": 0.0,
+   "oracle_recovery_n": 11,
+   "unrecovered_available": 14.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 30,
+   "unsupported_claim_rate": 0.04878,
+   "unsupported_claims": 2,
+   "n_claims": 41,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 1,
+     "outputs": 1,
+     "output_rate": 0.090909
+    },
+    "L2.text_key_predicate_false": {
+     "count": 1,
+     "outputs": 1,
+     "output_rate": 0.090909
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "medium": {
+   "n": 10,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 10,
+   "n_schema_valid": 10,
+   "total_violations": 61,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 10,
+   "schema_validity_rate_den": 10,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 10,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 10,
+   "mandatory_coverage": 0.1,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.3,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.478571,
+   "oracle_recovery": 0.3,
+   "oracle_recovery_n": 10,
+   "unrecovered_available": 9.8,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 72,
+   "unsupported_claim_rate": 0.287037,
+   "unsupported_claims": 31,
+   "n_claims": 108,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 30,
+     "outputs": 10,
+     "output_rate": 1.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 25,
+     "outputs": 5,
+     "output_rate": 0.5
+    },
+    "L2.text_key_predicate_false": {
+     "count": 6,
+     "outputs": 6,
+     "output_rate": 0.6
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "low": {
+   "n": 10,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 10,
+   "n_schema_valid": 10,
+   "total_violations": 30,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 10,
+   "schema_validity_rate_den": 10,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 10,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 10,
+   "mandatory_coverage": 0.2,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "oracle_recovery_n": 10,
+   "unrecovered_available": 14.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 30,
+   "unsupported_claim_rate": 0.0,
+   "unsupported_claims": 0,
+   "n_claims": 50,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 30,
+     "outputs": 10,
+     "output_rate": 1.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_predicate_false": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  }
+ },
+ "extras": {
+  "overall": {
+   "n": 31,
+   "n_present": 30,
+   "five_of_five": 0,
+   "rendered": 9,
+   "hedged_packets": "20/31",
+   "hedged_claims": "102/434",
+   "hit_token_limit": 0
+  },
+  "high": {
+   "n": 11,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 9,
+   "hedged_packets": "0/11",
+   "hedged_claims": "0/154",
+   "hit_token_limit": 0
+  },
+  "medium": {
+   "n": 10,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "10/10",
+   "hedged_claims": "72/140",
+   "hit_token_limit": 0
+  },
+  "low": {
+   "n": 10,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "10/10",
+   "hedged_claims": "30/140",
+   "hit_token_limit": 0
+  }
+ },
+ "per_packet": [
+  {
+   "recording_id": "SC4081E0-PSG",
+   "tier": "high",
+   "present": false,
+   "n_claims": 0,
+   "violations": [],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.0,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "0/0",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 1,
+   "wall_s": 5.8,
+   "output_tokens": null,
+   "prompt_tokens": null,
+   "peak_working_set_bytes": 2623840256,
+   "extraction": "no end-of-text marker: cut off at the token limit, or failed",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4082E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 178.62,
+   "output_tokens": 301,
+   "prompt_tokens": 1318,
+   "peak_working_set_bytes": 7271882752,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4111E0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 171.82,
+   "output_tokens": 379,
+   "prompt_tokens": 1314,
+   "peak_working_set_bytes": 7250210816,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4112E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 130.72,
+   "output_tokens": 308,
+   "prompt_tokens": 1312,
+   "peak_working_set_bytes": 7258824704,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4131E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 118.43,
+   "output_tokens": 309,
+   "prompt_tokens": 1318,
+   "peak_working_set_bytes": 7347372032,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4171E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "4/4",
+   "hedged_value": 4,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 138.98,
+   "output_tokens": 391,
+   "prompt_tokens": 1320,
+   "peak_working_set_bytes": 7837450240,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4172E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 165.26,
+   "output_tokens": 309,
+   "prompt_tokens": 1322,
+   "peak_working_set_bytes": 7241150464,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4321E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 173.14,
+   "output_tokens": 308,
+   "prompt_tokens": 1311,
+   "peak_working_set_bytes": 7251243008,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4322E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 173.97,
+   "output_tokens": 308,
+   "prompt_tokens": 1312,
+   "peak_working_set_bytes": 6552485888,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4341F0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 171.1,
+   "output_tokens": 308,
+   "prompt_tokens": 1308,
+   "peak_working_set_bytes": 7249108992,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4342F0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 160.19,
+   "output_tokens": 301,
+   "prompt_tokens": 1310,
+   "peak_working_set_bytes": 7217700864,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4351F0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 214.21,
+   "output_tokens": 389,
+   "prompt_tokens": 1315,
+   "peak_working_set_bytes": 7127576576,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4352F0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 136.86,
+   "output_tokens": 379,
+   "prompt_tokens": 1321,
+   "peak_working_set_bytes": 7724429312,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4441E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 17,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.571429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.571429,
+   "unrecovered_available": 6,
+   "fidelity": "11/11",
+   "hedged_value": 11,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 423.76,
+   "output_tokens": 1353,
+   "prompt_tokens": 1323,
+   "peak_working_set_bytes": 7249088512,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4442E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 139.09,
+   "output_tokens": 318,
+   "prompt_tokens": 1315,
+   "peak_working_set_bytes": 6777143296,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4461F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 148.07,
+   "output_tokens": 389,
+   "prompt_tokens": 1316,
+   "peak_working_set_bytes": 7278927872,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4462F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "4/4",
+   "hedged_value": 4,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 153.71,
+   "output_tokens": 391,
+   "prompt_tokens": 1319,
+   "peak_working_set_bytes": 7370866688,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4561F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 17,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.571429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.571429,
+   "unrecovered_available": 6,
+   "fidelity": "11/11",
+   "hedged_value": 11,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 356.36,
+   "output_tokens": 1352,
+   "prompt_tokens": 1321,
+   "peak_working_set_bytes": 7254007808,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4562F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 17,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.571429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.571429,
+   "unrecovered_available": 6,
+   "fidelity": "11/11",
+   "hedged_value": 11,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 295.37,
+   "output_tokens": 1323,
+   "prompt_tokens": 1318,
+   "peak_working_set_bytes": 7724015616,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4581G0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 97.77,
+   "output_tokens": 379,
+   "prompt_tokens": 1319,
+   "peak_working_set_bytes": 7259381760,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4582G0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 78.23,
+   "output_tokens": 378,
+   "prompt_tokens": 1319,
+   "peak_working_set_bytes": 7578935296,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4671G0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 78.41,
+   "output_tokens": 371,
+   "prompt_tokens": 1320,
+   "peak_working_set_bytes": 7264436224,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4672G0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 17,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.571429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.571429,
+   "unrecovered_available": 6,
+   "fidelity": "11/11",
+   "hedged_value": 11,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 213.75,
+   "output_tokens": 1351,
+   "prompt_tokens": 1321,
+   "peak_working_set_bytes": 7393746944,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7081J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 77.3,
+   "output_tokens": 378,
+   "prompt_tokens": 1319,
+   "peak_working_set_bytes": 8350650368,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7082J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 73.18,
+   "output_tokens": 379,
+   "prompt_tokens": 1320,
+   "peak_working_set_bytes": 8494878720,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7131J0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 63.06,
+   "output_tokens": 317,
+   "prompt_tokens": 1319,
+   "peak_working_set_bytes": 8564559872,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7132J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 70.3,
+   "output_tokens": 379,
+   "prompt_tokens": 1319,
+   "peak_working_set_bytes": 8566456320,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7151J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 72.69,
+   "output_tokens": 389,
+   "prompt_tokens": 1318,
+   "peak_working_set_bytes": 8564981760,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7152J0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 17,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.571429,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.571429,
+   "unrecovered_available": 6,
+   "fidelity": "11/11",
+   "hedged_value": 11,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 196.66,
+   "output_tokens": 1348,
+   "prompt_tokens": 1316,
+   "peak_working_set_bytes": 8494993408,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7201J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged",
+    "L2.safe_item_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 88.75,
+   "output_tokens": 379,
+   "prompt_tokens": 1318,
+   "peak_working_set_bytes": 8392478720,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7202J0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 63.83,
+   "output_tokens": 309,
+   "prompt_tokens": 1316,
+   "peak_working_set_bytes": 8472977408,
+   "extraction": "ok",
+   "hit_token_limit": false
+  }
+ ],
+ "host": {
+  "kind": "x86 evaluation-host timing and memory - run log only, not deployment",
+  "wall_s_total": 4629.4,
+  "wall_s_min": 5.8,
+  "wall_s_median": 139.09,
+  "wall_s_max": 423.76,
+  "peak_working_set_mib_max": 8169.6,
+  "peak_working_set_mib_median": 6941.7,
+  "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+  "context": 12288,
+  "hit_token_limit": 0
+ }
+}

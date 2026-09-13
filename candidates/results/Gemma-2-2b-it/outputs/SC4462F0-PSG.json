@@ -1,0 +1,49 @@
+[
+  {
+    "claim_id": "c001",
+    "claim_type": "observation",
+    "cites": [
+      "night.confidence"
+    ],
+    "subject": "this_recording",
+    "text_key": "tier_is_medium"
+  },
+  {
+    "claim_id": "c002",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_latency"
+    ],
+    "subject": "this_recording",
+    "value": 80.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c003",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_latency_sustained"
+    ],
+    "subject": "this_recording",
+    "value": 80.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c004",
+    "claim_type": "observation",
+    "cites": [
+      "night.confidence"
+    ],
+    "subject": "this_recording",
+    "text_key": "tier_is_medium"
+  },
+  {
+    "claim_id": "c005",
+    "claim_type": "observation",
+    "cites": [
+      "night.confidence"
+    ],
+    "subject": "this_recording",
+    "text_key": "tier_is_low"
+  }
+]

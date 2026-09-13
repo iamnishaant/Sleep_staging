@@ -1,0 +1,87 @@
+[
+{"claim_id": "c1", "claim_type": "value", "cites": 
+[
+"arch.total_sleep_time"
+]
+, "subject": "this_recording", "value": 540.0, "unit": "minutes"},
+{"claim_id": "c2", "claim_type": "value", "cites": 
+[
+"arch.time_in_bed"
+]
+, "subject": "this_recording", "value": 856.0, "unit": "minutes"},
+{"claim_id": "c3", "claim_type": "value", "cites": 
+[
+"arch.sleep_efficiency"
+]
+, "subject": "this_recording", "value": 0.6308, "unit": "fraction"},
+{"claim_id": "c4", "claim_type": "value", "cites": 
+[
+"arch.rem_latency"
+]
+, "subject": "this_recording", "value": 30.0, "unit": "minutes"},
+{"claim_id": "c5", "claim_type": "value", "cites": 
+[
+"arch.waso"
+]
+, "subject": "this_recording", "value": 286.0, "unit": "minutes"},
+{"claim_id": "c6", "claim_type": "value", "cites": 
+[
+"arch.rem_latency_sustained"
+]
+, "subject": "this_recording", "value": 445.5, "unit": "minutes"},
+{"claim_id": "c7", "claim_type": "value", "cites": 
+[
+"arch.rem_latency_sustained"
+]
+, "subject": "this_recording", "value": 445.5, "unit": "minutes"},
+{"claim_id": "c8", "claim_type": "value", "cites": 
+[
+"arch.rem_periods"
+]
+, "subject": "this_recording", "value": 6, "unit": "count"},
+{"claim_id": "c9", "claim_type": "value", "cites": 
+[
+"arch.stage_transitions"
+]
+, "subject": "this_recording", "value": 166, "unit": "count"},
+{"claim_id": "c10", "claim_type": "value", "cites": 
+[
+"arch.transition_rate"
+]
+, "subject": "this_recording", "value": 11.235, "unit": "per hour"},
+{"claim_id": "c11", "claim_type": "value", "cites": 
+[
+"arch.light_deep_ratio"
+]
+, "subject": "this_recording", "value": 1.504, "unit": "ratio"},
+{"claim_id": "c12", "claim_type": "value", "cites": 
+[
+"arch.wake_interruptions_per_hour"
+]
+, "subject": "this_recording", "value": 1.778, "unit": "per hour"},
+{"claim_id": "c13", "claim_type": "value", "cites": 
+[
+"stage.W.fraction"
+]
+, "subject": "this_recording", "value": 0.3909, "unit": "fraction"},
+{"claim_id": "c14", "claim_type": "value", "cites": 
+[
+"stage.N1.fraction"
+]
+, "subject": "this_recording", "value": 0.0389, "unit": "fraction"},
+{"claim_id": "c15", "claim_type": "value", "cites": 
+[
+"stage.N2.fraction"
+]
+, "subject": "this_recording", "value": 0.2504, "unit": "fraction"},
+{"claim_id": "c16", "claim_type": "value", "cites": 
+[
+"stage.N3.fraction"
+]
+, "subject": "this_recording", "value": 0.1923, "unit": "fraction"},
+{"claim_id": "c17", "claim_type": "value", "cites": 
+[
+"stage.REM.fraction"
+]
+, "subject": "this_recording", "value": 0.1275, "unit": "fraction"}
+]

@@ -1,0 +1,1609 @@
+{
+ "model": "Gemma-2-2b-it",
+ "prompt_id": "P1",
+ "n_cached": 31,
+ "n_failed_processes": 0,
+ "strata": {
+  "overall": {
+   "n": 31,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 1,
+   "n_failed": 30,
+   "n_schema_valid": 31,
+   "total_violations": 43,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 31,
+   "schema_validity_rate_den": 31,
+   "overall_pass_rate": 0.032258,
+   "overall_pass_rate_num": 1,
+   "overall_pass_rate_den": 31,
+   "policy_pass_rate": 0.032258,
+   "policy_pass_rate_num": 1,
+   "policy_pass_rate_den": 31,
+   "mandatory_coverage": 0.219355,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.110599,
+   "cited_mandatory": 0.219355,
+   "cited_discretionary": 0.110599,
+   "oracle_recovery": 0.110599,
+   "oracle_recovery_n": 31,
+   "unrecovered_available": 12.451613,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 54,
+   "unsupported_claim_rate": 0.293706,
+   "unsupported_claims": 42,
+   "n_claims": 143,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 1,
+     "outputs": 1,
+     "output_rate": 0.032258
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 20,
+     "outputs": 20,
+     "output_rate": 0.645161
+    },
+    "L2.text_key_predicate_false": {
+     "count": 22,
+     "outputs": 16,
+     "output_rate": 0.516129
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "high": {
+   "n": 11,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 1,
+   "n_failed": 10,
+   "n_schema_valid": 11,
+   "total_violations": 17,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 11,
+   "schema_validity_rate_den": 11,
+   "overall_pass_rate": 0.090909,
+   "overall_pass_rate_num": 1,
+   "overall_pass_rate_den": 11,
+   "policy_pass_rate": 0.090909,
+   "policy_pass_rate_num": 1,
+   "policy_pass_rate_den": 11,
+   "mandatory_coverage": 0.254545,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.116883,
+   "cited_mandatory": 0.254545,
+   "cited_discretionary": 0.116883,
+   "oracle_recovery": 0.116883,
+   "oracle_recovery_n": 11,
+   "unrecovered_available": 12.363636,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 23,
+   "unsupported_claim_rate": 0.307692,
+   "unsupported_claims": 16,
+   "n_claims": 52,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 1,
+     "outputs": 1,
+     "output_rate": 0.090909
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 3,
+     "outputs": 3,
+     "output_rate": 0.272727
+    },
+    "L2.text_key_predicate_false": {
+     "count": 13,
+     "outputs": 8,
+     "output_rate": 0.727273
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "medium": {
+   "n": 10,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 10,
+   "n_schema_valid": 10,
+   "total_violations": 16,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 10,
+   "schema_validity_rate_den": 10,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 10,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 10,
+   "mandatory_coverage": 0.2,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "oracle_recovery_n": 10,
+   "unrecovered_available": 12.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 21,
+   "unsupported_claim_rate": 0.313725,
+   "unsupported_claims": 16,
+   "n_claims": 51,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 7,
+     "outputs": 7,
+     "output_rate": 0.7
+    },
+    "L2.text_key_predicate_false": {
+     "count": 9,
+     "outputs": 8,
+     "output_rate": 0.8
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "low": {
+   "n": 10,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 10,
+   "n_schema_valid": 10,
+   "total_violations": 10,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 10,
+   "schema_validity_rate_den": 10,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 10,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 10,
+   "mandatory_coverage": 0.2,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "oracle_recovery_n": 10,
+   "unrecovered_available": 13.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 10,
+   "unsupported_claim_rate": 0.25,
+   "unsupported_claims": 10,
+   "n_claims": 40,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 10,
+     "outputs": 10,
+     "output_rate": 1.0
+    },
+    "L2.text_key_predicate_false": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_latency_double_count": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  }
+ },
+ "extras": {
+  "overall": {
+   "n": 31,
+   "n_present": 31,
+   "five_of_five": 0,
+   "rendered": 1,
+   "hedged_packets": "31/31",
+   "hedged_claims": "50/434",
+   "hit_token_limit": 0
+  },
+  "high": {
+   "n": 11,
+   "n_present": 11,
+   "five_of_five": 0,
+   "rendered": 1,
+   "hedged_packets": "11/11",
+   "hedged_claims": "19/154",
+   "hit_token_limit": 0
+  },
+  "medium": {
+   "n": 10,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "10/10",
+   "hedged_claims": "21/140",
+   "hit_token_limit": 0
+  },
+  "low": {
+   "n": 10,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "10/10",
+   "hedged_claims": "10/140",
+   "hit_token_limit": 0
+  }
+ },
+ "per_packet": [
+  {
+   "recording_id": "SC4081E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.4,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "3/3",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 35.0,
+   "output_tokens": 392,
+   "prompt_tokens": 1186,
+   "peak_working_set_bytes": 3768856576,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4082E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.4,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "2/2",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.25,
+   "output_tokens": 379,
+   "prompt_tokens": 1184,
+   "peak_working_set_bytes": 3768881152,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4111E0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.48,
+   "output_tokens": 298,
+   "prompt_tokens": 1180,
+   "peak_working_set_bytes": 3768958976,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4112E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 7,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.4,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "3/3",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 41.34,
+   "output_tokens": 532,
+   "prompt_tokens": 1178,
+   "peak_working_set_bytes": 3768913920,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4131E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 28.28,
+   "output_tokens": 308,
+   "prompt_tokens": 1184,
+   "peak_working_set_bytes": 3768827904,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4171E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.02,
+   "output_tokens": 378,
+   "prompt_tokens": 1186,
+   "peak_working_set_bytes": 3768745984,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4172E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.unsafe_item_not_hedged"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "3/3",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.99,
+   "output_tokens": 383,
+   "prompt_tokens": 1188,
+   "peak_working_set_bytes": 3768709120,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4321E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [],
+   "passed": true,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": true,
+   "exit_status": 0,
+   "wall_s": 28.22,
+   "output_tokens": 308,
+   "prompt_tokens": 1177,
+   "peak_working_set_bytes": 3768754176,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4322E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.27,
+   "output_tokens": 295,
+   "prompt_tokens": 1178,
+   "peak_working_set_bytes": 3768709120,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4341F0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.27,
+   "output_tokens": 295,
+   "prompt_tokens": 1174,
+   "peak_working_set_bytes": 3768852480,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4342F0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 31.67,
+   "output_tokens": 376,
+   "prompt_tokens": 1176,
+   "peak_working_set_bytes": 3768836096,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4351F0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.19,
+   "output_tokens": 298,
+   "prompt_tokens": 1181,
+   "peak_working_set_bytes": 3768803328,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4352F0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.51,
+   "output_tokens": 300,
+   "prompt_tokens": 1187,
+   "peak_working_set_bytes": 3768741888,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4441E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 33.46,
+   "output_tokens": 382,
+   "prompt_tokens": 1189,
+   "peak_working_set_bytes": 3768774656,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4442E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.55,
+   "output_tokens": 380,
+   "prompt_tokens": 1181,
+   "peak_working_set_bytes": 3768819712,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4461F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.72,
+   "output_tokens": 380,
+   "prompt_tokens": 1182,
+   "peak_working_set_bytes": 3768791040,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4462F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.19,
+   "output_tokens": 376,
+   "prompt_tokens": 1185,
+   "peak_working_set_bytes": 3768918016,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4561F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 6,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "3/3",
+   "hedged_value": 3,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 37.42,
+   "output_tokens": 459,
+   "prompt_tokens": 1187,
+   "peak_working_set_bytes": 3768762368,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4562F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.27,
+   "output_tokens": 382,
+   "prompt_tokens": 1184,
+   "peak_working_set_bytes": 3768733696,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4581G0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.9,
+   "output_tokens": 299,
+   "prompt_tokens": 1185,
+   "peak_working_set_bytes": 3768901632,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4582G0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.69,
+   "output_tokens": 299,
+   "prompt_tokens": 1185,
+   "peak_working_set_bytes": 3768664064,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4671G0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 33.27,
+   "output_tokens": 378,
+   "prompt_tokens": 1186,
+   "peak_working_set_bytes": 3768954880,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "SC4672G0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 33.1,
+   "output_tokens": 382,
+   "prompt_tokens": 1187,
+   "peak_working_set_bytes": 3768766464,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7081J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 28.0,
+   "output_tokens": 300,
+   "prompt_tokens": 1185,
+   "peak_working_set_bytes": 3768942592,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7082J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.75,
+   "output_tokens": 300,
+   "prompt_tokens": 1186,
+   "peak_working_set_bytes": 3768266752,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7131J0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.39,
+   "output_tokens": 382,
+   "prompt_tokens": 1185,
+   "peak_working_set_bytes": 3768803328,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7132J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 29.93,
+   "output_tokens": 299,
+   "prompt_tokens": 1185,
+   "peak_working_set_bytes": 3768184832,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7151J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 28.78,
+   "output_tokens": 300,
+   "prompt_tokens": 1184,
+   "peak_working_set_bytes": 3768930304,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7152J0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_predicate_false",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 32.9,
+   "output_tokens": 382,
+   "prompt_tokens": 1182,
+   "peak_working_set_bytes": 3768721408,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7201J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.071429,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.071429,
+   "oracle_recovery": 0.071429,
+   "unrecovered_available": 13,
+   "fidelity": "1/1",
+   "hedged_value": 1,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 27.54,
+   "output_tokens": 299,
+   "prompt_tokens": 1184,
+   "peak_working_set_bytes": 3768668160,
+   "extraction": "ok",
+   "hit_token_limit": false
+  },
+  {
+   "recording_id": "ST7202J0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 1,
+   "discretionary_coverage": 0.142857,
+   "cited_mandatory": 0.2,
+   "cited_discretionary": 0.142857,
+   "oracle_recovery": 0.142857,
+   "unrecovered_available": 12,
+   "fidelity": "2/2",
+   "hedged_value": 2,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 28.73,
+   "output_tokens": 306,
+   "prompt_tokens": 1182,
+   "peak_working_set_bytes": 3768840192,
+   "extraction": "ok",
+   "hit_token_limit": false
+  }
+ ],
+ "host": {
+  "kind": "x86 evaluation-host timing and memory - run log only, not deployment",
+  "wall_s_total": 957.1,
+  "wall_s_min": 27.19,
+  "wall_s_median": 31.67,
+  "wall_s_max": 41.34,
+  "peak_working_set_mib_max": 3594.4,
+  "peak_working_set_mib_median": 3594.2,
+  "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+  "context": 12288,
+  "hit_token_limit": 0
+ }
+}

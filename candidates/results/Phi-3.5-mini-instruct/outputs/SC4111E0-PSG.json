@@ -1,0 +1,40 @@
+[
+  {
+    "claim_id": "c1",
+    "claim_type": "hedged_value",
+    "cites": ["arch.total_sleep_time"],
+    "subject": "this_recording",
+    "value": 433.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c2",
+    "claim_type": "hedged_value",
+    "cites": ["arch.time_in_bed"],
+    "subject": "this_recording",
+    "value": 464.0,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c3",
+    "claim_type": "hedged_value",
+    "cites": ["arch.sleep_efficiency"],
+    "subject": "this_recording",
+    "value": 0.9343,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c4",
+    "claim_type": "review_flag",
+    "cites": ["night.confidence"],
+    "subject": "this_recording",
+    "reason_key": "low_night_confidence"
+  },
+  {
+    "claim_id": "c5",
+    "claim_type": "review_flag",
+    "cites": ["night.confidence"],
+    "subject": "this_recording",
+    "reason_key": "low_night_confidence"
+  }
+]

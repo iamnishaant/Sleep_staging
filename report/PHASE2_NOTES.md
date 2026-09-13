@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 364
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 368
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2672,6 +2672,323 @@ These are not deployment figures.
   - 0 of 31 reports render.
 - **For contrast,** the reference model's interim result is 8 of 8 at 5/5,
   with 14 hedged values per night.
+
+---
+
+## Local candidates on the dev population: all five models under P1 (13–14 September 2026)
+
+The other four candidates were run after Qwen (previous section), at
+identical settings. With Qwen, they make the local side of the 2F gap
+measurement. **Nothing here is a selection.** The pre-registered decision
+rule applies to the reference run at 31 responses.
+
+**Settings.** They are identical to the Qwen run:
+
+- P1, unchanged;
+- `--jinja -cnv -st`;
+- `report/claims.gbnf`;
+- temperature 0, seed 0;
+- `-n 3000` (not raised) and `-c 12288`;
+- one generation per packet, with no retries;
+- dev packets only;
+- the same cache key and logging.
+
+**One harness addition** (ade15ce): `hit_token_limit` is logged per
+generation.
+
+- **Definition:** there is no end-of-text marker, and the decode count is at
+  the cap. llama.cpp reports `N_PREDICT - 1` eval runs for a capped
+  generation.
+- **Qwen's entries** derive the flag the same way. Re-scoring Qwen changed no
+  figure and flagged SC4171E0 alone.
+
+### The five-model comparison
+
+| model | packets at 5/5 | mandatory mean | hedged packets | hedged claims | rendered | top three violation codes |
+|---|---:|---:|---:|---:|---:|---|
+| Qwen2.5-1.5B | 0/31 | 0.497 | 0/31 | 0/434 | 0/31 | `text_key_dependency_missing` 53, `rem_latency_double_count` 26, `text_key_predicate_false` 17 |
+| SmolLM2-1.7B | 0/31 | 0.019 | 0/31 | 0/434 | 0/31 | `malformed_json` 30, `unsafe_item_not_hedged` 14, `uncited_quantity` 1 |
+| Gemma-2-2b | 0/31 | 0.219 | 31/31 | 50/434 | 1/31 | `text_key_predicate_false` 22, `text_key_dependency_missing` 20, `unsafe_item_not_hedged` 1 |
+| Llama-3.2-3B | **4/31** | 0.310 | 11/31 | 156/434 | 0/31 | `unsafe_item_not_hedged` 150, `malformed_json` 20, `text_key_predicate_false` 9 |
+| Phi-3.5-mini | 0/31 | 0.348 | 20/31 | 102/434 | **9/31** | `safe_item_hedged` 60, `text_key_dependency_missing` 26, `text_key_predicate_false` 7 |
+
+This table is written by `candidates/results/comparison.{json,txt}`
+(`python -m candidates.score --compare`). The mandatory mean is the
+evaluator's `mandatory_coverage`, with a missing or malformed output counted
+as 0.
+
+**Distribution of mandatory facts verified, nights per score:**
+
+| model | 0/5 | 1/5 | 2/5 | 3/5 | 4/5 | 5/5 |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen2.5-1.5B | 1 | 0 | 15 | 13 | 2 | 0 |
+| SmolLM2-1.7B | 30 | 0 | 0 | 1 | 0 | 0 |
+| Gemma-2-2b | 0 | 28 | 3 | 0 | 0 | 0 |
+| Llama-3.2-3B | 20 | 0 | 0 | 0 | 7 | 4 |
+| Phi-3.5-mini | 6 | 15 | 0 | 1 | 9 | 0 |
+
+Phi's 0/5 count includes SC4081E0, which has no output (see *Run events*).
+
+### `hedged_value`, as two numbers
+
+In each cell, the first figure is packets using `hedged_value` at least once;
+the second is total `hedged_value` claims out of 14 per packet.
+
+| model | overall | high | medium | low |
+|---|---|---|---|---|
+| Qwen2.5-1.5B | 0/31 · 0/434 | 0/11 · 0/154 | 0/10 · 0/140 | 0/10 · 0/140 |
+| SmolLM2-1.7B | 0/31 · 0/434 | 0/11 · 0/154 | 0/10 · 0/140 | 0/10 · 0/140 |
+| Gemma-2-2b | 31/31 · 50/434 | 11/11 · 19/154 | 10/10 · 21/140 | 10/10 · 10/140 |
+| Llama-3.2-3B | 11/31 · 156/434 | 3/11 · 42/154 | 4/10 · 58/140 | 4/10 · 56/140 |
+| Phi-3.5-mini | 20/31 · 102/434 | 0/11 · 0/154 | 10/10 · 72/140 | 10/10 · 30/140 |
+
+**Three models use the form, and none applies the rule** (hedge exactly the
+14 unsafe items, and nothing else):
+
+- **Gemma** hedges only the REM-latency pair: 33 and 17 of its 50.
+- **Llama** hedges all 14, but states each one as a plain value as well.
+- **Phi** hedges the three safe facts on every medium and low night: total
+  sleep time, time in bed and sleep efficiency, 20 each.
+
+### Generations that hit the token limit
+
+| model | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| Qwen2.5-1.5B | 1/31 | 0 | 1 | 0 |
+| SmolLM2-1.7B | 30/31 | 10 | 10 | 10 |
+| Gemma-2-2b | 0/31 | 0 | 0 | 0 |
+| Llama-3.2-3B | 20/31 | 8 | 6 | 6 |
+| Phi-3.5-mini | 0/30 | 0 | 0 | 0 |
+
+That is **51 of the 154 completed generations.**
+
+- **Every capped output is malformed JSON,** because the array is cut off.
+- **It is not a grammar violation.** Every truncated claim is a legal
+  production.
+- **Both behaviours are grammar-legal.** A model that keeps choosing `,`
+  over `]` never ends, and the grammar allows that. This is question 3 of
+  the 2G ablation (`report/PHASE2G_ABLATION.md`).
+
+### Per model, per tier
+
+Qwen's tables are in the previous section.
+
+**SmolLM2-1.7B-Instruct**
+
+| metric | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| schema-valid | 1/31 | 1/11 | 0/10 | 0/10 |
+| overall pass | 0/31 | 0 | 0 | 0 |
+| mandatory mean | 0.019 | 0.055 | 0.000 | 0.000 |
+| packets at 5/5 | 0 | 0 | 0 | 0 |
+| discretionary coverage | 0.000 | 0.000 | 0.000 | 0.000 |
+| cited mandatory / discretionary | 0.019 / 0.030 | 0.055 / 0.084 | 0 / 0 | 0 / 0 |
+| oracle recovery · unrecovered available | 0.000 · 14.0 | 0.000 · 14.0 | 0.000 · 14.0 | 0.000 · 14.0 |
+| numeric fidelity | 0.941 | 0.941 | - | - |
+| rendered | 0/31 | 0 | 0 | 0 |
+| violations | 46 | 26 | 10 | 10 |
+
+The per-rule counts are:
+
+- `L1.malformed_json` 30 (10 / 10 / 10 across high, medium, low);
+- `L2.unsafe_item_not_hedged` 14 (high);
+- `L2.value_mismatch` 1 (high);
+- `L2.uncited_quantity` 1 (high).
+
+**What its outputs look like:**
+
+- **The loop.** SmolLM2 writes only `value` claims: 1,299 of them across its
+  30 capped outputs. It walks through the 17 numeric items once, then repeats
+  the five stage fractions until the cap, at 43–44 claims per output.
+- **The one output that ended.** SC4172E0 stopped at 1,094 tokens. It
+  verifies 3 of 5 mandatory facts, states all 14 unsafe items as plain values,
+  and carries one wrong number.
+
+**Gemma-2-2b-it**
+
+| metric | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| schema-valid | 31/31 | 11/11 | 10/10 | 10/10 |
+| overall pass | 1/31 | 1 | 0 | 0 |
+| mandatory mean | 0.219 | 0.255 | 0.200 | 0.200 |
+| packets at 5/5 | 0 | 0 | 0 | 0 |
+| discretionary coverage | 0.111 | 0.117 | 0.143 | 0.071 |
+| cited mandatory / discretionary | 0.219 / 0.111 | 0.255 / 0.117 | 0.200 / 0.143 | 0.200 / 0.071 |
+| oracle recovery · unrecovered available | 0.111 · 12.45 | 0.117 · 12.36 | 0.143 · 12.0 | 0.071 · 13.0 |
+| numeric fidelity | 1.000 | 1.000 | 1.000 | 1.000 |
+| rendered | 1/31 | 1 | 0 | 0 |
+| violations | 43 | 17 | 16 | 10 |
+
+The per-rule counts are:
+
+- `L2.text_key_predicate_false` 22 (13 / 9 / 0);
+- `L2.text_key_dependency_missing` 20 (3 / 7 / 10);
+- `L2.unsafe_item_not_hedged` 1 (high).
+
+**What its outputs look like:**
+
+- **Short outputs.** Each has 4–7 claims and 295–532 tokens. The claims
+  across all 31 are 74 observations, 50 hedged values, 15 review flags and 4
+  plain values.
+- **Its one mandatory fact is usually night confidence,** stated as a
+  `tier_is_*` observation. A wrong tier key gives the predicate failures.
+- **It attaches the N1 key to night confidence** instead of the N1 warning,
+  which gives the dependency failures.
+- **Its one passing night is thin.** SC4321E0 (high tier) renders with 4
+  claims: 1 mandatory fact and 2 hedged values.
+
+**Llama-3.2-3B-Instruct**
+
+| metric | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| schema-valid | 11/31 | 3/11 | 4/10 | 4/10 |
+| overall pass | 0/31 | 0 | 0 | 0 |
+| mandatory mean | 0.310 | 0.218 | 0.320 | 0.400 |
+| packets at 5/5 | **4** | 0 | 0 | 4 |
+| discretionary coverage | 0.353 | 0.273 | 0.393 | 0.400 |
+| cited mandatory / discretionary | 0.355 / 0.353 | 0.273 / 0.273 | 0.400 / 0.393 | 0.400 / 0.400 |
+| oracle recovery · unrecovered available | 0.353 · 9.06 | 0.273 · 10.18 | 0.393 · 8.5 | 0.400 · 8.4 |
+| numeric fidelity | 1.000 | 1.000 | 1.000 | 1.000 |
+| rendered | 0/31 | 0 | 0 | 0 |
+| violations | 186 | 51 | 73 | 62 |
+
+The per-rule counts are:
+
+- `L2.unsafe_item_not_hedged` 150 (40 / 54 / 56);
+- `L1.malformed_json` 20 (8 / 6 / 6);
+- `L2.text_key_predicate_false` 9 (3 / 6 / 0);
+- `L2.text_key_dependency_missing` 4 (medium);
+- `L2.safe_item_hedged` 3 (medium).
+
+**What its outputs look like:**
+
+- **20 of 31 loop to the cap.** The 11 that end run to about 31–40 claims.
+- **Each finished night reports almost everything.** The mandatory facts
+  come as values, and each discretionary item appears twice: once as a
+  `value` and once as a `hedged_value`. The plain copies are the 150
+  unhedged violations.
+- **Its 5/5 nights still fail.** The four nights at 5/5 are all low tier
+  (SC4581G0, SC4582G0, ST7081J0, ST7151J0), and each fails on 14 unhedged
+  duplicates.
+
+**Phi-3.5-mini-instruct**
+
+| metric | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| outputs present | 30/31 | 10/11 | 10/10 | 10/10 |
+| schema-valid | 30/31 | 10/11 | 10/10 | 10/10 |
+| overall pass | **9/31** | 9 | 0 | 0 |
+| mandatory mean | 0.348 | 0.709 | 0.100 | 0.200 |
+| packets at 5/5 | 0 | 0 | 0 | 0 |
+| discretionary coverage | 0.097 | 0.000 | 0.300 | 0.000 |
+| cited mandatory / discretionary | 0.774 / 0.157 | 0.727 / 0.006 | 0.800 / 0.479 | 0.800 / 0.000 |
+| oracle recovery · unrecovered available | 0.097 · 12.65 | 0.000 · 14.0 | 0.300 · 9.8 | 0.000 · 14.0 |
+| numeric fidelity | 1.000 | 1.000 | 1.000 | 1.000 |
+| rendered | 9/31 | 9 | 0 | 0 |
+| violations | 93 | 2 | 61 | 30 |
+
+The per-rule counts are:
+
+- `L2.safe_item_hedged` 60 (0 / 30 / 30);
+- `L2.text_key_dependency_missing` 26 (1 / 25 / 0);
+- `L2.text_key_predicate_false` 7 (1 / 6 / 0).
+
+**What its outputs look like:** a fixed template for each tier.
+
+- **High (9 of 10 nights).** Always the same four claims: plain values for
+  total sleep time, time in bed and efficiency, plus a `tier_is_high`
+  observation on night confidence. That verifies 4 of 5 facts, and the report
+  is clean and renders. The N1 warning is never stated.
+- **Low (all 10).** One shape: the three safe facts hedged, plus two
+  `low_night_confidence` flags. Three `safe_item_hedged` violations per night.
+- **Medium.** Four shapes. Each hedges the three safe facts, and the most
+  common (5 nights) also hedges 8 discretionary items and puts
+  `n1_reliability_is_low` on each stage fraction.
+
+**Reading.** Phi treats the confidence tier as a switch for hedging
+everything, including the facts that are safe to state. Its nine clean
+reports are the "clean but incomplete" case at scale: 0 violations with 4 of
+5 facts.
+
+### Run events
+
+- **Two session interruptions.** The Claude Code session ended once during
+  SmolLM2 (after 8 packets) and once during Phi (after 18).
+  - Each time, the packet in progress was killed before it finished. It was
+    never logged or cached, and it was generated once on resume.
+  - Every cached entry is one complete generation.
+- **Phi allocation probe.** Before Phi started, the host had 4.0 GiB of
+  uncommitted memory.
+  - **The probe:** one identical command, with `-n 1` and a synthetic prompt
+    rather than a packet. It exited 0, with a peak working set of 6,853 MiB,
+    5,994 MiB of it private.
+  - **Why it passed:** the page file is system-managed, with 28 GiB free on C:.
+  - The probe was not logged or cached, and generated nothing for any packet.
+- **Phi SC4081E0 failed at context creation.** It was the first Phi packet,
+  started just after the probe.
+  - **The error:** `failed to allocate buffer of size 4831838208` for the KV
+    cache. Exit 1 after 5.8 s, with no token generated.
+  - **Handling:** recorded as a failed process and not retried. The scorer
+    counts it as a missing output, so Phi is measured on 30 of 31 nights.
+    Every later Phi packet allocated.
+  - **Decision pending:** whether to generate this packet once (it has never
+    been generated), or keep it as a host failure.
+
+### Host figures: the x86 evaluation host, run log only
+
+| model | total s | per packet: min / median / max, s | peak working set: max / median, MiB | context |
+|---|---:|---|---|---:|
+| Qwen2.5-1.5B | 588.3 | 13.22 / 14.85 / 99.65 | 2,037.6 / 2,037.3 | 12,288 |
+| SmolLM2-1.7B | 6,708.3 | 95.10 / 204.13 / 289.61 | 4,152.9 / 4,152.5 | 12,288 |
+| Gemma-2-2b | 957.1 | 27.19 / 31.67 / 41.34 | 3,594.4 / 3,594.2 | 12,288 |
+| Llama-3.2-3B | 6,935.7 | 145.66 / 251.79 / 350.01 | 4,743.4 / 4,743.2 | 12,288 |
+| Phi-3.5-mini | 4,629.4 | 5.80 (the failure) / 139.09 / 423.76 | 8,169.6 / 6,941.7 | 12,288 |
+
+**Total: 19,818.8 s, about 5 h 30 min.** That excludes the two interrupted
+packets and the probe.
+
+**How peak RSS was gathered:**
+
+- a fresh llama.cpp process for every packet;
+- its peak working set read from Windows after the process exited
+  (`GetProcessMemoryInfo`);
+- all at context 12,288.
+
+These figures are not comparable with the deployment table, which was taken
+at context 4,096.
+
+**Two timing caveats:**
+
+- **Phi.** Phi's peak varies by packet, while the other four stay within
+  1 MiB. The host was under memory pressure and the page file grew, so Phi's
+  memory and time figures include paging.
+- **SmolLM2.** Its first 8 packets took about 285 s each, and the 23 after
+  the resume about 200 s.
+
+### What the five show
+
+- **No local candidate satisfies the contract on any night.** Llama's four
+  5/5 nights fail on unhedged duplicates, and Phi's nine clean reports stop
+  at 4 of 5 facts.
+- **Each fails in a different way:**
+  - **Qwen** states the facts, never hedges, and bundles items under N1-key
+    observations.
+  - **SmolLM2** lists items as plain values, and loops to the cap on 30 of 31
+    nights.
+  - **Gemma** writes short reports, hedges only the REM-latency pair, and
+    rarely states the basic facts.
+  - **Llama** covers everything and hedges all 14 when it finishes, but also
+    restates each as a plain value. It loops on 20 of 31 nights.
+  - **Phi** uses one template per tier, hedging the safe facts on medium and
+    low nights.
+- **Numbers are never the problem.** Numeric fidelity is 1.000 for every
+  model except SmolLM2, at 0.941 on its one valid output.
+- **The loops are grammar-legal.** 51 of the 154 completed generations hit
+  the cap, all from SmolLM2, Llama and Qwen.
+- **The gap is large.** Against the reference's interim result (8 of 8 at
+  5/5, 14 hedged values and a rendered report on every night), the gap is
+  large for every candidate. That is the "gap large" condition for
+  distillation. It is conditional on the 2F rule at 31 reference responses.
 
 ---
 

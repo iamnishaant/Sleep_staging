@@ -1,0 +1,31 @@
+{
+ "ts": "2026-09-13T21:03:28+00:00",
+ "key": {
+  "recording_id": "SC4111E0-PSG",
+  "model": "Phi-3.5-mini-instruct",
+  "model_file": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+  "prompt_id": "P1",
+  "prompt_hash": "a02b7fed951fc0c36b63ca2ef4d8d11a2f00a7f46e422f10dc2a69598a374f92"
+ },
+ "exit_status": 0,
+ "wall_s": 171.82,
+ "prompt_tokens": 1314,
+ "output_tokens": 379,
+ "hit_token_limit": false,
+ "peak_working_set_bytes": 7250210816,
+ "peak_private_bytes": 6292660224,
+ "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+ "extraction": "ok",
+ "runtime": "b10927",
+ "settings": {
+  "n_predict": 3000,
+  "context": 12288,
+  "temperature": 0,
+  "seed": 0,
+  "template": "--jinja -cnv -st",
+  "grammar": "report/claims.gbnf"
+ },
+ "text": "[\r\n  {\r\n    \"claim_id\": \"c1\",\r\n    \"claim_type\": \"hedged_value\",\r\n    \"cites\": [\"arch.total_sleep_time\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 433.5,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c2\",\r\n    \"claim_type\": \"hedged_value\",\r\n    \"cites\": [\"arch.time_in_bed\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 464.0,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c3\",\r\n    \"claim_type\": \"hedged_value\",\r\n    \"cites\": [\"arch.sleep_efficiency\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 0.9343,\r\n    \"unit\": \"fraction\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c4\",\r\n    \"claim_type\": \"review_flag\",\r\n    \"cites\": [\"night.confidence\"],\r\n    \"subject\": \"this_recording\",\r\n    \"reason_key\": \"low_night_confidence\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c5\",\r\n    \"claim_type\": \"review_flag\",\r\n    \"cites\": [\"night.confidence\"],\r\n    \"subject\": \"this_recording\",\r\n    \"reason_key\": \"low_night_confidence\"\r\n  }\r\n]",
+ "stderr_tail": "llama_completion: chat template example:\r\n<|system|>\r\nYou are a helpful assistant<|end|>\r\n<|user|>\r\nHello<|end|>\r\n<|assistant|>\r\nHi there<|end|>\r\n<|user|>\r\nHow are you?<|end|>\r\n<|assistant|>\r\n\r\n0.18.204.662 I \r\n0.18.207.382 I system_info: n_threads = 8 (n_threads_batch = 8) / 16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | \r\n0.18.207.393 I \r\n0.18.287.949 I sampler seed: 0\r\n0.18.288.571 I sampler params: \r\n\trepeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000\r\n\tdry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 64\r\n\ttop_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000\r\n\tmirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900\r\n0.18.289.298 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist \r\n0.18.289.308 I generate: n_ctx = 12288, n_batch = 2048, n_predict = 3000, n_keep = 0\r\n0.18.289.308 I \r\n2.50.537.725 I common_perf_print:    sampling time =     261.02 ms\r\n2.50.537.742 I common_perf_print:    samplers time =      29.63 ms /  1694 tokens\r\n2.50.537.750 I common_perf_print:        load time =   17898.60 ms\r\n2.50.537.937 I common_perf_print: prompt eval time =   53665.71 ms /  1314 tokens (   40.84 ms per token,    24.48 tokens per second)\r\n2.50.537.948 I common_perf_print:        eval time =   98217.22 ms /   379 runs   (  259.15 ms per token,     3.86 tokens per second)\r\n2.50.537.952 I common_perf_print:       total time =  152351.30 ms /  1693 tokens\r\n2.50.537.955 I common_perf_print: unaccounted time =     207.36 ms /   0.1 %      (total - sampling - prompt eval - eval) / (total)\r\n2.50.537.959 I common_perf_print:    graphs reused =        377\r\n",
+ "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f C:\\Users\\shahn\\AppData\\Local\\Temp\\tmpsu44f4v8\\SC4111E0-PSG.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt"
+}
