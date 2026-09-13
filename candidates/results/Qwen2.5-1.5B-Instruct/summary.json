@@ -1,0 +1,1636 @@
+{
+ "model": "Qwen2.5-1.5B-Instruct",
+ "prompt_id": "P1",
+ "n_cached": 31,
+ "n_failed_processes": 0,
+ "strata": {
+  "overall": {
+   "n": 31,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 31,
+   "n_schema_valid": 30,
+   "total_violations": 106,
+   "schema_validity_rate": 0.967742,
+   "schema_validity_rate_num": 30,
+   "schema_validity_rate_den": 31,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 31,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 30,
+   "mandatory_coverage": 0.496774,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.774194,
+   "cited_discretionary": 0.5553,
+   "oracle_recovery": 0.0,
+   "oracle_recovery_n": 31,
+   "unrecovered_available": 14.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 76,
+   "unsupported_claim_rate": 0.448718,
+   "unsupported_claims": 70,
+   "n_claims": 156,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 1,
+     "outputs": 1,
+     "output_rate": 0.032258
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 9,
+     "outputs": 1,
+     "output_rate": 0.032258
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 53,
+     "outputs": 30,
+     "output_rate": 0.967742
+    },
+    "L2.text_key_predicate_false": {
+     "count": 17,
+     "outputs": 17,
+     "output_rate": 0.548387
+    },
+    "L2.rem_latency_double_count": {
+     "count": 26,
+     "outputs": 26,
+     "output_rate": 0.83871
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "high": {
+   "n": 11,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 11,
+   "n_schema_valid": 11,
+   "total_violations": 43,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 11,
+   "schema_validity_rate_den": 11,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 11,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 11,
+   "mandatory_coverage": 0.472727,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.577922,
+   "oracle_recovery": 0.0,
+   "oracle_recovery_n": 11,
+   "unrecovered_available": 14.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 26,
+   "unsupported_claim_rate": 0.551724,
+   "unsupported_claims": 32,
+   "n_claims": 58,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 22,
+     "outputs": 11,
+     "output_rate": 1.0
+    },
+    "L2.text_key_predicate_false": {
+     "count": 10,
+     "outputs": 10,
+     "output_rate": 0.909091
+    },
+    "L2.rem_latency_double_count": {
+     "count": 11,
+     "outputs": 11,
+     "output_rate": 1.0
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "medium": {
+   "n": 10,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 10,
+   "n_schema_valid": 9,
+   "total_violations": 42,
+   "schema_validity_rate": 0.9,
+   "schema_validity_rate_num": 9,
+   "schema_validity_rate_den": 10,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 10,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 9,
+   "mandatory_coverage": 0.38,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.72,
+   "cited_discretionary": 0.514286,
+   "oracle_recovery": 0.0,
+   "oracle_recovery_n": 10,
+   "unrecovered_available": 14.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 28,
+   "unsupported_claim_rate": 0.471698,
+   "unsupported_claims": 25,
+   "n_claims": 53,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 1,
+     "outputs": 1,
+     "output_rate": 0.1
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 9,
+     "outputs": 1,
+     "output_rate": 0.1
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 18,
+     "outputs": 9,
+     "output_rate": 0.9
+    },
+    "L2.text_key_predicate_false": {
+     "count": 7,
+     "outputs": 7,
+     "output_rate": 0.7
+    },
+    "L2.rem_latency_double_count": {
+     "count": 7,
+     "outputs": 7,
+     "output_rate": 0.7
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  },
+  "low": {
+   "n": 10,
+   "small_n": false,
+   "n_missing": 0,
+   "n_passed": 0,
+   "n_failed": 10,
+   "n_schema_valid": 10,
+   "total_violations": 21,
+   "schema_validity_rate": 1.0,
+   "schema_validity_rate_num": 10,
+   "schema_validity_rate_den": 10,
+   "overall_pass_rate": 0.0,
+   "overall_pass_rate_num": 0,
+   "overall_pass_rate_den": 10,
+   "policy_pass_rate": 0.0,
+   "policy_pass_rate_num": 0,
+   "policy_pass_rate_den": 10,
+   "mandatory_coverage": 0.64,
+   "n_mandatory_full": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.571429,
+   "oracle_recovery": 0.0,
+   "oracle_recovery_n": 10,
+   "unrecovered_available": 14.0,
+   "numeric_fidelity": 1.0,
+   "numeric_fidelity_claims": 22,
+   "unsupported_claim_rate": 0.288889,
+   "unsupported_claims": 13,
+   "n_claims": 45,
+   "per_rule": {
+    "L1.malformed_json": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_array": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.not_an_object": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_base_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_claim_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.missing_required_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.forbidden_derived_field": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.duplicate_claim_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_field_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.bad_cites_arity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_evidence_id": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_text_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_reason_key": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L1.unknown_subject": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.cited_id_not_in_packet": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.value_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unit_mismatch": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.unsafe_item_not_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.safe_item_hedged": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.stage_tier_unavailable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.text_key_dependency_missing": {
+     "count": 13,
+     "outputs": 10,
+     "output_rate": 1.0
+    },
+    "L2.text_key_predicate_false": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.rem_latency_double_count": {
+     "count": 8,
+     "outputs": 8,
+     "output_rate": 0.8
+    },
+    "L2.rem_error_differenced": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.missing_review_flag": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.uncited_quantity": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.not_associative_evidence": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.bad_subject_for_type": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    },
+    "L2.tier_item_not_valuable": {
+     "count": 0,
+     "outputs": 0,
+     "output_rate": 0.0
+    }
+   }
+  }
+ },
+ "extras": {
+  "overall": {
+   "n": 31,
+   "n_present": 31,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "0/31",
+   "hedged_claims": "0/434"
+  },
+  "high": {
+   "n": 11,
+   "n_present": 11,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "0/11",
+   "hedged_claims": "0/154"
+  },
+  "medium": {
+   "n": 10,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "0/10",
+   "hedged_claims": "0/140"
+  },
+  "low": {
+   "n": 10,
+   "n_present": 10,
+   "five_of_five": 0,
+   "rendered": 0,
+   "hedged_packets": "0/10",
+   "hedged_claims": "0/140"
+  }
+ },
+ "per_packet": [
+  {
+   "recording_id": "SC4081E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 15.87,
+   "output_tokens": 317,
+   "prompt_tokens": 1104,
+   "peak_working_set_bytes": 2136555520,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4082E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.98,
+   "output_tokens": 317,
+   "prompt_tokens": 1102,
+   "peak_working_set_bytes": 2136264704,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4111E0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 17.15,
+   "output_tokens": 401,
+   "prompt_tokens": 1098,
+   "peak_working_set_bytes": 2136268800,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4112E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 6,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.857143,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 17.87,
+   "output_tokens": 437,
+   "prompt_tokens": 1096,
+   "peak_working_set_bytes": 2136227840,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4131E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.96,
+   "output_tokens": 317,
+   "prompt_tokens": 1102,
+   "peak_working_set_bytes": 2136363008,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4171E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 0,
+   "violations": [
+    "L1.malformed_json"
+   ],
+   "passed": false,
+   "mandatory": 0,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.0,
+   "cited_discretionary": 0.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "0/0",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 99.65,
+   "output_tokens": 2999,
+   "prompt_tokens": 1104,
+   "peak_working_set_bytes": 2136207360,
+   "extraction": "no end-of-text marker: cut off at the token limit, or failed"
+  },
+  {
+   "recording_id": "SC4172E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.74,
+   "output_tokens": 317,
+   "prompt_tokens": 1106,
+   "peak_working_set_bytes": 2136170496,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4321E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.571429,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.12,
+   "output_tokens": 305,
+   "prompt_tokens": 1095,
+   "peak_working_set_bytes": 2136252416,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4322E0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 8,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.857143,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 21.37,
+   "output_tokens": 551,
+   "prompt_tokens": 1096,
+   "peak_working_set_bytes": 2136428544,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4341F0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 6,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.857143,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 18.0,
+   "output_tokens": 437,
+   "prompt_tokens": 1092,
+   "peak_working_set_bytes": 2136150016,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4342F0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 17.43,
+   "output_tokens": 401,
+   "prompt_tokens": 1094,
+   "peak_working_set_bytes": 2136244224,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4351F0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.59,
+   "output_tokens": 317,
+   "prompt_tokens": 1099,
+   "peak_working_set_bytes": 2136293376,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4352F0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 4,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 17.06,
+   "output_tokens": 401,
+   "prompt_tokens": 1105,
+   "peak_working_set_bytes": 2136240128,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4441E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 1.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 15.52,
+   "output_tokens": 350,
+   "prompt_tokens": 1107,
+   "peak_working_set_bytes": 2136162304,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4442E0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.571429,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.05,
+   "output_tokens": 303,
+   "prompt_tokens": 1099,
+   "peak_working_set_bytes": 2136182784,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4461F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 8,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.857143,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 21.18,
+   "output_tokens": 551,
+   "prompt_tokens": 1100,
+   "peak_working_set_bytes": 2136252416,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4462F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.35,
+   "output_tokens": 317,
+   "prompt_tokens": 1103,
+   "peak_working_set_bytes": 2136391680,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4561F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 15,
+   "violations": [
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.unsafe_item_not_hedged",
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 1.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "12/12",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 36.14,
+   "output_tokens": 1050,
+   "prompt_tokens": 1105,
+   "peak_working_set_bytes": 2136264704,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4562F0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.5,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.16,
+   "output_tokens": 297,
+   "prompt_tokens": 1102,
+   "peak_working_set_bytes": 2136195072,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4581G0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.44,
+   "output_tokens": 317,
+   "prompt_tokens": 1103,
+   "peak_working_set_bytes": 2136297472,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4582G0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.571429,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.28,
+   "output_tokens": 303,
+   "prompt_tokens": 1103,
+   "peak_working_set_bytes": 2136289280,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4671G0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.5,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.03,
+   "output_tokens": 297,
+   "prompt_tokens": 1104,
+   "peak_working_set_bytes": 2136395776,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "SC4672G0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.285714,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 13.99,
+   "output_tokens": 276,
+   "prompt_tokens": 1105,
+   "peak_working_set_bytes": 2136387584,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7081J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.857143,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.83,
+   "output_tokens": 336,
+   "prompt_tokens": 1103,
+   "peak_working_set_bytes": 2136334336,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7082J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 1.0,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 15.65,
+   "output_tokens": 350,
+   "prompt_tokens": 1104,
+   "peak_working_set_bytes": 2136170496,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7131J0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.35,
+   "output_tokens": 317,
+   "prompt_tokens": 1103,
+   "peak_working_set_bytes": 2136289280,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7132J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.5,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.57,
+   "output_tokens": 297,
+   "prompt_tokens": 1103,
+   "peak_working_set_bytes": 2135621632,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7151J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.text_key_dependency_missing",
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.214286,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.85,
+   "output_tokens": 317,
+   "prompt_tokens": 1102,
+   "peak_working_set_bytes": 2136174592,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7152J0-PSG",
+   "tier": "medium",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 2,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.5,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 14.1,
+   "output_tokens": 297,
+   "prompt_tokens": 1100,
+   "peak_working_set_bytes": 2136424448,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7201J0-PSG",
+   "tier": "low",
+   "present": true,
+   "n_claims": 4,
+   "violations": [
+    "L2.text_key_dependency_missing"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.285714,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "2/2",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 13.22,
+   "output_tokens": 276,
+   "prompt_tokens": 1102,
+   "peak_working_set_bytes": 2136154112,
+   "extraction": "ok"
+  },
+  {
+   "recording_id": "ST7202J0-PSG",
+   "tier": "high",
+   "present": true,
+   "n_claims": 5,
+   "violations": [
+    "L2.rem_latency_double_count",
+    "L2.text_key_dependency_missing",
+    "L2.text_key_predicate_false"
+   ],
+   "passed": false,
+   "mandatory": 3,
+   "discretionary_coverage": 0.0,
+   "cited_mandatory": 0.8,
+   "cited_discretionary": 0.928571,
+   "oracle_recovery": 0.0,
+   "unrecovered_available": 14,
+   "fidelity": "3/3",
+   "hedged_value": 0,
+   "rendered": false,
+   "exit_status": 0,
+   "wall_s": 16.84,
+   "output_tokens": 401,
+   "prompt_tokens": 1100,
+   "peak_working_set_bytes": 2136227840,
+   "extraction": "ok"
+  }
+ ],
+ "host": {
+  "kind": "x86 evaluation-host timing and memory - run log only, not deployment",
+  "wall_s_total": 588.3,
+  "wall_s_min": 13.22,
+  "wall_s_median": 14.85,
+  "wall_s_max": 99.65,
+  "peak_working_set_mib_max": 2037.6,
+  "peak_working_set_mib_median": 2037.3,
+  "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table"
+ }
+}

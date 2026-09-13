@@ -1,0 +1,48 @@
+[
+    {
+        "claim_id": "c1",
+        "claim_type": "value",
+        "cites": [
+            "arch.total_sleep_time"
+        ],
+        "subject": "this_recording",
+        "value": 433.5,
+        "unit": "minutes"
+    },
+    {
+        "claim_id": "c2",
+        "claim_type": "value",
+        "cites": [
+            "arch.time_in_bed"
+        ],
+        "subject": "this_recording",
+        "value": 516.0,
+        "unit": "minutes"
+    },
+    {
+        "claim_id": "c3",
+        "claim_type": "observation",
+        "cites": [
+            "arch.sleep_efficiency",
+            "arch.stage_transitions",
+            "arch.transition_rate",
+            "arch.light_deep_ratio",
+            "stage.W.fraction",
+            "stage.N1.fraction",
+            "stage.N2.fraction",
+            "stage.N3.fraction",
+            "stage.REM.fraction"
+        ],
+        "subject": "this_recording",
+        "text_key": "n1_reliability_is_low"
+    },
+    {
+        "claim_id": "c4",
+        "claim_type": "review_flag",
+        "cites": [
+            "night.confidence"
+        ],
+        "subject": "this_recording",
+        "reason_key": "low_night_confidence"
+    }
+]

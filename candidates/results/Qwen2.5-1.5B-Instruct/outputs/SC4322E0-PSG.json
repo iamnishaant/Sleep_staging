@@ -1,0 +1,85 @@
+[
+    {
+        "claim_id": "c1",
+        "claim_type": "value",
+        "cites": [
+            "arch.total_sleep_time"
+        ],
+        "subject": "this_recording",
+        "value": 430.5,
+        "unit": "minutes"
+    },
+    {
+        "claim_id": "c2",
+        "claim_type": "value",
+        "cites": [
+            "arch.time_in_bed"
+        ],
+        "subject": "this_recording",
+        "value": 480.5,
+        "unit": "minutes"
+    },
+    {
+        "claim_id": "c3",
+        "claim_type": "observation",
+        "cites": [
+            "arch.sleep_efficiency",
+            "arch.transition_rate"
+        ],
+        "subject": "this_recording",
+        "text_key": "n1_reliability_is_low"
+    },
+    {
+        "claim_id": "c4",
+        "claim_type": "observation",
+        "cites": [
+            "arch.rem_latency",
+            "arch.rem_latency_sustained"
+        ],
+        "subject": "this_recording",
+        "text_key": "n1_reliability_is_low"
+    },
+    {
+        "claim_id": "c5",
+        "claim_type": "observation",
+        "cites": [
+            "arch.rem_periods",
+            "arch.stage_transitions",
+            "arch.transition_rate"
+        ],
+        "subject": "this_recording",
+        "text_key": "n1_reliability_is_low"
+    },
+    {
+        "claim_id": "c6",
+        "claim_type": "observation",
+        "cites": [
+            "arch.light_deep_ratio",
+            "arch.wake_interruptions_per_hour"
+        ],
+        "subject": "this_recording",
+        "text_key": "n1_reliability_is_low"
+    },
+    {
+        "claim_id": "c7",
+        "claim_type": "observation",
+        "cites": [
+            "stage.W.fraction",
+            "stage.N1.fraction",
+            "stage.N2.fraction",
+            "stage.N3.fraction",
+            "stage.REM.fraction"
+        ],
+        "subject": "this_recording",
+        "text_key": "n1_reliability_is_low"
+    },
+    {
+        "claim_id": "c8",
+        "claim_type": "review_flag",
+        "cites": [
+            "night.confidence"
+        ],
+        "subject": "this_recording",
+        "reason_key": "n1_low_reliability"
+    }
+]

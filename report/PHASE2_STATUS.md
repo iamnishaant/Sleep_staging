@@ -19,7 +19,7 @@ fully clean claim set is rendered into fixed clinician-register wording.
 
 Phase 2 asks how well a model can fill that contract.
 
-The deterministic tier is **finished, frozen and tested** (354 tests). The
+The deterministic tier is **finished, frozen and tested** (364 tests). The
 **local small-model tier** is set up and has been probed: five candidate
 models are on disk, and Qwen2.5-1.5B has been explored on one night. The
 **reference run** with a strong hosted model (Gemini 3.8 Flash) is **in
@@ -81,6 +81,18 @@ What the five runs showed:
   verification.
 
 On the same night, the reference model scored 5/5 with zero violations.
+
+**Across all 31 dev nights**, Qwen2.5-1.5B under P1 (the same settings, run on
+13 September 2026) gave:
+
+- **0 of 31** nights at 5/5 mandatory;
+- a mandatory mean of 0.497, with a median of 2/5 and a best of 4/5, reached
+  on two nights;
+- `hedged_value` in **0 of 31 nights (0 of 434 possible claims)**;
+- **0** reports rendered.
+
+So the one-night diagnostic generalises: the model never learns the hedged
+form. See PHASE2_NOTES, "Local candidates on the dev population".
 
 ### 2.3 Deployment: plausible within a Raspberry Pi 5 envelope, for batch use
 
@@ -190,7 +202,7 @@ A person starts each session; nothing runs on a timer.
 
 ## 5. Integrity
 
-- **354 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
+- **364 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
   unchanged throughout.
 - **The frozen tier** (`report/` rules, schema, grammar, coverage, oracle,
   evaluator) is untouched by the 2F and deployment work, which lives in
@@ -254,5 +266,5 @@ A person starts each session; nothing runs on a timer.
 | `report/` | the frozen deterministic tier, and `PHASE2_NOTES.md`, the full lab record |
 | `reference/` | the reference-model tier: schema, client, runner, scorer, prompts, cache, logs |
 | `deploy/` | size, memory and throughput analysis; the GGUF reader; results |
-| `tests/` | 354 tests |
+| `tests/` | 364 tests |
 | `distillation/results/` | evidence packets and split manifests |

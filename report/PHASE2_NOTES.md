@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 354
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 364
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2531,6 +2531,147 @@ A session that declines to start still writes its summary, marked
 asserts it.
 
 5 tests were added, taking the suite from 349 to 354.
+
+---
+
+## Local candidates on the dev population: Qwen2.5-1.5B under P1 (13 September 2026)
+
+This is the first local candidate measured across all 31 dev packets. It
+replaces a one-night diagnostic with a dev-population measurement. The other
+four candidates have not been started.
+
+**Settings.** They are identical to the diagnostics and, where they apply, to
+the reference run:
+
+- P1, which is run C's shape rules, unchanged, on the frozen `build_prompt`
+  body;
+- the model's own chat template (`llama-completion --jinja -cnv -st`);
+- `report/claims.gbnf`;
+- temperature 0, seed 0, up to 3,000 tokens, context 12,288.
+
+There was one generation per packet, with no retries and no resampling.
+
+**The harness** is `candidates/run.py`. Its cache is keyed by
+`(recording_id, model, model_file, prompt_id, prompt_hash)`, and it accepts dev
+packets only. All 31 ran. None was stopped early, and P1 was not modified.
+
+**Determinism check.** P1 on SC4111E0 is byte-identical to diagnostic run C's
+prompt. The new output is identical to run C's once Windows line endings are
+normalised, and identical as parsed JSON. The harness keeps llama.cpp's raw
+CRLF output, which does not affect parsing.
+
+### Scoring, through the frozen verifier and evaluator
+
+| metric | overall (31) | high (11) | medium (10) | low (10) |
+|---|---:|---:|---:|---:|
+| schema validity | 30/31 | 11/11 | 9/10 | 10/10 |
+| overall pass | 0/31 | 0/11 | 0/10 | 0/10 |
+| policy pass (of schema-valid) | 0/30 | 0/11 | 0/9 | 0/10 |
+| mandatory coverage (mean) | 0.497 | 0.473 | 0.380 | 0.640 |
+| **packets at 5/5 mandatory** | **0** | **0** | **0** | **0** |
+| discretionary coverage | 0.000 | 0.000 | 0.000 | 0.000 |
+| cited mandatory (diagnostic) | 0.774 | 0.800 | 0.720 | 0.800 |
+| cited discretionary (diagnostic) | 0.555 | 0.578 | 0.514 | 0.571 |
+| oracle recovery | 0.000 | 0.000 | 0.000 | 0.000 |
+| unrecovered available (mean) | 14 | 14 | 14 | 14 |
+| numeric fidelity | 1.000 | 1.000 | 1.000 | 1.000 |
+| reports rendered | 0/31 | 0/11 | 0/10 | 0/10 |
+| violations | 106 | 43 | 42 | 21 |
+
+| rule (count) | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| `L2.text_key_dependency_missing` | 53 | 22 | 18 | 13 |
+| `L2.rem_latency_double_count` | 26 | 11 | 7 | 8 |
+| `L2.text_key_predicate_false` | 17 | 10 | 7 | 0 |
+| `L2.unsafe_item_not_hedged` | 9 | 0 | 9 | 0 |
+| `L1.malformed_json` | 1 | 0 | 1 | 0 |
+
+**`hedged_value`, as two numbers:**
+
+| | overall | high | medium | low |
+|---|---:|---:|---:|---:|
+| packets using it at least once | **0 of 31** | 0 of 11 | 0 of 10 | 0 of 10 |
+| total `hedged_value` claims | **0 of 434** | 0 of 154 | 0 of 140 | 0 of 140 |
+
+The model never uses the form at all. This is the first of the two failure
+modes: never learning the form, as opposed to using it once and stopping.
+Run C's zero on one night holds across the population.
+
+**The distribution of mandatory coverage:**
+
+| mandatory verified | nights |
+|---|---:|
+| 4/5 | 2: SC4111E0 and SC4352F0, both low tier |
+| 3/5 | 13 |
+| 2/5 | 15 |
+| 0/5 | 1: SC4171E0 (see below) |
+
+The median is 2/5.
+
+**Per mandatory item, verified and cited, of 31 nights:**
+
+| item | verified | cited |
+|---|---:|---:|
+| total sleep time | 30 | 30 |
+| time in bed | 30 | 30 |
+| sleep efficiency | 7 | 30 |
+| night confidence | 10 | 30 |
+| N1 reliability warning | **0** | **0** |
+
+**What the claims look like.** There were 156 claims in all: 76 values, 50
+observations, 30 review flags, and no `hedged_value`.
+
+- **The modal output,** on 9 nights: two values (total sleep time and time in
+  bed), two two-item observations under `n1_reliability_is_low`, and one
+  review flag.
+- **The low-night flag is emitted on almost every night,** 27 times in all.
+  It verifies only on the 10 low nights, which accounts for the 17
+  `text_key_predicate_false` violations on high and medium nights. So the low
+  tier's higher mandatory mean (0.640) is a constant behaviour meeting the one
+  tier where it happens to be right. It is not the model reading the tier.
+- **Every discretionary item appears only inside multi-item N1-key
+  observations.** That produces the missing-dependency violations, and the
+  REM double-counts wherever both REM latencies land in one observation.
+- **`model.n1_reliability_warning` was never cited,** on any of the 31
+  nights.
+
+### What differed from the single-packet diagnostic
+
+1. **SC4111E0 reproduced exactly.** The pipeline is deterministic at these
+   settings.
+2. **The diagnostic's 4/5 was the top of the distribution,** shared with one
+   other low night. The median is 2/5.
+3. **A failure one night could not show:** the low-night flag on nights that
+   are not low (17 predicate failures).
+4. **A degenerate loop.** SC4171E0 generated 44 observation claims in a
+   repeating pattern until the 3,000-token limit, which left malformed JSON.
+   It is the run's only Layer 1 failure and its one timing outlier.
+5. **The `hedged_value` result generalises:** 0 of 31 packets and 0 of 434
+   claims.
+
+### Host figures: the x86 evaluation host, run log only
+
+These are not deployment figures.
+
+- **Wall clock:** 588.3 s in total. Per packet: minimum 13.22 s, median
+  14.85 s, maximum 99.65 s (the SC4171E0 loop).
+- **Peak RSS.** Each packet ran as a fresh llama.cpp process, and its peak
+  working set was read from Windows after it exited. The peak was 2,037 MiB on
+  every packet (median 2,037.3, maximum 2,037.6) at a context of 12,288.
+- **This is not comparable with the deployment table's 1,812 MiB,** which was
+  taken at a context of 4,096. The ~225 MiB difference matches the larger
+  KV-cache reservation: 28 KiB × 8,192 more positions ≈ 224 MiB.
+
+### The comparison this run answers
+
+- **Single-night diagnostic** (run C, SC4111E0): 4/5 mandatory, 0 hedged.
+- **31-night P1 result:**
+  - 0 of 31 nights at 5/5 mandatory;
+  - mandatory mean 0.497, median 2/5, with 4/5 as the best, on 2 nights;
+  - `hedged_value` in 0 of 31 packets and 0 of 434 claims;
+  - 0 of 31 reports render.
+- **For contrast,** the reference model's interim result is 8 of 8 at 5/5,
+  with 14 hedged values per night.
 
 ---
 
