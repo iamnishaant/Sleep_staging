@@ -100,6 +100,7 @@ def arch_params(g: dict) -> dict:
         "n_layer": n_layer,
         "n_embd": n_embd,
         "n_head": n_head,
+        "n_head_kv": n_head_kv,               # equal to n_head: no grouped-query attention
         # Per-layer lists are allowed by the format; totals are what matter.
         "kv_heads_total": sum(n_head_kv) if isinstance(n_head_kv, list) else n_layer * n_head_kv,
         "head_dim_k": get("attention.key_length", head_dim),

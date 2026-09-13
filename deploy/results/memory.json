@@ -92,5 +92,12 @@
    ],
    "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f F:\\Sleep_project\\Sleep-Staging\\deploy\\results\\workload_prompt.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 512 -c 4096 --temp 0 --seed 0 --no-display-prompt"
   }
- ]
+ ],
+ "platform": {
+  "role": "x86 Windows EVALUATION HOST - not the target device",
+  "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz (8 cores, 16 logical)",
+  "ram_gib": 15.7,
+  "os": "Microsoft Windows 11 Home Single Language 10.0.26200, 64-bit",
+  "note": "Peak working set and peak private bytes were measured here. A Raspberry Pi 5's allocator, page size and runtime build differ, so these are not target measurements. File size is platform-independent."
+ }
 }

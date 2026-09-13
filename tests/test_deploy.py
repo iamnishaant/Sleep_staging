@@ -12,8 +12,8 @@ import unittest
 from pathlib import Path
 
 from deploy.gguf import arch_params, read_gguf
-from deploy.throughput import (decode_tokens_per_s, kv_bytes_per_position,
-                               weight_bytes_per_token)
+from deploy.throughput import (TARGET, decode_tokens_per_s, kv_bytes_per_position,
+                               seconds_per_report, weight_bytes_per_token)
 
 F32 = 0
 
@@ -92,6 +92,28 @@ class TestGGUF(unittest.TestCase):
         self.assertEqual(kv_bytes_per_position(g), 64)
         # 10 GB/s over (2688 + 64 x 100) bytes per token
         self.assertAlmostEqual(decode_tokens_per_s(g, 10, 100), 10e9 / (2688 + 6400))
+
+    def test_seconds_per_report_sums_over_a_growing_cache(self):
+        """The closed form equals the token-by-token sum as the cache grows."""
+        g = self.model(tied=False)
+        w, k = weight_bytes_per_token(g), kv_bytes_per_position(g)
+        brute = sum((w + k * t) / 10e9 for t in range(100, 150))
+        self.assertAlmostEqual(seconds_per_report(g, 10, prompt=100, output=50), brute)
+
+    def test_the_heads_are_read_and_gqa_follows_from_them(self):
+        a = arch_params(self.model(tied=False))
+        self.assertEqual((a["n_head"], a["n_head_kv"]), (4, 2))       # 4 != 2: grouped
+
+
+class TestTarget(unittest.TestCase):
+    def test_the_effective_bandwidth_is_a_labelled_assumed_range(self):
+        """Never a point estimate, and never presented as a hardware property."""
+        lo, hi = TARGET["assumed_effective_gbps"]
+        self.assertLess(lo, hi)
+        self.assertGreaterEqual(lo / TARGET["theoretical_gbps"], 0.35)
+        self.assertLessEqual(hi / TARGET["theoretical_gbps"], 0.65)
+        self.assertIn("ASSUMED", TARGET["assumed_effective_note"])
+        self.assertIn("Not measured", TARGET["assumed_effective_note"])
 
 
 if __name__ == "__main__":

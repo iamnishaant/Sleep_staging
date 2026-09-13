@@ -2,6 +2,11 @@
 
 QUANTIZED SIZE is the GGUF file's size on disk, with the tensor data it holds.
 
+WHERE: everything here is measured on the x86 Windows EVALUATION HOST. The
+analytical target (a Raspberry Pi 5) differs in allocator, page size and
+runtime build, so these are not target measurements. File size is the one
+platform-independent figure.
+
 PEAK RESIDENT MEMORY is the peak working set of the llama.cpp process over one
 representative generation. It is read from Windows after the process exits -
 GetProcessMemoryInfo on the finished process's handle - so it is the exact
@@ -20,6 +25,7 @@ from __future__ import annotations
 
 import ctypes
 import json
+import platform
 import re
 import subprocess
 import time
@@ -108,6 +114,8 @@ def main() -> int:
         (RESULTS / "memory.json").write_text(json.dumps(
             {"workload": {"packet": PACKET, "context": CONTEXT_WINDOW, "n_predict": N_PREDICT,
                           "runtime": LLAMA.parent.name, "mmap": "default (on)"},
+             "platform": {"role": "x86 Windows EVALUATION HOST - not the target device",
+                          "system": platform.platform(), "processor": platform.processor()},
              "models": rows}, indent=1), encoding="utf-8")
     return 0
 

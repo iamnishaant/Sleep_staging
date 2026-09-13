@@ -3,10 +3,11 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 336
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 339
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
-reserve; the reference model is Gemini 3.8 Flash. Deployment size, peak memory
-and throughput bounds are done for all five local candidates. The deterministic tier is finished and frozen. One model has
+reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
+measured on the x86 evaluation host; throughput predicted analytically for the
+named target, a Raspberry Pi 5. The deterministic tier is finished and frozen. One model has
 run, once, to confirm the grammar holds mechanically. That single output has
 been scored as an exploratory reading, not a measurement. The reference model
 is chosen (the key is Flash-class only); its rate limits,
@@ -2195,77 +2196,196 @@ stopped.
 
 ---
 
-## Deployment numbers for the five local candidates (13 September 2026)
+## Deployment numbers for the five local candidates (13 September 2026, target named)
 
-As 2c set out, quantized size and peak resident memory are **measured**, with
-the llama.cpp runtime the deployment targets (b10927, CPU build, on this
-machine). Decode throughput is an **analytical bandwidth-bound estimate**. No
-API quota was used. The code is `deploy/`: `measure.py`, `throughput.py`, and
-a standard-library GGUF reader. The results are in `deploy/results/`.
+Resource-constrained evaluation was performed on x86 under
+Windows, with the Raspberry Pi 5 (8 GB, 4 cores, LPDDR4X-4267) as
+the named analytical target. Throughput figures are analytical
+bandwidth-bound estimates derived from quantized tensor sizes
+against an assumed effective-bandwidth range, not on-device
+measurements. Peak resident memory and quantized model size are
+measured directly, on the x86 evaluation host.
 
-**The memory workload.**
+The conclusion this section supports is that the reporting
+workload is plausible within a Raspberry Pi 5-class resource
+envelope — not that the system was demonstrated to run on a
+Raspberry Pi 5.
 
-- The input is dev SC4111E0, through the frozen `build_prompt`, in each
-  model's own chat template (`--jinja -cnv -st`), under `claims.gbnf`.
-- Context is 4,096 tokens, the budgeted window in `report/serialize.py`.
-- Generation runs to at most 512 tokens, at temperature 0 and seed 0.
-- Runtime defaults apply: weights are memory-mapped, and the thread count is
-  llama.cpp's own.
-- Peak memory is read from the finished process's handle
-  (`GetProcessMemoryInfo`), so it is the exact peak, not a sample. The output
-  is not scored.
+**Nothing was run on a Raspberry Pi 5, and nothing will be.** Every figure
+below belongs to one of these kinds:
 
-| model | params (GGUF tensors) | quantized size (file) | peak working set | peak private | KV cache per position | decode tokens/s bound at 25 / 50 GB/s |
-|---|---:|---:|---:|---:|---:|---:|
-| Qwen2.5-1.5B-Instruct | 1.78B | 1,065.6 MiB | **1,812.1 MiB** | 1,168.7 MiB | 28 KiB | 23.8 / 47.7 |
-| SmolLM2-1.7B-Instruct | 1.71B | 1,006.7 MiB | **2,615.1 MiB** | 1,682.3 MiB | 192 KiB | 16.4 / 32.8 |
-| Gemma-2-2b-it | 2.61B | 1,629.4 MiB | **3,150.7 MiB** | 2,023.0 MiB | 104 KiB | 12.8 / 25.5 |
-| Llama-3.2-3B-Instruct | 3.21B | 1,925.8 MiB | **3,840.4 MiB** | 2,162.2 MiB | 112 KiB | 10.9 / 21.9 |
-| Phi-3.5-mini-instruct | 3.82B | 2,282.4 MiB | **5,103.5 MiB** | 2,935.2 MiB | 384 KiB | 7.6 / 15.2 |
+| figure | kind | where it comes from |
+|---|---|---|
+| throughput ceilings (tokens/s) and seconds per report | **ANALYTICAL**: predictions of a model | quantized tensor sizes against the target's bandwidth, which is either its theoretical 17 GB/s or the **assumed** 7–10 GB/s effective range. Not measured, not timed |
+| peak resident memory (peak working set, peak private bytes) | **MEASURED on the x86 evaluation host** | an Intel i7-11800H (8 cores, 16 threads, 15.7 GiB) running 64-bit Windows 11, with llama.cpp b10927 (CPU build). A Pi 5's allocator, page size and runtime build differ, so these are **not target measurements** |
+| quantized file size | **MEASURED**, platform-independent | the GGUF file on disk |
+| layer and head counts, head dimensions; KV cache per position; weights read per token | **read from GGUF headers, then derived**; platform-independent | `deploy/gguf.py`, `deploy/throughput.py` |
 
-The throughput bounds are taken at 2,400 cached positions: the prompt plus a
-full report's output. The full grid, at 10, 25, 50 and 100 GB/s and at 1,200
-and 2,400 positions, is in `deploy/results/throughput.json`.
+### The target and its bandwidth
 
-**How the throughput bound is built.** Decode tokens/s ≤ B / (W + K·L):
+**The target is the Raspberry Pi 5: 8 GB, 4 cores, LPDDR4X-4267.** Its
+**theoretical** memory bandwidth is about 17 GB/s: 4,267 MT/s times 4 bytes
+over its 32-bit interface, which is 17.07 GB/s.
 
-- **W** is the weight bytes read per token, from the GGUF tensor table. The
-  token-embedding table is excluded when a separate output matrix exists.
-- **K** is the f16 KV-cache bytes per cached position.
-- **L** is the number of positions cached.
-- **B** is the device's memory bandwidth.
+**The analytical model's effective bandwidth is an ASSUMED range of 7–10
+GB/s**, roughly 40–60% of theoretical. This is an assumption of the
+simulation. It is never a point estimate, and it is not a measured or typical
+property of the hardware. It is labelled as an assumption wherever it appears,
+including in `deploy/throughput.py` and `deploy/results/throughput.json`.
 
-It is an upper bound on decode rate; prefill is compute-bound and is not
-estimated.
+**What the published benchmarks do and do not say.** The one citable
+memory benchmark found is tinymembench on a *pre-release* 8 GB Pi 5
+([geerlingguy/sbc-reviews, issue #21](https://github.com/geerlingguy/sbc-reviews/issues/21)).
+It reports copy throughput of 4,793.9–5,688.0 MB/s across its copy variants
+(standard memcpy 4,805.4 MB/s) and fill of about 13,700 MB/s (standard memset
+13,676.9 MB/s). It gives no read-only figure. Decoding is dominated by reads,
+so none of these is the quantity the model needs, and the board was
+pre-release. The benchmark is cited as context. **The 7–10 GB/s range stays a
+declared assumption; it is not derived from the benchmark.**
 
-**What the numbers show:**
+### KV cache: verified from the headers
 
-- **Peak memory is 1.7 to 2.2 times the file size.** Quantized size alone
-  understates what a device must hold.
-- **The KV cache, not the file size, separates the candidates.** SmolLM2 and
-  Phi-3.5 have no grouped-query attention, so they cache 192 and 384 KiB per
-  position, against Qwen's 28 KiB. SmolLM2 has the smallest file of the five
-  yet peaks about 800 MiB above Qwen. At the 4,096-token context, their cache
-  reservations are 768 MiB and 1,536 MiB, against Qwen's 112 MiB.
-- **Cache traffic is also a large share of decode bandwidth.** At 2,400
-  positions it is about 31% of the bytes SmolLM2 reads per token and 29% of
-  Phi-3.5's, against 7% for Qwen and about 12–13% for Gemma and Llama.
-- **The parameter count comes from the tensors, not the model card.** Qwen's
-  GGUF stores its output matrix separately although the model ties it to the
-  embeddings, so it counts 1.78B against the card's 1.54B. Decoding reads that
-  output copy, which is what W counts.
+`attention.head_count` and `attention.head_count_kv` were read from all five
+GGUF headers. Equal values mean no grouped-query attention (GQA). The cache
+per position is derived as layers × `head_count_kv` × (key length + value
+length) × 2 bytes (f16).
 
-**Open input: the deployment device.** The project has not fixed a target
-device, so the throughput bounds are given per bandwidth, and they scale
-linearly with it. Choosing the device, and so B, is a decision still to take.
+| model | arch | layers | `head_count` | `head_count_kv` | GQA | head dim (K/V) | KV per position | vs Qwen | weights read per token |
+|---|---|---:|---:|---:|---|---:|---:|---:|---:|
+| Qwen2.5-1.5B-Instruct | qwen2 | 28 | 12 | 2 | yes | 128/128 | 28,672 B (28 KiB) | 1.00× | 934.7 MiB |
+| SmolLM2-1.7B-Instruct | llama | 24 | 32 | 32 | **no** | 64/64 | 196,608 B (192 KiB) | **6.86×** | 1,005.0 MiB |
+| Gemma-2-2b-it | gemma2 | 26 | 8 | 4 | yes | 256/256 | 106,496 B (104 KiB) | 3.71× | 1,623.7 MiB |
+| Llama-3.2-3B-Instruct | llama | 28 | 24 | 8 | yes | 128/128 | 114,688 B (112 KiB) | 4.00× | 1,918.4 MiB |
+| Phi-3.5-mini-instruct | phi3 | 32 | 32 | 32 | **no** | 96/96 | 393,216 B (384 KiB) | **13.71×** | 2,228.8 MiB |
 
-**Caveats.**
+**The headers confirm that SmolLM2 and Phi-3.5 lack grouped-query
+attention.** Each has as many KV heads as attention heads (32 and 32). The
+other three share KV heads across groups of 6, 2 and 3 query heads.
 
-- There is one run per model. The peak working set is Windows' resident set on
-  this machine, with memory-mapping on. `--no-mmap`, `--mlock` or another OS
-  would change how memory is accounted.
-- Timings from the runs are not reported as throughput. 2c makes throughput an
-  analytical figure.
+### Memory, measured on the x86 evaluation host
+
+**The workload** is dev SC4111E0 through the frozen `build_prompt`, in each
+model's chat template, under `claims.gbnf`, with a context of 4,096 tokens and
+up to 512 generated tokens at temperature 0. Weights are memory-mapped
+(llama.cpp's default). The peak is read exactly from the finished process with
+`GetProcessMemoryInfo`, over one run per model.
+
+| model | quantized file size | peak working set (host) | peak private (host) | peak working set ÷ file | peak working set against the target's 8 GB (8,192 MiB) |
+|---|---:|---:|---:|---:|---:|
+| Qwen2.5-1.5B-Instruct | 1,065.6 MiB | 1,812.1 MiB | 1,168.7 MiB | 1.70× | 22% |
+| SmolLM2-1.7B-Instruct | 1,006.7 MiB | 2,615.1 MiB | 1,682.3 MiB | **2.60×** | 32% |
+| Gemma-2-2b-it | 1,629.4 MiB | 3,150.7 MiB | 2,023.0 MiB | 1.93× | 38% |
+| Llama-3.2-3B-Instruct | 1,925.8 MiB | 3,840.4 MiB | 2,162.2 MiB | 1.99× | 47% |
+| Phi-3.5-mini-instruct | 2,282.4 MiB | 5,103.5 MiB | 2,935.2 MiB | 2.24× | **62%** |
+
+**The envelope comparison is analytical, not a demonstrated fit.** The
+comparison is between peak memory on the evaluation host and the target's
+8 GB.
+
+- Phi-3.5, at about 5.1 GB, is **tight** against that envelope. This is
+  particularly so because the student staging model runs alongside it on the
+  same device. The staging model's memory was not measured here, and neither
+  is the operating system's share.
+- The other four leave more headroom on this comparison.
+
+None of this shows that any model runs within 8 GB on a Pi 5, whose allocator
+and page size differ.
+
+### The finding: quantized size gives the wrong ranking for this workload
+
+**Peak working set runs 1.70–2.60× the quantized file size** across the five
+models, so file size alone understates what a device must hold. (An earlier
+note in this session said 1.7–2.2×, which omitted SmolLM2's 2.60×. The table
+above is the computed range.)
+
+**Quantized size is the metric usually reported for edge-deployment
+feasibility, and it gives the wrong ranking for this workload.** The reason is
+the KV cache:
+
+- **By file size,** SmolLM2 is the lightest of the five (1,006.7 MiB), just
+  under Qwen (1,065.6 MiB).
+- **By per-position cache** from the headers, SmolLM2 is second-worst: 192
+  KiB, against 28 KiB for Qwen and 384 KiB for Phi-3.5.
+- **By share of per-token memory traffic** at 2,400 cached positions, it is
+  the worst: KV reads are 30.9% of what SmolLM2 reads per decoded token,
+  against 28.8% for Phi-3.5, 13.1% for Gemma, 12.0% for Llama and 6.6% for
+  Qwen.
+- **The consequence:** once the cache is included, Qwen moves ahead of
+  SmolLM2 on both measured peak memory (1,812.1 against 2,615.1 MiB) and
+  predicted decode rate, reversing the file-size order at the top. Below the
+  top two, the orders agree.
+
+The file-size ranking would have picked the model with the second-largest
+cache, the highest peak-to-file ratio (2.60×) and the largest cache share of
+decode traffic.
+
+### Predicted throughput (analytical)
+
+Decode tokens/s ≤ B / (W + K·L), taken at L = 2,400 cached positions (a
+~1,200-token prompt plus a ~1,200-token report). Every entry is a
+**prediction** of the model. The general form is kept, so the analysis
+survives a change of target; the Pi 5 rows are the named target.
+
+| bandwidth | Qwen2.5-1.5B | SmolLM2-1.7B | Gemma-2-2b | Llama-3.2-3B | Phi-3.5-mini |
+|---|---:|---:|---:|---:|---:|
+| 10 GB/s (general form) | 9.5 | 6.5 | 5.1 | 4.4 | 3.0 |
+| 25 GB/s (general form) | 23.8 | 16.4 | 12.8 | 10.9 | 7.6 |
+| 50 GB/s (general form) | 47.7 | 32.8 | 25.5 | 21.9 | 15.2 |
+| 100 GB/s (general form) | 95.3 | 65.5 | 51.1 | 43.7 | 30.5 |
+| **Pi 5, 17 GB/s theoretical (ceiling)** | **16.2** | **11.1** | **8.7** | **7.4** | **5.2** |
+| **Pi 5, ASSUMED 7–10 GB/s effective** | **6.7–9.5** | **4.6–6.5** | **3.6–5.1** | **3.1–4.4** | **2.1–3.0** |
+
+**Under the assumed 7–10 GB/s effective-bandwidth envelope, the model predicts
+approximately:**
+
+| model | predicted decode rate |
+|---|---:|
+| Qwen2.5-1.5B | 6.7–9.5 tok/s |
+| SmolLM2-1.7B | 4.6–6.5 tok/s |
+| Gemma-2-2b | 3.6–5.1 tok/s |
+| Llama-3.2-3B | 3.1–4.4 tok/s |
+| Phi-3.5-mini | 2.1–3.0 tok/s |
+
+**Even at the 17 GB/s theoretical ceiling, the model predicts no more than
+5.2–16.2 tok/s.**
+
+### Predicted seconds per report (analytical)
+
+One complete report is a ~1,200-token prompt followed by ~1,200 generated
+tokens, so about 2,400 tokens in context by the end. Decode time is the sum of
+(W + K·t) / B as the cache grows from 1,200 to 2,400 positions.
+
+**Prefill is compute-bound and not modelled, so these understate wall time.**
+
+| bandwidth | Qwen2.5-1.5B | SmolLM2-1.7B | Gemma-2-2b | Llama-3.2-3B | Phi-3.5-mini |
+|---|---:|---:|---:|---:|---:|
+| **Pi 5, 17 GB/s theoretical (ceiling)** | 73 s | 99 s | 134 s | 157 s | 215 s |
+| **Pi 5, ASSUMED 7–10 GB/s effective** | 124–177 s | 169–241 s | 227–325 s | 266–380 s | 365–522 s |
+
+**Even under ideal bandwidth, the model predicts at least 73–215 s of decode
+per report, before any prefill.** That is the stronger form of the argument,
+since no effective bandwidth can beat the theoretical ceiling.
+
+Under the assumed 7–10 GB/s envelope, it predicts approximately 2–9 minutes of
+decode per report.
+
+**The consequence.** At these predicted rates the task is plausible for
+**overnight batch reporting**, where one report per recorded night takes
+minutes. It is **not plausible for interactive use.**
+
+### Not done: a Pi 5-matched container
+
+Earlier planning referred to a memory- and core-limited container matching the
+Pi 5 envelope. **No such container exists, and none was used.**
+
+**It is a candidate for future work:** the five candidates run inside a
+container or job object limited to 4 cores and 8 GB. That would make the
+memory-envelope comparison *demonstrated* rather than notional, because an
+out-of-memory failure or swapping would show directly, and it would show
+behaviour on 4 cores.
+
+It would still not reproduce the Pi 5's ARM cores, NEON kernels or LPDDR4X
+bandwidth. Throughput would remain analytical even then.
 
 ---
 
