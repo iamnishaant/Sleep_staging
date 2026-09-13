@@ -2433,6 +2433,15 @@ The three skipped packets were not reached again before the budget ran out.
 **23 P1 packets remain.** At about 5 responses per 20-attempt day, that is
 roughly 4–5 more days.
 
+**Interim pipeline check, 13 September 2026: 8 of 31. This is not a
+result.** The 8 saved responses were scored with `reference.score` into a
+scratch directory, to confirm the scoring path end to end. All 8 verify with
+zero violations: 5/5 mandatory, 14/14 discretionary, 17/17 numbers exact,
+14 `hedged_value` claims each, and every one renders. The reference set's
+oracle recovery is 1.0 on each night. The 8 are six high, one medium and one
+low tier (manifest order), so the harder tiers are under-sampled. **The
+decision rule is applied at 31, not now.**
+
 ---
 
 ## 2F reference run: skip-and-requeue and a session breaker (13 September 2026)
