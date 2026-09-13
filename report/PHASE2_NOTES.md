@@ -2216,7 +2216,7 @@ below belongs to one of these kinds:
 
 | figure | kind | where it comes from |
 |---|---|---|
-| throughput ceilings (tokens/s) and seconds per report | **ANALYTICAL**: predictions of a model | quantized tensor sizes against the target's bandwidth, which is either its theoretical 17 GB/s or the **assumed** 7–10 GB/s effective range. Not measured, not timed |
+| throughput ceilings (tokens/s) and predicted generation time (prefill excluded) | **ANALYTICAL**: predictions of a model | quantized tensor sizes against the target's bandwidth, which is either its theoretical 17 GB/s or the **assumed** 7–10 GB/s effective range. Not measured, not timed |
 | peak resident memory (peak working set, peak private bytes) | **MEASURED on the x86 evaluation host** | an Intel i7-11800H (8 cores, 16 threads, 15.7 GiB) running 64-bit Windows 11, with llama.cpp b10927 (CPU build). A Pi 5's allocator, page size and runtime build differ, so these are **not target measurements** |
 | quantized file size | **MEASURED**, platform-independent | the GGUF file on disk |
 | layer and head counts, head dimensions; KV cache per position; weights read per token | **read from GGUF headers, then derived**; platform-independent | `deploy/gguf.py`, `deploy/throughput.py` |
@@ -2232,6 +2232,11 @@ GB/s**, roughly 40–60% of theoretical. This is an assumption of the
 simulation. It is never a point estimate, and it is not a measured or typical
 property of the hardware. It is labelled as an assumption wherever it appears,
 including in `deploy/throughput.py` and `deploy/results/throughput.json`.
+
+**Why the cited benchmark is not the basis of the range.** The tinymembench
+figure below is cited, but it is not used as the basis for 7–10 GB/s. It is
+*copy* bandwidth, on a *pre-release* board, not read-only bandwidth, and
+decode is read-dominated. So it neither produced the range nor tests it.
 
 **What the published benchmarks do and do not say.** The one citable
 memory benchmark found is tinymembench on a *pre-release* 8 GB Pi 5
@@ -2349,25 +2354,31 @@ approximately:**
 **Even at the 17 GB/s theoretical ceiling, the model predicts no more than
 5.2–16.2 tok/s.**
 
-### Predicted seconds per report (analytical)
+### Predicted generation time per report, prefill excluded (analytical)
 
 One complete report is a ~1,200-token prompt followed by ~1,200 generated
-tokens, so about 2,400 tokens in context by the end. Decode time is the sum of
-(W + K·t) / B as the cache grows from 1,200 to 2,400 positions.
+tokens, so about 2,400 tokens in context by the end. **Predicted generation
+time** is the sum of (W + K·t) / B over the 1,200 generated tokens, as the
+cache grows from 1,200 to 2,400 positions.
 
-**Prefill is compute-bound and not modelled, so these understate wall time.**
+**These are floors, not report times.** Prefill, the prompt processing
+before the first generated token, is compute-bound and not modelled. So
+**end-to-end report time is strictly greater** than every figure in this
+table.
 
 | bandwidth | Qwen2.5-1.5B | SmolLM2-1.7B | Gemma-2-2b | Llama-3.2-3B | Phi-3.5-mini |
 |---|---:|---:|---:|---:|---:|
-| **Pi 5, 17 GB/s theoretical (ceiling)** | 73 s | 99 s | 134 s | 157 s | 215 s |
-| **Pi 5, ASSUMED 7–10 GB/s effective** | 124–177 s | 169–241 s | 227–325 s | 266–380 s | 365–522 s |
+| **Pi 5, 17 GB/s theoretical (ceiling): predicted generation time, prefill excluded** | 73 s | 99 s | 134 s | 157 s | 215 s |
+| **Pi 5, ASSUMED 7–10 GB/s effective: predicted generation time, prefill excluded** | 124–177 s | 169–241 s | 227–325 s | 266–380 s | 365–522 s |
 
-**Even under ideal bandwidth, the model predicts at least 73–215 s of decode
-per report, before any prefill.** That is the stronger form of the argument,
+**Even under ideal bandwidth, the model predicts at least 73–215 s of
+generation per report, with end-to-end time strictly greater once prefill is
+added.** That is the stronger form of the argument,
 since no effective bandwidth can beat the theoretical ceiling.
 
 Under the assumed 7–10 GB/s envelope, it predicts approximately 2–9 minutes of
-decode per report.
+generation time per report (prefill excluded). None of these is a report
+time.
 
 **The consequence.** At these predicted rates the task is plausible for
 **overnight batch reporting**, where one report per recorded night takes
@@ -2386,6 +2397,23 @@ behaviour on 4 cores.
 
 It would still not reproduce the Pi 5's ARM cores, NEON kernels or LPDDR4X
 bandwidth. Throughput would remain analytical even then.
+
+---
+
+## 2F reference run: session log (P1, gemini-3.8-flash)
+
+Each session is started by a person. Every attempt's log record carries its
+caller (pid, ppid, argv), available from the 13 September sessions onward.
+Quota is counted per Pacific day, and 503s count against it.
+
+| Pacific date | session start (UTC) | started from | attempts | HTTP 200 | HTTP 503 | how it ended | P1 cached after |
+|---|---|---|---:|---:|---:|---|---:|
+| 12 Sep | 21:07:06 | Antigravity's integrated terminal, by hand (traced after the fact) | 7 | 3 | 4 | the day's budget (20 of 20, preflight included) | 3 / 31 |
+| 13 Sep | 09:08:13 | Antigravity's integrated terminal (`pwsh`, pid 8680, child of Antigravity.exe) running `reference/run.py --go` as pid 6720 | 4 | 0 | 4 | unavailable: 4 consecutive 503s on SC4112E0, remaining allowance untouched (16 of 20 left) | 3 / 31 |
+
+**Run attempts so far: 11, of which 3 succeeded and 8 returned 503 (73%).**
+Neither session is a clean full window. The first was the tail of a day, and
+the second was stopped by the service after four attempts.
 
 ---
 

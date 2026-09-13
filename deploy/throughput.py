@@ -26,8 +26,9 @@ range is an assumption of this simulation, never a measured or typical property
 of the hardware. The general 10/25/50/100 GB/s grid is kept, so the analysis
 survives a change of target.
 
-Prefill is compute-bound and not modelled, so seconds per report understates
-wall time.
+Prefill is compute-bound and not modelled. "Predicted generation time"
+excludes it, so end-to-end report time is strictly greater - a floor, never
+a report time.
 
     python -m deploy.throughput
 """
@@ -76,12 +77,14 @@ def decode_tokens_per_s(g: dict, bandwidth_gbps: float, positions: int) -> float
     return bandwidth_gbps * 1e9 / (weight_bytes_per_token(g) + kv_bytes_per_position(g) * positions)
 
 
-def seconds_per_report(g: dict, bandwidth_gbps: float, prompt: int = PROMPT_TOKENS,
-                       output: int = REPORT_OUTPUT_TOKENS) -> float:
-    """Predicted DECODE time for one report: `output` tokens generated after a
-    `prompt`-token prompt, the cache growing from `prompt` to `prompt + output`.
-    The sum of (W + K*t) / B over t = prompt .. prompt+output-1, in closed form.
-    Prefill is excluded, so this understates wall time."""
+def predicted_generation_seconds(g: dict, bandwidth_gbps: float,
+                                 prompt: int = PROMPT_TOKENS,
+                                 output: int = REPORT_OUTPUT_TOKENS) -> float:
+    """PREDICTED GENERATION TIME, PREFILL EXCLUDED, for one report: `output`
+    tokens generated after a `prompt`-token prompt, the cache growing from
+    `prompt` to `prompt + output`. The sum of (W + K*t) / B over
+    t = prompt .. prompt+output-1, in closed form. End-to-end report time is
+    strictly greater: prefill is not modelled."""
     w, k = weight_bytes_per_token(g), kv_bytes_per_position(g)
     total = output * w + k * (output * prompt + output * (output - 1) // 2)
     return total / (bandwidth_gbps * 1e9)
@@ -110,10 +113,11 @@ def estimate(path) -> dict:
                 decode_tokens_per_s(g, TARGET["theoretical_gbps"], end), 2),
             "assumed_range_tokens_per_s": (round(decode_tokens_per_s(g, lo, end), 2),
                                            round(decode_tokens_per_s(g, hi, end), 2)),
-            "ceiling_seconds_per_report": round(
-                seconds_per_report(g, TARGET["theoretical_gbps"]), 1),
-            "assumed_range_seconds_per_report": (round(seconds_per_report(g, hi), 1),
-                                                 round(seconds_per_report(g, lo), 1)),
+            "ceiling_predicted_generation_s_prefill_excluded": round(
+                predicted_generation_seconds(g, TARGET["theoretical_gbps"]), 1),
+            "assumed_range_predicted_generation_s_prefill_excluded": (
+                round(predicted_generation_seconds(g, hi), 1),
+                round(predicted_generation_seconds(g, lo), 1)),
         },
     }
 
@@ -137,12 +141,13 @@ def main() -> int:
           + "".join(f"{out[n]['target']['ceiling_tokens_per_s_at_theoretical']:>12.1f}" for n in names))
     print(f"{'Pi 5, ASSUMED 7-10 GB/s effective':<34}"
           + "".join(f"{'%.1f-%.1f' % out[n]['target']['assumed_range_tokens_per_s']:>12}" for n in names))
-    print(f"\nPREDICTED seconds per report ({PROMPT_TOKENS} prompt + {REPORT_OUTPUT_TOKENS} "
-          f"generated; decode only)")
+    print(f"\nPREDICTED GENERATION TIME, PREFILL EXCLUDED, seconds ({PROMPT_TOKENS} prompt + "
+          f"{REPORT_OUTPUT_TOKENS} generated). End-to-end report time is strictly greater.")
     print(f"{'Pi 5, 17 GB/s theoretical ceiling':<34}"
-          + "".join(f"{out[n]['target']['ceiling_seconds_per_report']:>12.0f}" for n in names))
+          + "".join(f"{out[n]['target']['ceiling_predicted_generation_s_prefill_excluded']:>12.0f}"
+                    for n in names))
     print(f"{'Pi 5, ASSUMED 7-10 GB/s effective':<34}"
-          + "".join(f"{'%.0f-%.0f' % out[n]['target']['assumed_range_seconds_per_report']:>12}"
+          + "".join(f"{'%.0f-%.0f' % out[n]['target']['assumed_range_predicted_generation_s_prefill_excluded']:>12}"
                     for n in names))
     return 0
 

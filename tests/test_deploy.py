@@ -13,7 +13,7 @@ from pathlib import Path
 
 from deploy.gguf import arch_params, read_gguf
 from deploy.throughput import (TARGET, decode_tokens_per_s, kv_bytes_per_position,
-                               seconds_per_report, weight_bytes_per_token)
+                               predicted_generation_seconds, weight_bytes_per_token)
 
 F32 = 0
 
@@ -93,12 +93,13 @@ class TestGGUF(unittest.TestCase):
         # 10 GB/s over (2688 + 64 x 100) bytes per token
         self.assertAlmostEqual(decode_tokens_per_s(g, 10, 100), 10e9 / (2688 + 6400))
 
-    def test_seconds_per_report_sums_over_a_growing_cache(self):
-        """The closed form equals the token-by-token sum as the cache grows."""
+    def test_predicted_generation_time_sums_over_a_growing_cache(self):
+        """The closed form equals the token-by-token sum as the cache grows.
+        Prefill is not in it - the figure is a floor on report time."""
         g = self.model(tied=False)
         w, k = weight_bytes_per_token(g), kv_bytes_per_position(g)
         brute = sum((w + k * t) / 10e9 for t in range(100, 150))
-        self.assertAlmostEqual(seconds_per_report(g, 10, prompt=100, output=50), brute)
+        self.assertAlmostEqual(predicted_generation_seconds(g, 10, prompt=100, output=50), brute)
 
     def test_the_heads_are_read_and_gqa_follows_from_them(self):
         a = arch_params(self.model(tied=False))
