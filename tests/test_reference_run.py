@@ -213,7 +213,7 @@ class TestBudget(Case):
                                          "model": "some-other-model"}) + "\n"
                              for _ in range(18)), encoding="utf-8")
         s = self.runner(FakeTransport(self.clock), limit=2, jobs=JOBS[:2]).run()
-        self.assertEqual((s["sent"], s["stopped"]), (2, None))
+        self.assertEqual((s["sent"], s["stopped"]), (2, "complete"))
 
     def test_successes_only_when_2a_says_failures_are_free(self):
         self.seed_log(18, self.clock.now() - timedelta(hours=1))
@@ -252,23 +252,145 @@ class TestRetryPolicy(Case):
         t = FakeTransport(self.clock, script=[400])
         s = self.runner(t).run()
         self.assertEqual((len(t.calls), s["stopped"], s["sent"]), (1, "api_error", 0))
-        t = FakeTransport(self.clock, script=[503] * 4)
-        s = self.runner(t).run()
-        self.assertEqual((len(t.calls), s["stopped"], s["sent"]), (4, "unavailable", 0))
+        t = FakeTransport(self.clock, script=[503] * 6)
+        s = self.runner(t, jobs=JOBS[:5]).run()
+        self.assertEqual((len(t.calls), s["stopped"], s["sent"]), (6, "service_unavailable", 0))
 
     def test_every_attempt_is_logged_with_its_retry_cause(self):
+        """One packet: 503, 429, then a skip - the requeue returns the same
+        packet, since it is the only one - then a success."""
         self.runner(FakeTransport(self.clock, script=[503, 429, 200]), jobs=JOBS[:1]).run()
         log = self.log()
-        self.assertEqual([r["attempt"] for r in log], [1, 2, 3])
-        self.assertEqual([r["retry"] for r in log], [False, True, True])
-        self.assertEqual([r["retry_cause"] for r in log], [None, "HTTP 503", "HTTP 429"])
-        self.assertEqual({r["prompt_id"] for r in log}, {"P1"})
+        self.assertEqual([r.get("event", "attempt") for r in log],
+                         ["attempt", "attempt", "skip", "attempt"])
+        att = [r for r in log if "event" not in r]
+        self.assertEqual([r["attempt"] for r in att], [1, 2, 3])
+        self.assertEqual([r["retry"] for r in att], [False, True, True])
+        self.assertEqual([r["retry_cause"] for r in att], [None, "HTTP 503", "HTTP 429"])
+        self.assertEqual({r["prompt_id"] for r in att}, {"P1"})
 
     def test_attempts_keep_to_5_rpm(self):
         self.runner(FakeTransport(self.clock), jobs=JOBS[:6]).run()
-        ts = [datetime.fromisoformat(r["ts"]) for r in self.log()]
+        ts = [datetime.fromisoformat(r["ts"]) for r in self.log() if "event" not in r]
         gaps = [(b - a).total_seconds() for a, b in zip(ts, ts[1:])]
         self.assertTrue(all(g >= 12 for g in gaps), gaps)
+
+
+def rec(i: int) -> str:
+    return JOBS[i][1]["recording_id"]
+
+
+class TestSkipAndBreaker(Case):
+    """A 503 is a property of the service, not the packet: skip after 2 on one
+    packet, stop the session after 6 in a row, reset on any success."""
+
+    def ids(self, t):
+        return [c["request_id"] for c in t.calls]
+
+    def test_two_consecutive_503s_skip_the_packet_and_do_not_fail_it(self):
+        t = FakeTransport(self.clock, script=[503, 503])
+        s = self.runner(t, jobs=JOBS[:3]).run()
+        skip = [r for r in self.log() if r.get("event") == "skip"]
+        self.assertEqual(len(skip), 1)
+        self.assertEqual((skip[0]["recording_id"], skip[0]["causes"]),
+                         (rec(0), ["HTTP 503", "HTTP 503"]))
+        self.assertEqual((s["stopped"], s["status"]["cached"]), ("complete", {"P1": 3}))
+
+    def test_a_skipped_packet_is_retried_later_in_the_same_session(self):
+        t = FakeTransport(self.clock, script=[503, 503])
+        self.runner(t, jobs=JOBS[:3]).run()
+        self.assertEqual(self.ids(t), [f"P1/{rec(0)}#1", f"P1/{rec(0)}#2", f"P1/{rec(1)}#1",
+                                       f"P1/{rec(2)}#1", f"P1/{rec(0)}#3"])
+
+    def test_the_requeue_order_is_deterministic(self):
+        """pending [A,B,C,D,E]; A 503, A 503 -> [B,C,D,E,A]. The same script in a
+        fresh cache gives the same sequence."""
+        seqs = []
+        for sub in ("one", "two"):
+            t = FakeTransport(self.clock, script=[503, 503])
+            R.Runner(max_attempts_today=100, transport=t, clock=self.clock.now,
+                     sleep=self.clock.sleep, rand=lambda: 0.0, jobs=JOBS[:5],
+                     cache_dir=self.dir / sub / "cache", log_dir=self.dir / sub / "logs").run()
+            seqs.append(self.ids(t))
+        want = [f"P1/{rec(0)}#1", f"P1/{rec(0)}#2"] + [f"P1/{rec(i)}#1" for i in (1, 2, 3, 4)] \
+            + [f"P1/{rec(0)}#3"]
+        self.assertEqual(seqs, [want, want])
+
+    def test_a_success_resets_the_cross_packet_counter(self):
+        """8 failures in the session, never 6 in a row: no breaker."""
+        script = [503, 503, 503, 503, 200, 503, 503, 503, 503, 200]
+        t = FakeTransport(self.clock, script=script)
+        s = self.runner(t, jobs=JOBS[:6]).run()
+        self.assertEqual((s["stopped"], s["status"]["cached"]), ("complete", {"P1": 6}))
+        self.assertEqual(s["session"]["503s"], 8)
+        self.assertEqual(max(r["session_consecutive_failures"]
+                             for r in self.log() if "event" not in r), 4)
+
+    def test_six_failures_across_packets_stop_and_preserve_the_allowance(self):
+        t = FakeTransport(self.clock, script=[503] * 6)
+        s = self.runner(t, limit=20, jobs=JOBS[:5]).run()
+        self.assertEqual((len(t.calls), s["stopped"], s["sent"]), (6, "service_unavailable", 0))
+        self.assertEqual({c["request_id"].split("#")[0] for c in t.calls},
+                         {f"P1/{rec(i)}" for i in (0, 1, 2)})
+        later = self.runner(FakeTransport(self.clock), limit=20, jobs=JOBS[:5])
+        self.assertEqual(later.used_today(), 6)                 # 14 left, untouched
+        self.assertEqual(later.run()["sent"], 5)
+
+    def test_six_on_one_packet_is_unreachable_with_two_or_more_pending(self):
+        for n_jobs in (2, 3, 5):
+            with self.subTest(pending=n_jobs):
+                sub = self.dir / f"p{n_jobs}"
+                t = FakeTransport(self.clock, script=[503] * 6)
+                R.Runner(max_attempts_today=100, transport=t, clock=self.clock.now,
+                         sleep=self.clock.sleep, rand=lambda: 0.0, jobs=JOBS[:n_jobs],
+                         cache_dir=sub / "cache", log_dir=sub / "logs").run()
+                labels = [c["request_id"].split("#")[0] for c in t.calls]
+                runs, longest = 1, 1
+                for a, b in zip(labels, labels[1:]):
+                    runs = runs + 1 if a == b else 1
+                    longest = max(longest, runs)
+                self.assertEqual((len(labels), longest), (6, 2))
+
+    def test_with_one_packet_pending_the_breaker_still_stops_the_session(self):
+        """The one case where the 6 fall on a single packet: the requeue
+        returns it, skip fires twice, and the breaker still stops."""
+        t = FakeTransport(self.clock, script=[503] * 6)
+        s = self.runner(t, jobs=JOBS[:1]).run()
+        self.assertEqual((len(t.calls), s["stopped"], len(s["skips"])),
+                         (6, "service_unavailable", 2))
+
+    def test_the_budget_counts_every_attempt_but_no_event(self):
+        self.seed_log(17, self.clock.now() - timedelta(hours=1))
+        r = self.runner(FakeTransport(self.clock, script=[503, 503, 200]), limit=20,
+                        jobs=JOBS[:3])
+        s = r.run()
+        self.assertEqual((s["attempts"], s["stopped"], len(s["skips"])), (3, "budget", 1))
+        self.assertEqual(r.used_today(), 20)
+        self.assertEqual(len(self.log()), 4)                     # 3 attempts + 1 skip
+
+    def test_each_session_writes_its_summary(self):
+        s = self.runner(FakeTransport(self.clock, script=[503, 503]), jobs=JOBS[:3]).run()
+        p = self.dir / "logs" / "sessions.jsonl"
+        rows = [json.loads(ln) for ln in p.read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(len(rows), 1)
+        x = rows[0]
+        for k in ("session_start", "session_end", "wall_clock_seconds", "attempts",
+                  "successes", "503s", "503_rate", "stop_reason"):
+            self.assertIn(k, x)
+        self.assertEqual((x["attempts"], x["successes"], x["503s"], x["503_rate"],
+                          x["stop_reason"], x["skips"]), (5, 3, 2, 0.4, "complete", 1))
+        span = (datetime.fromisoformat(x["session_end"])
+                - datetime.fromisoformat(x["session_start"])).total_seconds()
+        self.assertAlmostEqual(x["wall_clock_seconds"], span, delta=1)
+        self.assertGreater(x["wall_clock_seconds"], 0)
+        self.assertEqual(s["session"]["session_id"], x["session_id"])
+
+    def test_no_test_packet_can_enter_the_queue(self):
+        from report.evaluate import PACKET_DIRS
+        test_rec = json.loads(R.TEST_MANIFEST.read_text(encoding="utf-8"))[0]["recording_id"]
+        pk = json.loads((PACKET_DIRS["test"] / f"{test_rec}.json").read_text(encoding="utf-8"))
+        with self.assertRaises(SystemExit):
+            self.runner(FakeTransport(self.clock), jobs=[("P1", pk)])
 
 
 class TestScoring(Case):

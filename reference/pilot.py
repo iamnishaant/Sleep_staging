@@ -24,11 +24,12 @@ from report.evaluate import PACKET_DIRS, evaluate
 from report.render import RenderRefused
 from report.verify_structure import verify_structure
 from .config import CANDIDATE_MODELS
-from .run import DEV_MANIFEST, MAX_ATTEMPTS, Runner, dev_jobs, load_cached
+from .run import DEV_MANIFEST, Runner, dev_jobs, load_cached
 from .schema import validate
 
 HERE = Path(__file__).resolve().parent
 PILOT_DIR = HERE / "pilot"
+MAX_ATTEMPTS = 4                     # the pilot's own cap, as its daily budget
 PILOT_MODEL = CANDIDATE_MODELS["flash_lite"]
 PACKET = "SC4111E0-PSG"
 PROMPT = "P1"

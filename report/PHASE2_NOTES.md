@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 339
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 350
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2414,6 +2414,71 @@ Quota is counted per Pacific day, and 503s count against it.
 **Run attempts so far: 11, of which 3 succeeded and 8 returned 503 (73%).**
 Neither session is a clean full window. The first was the tail of a day, and
 the second was stopped by the service after four attempts.
+
+---
+
+## 2F reference run: skip-and-requeue and a session breaker (13 September 2026)
+
+This is an efficiency change to the runner, not to the experiment. The 13
+September session spent 4 of its 20 attempts on four consecutive 503s against
+one packet and produced no observation. **A 503 is a property of the service
+at that moment, not of the packet**, so retrying the same packet straight away
+is the least informative use of the next attempt. At a failure rate of about
+73%, that pattern could consume a day's allowance on two or three packets.
+
+**The rules** (`reference/run.py`):
+
+- **Skip and requeue.** After 2 consecutive failures on one packet, the
+  packet moves to the back of the session's queue and the next pending packet
+  goes next. For example, `[A, B, C, D, E]` with A failing twice becomes
+  `[B, C, D, E, A]`. The skipped packet stays pending; it is never marked
+  failed, and it gets another turn later in the same session if attempts
+  remain. The skip is written to the attempt log as its own event, after the
+  two failures that caused it, so both can be recovered from the log alone.
+- **The session breaker.** After 6 consecutive failures, the session stops
+  and the rest of the day's allowance is left untouched. Any success, on any
+  packet, resets the count. While two or more packets are pending, the 6 must
+  span at least three packets, because skip fires at 2; that is what makes
+  the breaker a service signal. **With exactly one packet pending**, the
+  requeue returns that same packet, so the 6 fall on it across three visits,
+  and the breaker still stops the session.
+- **Backoff.** After a failure, the next attempt waits 20 s × 2^(n−1) plus
+  jitter, capped at 160 s, whether it goes to the same packet or the next.
+  Here n is the session's current run of consecutive failures.
+- **Session summaries.** Each session appends one record to
+  `reference/logs/sessions.jsonl` with `session_start`, `session_end`,
+  `wall_clock_seconds`, `attempts`, `successes`, `503s`, `503_rate`,
+  `stop_reason` (complete, budget, service_unavailable or api_error) and its
+  skip count. Every attempt record carries its `session_id`. The wall-clock
+  span tells a busy hour from a busy day across sessions, which a per-day
+  count cannot.
+- **Events are never counted.** Skip and session records carry an `event`
+  field. The daily budget and the 5 RPM pacing count requests only.
+- **Defence in depth.** The `Runner` itself refuses any packet not in the dev
+  manifest, however its job list was built.
+
+**Unchanged:**
+
+- every generation setting: thinking off, `maxOutputTokens` 16,384,
+  temperature 0, seed 0, the Item 0 schema;
+- both prompts, and the schema;
+- the per-day attempt budget, and the fact that failures count against it;
+- the frozen tier, the test packets, and the three cached responses, which
+  are byte-identical to their committed versions.
+
+**Tests.** 11 were added and 3 existing tests were updated for the new retry
+behaviour. All run against a fake transport. They cover:
+
+- skipped, not failed;
+- a skipped packet retried later in the session;
+- the requeue order, deterministic across runs;
+- a success resetting the cross-packet count;
+- 6 failures across packets stopping the session with the allowance intact;
+- 6 on one packet being unreachable with 2, 3 or 5 packets pending;
+- the one-packet case;
+- the budget counting attempts but no events;
+- session summaries;
+- a test packet refused at the queue.
 
 ---
 
