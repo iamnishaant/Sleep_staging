@@ -265,6 +265,59 @@ A person starts each session; nothing runs on a timer.
    - The best is Llama-3.2-3B, at 4 of 31 nights at 5/5, none of which
      passes.
    - One Phi packet failed on host memory, and awaits a decision.
+4. **Open decision: Phi's SC4081E0.** The host could not allocate its KV
+   cache, so no token was generated.
+   - **Option 1:** run it once. That would be its first real generation.
+   - **Option 2:** keep it as a recorded host failure.
+
+   Only Phi's figures change.
+
+### What we will use
+
+| component | what | status |
+|---|---|---|
+| Safety layer | The frozen schema, grammar, verifier and renderer. Every model output passes through it. | decided |
+| Prompt | P1: the frozen `build_prompt` body plus run C's claim-shape rules. P2 is held in reserve. | in use |
+| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses become the reference set if the rule says the contract is satisfiable. | 8 of 31 |
+| Local runtime | llama.cpp b10927 (CPU), Q4_K_M, grammar-constrained. The grammar stays, and 2G measures what it buys. | in use |
+| Local model, as prompted | None. Not one of the 154 completed generations both passes verification and covers all five mandatory facts. | not usable |
+| Approach | Distillation: train a small model on the reference set, whose oracle recovery is 1.0 on every night so far. | if 2F routes there |
+| Student model | **Qwen2.5-1.5B**, with Llama-3.2-3B trained alongside as the capacity comparison. | recommendation |
+| Deployment target | Raspberry Pi 5 (8 GB), overnight batch reporting. | analytical |
+
+**Why Qwen2.5-1.5B:**
+
+- **Coverage:** the highest mandatory coverage of the five (0.497).
+- **Clean output:** it loops only once in 31, and its numbers are exact.
+- **Size and speed:** by far the smallest and fastest.
+  - 28 KiB of KV cache per token;
+  - 1.8 GB peak at the deployment context;
+  - 15 s a night on the host;
+  - 124–177 s per report predicted on a Pi 5.
+- **Its failures are trainable.** It never hedges, and it attaches text keys
+  to the wrong evidence. Both are semantic errors, which is exactly what
+  training on a clean reference set targets.
+
+**Why Llama-3.2-3B alongside:**
+
+- **Capacity:** it is the only model to reach 5/5 (4 nights), and the only
+  one that hedges all 14 items when it finishes.
+- **What it tests:** whether that extra capacity is worth about twice the
+  memory, and 266–380 s per report on a Pi 5.
+
+**Not recommended:**
+
+- **SmolLM2:** it loops on 30 of 31 nights, and has no grouped-query
+  attention.
+- **Phi-3.5:** a fixed per-tier template that hedges the safe facts. It has no
+  grouped-query attention (13.7× Qwen's KV cache per token) and the slowest
+  Pi estimate.
+- **Gemma-2:** it rarely states the basic facts, and hedges only the
+  REM-latency pair. It is kept as the reserve.
+
+**This is a recommendation, not a selection.** Selection decisions are made on
+dev at 2G, after the reference run reaches 31 and the pre-registered rule is
+applied.
 
 ### Then: 2G
 
