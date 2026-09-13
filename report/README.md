@@ -428,7 +428,7 @@ python test_reference_run.py      # 2F runner and scorer, offline: cache, budget
 python test_deploy.py             # deployment arithmetic on a synthetic GGUF file
 ```
 
-350 tests.
+349 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.

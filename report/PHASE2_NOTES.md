@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 350
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 349
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2466,8 +2466,9 @@ is the least informative use of the next attempt. At a failure rate of about
 - the frozen tier, the test packets, and the three cached responses, which
   are byte-identical to their committed versions.
 
-**Tests.** 11 were added and 3 existing tests were updated for the new retry
-behaviour. All run against a fake transport. They cover:
+**Tests.** 10 were added and 3 existing tests were updated for the new retry
+behaviour, taking the suite from 339 to 349. (The commit that introduced them
+said 11 and 350; the determinism and requeue-order checks are a single test.) All run against a fake transport. They cover:
 
 - skipped, not failed;
 - a skipped packet retried later in the session;
