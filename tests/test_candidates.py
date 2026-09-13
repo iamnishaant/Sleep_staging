@@ -12,8 +12,9 @@ import unittest
 from pathlib import Path
 
 from candidates.run import (CONTEXT, END_MARK, N_PREDICT, PROMPT_ID, CandidateRun, command,
-                            extract_output, parse_tokens)
-from candidates.score import score_model
+                            entry_hit_token_limit, extract_output, hit_token_limit,
+                            parse_tokens)
+from candidates.score import compare, score_model
 from reference.prompts import build, shape_block
 from reference.run import dev_jobs
 from report.evaluate import PACKET_DIRS
@@ -28,15 +29,17 @@ STDERR = ("common_perf_print: prompt eval time =    9277.24 ms /  1036 tokens (x
 class FakeLlama:
     """Returns a scripted stdout per recording; counts calls."""
 
-    def __init__(self, text=lambda rec: "[]", exit_status=0):
+    def __init__(self, text=lambda rec: "[]", exit_status=0, ended=True, runs=353):
         self.text, self.exit_status, self.calls = text, exit_status, []
+        self.ended, self.runs = ended, runs
 
     def __call__(self, cmd):
         prompt = Path(cmd[cmd.index("-f") + 1]).read_text(encoding="utf-8")
         rec = next(pk["recording_id"] for _, pk in JOBS if pk["recording_id"] in prompt
                    or build(PROMPT_ID, pk) == prompt)
         self.calls.append((rec, cmd))
-        return {"stdout": self.text(rec) + f" {END_MARK}\n\n", "stderr": STDERR,
+        return {"stdout": self.text(rec) + (f" {END_MARK}\n\n" if self.ended else ""),
+                "stderr": STDERR.replace("353 runs", f"{self.runs} runs"),
                 "exit_status": self.exit_status, "wall_s": 1.5,
                 "peak_working_set_bytes": 2 * 2**30, "peak_private_bytes": 2**30}
 
@@ -131,19 +134,57 @@ class TestHarness(Case):
             CandidateRun(MODEL, cache_dir=self.dir, exec_fn=FakeLlama(), jobs=[(PROMPT_ID, pk)])
 
 
+class TestTokenLimit(Case):
+    def test_the_flag_is_the_cap_without_an_end_of_generation(self):
+        self.assertTrue(hit_token_limit(N_PREDICT - 1, ended=False))
+        self.assertFalse(hit_token_limit(1050, ended=True))
+        self.assertFalse(hit_token_limit(N_PREDICT - 1, ended=True))   # ended on the last token
+        self.assertFalse(hit_token_limit(40, ended=False))             # a crash, not the cap
+        self.assertFalse(hit_token_limit(None, ended=False))
+
+    def test_a_capped_generation_is_logged_and_counted(self):
+        fake = FakeLlama(text=lambda rec: '[{"claim_id": "c1"', ended=False, runs=N_PREDICT - 1)
+        self.run_(fake, jobs=JOBS[:1])
+        row = json.loads((self.dir / "log.jsonl").read_text().splitlines()[0])
+        self.assertIs(row["hit_token_limit"], True)
+        s = score_model(MODEL, cache_dir=self.dir / "cache", out_dir=self.dir / "out", jobs=JOBS)
+        self.assertEqual((s["extras"]["overall"]["hit_token_limit"], s["host"]["hit_token_limit"]),
+                         (1, 1))
+
+    def test_entries_written_before_the_flag_derive_it(self):
+        self.assertTrue(entry_hit_token_limit(
+            {"output_tokens": 2999,
+             "extraction": "no end-of-text marker: cut off at the token limit, or failed"}))
+        self.assertFalse(entry_hit_token_limit({"output_tokens": 317, "extraction": "ok"}))
+
+
 class TestScoring(Case):
+    TEXTS = {JOBS[0][1]["recording_id"]: json.dumps(oracle(JOBS[0][1]).witness),
+             JOBS[1][1]["recording_id"]: json.dumps(oracle(JOBS[1][1]).witness),
+             JOBS[2][1]["recording_id"]: "[]"}
+
     def test_hedged_value_is_two_numbers_and_5_of_5_is_a_count(self):
         """Two witnesses (14 hedged each, 5/5), one empty array, 28 missing."""
-        texts = {JOBS[0][1]["recording_id"]: json.dumps(oracle(JOBS[0][1]).witness),
-                 JOBS[1][1]["recording_id"]: json.dumps(oracle(JOBS[1][1]).witness),
-                 JOBS[2][1]["recording_id"]: "[]"}
-        self.run_(FakeLlama(text=lambda rec: texts[rec]))
+        self.run_(FakeLlama(text=lambda rec: self.TEXTS[rec]))
         s = score_model(MODEL, cache_dir=self.dir / "cache", out_dir=self.dir / "out", jobs=JOBS)
         o = s["extras"]["overall"]
         self.assertEqual((o["n"], o["n_present"], o["five_of_five"]), (31, 3, 2))
         self.assertEqual((o["hedged_packets"], o["hedged_claims"]), ("2/31", "28/434"))
         self.assertEqual(s["strata"]["overall"]["n_missing"], 28)
         self.assertEqual(s["host"]["wall_s_total"], 4.5)
+        self.assertEqual((o["hit_token_limit"], s["host"]["context"]), (0, CONTEXT))
+
+    def test_the_comparison_table_reads_each_models_summary(self):
+        self.run_(FakeLlama(text=lambda rec: self.TEXTS[rec]))
+        s = score_model(MODEL, cache_dir=self.dir / "cache", out_dir=self.dir / "out", jobs=JOBS)
+        c = compare([MODEL], out_dir=self.dir / "out")
+        r, h = c["models"][0], c["host"][0]
+        self.assertEqual((r["five_of_five"], r["hedged_packets"], r["hedged_claims"]),
+                         ("2/31", "2/31", "28/434"))
+        self.assertEqual(r["rendered"], f"{s['extras']['overall']['rendered']}/31")
+        self.assertLessEqual(len(r["top_violations"]), 3)
+        self.assertEqual((h["context"], h["hit_token_limit"]), (CONTEXT, "0/31"))
+        self.assertIn("run log only", (self.dir / "out" / "comparison.txt").read_text())
 
 
 if __name__ == "__main__":

@@ -29,6 +29,11 @@ deployment table's figure (one run per model, context 4,096, 512 tokens).
 
 WALL-CLOCK is x86 evaluation-host timing. It belongs in the run log, never in
 the deployment section, where timing is analytical and Pi-targeted.
+
+HIT_TOKEN_LIMIT is logged per generation: the generation was stopped by the
+3,000-token cap rather than by end of generation. The cap is generous against
+the ~805-token oracle witness, so reaching it is degenerate repetition, and
+an observation, not a configuration problem. The cap is not raised.
 """
 from __future__ import annotations
 
@@ -84,6 +89,22 @@ def parse_tokens(stderr: str) -> dict:
     p, g = _PROMPT_TOK.search(stderr), _GEN_TOK.search(stderr)
     return {"prompt_tokens": int(p.group(1)) if p else None,
             "output_tokens": int(g.group(1)) if g else None}
+
+
+def hit_token_limit(output_tokens: int | None, ended: bool) -> bool:
+    """Stopped by the -n cap, not by end of generation: no end-of-text marker,
+    and the decode count at the cap. llama.cpp samples the first token from the
+    prompt pass, so a capped generation reports N_PREDICT - 1 eval runs."""
+    return not ended and output_tokens is not None and output_tokens >= N_PREDICT - 1
+
+
+def entry_hit_token_limit(entry: dict) -> bool:
+    """The flag for a cache entry. Entries written before the flag was logged
+    (Qwen's) derive it the same way, from their token count and extraction note."""
+    if "hit_token_limit" in entry:
+        return entry["hit_token_limit"]
+    ended = not entry["extraction"].startswith("no end-of-text marker")
+    return hit_token_limit(entry["output_tokens"], ended)
 
 
 def exec_llama(cmd: list[str]) -> dict:
@@ -149,10 +170,12 @@ class CandidateRun:
                 cmd = command(self.model_file, prompt_file)
                 r = self.exec_fn(cmd)                   # exactly once: no retries
                 out, note = extract_output(r["stdout"])
+                tokens = parse_tokens(r["stderr"])
+                capped = hit_token_limit(tokens["output_tokens"], END_MARK in r["stdout"])
                 record = {
                     "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                     "key": key, "exit_status": r["exit_status"], "wall_s": r["wall_s"],
-                    **parse_tokens(r["stderr"]),
+                    **tokens, "hit_token_limit": capped,
                     "peak_working_set_bytes": r.get("peak_working_set_bytes"),
                     "peak_private_bytes": r.get("peak_private_bytes"),
                     "peak_rss_method": PEAK_RSS_METHOD, "extraction": note,
@@ -173,7 +196,8 @@ class CandidateRun:
                 done += 1
                 say(f"[{i}/{len(todo)}] {key['recording_id']}: exit {r['exit_status']}, "
                     f"{record['output_tokens']} tokens out, {r['wall_s']} s, "
-                    f"peak {(r.get('peak_working_set_bytes') or 0) / 2**20:.0f} MiB, {note}")
+                    f"peak {(r.get('peak_working_set_bytes') or 0) / 2**20:.0f} MiB, {note}"
+                    + (", HIT TOKEN LIMIT" if capped else ""))
         return {"generated": done, "pending": len(self.pending())}
 
 

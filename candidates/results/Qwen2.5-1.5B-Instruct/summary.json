@@ -744,7 +744,8 @@
    "five_of_five": 0,
    "rendered": 0,
    "hedged_packets": "0/31",
-   "hedged_claims": "0/434"
+   "hedged_claims": "0/434",
+   "hit_token_limit": 1
   },
   "high": {
    "n": 11,
@@ -752,7 +753,8 @@
    "five_of_five": 0,
    "rendered": 0,
    "hedged_packets": "0/11",
-   "hedged_claims": "0/154"
+   "hedged_claims": "0/154",
+   "hit_token_limit": 0
   },
   "medium": {
    "n": 10,
@@ -760,7 +762,8 @@
    "five_of_five": 0,
    "rendered": 0,
    "hedged_packets": "0/10",
-   "hedged_claims": "0/140"
+   "hedged_claims": "0/140",
+   "hit_token_limit": 1
   },
   "low": {
    "n": 10,
@@ -768,7 +771,8 @@
    "five_of_five": 0,
    "rendered": 0,
    "hedged_packets": "0/10",
-   "hedged_claims": "0/140"
+   "hedged_claims": "0/140",
+   "hit_token_limit": 0
   }
  },
  "per_packet": [
@@ -798,7 +802,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1104,
    "peak_working_set_bytes": 2136555520,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4082E0-PSG",
@@ -826,7 +831,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1102,
    "peak_working_set_bytes": 2136264704,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4111E0-PSG",
@@ -852,7 +858,8 @@
    "output_tokens": 401,
    "prompt_tokens": 1098,
    "peak_working_set_bytes": 2136268800,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4112E0-PSG",
@@ -880,7 +887,8 @@
    "output_tokens": 437,
    "prompt_tokens": 1096,
    "peak_working_set_bytes": 2136227840,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4131E0-PSG",
@@ -908,7 +916,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1102,
    "peak_working_set_bytes": 2136363008,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4171E0-PSG",
@@ -933,7 +942,8 @@
    "output_tokens": 2999,
    "prompt_tokens": 1104,
    "peak_working_set_bytes": 2136207360,
-   "extraction": "no end-of-text marker: cut off at the token limit, or failed"
+   "extraction": "no end-of-text marker: cut off at the token limit, or failed",
+   "hit_token_limit": true
   },
   {
    "recording_id": "SC4172E0-PSG",
@@ -961,7 +971,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1106,
    "peak_working_set_bytes": 2136170496,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4321E0-PSG",
@@ -988,7 +999,8 @@
    "output_tokens": 305,
    "prompt_tokens": 1095,
    "peak_working_set_bytes": 2136252416,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4322E0-PSG",
@@ -1019,7 +1031,8 @@
    "output_tokens": 551,
    "prompt_tokens": 1096,
    "peak_working_set_bytes": 2136428544,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4341F0-PSG",
@@ -1047,7 +1060,8 @@
    "output_tokens": 437,
    "prompt_tokens": 1092,
    "peak_working_set_bytes": 2136150016,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4342F0-PSG",
@@ -1074,7 +1088,8 @@
    "output_tokens": 401,
    "prompt_tokens": 1094,
    "peak_working_set_bytes": 2136244224,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4351F0-PSG",
@@ -1101,7 +1116,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1099,
    "peak_working_set_bytes": 2136293376,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4352F0-PSG",
@@ -1127,7 +1143,8 @@
    "output_tokens": 401,
    "prompt_tokens": 1105,
    "peak_working_set_bytes": 2136240128,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4441E0-PSG",
@@ -1154,7 +1171,8 @@
    "output_tokens": 350,
    "prompt_tokens": 1107,
    "peak_working_set_bytes": 2136162304,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4442E0-PSG",
@@ -1180,7 +1198,8 @@
    "output_tokens": 303,
    "prompt_tokens": 1099,
    "peak_working_set_bytes": 2136182784,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4461F0-PSG",
@@ -1211,7 +1230,8 @@
    "output_tokens": 551,
    "prompt_tokens": 1100,
    "peak_working_set_bytes": 2136252416,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4462F0-PSG",
@@ -1239,7 +1259,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1103,
    "peak_working_set_bytes": 2136391680,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4561F0-PSG",
@@ -1276,7 +1297,8 @@
    "output_tokens": 1050,
    "prompt_tokens": 1105,
    "peak_working_set_bytes": 2136264704,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4562F0-PSG",
@@ -1303,7 +1325,8 @@
    "output_tokens": 297,
    "prompt_tokens": 1102,
    "peak_working_set_bytes": 2136195072,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4581G0-PSG",
@@ -1330,7 +1353,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1103,
    "peak_working_set_bytes": 2136297472,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4582G0-PSG",
@@ -1355,7 +1379,8 @@
    "output_tokens": 303,
    "prompt_tokens": 1103,
    "peak_working_set_bytes": 2136289280,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4671G0-PSG",
@@ -1382,7 +1407,8 @@
    "output_tokens": 297,
    "prompt_tokens": 1104,
    "peak_working_set_bytes": 2136395776,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "SC4672G0-PSG",
@@ -1408,7 +1434,8 @@
    "output_tokens": 276,
    "prompt_tokens": 1105,
    "peak_working_set_bytes": 2136387584,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7081J0-PSG",
@@ -1434,7 +1461,8 @@
    "output_tokens": 336,
    "prompt_tokens": 1103,
    "peak_working_set_bytes": 2136334336,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7082J0-PSG",
@@ -1460,7 +1488,8 @@
    "output_tokens": 350,
    "prompt_tokens": 1104,
    "peak_working_set_bytes": 2136170496,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7131J0-PSG",
@@ -1488,7 +1517,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1103,
    "peak_working_set_bytes": 2136289280,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7132J0-PSG",
@@ -1514,7 +1544,8 @@
    "output_tokens": 297,
    "prompt_tokens": 1103,
    "peak_working_set_bytes": 2135621632,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7151J0-PSG",
@@ -1541,7 +1572,8 @@
    "output_tokens": 317,
    "prompt_tokens": 1102,
    "peak_working_set_bytes": 2136174592,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7152J0-PSG",
@@ -1568,7 +1600,8 @@
    "output_tokens": 297,
    "prompt_tokens": 1100,
    "peak_working_set_bytes": 2136424448,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7201J0-PSG",
@@ -1593,7 +1626,8 @@
    "output_tokens": 276,
    "prompt_tokens": 1102,
    "peak_working_set_bytes": 2136154112,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   },
   {
    "recording_id": "ST7202J0-PSG",
@@ -1620,7 +1654,8 @@
    "output_tokens": 401,
    "prompt_tokens": 1100,
    "peak_working_set_bytes": 2136227840,
-   "extraction": "ok"
+   "extraction": "ok",
+   "hit_token_limit": false
   }
  ],
  "host": {
@@ -1631,6 +1666,8 @@
   "wall_s_max": 99.65,
   "peak_working_set_mib_max": 2037.6,
   "peak_working_set_mib_median": 2037.3,
-  "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table"
+  "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+  "context": 12288,
+  "hit_token_limit": 1
  }
 }
