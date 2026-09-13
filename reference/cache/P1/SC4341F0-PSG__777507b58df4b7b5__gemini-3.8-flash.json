@@ -1,0 +1,33 @@
+{
+ "key": {
+  "recording_id": "SC4341F0-PSG",
+  "prompt_id": "P1",
+  "prompt_hash": "777507b58df4b7b51cc6efc5b50919d938cd664f718d16831c97e55a5dae70a7",
+  "model": "gemini-3.8-flash"
+ },
+ "settings": {
+  "thinking": {
+   "thinkingBudget": 0
+  },
+  "max_output_tokens": 16384,
+  "temperature": 0.0,
+  "seed": 0
+ },
+ "ts": "2026-09-13T10:03:08+00:00",
+ "http_status": 200,
+ "session_id": "20260913T095014Z-20012",
+ "attempts": 2,
+ "retry_causes": [
+  "HTTP 503"
+ ],
+ "text": "[\n  {\"claim_id\":\"c1\",\"claim_type\":\"value\",\"cites\":[\"arch.total_sleep_time\"],\"subject\":\"this_recording\",\"value\":430.5,\"unit\":\"minutes\"},\n  {\"claim_id\":\"c2\",\"claim_type\":\"value\",\"cites\":[\"arch.time_in_bed\"],\"subject\":\"this_recording\",\"value\":716.0,\"unit\":\"minutes\"},\n  {\"claim_id\":\"c3\",\"claim_type\":\"value\",\"cites\":[\"arch.sleep_efficiency\"],\"subject\":\"this_recording\",\"value\":0.6013,\"unit\":\"fraction\"},\n  {\"claim_id\":\"c4\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.sleep_onset_latency\"],\"subject\":\"this_recording\",\"value\":282.0,\"unit\":\"minutes\"},\n  {\"claim_id\":\"c5\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.waso\"],\"subject\":\"this_recording\",\"value\":3.5,\"unit\":\"minutes\"},\n  {\"claim_id\":\"c6\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.rem_latency\"],\"subject\":\"this_recording\",\"value\":81.5,\"unit\":\"minutes\"},\n  {\"claim_id\":\"c7\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.rem_latency_sustained\"],\"subject\":\"this_recording\",\"value\":81.5,\"unit\":\"minutes\"},\n  {\"claim_id\":\"c8\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.rem_periods\"],\"subject\":\"this_recording\",\"value\":5,\"unit\":\"count\"},\n  {\"claim_id\":\"c9\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.stage_transitions\"],\"subject\":\"this_recording\",\"value\":65,\"unit\":\"count\"},\n  {\"claim_id\":\"c10\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.transition_rate\"],\"subject\":\"this_recording\",\"value\":5.197,\"unit\":\"per hour\"},\n  {\"claim_id\":\"c11\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.light_deep_ratio\"],\"subject\":\"this_recording\",\"value\":0,\"unit\":\"ratio\"},\n  {\"claim_id\":\"c12\",\"claim_type\":\"hedged_value\",\"cites\":[\"arch.wake_interruptions_per_hour\"],\"subject\":\"this_recording\",\"value\":0.836,\"unit\":\"per hour\"},\n  {\"claim_id\":\"c13\",\"claim_type\":\"hedged_value\",\"cites\":[\"stage.W.fraction\"],\"subject\":\"this_recording\",\"value\":0.4264,\"unit\":\"fraction\"},\n  {\"claim_id\":\"c14\",\"claim_type\":\"hedged_value\",\"cites\":[\"stage.N1.fraction\"],\"subject\":\"this_recording\",\"value\":0.2312,\"unit\":\"fraction\"},\n  {\"claim_id\":\"c15\",\"claim_type\":\"hedged_value\",\"cites\":[\"stage.N2.fraction\"],\"subject\":\"this_recording\",\"value\":0.2725,\"unit\":\"fraction\"},\n  {\"claim_id\":\"c16\",\"claim_type\":\"hedged_value\",\"cites\":[\"stage.N3.fraction\"],\"subject\":\"this_recording\",\"value\":0.0,\"unit\":\"fraction\"},\n  {\"claim_id\":\"c17\",\"claim_type\":\"hedged_value\",\"cites\":[\"stage.REM.fraction\"],\"subject\":\"this_recording\",\"value\":0.07,\"unit\":\"fraction\"},\n  {\"claim_id\":\"c18\",\"claim_type\":\"observation\",\"cites\":[\"night.confidence\"],\"subject\":\"this_recording\",\"text_key\":\"tier_is_high\"},\n  {\"claim_id\":\"c19\",\"claim_type\":\"observation\",\"cites\":[\"model.n1_reliability_warning\"],\"subject\":\"this_recording\",\"text_key\":\"n1_reliability_is_low\"},\n  {\"claim_id\":\"c20\",\"claim_type\":\"review_flag\",\"cites\":[\"model.n1_reliability_warning\"],\"subject\":\"this_recording\",\"reason_key\":\"n1_low_reliability\"}\n]",
+ "finish_reason": "STOP",
+ "model_version": "gemini-3.8-flash",
+ "prompt_feedback": null,
+ "usage": {
+  "prompt_tokens": 1159,
+  "output_tokens": 926,
+  "thinking_tokens": null,
+  "total_tokens": 2085
+ }
+}

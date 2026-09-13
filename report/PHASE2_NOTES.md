@@ -2410,10 +2410,28 @@ Quota is counted per Pacific day, and 503s count against it.
 |---|---|---|---:|---:|---:|---|---:|
 | 12 Sep | 21:07:06 | Antigravity's integrated terminal, by hand (traced after the fact) | 7 | 3 | 4 | the day's budget (20 of 20, preflight included) | 3 / 31 |
 | 13 Sep | 09:08:13 | Antigravity's integrated terminal (`pwsh`, pid 8680, child of Antigravity.exe) running `reference/run.py --go` as pid 6720 | 4 | 0 | 4 | unavailable: 4 consecutive 503s on SC4112E0, remaining allowance untouched (16 of 20 left) | 3 / 31 |
+| 13 Sep | 09:50:14 (806 s wall clock) | Antigravity's integrated terminal, `pwsh` pid 8680, running the skip-and-breaker runner as pid 20012 | 16 | 5 | 11 | the day's budget (20 of 20), with 3 skips; the longest run of consecutive failures was 5, one short of the breaker | 8 / 31 |
 
-**Run attempts so far: 11, of which 3 succeeded and 8 returned 503 (73%).**
-Neither session is a clean full window. The first was the tail of a day, and
-the second was stopped by the service after four attempts.
+**Run attempts so far: 27, of which 8 succeeded and 19 returned 503 (70%).**
+
+The 09:50 session is the first to run to its budget. Its 16 attempts give a
+503 rate of 68.8%, in line with the earlier partial samples. Per packet:
+
+| packet | outcome |
+|---|---|
+| SC4112E0 | 503, 503, skipped (still pending) |
+| SC4131E0 | 503, then 200 |
+| SC4171E0 | 503, then 200 |
+| SC4172E0 | 503, then 200 |
+| SC4321E0 | 503, 503, skipped (still pending) |
+| SC4322E0 | 503, 503, skipped (still pending) |
+| SC4341F0 | 503, then 200 (the success came after 5 consecutive failures, one short of the breaker) |
+| SC4342F0 | 200 |
+| SC4351F0 | 503, then the budget ran out (still pending) |
+
+The three skipped packets were not reached again before the budget ran out.
+**23 P1 packets remain.** At about 5 responses per 20-attempt day, that is
+roughly 4–5 more days.
 
 ---
 
