@@ -1,7 +1,7 @@
 # Phase 2 status report: the language-model tier
 
 **Sleep-EDF sleep-staging report pipeline · Team 40 · Project 48**
-**Status as of 13 September 2026 · branch `team-40`**
+**Status as of 14 September 2026 · branch `team-40`**
 
 This is the readable overview. The full record, with every decision, number
 and correction, is `report/PHASE2_NOTES.md`. The deterministic tier (schema,
@@ -19,15 +19,21 @@ fully clean claim set is rendered into fixed clinician-register wording.
 
 Phase 2 asks how well a model can fill that contract.
 
-The deterministic tier is **finished, frozen and tested** (364 tests). The
-**local small-model tier** is set up and has been probed: five candidate
-models are on disk, and Qwen2.5-1.5B has been explored on one night. The
+The deterministic tier is **finished, frozen and tested** (368 tests). The
+**local small-model tier** is being measured. Qwen2.5-1.5B has now been run
+on all 31 dev nights: 0 of 31 at 5/5 mandatory, with no hedged values. The
+other four candidates are running. The
 **reference run** with a strong hosted model (Gemini 3.8 Flash) is **in
 progress**, at 8 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
 5-class target are done: measured memory and analytical throughput.
 
-The next step is to finish the reference run, then measure the five local
-models on the same 31 nights.
+Next:
+
+- finish the reference run and the five-model measurement;
+- apply the pre-registered rule.
+
+The 2G grammar ablation is designed and waiting in
+`report/PHASE2G_ABLATION.md`.
 
 ---
 
@@ -52,7 +58,7 @@ schema, and prompt P1.
 nights, one medium and one low, in manifest order, so the harder tiers are
 under-sampled. The pre-registered decision rule applies at 31 nights (§6).
 
-### 2.2 The local small model does not: exploratory, one night
+### 2.2 The local small model does not: one night, then all 31
 
 This was Qwen2.5-1.5B-Instruct (Q4_K_M, llama.cpp, grammar-constrained,
 temperature 0) on dev night SC4111E0, run under five prompt variants. It is
@@ -202,11 +208,11 @@ A person starts each session; nothing runs on a timer.
 
 ## 5. Integrity
 
-- **364 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
+- **368 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
   unchanged throughout.
 - **The frozen tier** (`report/` rules, schema, grammar, coverage, oracle,
   evaluator) is untouched by the 2F and deployment work, which lives in
-  `reference/` and `deploy/`.
+  `reference/`, `deploy/` and `candidates/`.
 - **Nothing is evaluated on the test set** until every selection is final.
 - **The API key** lives only in the git-ignored `.env`.
 
@@ -224,11 +230,13 @@ A person starts each session; nothing runs on a timer.
    - **near zero:** the contract itself is the ceiling;
    - **mid-range, around 12 of 31:** run P2, because prompt design plausibly
      explains the gap.
-3. **Meanwhile, with no quota needed: measure the five local models on the
-   same 31 dev nights, under P1.** Use the same prompt, grammar-constrained,
-   temperature 0. This is the gap measurement 2F exists for. It needs a
-   go-ahead, because the prompt format for the local models is a selection
-   decision made on dev.
+3. **Under way: the five local models on the same 31 dev nights, under P1.**
+   The runs are grammar-constrained, at temperature 0, with one generation per
+   packet. This is the gap measurement 2F exists for.
+   - Qwen2.5-1.5B is done: 0 of 31 at 5/5 and no hedged values (§2.2).
+   - SmolLM2-1.7B is running. Gemma-2-2b, Llama-3.2-3B and Phi-3.5-mini
+     follow.
+   - Each generation now logs whether it hit the 3,000-token cap.
 
 ### Then: 2G
 
@@ -236,6 +244,12 @@ A person starts each session; nothing runs on a timer.
   tier, with cited coverage showing *why* each misses.
 - **The grammar ablation:** constrained against unconstrained generation, to
   measure what the grammar buys.
+  - **Status:** designed and pre-registered, not run.
+  - **Where:** `report/PHASE2G_ABLATION.md`.
+  - **What it fixes in advance:** the arms, the strict scoring and how each
+    outcome will be read, before any unconstrained output exists.
+  - **Its built-in check:** the grammar rules out 14 of the 30 violation
+    codes, so any of them in the constrained arm means a harness fault.
 - **Deployment framing:** the Pi 5-class envelope, written as plausibility for
   batch use.
 - **If the gap is large and the contract satisfiable:** distillation, with
@@ -263,8 +277,9 @@ A person starts each session; nothing runs on a timer.
 
 | path | contents |
 |---|---|
-| `report/` | the frozen deterministic tier, and `PHASE2_NOTES.md`, the full lab record |
+| `report/` | the frozen deterministic tier, and `PHASE2_NOTES.md`, the full lab record; `PHASE2G_ABLATION.md`, the 2G ablation design |
 | `reference/` | the reference-model tier: schema, client, runner, scorer, prompts, cache, logs |
 | `deploy/` | size, memory and throughput analysis; the GGUF reader; results |
-| `tests/` | 364 tests |
+| `candidates/` | the local-candidate harness: runner, scorer, cache, logs, per-model results |
+| `tests/` | 368 tests |
 | `distillation/results/` | evidence packets and split manifests |
