@@ -426,6 +426,7 @@ python test_evaluate.py           # calibration on oracle witnesses
 python test_reference_schema.py   # 2F responseSchema: generated, agrees with the grammar
 python test_reference_run.py      # 2F runner and scorer, offline: cache, budget, retries
 python test_deploy.py             # deployment arithmetic on a synthetic GGUF file
+python test_candidates.py         # local-candidate harness and scorer, offline: cache, no retries, token limit
 ```
 
 368 tests.
