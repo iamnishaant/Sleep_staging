@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 349
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 354
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2480,6 +2480,30 @@ said 11 and 350; the determinism and requeue-order checks are a single test.) Al
 - the budget counting attempts but no events;
 - session summaries;
 - a test packet refused at the queue.
+
+### The runner now says what it decided (13 September 2026)
+
+A `--go` session used to print the status header and then nothing until the
+session ended. While it waited out a 20–160 s backoff, it looked exactly like
+a dry run that had returned. That is how the 09:50 UTC session was taken for
+one that had sent nothing, when in fact it was running and had already made
+three attempts.
+
+The command line now announces:
+
+- whether it is starting a session (how many packets are pending and how many
+  attempts are left), or not starting and why (the budget is used, or nothing
+  is pending);
+- every attempt's result;
+- every wait, for backoff or for pacing;
+- every skip;
+- why it stopped, and a closing summary.
+
+A session that declines to start still writes its summary, marked
+`"started": false`. Used as a library, the runner stays silent, and a test
+asserts it.
+
+5 tests were added, taking the suite from 349 to 354.
 
 ---
 

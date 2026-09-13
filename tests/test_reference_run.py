@@ -393,6 +393,55 @@ class TestSkipAndBreaker(Case):
             self.runner(FakeTransport(self.clock), jobs=[("P1", pk)])
 
 
+class TestTheRunnerSaysWhatItDecided(Case):
+    """A session waiting out a backoff printed nothing and looked exactly like
+    a dry run that had returned. Every decision is now announced."""
+
+    def test_a_sending_session_announces_its_start_each_attempt_and_its_end(self):
+        msgs: list[str] = []
+        self.runner(FakeTransport(self.clock, script=[503, 503]), jobs=JOBS[:3],
+                    progress=msgs.append).run()
+        self.assertIn("starting session", msgs[0])
+        self.assertIn("3 pending", msgs[0])
+        joined = "\n".join(msgs)
+        for phrase in ("HTTP 503 - 1 consecutive failure", "waiting", "skipping",
+                       "HTTP 200 - cached", "ended: complete"):
+            self.assertIn(phrase, joined)
+        self.assertIn("ended: complete", msgs[-1])
+
+    def test_an_exhausted_budget_is_announced_and_nothing_is_sent(self):
+        self.seed_log(20, self.clock.now() - timedelta(hours=1))
+        msgs: list[str] = []
+        t = FakeTransport(self.clock)
+        s = self.runner(t, limit=20, jobs=JOBS[:3], progress=msgs.append).run()
+        self.assertEqual((len(t.calls), s["stopped"], s["session"]["started"]),
+                         (0, "budget", False))
+        self.assertIn("not starting: today's budget is used (20 of 20", msgs[0])
+
+    def test_nothing_pending_is_announced(self):
+        self.runner(FakeTransport(self.clock), jobs=JOBS[:1]).run()
+        msgs: list[str] = []
+        t = FakeTransport(self.clock)
+        s = self.runner(t, jobs=JOBS[:1], progress=msgs.append).run()
+        self.assertEqual((len(t.calls), s["stopped"]), (0, "complete"))
+        self.assertIn("not starting: nothing pending", msgs[0])
+
+    def test_the_breaker_says_why_it_stopped(self):
+        msgs: list[str] = []
+        self.runner(FakeTransport(self.clock, script=[503] * 6), jobs=JOBS[:5],
+                    progress=msgs.append).run()
+        self.assertTrue(any("service looks unavailable" in m for m in msgs))
+        self.assertIn("ended: service_unavailable", msgs[-1])
+
+    def test_without_a_callback_the_runner_is_silent(self):
+        """Library use and the test suite stay quiet; only the CLI prints."""
+        import contextlib, io
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.runner(FakeTransport(self.clock, script=[503, 503]), jobs=JOBS[:2]).run()
+        self.assertEqual(buf.getvalue(), "")
+
+
 class TestScoring(Case):
     def test_five_of_five_count_and_a_reference_set_of_passing_responses_only(self):
         """Two witnesses (perfect) and one malformed response, cached for P1."""

@@ -182,7 +182,9 @@ class Runner:
                  successes_only: bool = False, transport=generate,
                  clock=lambda: datetime.now(timezone.utc), sleep=time.sleep,
                  rand=random.random, cache_dir: Path = CACHE_DIR,
-                 log_dir: Path = LOG_DIR, jobs=None, model: str = REFERENCE_MODEL):
+                 log_dir: Path = LOG_DIR, jobs=None, model: str = REFERENCE_MODEL,
+                 progress=None):
+        self.progress = progress              # callable(str); the CLI always passes print
         self.max_attempts_today = max_attempts_today
         self.successes_only = successes_only
         self.transport, self.clock, self.sleep, self.rand = transport, clock, sleep, rand
@@ -233,7 +235,15 @@ class Runner:
         if last is not None:
             wait = MIN_GAP_S - (self.clock() - last).total_seconds()
             if wait > 0:
+                if wait >= 1:
+                    self._say(f"pacing: waiting {wait:.0f} s (5 requests per minute)")
                 self.sleep(wait)
+
+    def _say(self, msg: str) -> None:
+        """Say what the runner decided. A session that looks identical to a dry
+        run while it waits out a backoff is how an operator gets misled."""
+        if self.progress is not None:
+            self.progress(f"[{self.clock():%H:%M:%S}Z] {msg}")
 
     def _backoff(self, n: int) -> float:
         return min(BASE_DELAY_S * 2 ** (n - 1), MAX_BACKOFF_S) + self.rand() * BASE_DELAY_S / 2
@@ -254,6 +264,22 @@ class Runner:
         skips: list[dict] = []
         consecutive = 0                           # session-wide; any success resets it
         stop = at = last_error = None
+        started = False
+        used = self.used_today()
+        if not queue:
+            stop = "complete"
+            self._say("not starting: nothing pending - every scheduled job is already cached")
+        elif used >= self.max_attempts_today:
+            stop = "budget"
+            self._say(f"not starting: today's budget is used ({used} of "
+                      f"{self.max_attempts_today} attempts on Pacific {pacific_date(start)}); "
+                      f"it resets at midnight Pacific")
+        else:
+            started = True
+            first = queue[0]
+            self._say(f"starting session {sid}: {len(queue)} pending, "
+                      f"{self.max_attempts_today - used} of {self.max_attempts_today} attempts "
+                      f"left today; first {first[0]}/{first[3]['recording_id']}")
         try:
             while queue and stop is None:
                 prompt_id, pk, text, key = queue[0]
@@ -262,9 +288,15 @@ class Runner:
                 while True:
                     if self.used_today() >= self.max_attempts_today:
                         stop = "budget"
+                        self._say(f"stopping: today's budget is used ({self.max_attempts_today} "
+                                  f"attempts); {label} stays pending")
                         break
                     if consecutive:
-                        self.sleep(self._backoff(consecutive))
+                        wait = self._backoff(consecutive)
+                        self._say(f"waiting {wait:.0f} s before the next attempt (backoff after "
+                                  f"{consecutive} consecutive failure"
+                                  f"{'s' if consecutive > 1 else ''})")
+                        self.sleep(wait)
                     self._pace()
                     n = tried[label] = tried.get(label, 0) + 1
                     prior = packet_causes.get(label, [])
@@ -288,18 +320,26 @@ class Runner:
                                                              "thinking_tokens", "total_tokens")}})
                         consecutive = 0
                         queue.popleft()
+                        self._say(f"{label} attempt {n}: HTTP 200 - cached; "
+                                  f"{len(queue)} still pending")
                         break
                     cause = f"HTTP {r['http_status']}" if r["http_status"] else str(r["error"])
                     if not is_retryable(r):
                         stop, last_error = "api_error", r.get("error") or cause
+                        self._say(f"stopping: {label} attempt {n} returned {cause}, which is "
+                                  f"not retryable - {last_error}")
                         break
                     consecutive += 1
                     run_here += 1
                     causes[cause] += 1
                     packet_causes.setdefault(label, []).append(cause)
                     last_error = cause
+                    self._say(f"{label} attempt {n}: {cause} - {consecutive} consecutive "
+                              f"failure{'s' if consecutive > 1 else ''} in this session")
                     if consecutive >= BREAKER_AFTER:
                         stop = "service_unavailable"
+                        self._say(f"stopping: {consecutive} consecutive failures - the service "
+                                  f"looks unavailable; the rest of today's allowance is untouched")
                         break
                     if run_here >= SKIP_AFTER:
                         queue.rotate(-1)          # to the back; still pending
@@ -312,6 +352,8 @@ class Runner:
                                 "next": queue[0][3]["recording_id"]}
                         self._event(skip)
                         skips.append(skip)
+                        self._say(f"skipping {label} after {run_here} consecutive failures; "
+                                  f"requeued to position {len(queue)}, next {skip['next']}")
                         break
                 if stop is not None:
                     at = (prompt_id, key["recording_id"])
@@ -332,10 +374,13 @@ class Runner:
                 "attempts": attempts, "successes": statuses[200], "503s": statuses[503],
                 "503_rate": round(statuses[503] / attempts, 3) if attempts else None,
                 "failures_by_cause": dict(causes), "skips": len(skips),
-                "stop_reason": stop, "caller": caller()}
+                "started": started, "stop_reason": stop, "caller": caller()}
             self.sessions_path.parent.mkdir(parents=True, exist_ok=True)
             with self.sessions_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(session) + "\n")
+            self._say(f"session {sid} ended: {stop}; {attempts} attempts, {statuses[200]} "
+                      f"cached, {statuses[503]} x 503, {len(skips)} skips, "
+                      f"{session['wall_clock_seconds']} s")
         return {"sent": statuses[200], "attempts": attempts, "stopped": stop, "at": at,
                 "last_error": last_error, "skips": skips, "session": session,
                 "status": self.status()}
@@ -349,7 +394,8 @@ def main(argv=None) -> int:
     ap.add_argument("--show-request", action="store_true",
                     help="print the resolved request for the next job; sends nothing")
     a = ap.parse_args(argv)
-    runner = Runner(max_attempts_today=a.max_attempts_today, successes_only=a.successes_only)
+    runner = Runner(max_attempts_today=a.max_attempts_today, successes_only=a.successes_only,
+                    progress=(lambda m: print(m, flush=True)) if a.go else None)
     if a.show_request:
         prompt_id, pk, text, key = next(runner.keyed_jobs())
         kw = runner.request_kwargs()
