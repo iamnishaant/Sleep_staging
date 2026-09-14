@@ -1,7 +1,7 @@
 # Phase 2 status report: the language-model tier
 
 **Sleep-EDF sleep-staging report pipeline · Team 40 · Project 48**
-**Status as of 14 September 2026 · branch `team-40`**
+**Status as of 15 September 2026 · branch `team-40`**
 
 This is the readable overview. The full record, with every decision, number
 and correction, is `report/PHASE2_NOTES.md`. The deterministic tier (schema,
@@ -22,15 +22,23 @@ Phase 2 asks how well a model can fill that contract.
 The deterministic tier is **finished, frozen and tested** (394 tests). The
 **local small-model tier** has been measured: all five candidates, on all
 31 dev nights, under P1. None reaches the contract. The best is 2 of 31
-nights at 5/5 (Llama-3.2-3B, date pinned), and neither passes. The
+nights at 5/5 (Llama-3.2-3B, date pinned), and neither passes. That count
+is a point observation: changing only the date in Llama's prompt moved it
+from 4 to 2. The
 **reference run** with a strong hosted model (Gemini 3.8 Flash) is **in
-progress**, at 8 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
+progress**, at 9 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
 5-class target are done: measured memory and analytical throughput.
 
 Next:
 
-- finish the reference run;
+- finish the reference run. 9 of 31 are saved, and 7 of those 9 are
+  high-confidence nights, so the harder tiers are barely sampled;
 - apply the pre-registered rule.
+
+**Training is conditional.** If the reference run clears the pre-registered
+bar at 31 nights, the local side becomes a training problem. The training
+set and Kaggle kit are built and waiting on that rule. Qwen2.5-1.5B is the
+recommended student.
 
 The 2G grammar ablation is designed and waiting in
 `report/PHASE2G_ABLATION.md`.
@@ -125,10 +133,17 @@ September 2026:
 - **One Phi packet (SC4081E0) first failed on host memory,** before
   generating a token. It was generated once on 14 September, and is
   included above.
-- **Llama was re-run with its date pinned,** using
-  `--chat-template-file student/templates/Llama-3.2-3B-Instruct.pinned.jinja`.
-  Only 3 of its 31 outputs matched the unpinned run, and its 5/5 count moved
-  from 4 to 2. Its figures here are the pinned run's.
+- **Llama's 2/31 is a point observation, not a stable count.**
+  - **The change:** Llama was re-run with its chat-template date pinned
+    (`--chat-template-file student/templates/Llama-3.2-3B-Instruct.pinned.jinja`),
+    a change that says nothing about the task.
+  - **What moved:** 28 of its 31 outputs changed. Five nights started
+    looping, five stopped, and 10 changed their count of mandatory facts.
+  - **The 5/5 count:** it moved from 4 to 2, with only ST7081J0 at 5/5 in
+    both runs. Another irrelevant change could as easily give 0 or 4.
+  - **What to report:** the figures across 31 nights are the reportable
+    unit, and single nights are not. Its figures here are the pinned
+    run's.
 - **The reference model, for contrast:** on its 8 nights so far, it scored
   5/5, with 14 hedged values and a rendered report, every night.
 
@@ -224,10 +239,19 @@ variant) is held in reserve.
 | 12 Sep | 21:07 UTC | 7 | 3 | 4 | daily budget |
 | 13 Sep | 09:08 UTC | 4 | 0 | 4 | four failures in a row (old runner) |
 | 13 Sep | 09:50 UTC | 16 | 5 | 11 | daily budget |
-| **total** | | **27** | **8** | **19 (70%)** | |
+| 14 Sep | 08:40 UTC | 2 | 0 | 2 | stopped by hand during a backoff wait |
+| 14 Sep | 12:41 UTC | 3 | 0 | 3 | stopped by hand during a backoff wait |
+| 14 Sep | 18:02 UTC | 9 | 1 | 8 | six failures in a row (the breaker) |
+| **total** | | **41** | **9** | **32 (78%)** | |
 
-**Progress: 8 of 31.** 23 remain. At about 5 responses per 20-attempt day,
-that is **roughly 4–5 more days**.
+**Progress: 9 of 31, with 22 remaining.**
+
+- **The rate:** 9 of 41 attempts succeed, which is about 4 responses per
+  full 20-attempt day.
+- **The estimate:** roughly 5 more full days.
+- **The sample so far:** 7 of the 9 saved nights are high-confidence,
+  because the manifest order puts them first. SC4321E0, the ninth, is
+  saved but not scored.
 
 **Running a session** (after 07:00 UTC, when the Pacific day resets):
 
@@ -268,7 +292,8 @@ A person starts each session; nothing runs on a timer.
    (§2.2).
    - No candidate reaches the contract on any night.
    - The best is Llama-3.2-3B, at 2 of 31 nights at 5/5 with its date
-     pinned, neither of which passes.
+     pinned, neither of which passes. That is a point observation: the date
+     change alone moved it from 4.
    - One Phi packet first failed on host memory. It was generated once on
      14 September, and its failed record is kept in `P1-host-failures/`.
 
@@ -278,12 +303,12 @@ A person starts each session; nothing runs on a timer.
 |---|---|---|
 | Safety layer | The frozen schema, grammar, verifier and renderer. Every model output passes through it. | decided |
 | Prompt | P1: the frozen `build_prompt` body plus run C's claim-shape rules. P2 is held in reserve. | in use |
-| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses decide the 2F rule and measure the gap. | 8 of 31 |
+| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses decide the 2F rule and measure the gap. | 9 of 31 |
 | Local runtime | llama.cpp b10927 (CPU), Q4_K_M, grammar-constrained. The grammar stays, and 2G measures what it buys. | in use |
 | Local model, as prompted | None. Not one of the 155 generations both passes verification and covers all five mandatory facts. | not usable |
-| Approach | Distillation on the 137 training nights (69 subjects, disjoint from dev and test), with the oracle's verified claim sets as targets. Design: `report/PHASE2_DISTILLATION.md`. | decided; runs if 2F routes there |
-| Training | On Kaggle. The training set is built: `student/trainset`, with 123 training and 14 validation nights. | decided |
-| Student model | **Qwen2.5-1.5B**, with Llama-3.2-3B trained alongside as the capacity comparison. | recommendation |
+| Approach | Distillation on the 137 training nights (69 subjects, disjoint from dev and test), with the oracle's verified claim sets as targets. Design: `report/PHASE2_DISTILLATION.md`. | if the rule routes there |
+| Training | On Kaggle, if training runs. The training set is built: `student/trainset`, with 123 training and 14 validation nights. | venue decided; runs only if the rule routes there |
+| Student model | **Qwen2.5-1.5B**, with Llama-3.2-3B as the capacity comparison, if the rule routes to training. | recommendation |
 | Deployment target | Raspberry Pi 5 (8 GB), overnight batch reporting. | analytical |
 
 **Why Qwen2.5-1.5B:**
@@ -301,8 +326,9 @@ A person starts each session; nothing runs on a timer.
 
 **Why Llama-3.2-3B alongside:**
 
-- **Capacity:** it is the only model to reach 5/5 (2 nights, date pinned),
-  and the only one that hedges all 14 items when it finishes.
+- **Capacity:** it is the only model to reach 5/5, though only as point
+  observations (2 nights pinned, 4 unpinned, 1 in common). It is also the only
+  one that hedges all 14 items when it finishes.
 - **What it tests:** whether that extra capacity is worth about twice the
   memory, and 266–380 s per report on a Pi 5.
 
@@ -338,8 +364,8 @@ applied.
   designed in `report/PHASE2_DISTILLATION.md`.
   - **Done:** the 137 training packets are built, and the oracle's claim set
     verifies and renders on all of them.
-  - **Decided:** the oracle's claim sets are the targets, and training runs
-    on Kaggle.
+  - **Decided, for if training runs:** the oracle's claim sets are the
+    targets, and training would run on Kaggle.
   - **Done:** the training set, `student/trainset`, with 123 training and 14
     validation nights. Every target is checked against the grammar, the
     verifier and the oracle.

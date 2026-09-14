@@ -13,6 +13,11 @@ Nothing has been trained. This document fixes the following before any student i
 That is the same discipline as the 2F decision rule and the 2G ablation
 (`report/PHASE2G_ABLATION.md`).
 
+**Whether any student is trained is not decided here.** Training runs only
+if the 2F rule, applied at 31 reference responses, finds the contract
+satisfiable, and 2G confirms the gap (section 1). Every "decided" below
+applies if it does.
+
 ---
 
 ## 1. Why, and when
@@ -100,14 +105,14 @@ The low and medium nights are what teach the review flag and the tier keys.
 | option | what | cost | verified clean |
 |---|---|---|---|
 | **A. Oracle witness** | The oracle's maximal verified claim set for each training packet | Free and instant, and deterministic | Yes, by construction |
-| B. Reference model | Gemini 3.8 Flash under P1, on each training packet | About four weeks at the free tier's ~5 successful responses a day | Only after verification; failures would need handling |
-| C. A, checked by B | A for all 137, and B on a sample of 20 nights, to show the two agree | About four days of quota | A yes; B checked |
+| B. Reference model | Gemini 3.8 Flash under P1, on each training packet | About a month at the free tier's current ~4 successful responses a day (9 of 41 attempts succeed) | Only after verification; failures would need handling |
+| C. A, checked by B | A for all 137, and B on a sample of 20 nights, to show the two agree | About five days of quota | A yes; B checked |
 
 **Recommendation: A.**
 
 - **The reference adds no content.** Its 8 responses so far recover the
   oracle's content exactly (oracle recovery 1.0 on every night).
-- **B's cost buys nothing.** It would spend four weeks of quota to produce
+- **B's cost buys nothing.** It would spend about a month of quota to produce
   what A produces deterministically.
 - **C is worth having only as evidence** that the reference and the oracle
   agree beyond the dev nights. It is not needed as training data.
@@ -154,7 +159,7 @@ measured and before any training.
 **Students.**
 
 - **Qwen2.5-1.5B-Instruct** is the lead.
-- **Llama-3.2-3B-Instruct** is trained alongside it as the capacity
+- **Llama-3.2-3B-Instruct** would be trained alongside it as the capacity
   comparison.
 
 The reasons are in `report/PHASE2_STATUS.md`, "What we will use".

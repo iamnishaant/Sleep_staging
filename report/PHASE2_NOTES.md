@@ -2411,8 +2411,13 @@ Quota is counted per Pacific day, and 503s count against it.
 | 12 Sep | 21:07:06 | Antigravity's integrated terminal, by hand (traced after the fact) | 7 | 3 | 4 | the day's budget (20 of 20, preflight included) | 3 / 31 |
 | 13 Sep | 09:08:13 | Antigravity's integrated terminal (`pwsh`, pid 8680, child of Antigravity.exe) running `reference/run.py --go` as pid 6720 | 4 | 0 | 4 | unavailable: 4 consecutive 503s on SC4112E0, remaining allowance untouched (16 of 20 left) | 3 / 31 |
 | 13 Sep | 09:50:14 (806 s wall clock) | Antigravity's integrated terminal, `pwsh` pid 8680, running the skip-and-breaker runner as pid 20012 | 16 | 5 | 11 | the day's budget (20 of 20), with 3 skips; the longest run of consecutive failures was 5, one short of the breaker | 8 / 31 |
+| 14 Sep | 08:40:54 (70 s) | by hand: `reference/run.py --go` as pid 14644 (parent 17872) | 2 | 0 | 2 | stopped by hand (Ctrl+C) during the 49 s backoff; SC4112E0 skipped | 8 / 31 |
+| 14 Sep | 12:41:51 (112 s) | by hand: `reference/run.py --go` as pid 1180 (parent 25768) | 3 | 0 | 3 | stopped by hand (Ctrl+C) during the 84 s backoff | 8 / 31 |
+| 14 Sep | 18:02:05 (693 s) | by hand: `reference/run.py --go` as pid 11824 (parent 25768) | 9 | 1 | 8 | the breaker: six consecutive failures after SC4321E0's 200; 3 skips; 14 of the day's 20 attempts used | 9 / 31 |
 
-**Run attempts so far: 27, of which 8 succeeded and 19 returned 503 (70%).**
+**Run attempts so far: 41, of which 9 succeeded and 32 returned 503 (78%).**
+Before the 14 September sessions, the figure was 27 attempts, 8 successes
+and 19 503s (70%).
 
 The 09:50 session is the first to run to its budget. Its 16 attempts give a
 503 rate of 68.8%, in line with the earlier partial samples. Per packet:
@@ -2430,8 +2435,20 @@ The 09:50 session is the first to run to its budget. Its 16 attempts give a
 | SC4351F0 | 503, then the budget ran out (still pending) |
 
 The three skipped packets were not reached again before the budget ran out.
-**23 P1 packets remain.** At about 5 responses per 20-attempt day, that is
-roughly 4–5 more days.
+**22 P1 packets remain.** At the current rate (9 of 41 attempts succeed,
+about 4 responses per full 20-attempt day), that is roughly 5 more full
+days.
+
+**The 14 September sessions:**
+
+- **08:40 and 12:41 UTC:** SC4112E0 returned 503 twice in each.
+- **18:02 UTC:** SC4112E0 returned 503 twice more. SC4321E0 then returned
+  200. SC4322E0, SC4351F0 and SC4352F0 returned 503 twice each, and the
+  breaker stopped the session.
+
+A correction to a figure given in conversation on 14 September: "26 of 34
+(76%)" double-counted the 08:40 session. After the two morning sessions,
+the true figure was 24 of 32 (75%).
 
 **Interim pipeline check, 13 September 2026: 8 of 31. This is not a
 result.** The 8 saved responses were scored with `reference.score` into a
@@ -2440,7 +2457,8 @@ zero violations: 5/5 mandatory, 14/14 discretionary, 17/17 numbers exact,
 14 `hedged_value` claims each, and every one renders. The reference set's
 oracle recovery is 1.0 on each night. The 8 are six high, one medium and one
 low tier (manifest order), so the harder tiers are under-sampled. **The
-decision rule is applied at 31, not now.**
+decision rule is applied at 31, not now.** The ninth response, SC4321E0
+(saved 14 September), is also high-confidence, and is not scored.
 
 ---
 
@@ -2717,6 +2735,11 @@ This table is written by `candidates/results/comparison.{json,txt}`
 evaluator's `mandatory_coverage`, with a missing or malformed output counted
 as 0.
 
+**Llama's 2/31 is a point observation, not a stable count.** Changing only
+the date in its chat template moved it from 4 to 2. See *Llama-3.2-3B re-run
+with its date pinned*, and *Per-night results are point observations* under
+*What the five show*.
+
 **Distribution of mandatory facts verified, nights per score:**
 
 | model | 0/5 | 1/5 | 2/5 | 3/5 | 4/5 | 5/5 |
@@ -2870,6 +2893,8 @@ The per-rule counts are:
 - **Its 5/5 nights still fail.** The two nights at 5/5 are both low tier
   (SC4111E0 and ST7081J0). They fail on 17 and 14 violations, mostly
   unhedged duplicates.
+- **They are point observations.** In the unpinned run, the 5/5 nights were
+  SC4581G0, SC4582G0, ST7081J0 and ST7151J0. Only ST7081J0 is in both.
 
 **Phi-3.5-mini-instruct**
 
@@ -2993,6 +3018,19 @@ at context 4,096.
   model except SmolLM2, at 0.941 on its one valid output.
 - **The loops are grammar-legal.** 51 of the 155 generations hit
   the cap, all from SmolLM2, Llama and Qwen.
+- **Per-night results are point observations.** At temperature 0 with one
+  generation per night, each night's outcome is a single draw from a
+  deterministic but prompt-sensitive process, for every model here.
+  - **How far a night can move:** Llama shows it under a change with no
+    task content. Pinning its chat-template date changed 28 of 31 outputs.
+    Five nights started looping, five stopped, and 10 changed their count
+    of mandatory facts.
+  - **What that does to small counts:** the 5/5 count moved from 4 to 2,
+    with only one night at 5/5 in both runs. Llama's 2/31 could as easily
+    have been 0 or 4 under a different irrelevant change.
+  - **The rule for reporting:** **population figures across 31 nights are
+    the reportable unit. Single nights, and small counts built from them,
+    are not.**
 - **The gap is large.** Against the reference's interim result (8 of 8 at
   5/5, 14 hedged values and a rendered report on every night), the gap is
   large for every candidate. That is the "gap large" condition for
@@ -3060,10 +3098,13 @@ measured and before any training (design, section 3.3).
 
 ## Distillation training set (14 September 2026)
 
-**The two decisions, taken on 14 September:**
+**The two decisions, taken on 14 September, for if training runs:**
 
 - the targets are the oracle's verified claim sets (option A);
-- training runs on Kaggle.
+- training would run on Kaggle.
+
+Neither decides whether training runs. That is the 2F rule's decision, at
+31 reference responses.
 
 `student/build_set.py` (new) builds the training set from the 137 training
 packets.
@@ -3237,6 +3278,8 @@ Of the five GGUF templates, only Llama's reads the date. That is now a test.
 - **10 nights changed** their count of mandatory facts.
 - **The capped nights changed too.** Five nights that looped unpinned now end,
   and five that ended now loop.
+- **The 5/5 nights changed too.** Unpinned: SC4581G0, SC4582G0, ST7081J0 and
+  ST7151J0. Pinned: SC4111E0 and ST7081J0. Only ST7081J0 is in both.
 
 **Reading.** A date line that carries no task information changes 28 of 31
 greedy outputs.
@@ -3245,8 +3288,9 @@ greedy outputs.
   night that finishes restates the hedged items as plain values.
 - **The per-night outcomes are not.** So neither are small counts like 5/5:
   the move from 4 to 2 is within that sensitivity.
-- **Two consequences:** the date is pinned, and single-night outcomes for a
-  loop-prone model should not be read as stable.
+- **Two consequences:** the date is pinned, and single-night outcomes should
+  not be read as stable, for this model or any other here. See *What the
+  five show*, *Per-night results are point observations*.
 - **Llama's figures elsewhere in these notes are the pinned run's.**
 
 ---
