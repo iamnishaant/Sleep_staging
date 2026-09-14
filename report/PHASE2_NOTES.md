@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 368
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 374
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2710,7 +2710,7 @@ generation.
 | SmolLM2-1.7B | 0/31 | 0.019 | 0/31 | 0/434 | 0/31 | `malformed_json` 30, `unsafe_item_not_hedged` 14, `uncited_quantity` 1 |
 | Gemma-2-2b | 0/31 | 0.219 | 31/31 | 50/434 | 1/31 | `text_key_predicate_false` 22, `text_key_dependency_missing` 20, `unsafe_item_not_hedged` 1 |
 | Llama-3.2-3B | **4/31** | 0.310 | 11/31 | 156/434 | 0/31 | `unsafe_item_not_hedged` 150, `malformed_json` 20, `text_key_predicate_false` 9 |
-| Phi-3.5-mini | 0/31 | 0.348 | 20/31 | 102/434 | **9/31** | `safe_item_hedged` 60, `text_key_dependency_missing` 26, `text_key_predicate_false` 7 |
+| Phi-3.5-mini | 0/31 | 0.368 | 20/31 | 102/434 | **9/31** | `safe_item_hedged` 60, `text_key_dependency_missing` 27, `text_key_predicate_false` 8 |
 
 This table is written by `candidates/results/comparison.{json,txt}`
 (`python -m candidates.score --compare`). The mandatory mean is the
@@ -2725,9 +2725,10 @@ as 0.
 | SmolLM2-1.7B | 30 | 0 | 0 | 1 | 0 | 0 |
 | Gemma-2-2b | 0 | 28 | 3 | 0 | 0 | 0 |
 | Llama-3.2-3B | 20 | 0 | 0 | 0 | 7 | 4 |
-| Phi-3.5-mini | 6 | 15 | 0 | 1 | 9 | 0 |
+| Phi-3.5-mini | 5 | 15 | 0 | 2 | 9 | 0 |
 
-Phi's 0/5 count includes SC4081E0, which has no output (see *Run events*).
+Phi's row includes SC4081E0, first a host failure and generated once on 14
+September (see *Run events*).
 
 ### `hedged_value`, as two numbers
 
@@ -2758,9 +2759,9 @@ the second is total `hedged_value` claims out of 14 per packet.
 | SmolLM2-1.7B | 30/31 | 10 | 10 | 10 |
 | Gemma-2-2b | 0/31 | 0 | 0 | 0 |
 | Llama-3.2-3B | 20/31 | 8 | 6 | 6 |
-| Phi-3.5-mini | 0/30 | 0 | 0 | 0 |
+| Phi-3.5-mini | 0/31 | 0 | 0 | 0 |
 
-That is **51 of the 154 completed generations.**
+That is **51 of the 155 generations.**
 
 - **Every capped output is malformed JSON,** because the array is cut off.
 - **It is not a grammar violation.** Every truncated claim is a legal
@@ -2875,27 +2876,27 @@ The per-rule counts are:
 
 | metric | overall | high | medium | low |
 |---|---:|---:|---:|---:|
-| outputs present | 30/31 | 10/11 | 10/10 | 10/10 |
-| schema-valid | 30/31 | 10/11 | 10/10 | 10/10 |
+| outputs present | 31/31 | 11/11 | 10/10 | 10/10 |
+| schema-valid | 31/31 | 11/11 | 10/10 | 10/10 |
 | overall pass | **9/31** | 9 | 0 | 0 |
-| mandatory mean | 0.348 | 0.709 | 0.100 | 0.200 |
+| mandatory mean | 0.368 | 0.764 | 0.100 | 0.200 |
 | packets at 5/5 | 0 | 0 | 0 | 0 |
 | discretionary coverage | 0.097 | 0.000 | 0.300 | 0.000 |
-| cited mandatory / discretionary | 0.774 / 0.157 | 0.727 / 0.006 | 0.800 / 0.479 | 0.800 / 0.000 |
+| cited mandatory / discretionary | 0.800 / 0.159 | 0.800 / 0.013 | 0.800 / 0.479 | 0.800 / 0.000 |
 | oracle recovery · unrecovered available | 0.097 · 12.65 | 0.000 · 14.0 | 0.300 · 9.8 | 0.000 · 14.0 |
 | numeric fidelity | 1.000 | 1.000 | 1.000 | 1.000 |
 | rendered | 9/31 | 9 | 0 | 0 |
-| violations | 93 | 2 | 61 | 30 |
+| violations | 95 | 4 | 61 | 30 |
 
 The per-rule counts are:
 
 - `L2.safe_item_hedged` 60 (0 / 30 / 30);
-- `L2.text_key_dependency_missing` 26 (1 / 25 / 0);
-- `L2.text_key_predicate_false` 7 (1 / 6 / 0).
+- `L2.text_key_dependency_missing` 27 (2 / 25 / 0);
+- `L2.text_key_predicate_false` 8 (2 / 6 / 0).
 
 **What its outputs look like:** a fixed template for each tier.
 
-- **High (9 of 10 nights).** Always the same four claims: plain values for
+- **High (9 of 11 nights).** Always the same four claims: plain values for
   total sleep time, time in bed and efficiency, plus a `tier_is_high`
   observation on night confidence. That verifies 4 of 5 facts, and the report
   is clean and renders. The N1 warning is never stated.
@@ -2928,11 +2929,18 @@ reports are the "clean but incomplete" case at scale: 0 violations with 4 of
   started just after the probe.
   - **The error:** `failed to allocate buffer of size 4831838208` for the KV
     cache. Exit 1 after 5.8 s, with no token generated.
-  - **Handling:** recorded as a failed process and not retried. The scorer
-    counts it as a missing output, so Phi is measured on 30 of 31 nights.
-    Every later Phi packet allocated.
-  - **Decision pending:** whether to generate this packet once (it has never
-    been generated), or keep it as a host failure.
+  - **Handling:** recorded as a failed process and not retried, so the
+    scorer first counted it as a missing output. Every later Phi packet
+    allocated.
+  - **Resolved on 14 September.** On the user's decision, it was generated
+    once, which is its first generation.
+    - The failed entry was moved, with its history, to
+      `candidates/cache/Phi-3.5-mini-instruct/P1-host-failures/`, and its
+      run-log row is kept.
+    - It allocated normally and ran in 75.7 s (371 tokens). It is high
+      tier, with 3 of 5 mandatory facts and two key violations, and it is
+      not rendered.
+    - Phi's figures above include it.
 
 ### Host figures: the x86 evaluation host, run log only
 
@@ -2942,10 +2950,10 @@ reports are the "clean but incomplete" case at scale: 0 violations with 4 of
 | SmolLM2-1.7B | 6,708.3 | 95.10 / 204.13 / 289.61 | 4,152.9 / 4,152.5 | 12,288 |
 | Gemma-2-2b | 957.1 | 27.19 / 31.67 / 41.34 | 3,594.4 / 3,594.2 | 12,288 |
 | Llama-3.2-3B | 6,935.7 | 145.66 / 251.79 / 350.01 | 4,743.4 / 4,743.2 | 12,288 |
-| Phi-3.5-mini | 4,629.4 | 5.80 (the failure) / 139.09 / 423.76 | 8,169.6 / 6,941.7 | 12,288 |
+| Phi-3.5-mini | 4,699.3 | 63.06 / 139.09 / 423.76 | 8,169.6 / 6,941.7 | 12,288 |
 
-**Total: 19,818.8 s, about 5 h 30 min.** That excludes the two interrupted
-packets and the probe.
+**Total: 19,888.7 s, about 5 h 31 min.** That excludes the two interrupted
+packets, the probe and the 5.8 s host failure.
 
 **How peak RSS was gathered:**
 
@@ -2983,7 +2991,7 @@ at context 4,096.
     low nights.
 - **Numbers are never the problem.** Numeric fidelity is 1.000 for every
   model except SmolLM2, at 0.941 on its one valid output.
-- **The loops are grammar-legal.** 51 of the 154 completed generations hit
+- **The loops are grammar-legal.** 51 of the 155 generations hit
   the cap, all from SmolLM2, Llama and Qwen.
 - **The gap is large.** Against the reference's interim result (8 of 8 at
   5/5, 14 hedged values and a rendered report on every night), the gap is

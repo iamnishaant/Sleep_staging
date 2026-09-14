@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T20:57:37+00:00",
+ "ts": "2026-09-14T08:46:01+00:00",
  "key": {
   "recording_id": "SC4081E0-PSG",
   "model": "Phi-3.5-mini-instruct",
@@ -7,15 +7,15 @@
   "prompt_id": "P1",
   "prompt_hash": "9debf798798273930399b2c4edeb9b975c3cc4fd9effb0178116684090c7e515"
  },
- "exit_status": 1,
- "wall_s": 5.8,
- "prompt_tokens": null,
- "output_tokens": null,
+ "exit_status": 0,
+ "wall_s": 75.74,
+ "prompt_tokens": 1320,
+ "output_tokens": 371,
  "hit_token_limit": false,
- "peak_working_set_bytes": 2623840256,
- "peak_private_bytes": 6161498112,
+ "peak_working_set_bytes": 7257776128,
+ "peak_private_bytes": 6292615168,
  "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
- "extraction": "no end-of-text marker: cut off at the token limit, or failed",
+ "extraction": "ok",
  "runtime": "b10927",
  "settings": {
   "n_predict": 3000,
@@ -25,7 +25,7 @@
   "template": "--jinja -cnv -st",
   "grammar": "report/claims.gbnf"
  },
- "text": "",
- "stderr_tail": "0.00.063.509 I llama_completion: llama backend init\r\n0.00.063.522 I llama_completion: load the model and apply lora adapter, if any\r\n0.00.223.827 W load_arch_hparams: Phi SWA is currently disabled - results might be suboptimal for some models (see https://github.com/ggml-org/llama.cpp/pull/13676)\r\n0.00.237.595 W load: control-looking token:      2 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden\r\n0.05.126.513 E ggml_backend_cpu_buffer_type_alloc_buffer: failed to allocate buffer of size 4831838208\r\n0.05.126.530 E alloc_tensor_range: failed to allocate CPU buffer of size 4831838208\r\n0.05.138.897 E llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache\r\n0.05.138.913 E cmn  common_init_: failed to create context with model 'C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf'\r\n0.05.138.915 E cmn  common_init_: failed to create context with model 'C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf'\r\n0.05.138.923 E llama_completion: error: unable to create context\r\n",
- "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f C:\\Users\\shahn\\AppData\\Local\\Temp\\tmpsu44f4v8\\SC4081E0-PSG.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt"
+ "text": "[\r\n  {\r\n    \"claim_id\": \"c1\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\"arch.total_sleep_time\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 410.0,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c2\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\"arch.time_in_bed\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 537.0,\r\n    \"unit\": \"minutes\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c3\",\r\n    \"claim_type\": \"value\",\r\n    \"cites\": [\"arch.sleep_efficiency\"],\r\n    \"subject\": \"this_recording\",\r\n    \"value\": 0.7635,\r\n    \"unit\": \"fraction\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c4\",\r\n    \"claim_type\": \"observation\",\r\n    \"cites\": [\"stage.W.fraction\"],\r\n    \"subject\": \"this_recording\",\r\n    \"text_key\": \"tier_is_high\"\r\n  },\r\n  {\r\n    \"claim_id\": \"c5\",\r\n    \"claim_type\": \"review_flag\",\r\n    \"cites\": [\"night.confidence\"],\r\n    \"subject\": \"this_recording\",\r\n    \"reason_key\": \"low_night_confidence\"\r\n  }\r\n]",
+ "stderr_tail": "llama_completion: chat template example:\r\n<|system|>\r\nYou are a helpful assistant<|end|>\r\n<|user|>\r\nHello<|end|>\r\n<|assistant|>\r\nHi there<|end|>\r\n<|user|>\r\nHow are you?<|end|>\r\n<|assistant|>\r\n\r\n0.09.598.527 I \r\n0.09.601.536 I system_info: n_threads = 8 (n_threads_batch = 8) / 16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | \r\n0.09.601.541 I \r\n0.09.619.593 I sampler seed: 0\r\n0.09.619.913 I sampler params: \r\n\trepeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000\r\n\tdry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 64\r\n\ttop_k = 40, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000\r\n\tmirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900\r\n0.09.620.640 I sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist \r\n0.09.620.645 I generate: n_ctx = 12288, n_batch = 2048, n_predict = 3000, n_keep = 0\r\n0.09.620.645 I \r\n1.14.946.026 I common_perf_print:    sampling time =      85.64 ms\r\n1.14.946.032 I common_perf_print:    samplers time =      12.13 ms /  1692 tokens\r\n1.14.946.034 I common_perf_print:        load time =    9189.10 ms\r\n1.14.946.506 I common_perf_print: prompt eval time =   23432.50 ms /  1320 tokens (   17.75 ms per token,    56.33 tokens per second)\r\n1.14.946.511 I common_perf_print:        eval time =   41777.68 ms /   371 runs   (  112.61 ms per token,     8.88 tokens per second)\r\n1.14.946.511 I common_perf_print:       total time =   65356.84 ms /  1691 tokens\r\n1.14.946.513 I common_perf_print: unaccounted time =      61.02 ms /   0.1 %      (total - sampling - prompt eval - eval) / (total)\r\n1.14.946.515 I common_perf_print:    graphs reused =        369\r\n",
+ "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f C:\\Users\\shahn\\AppData\\Local\\Temp\\tmpcqgvnodq\\SC4081E0-PSG.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt"
 }

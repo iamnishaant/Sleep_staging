@@ -2,21 +2,21 @@ evaluation of 31 outputs (phase2_dev_manifest.json)
 
 metric                                           overall                      high                    medium                       low
 --------------------------------------------------------------------------------------------------------------------------------------
-schema validity                  96.8%   (30/31) n=31      90.9%   (10/11) n=11     100.0%   (10/10) n=10     100.0%   (10/10) n=10   
+schema validity                 100.0%   (31/31) n=31     100.0%   (11/11) n=11     100.0%   (10/10) n=10     100.0%   (10/10) n=10   
 overall pass                     29.0%    (9/31) n=31      81.8%    (9/11) n=11       0.0%    (0/10) n=10       0.0%    (0/10) n=10   
-policy pass (of schema-valid)    30.0%    (9/30) n=31      90.0%    (9/10) n=11       0.0%    (0/10) n=10       0.0%    (0/10) n=10   
-mandatory coverage                         0.348 n=31                0.709 n=11                0.100 n=10                0.200 n=10   
+policy pass (of schema-valid)    29.0%    (9/31) n=31      81.8%    (9/11) n=11       0.0%    (0/10) n=10       0.0%    (0/10) n=10   
+mandatory coverage                         0.368 n=31                0.764 n=11                0.100 n=10                0.200 n=10   
   packets at 5/5                               0 n=31                    0 n=11                    0 n=10                    0 n=10   
 discretionary coverage (/14)               0.097 n=31                0.000 n=11                0.300 n=10                0.000 n=10   
-cited mandatory (diag.)                    0.774 n=31                0.727 n=11                0.800 n=10                0.800 n=10   
-cited discretionary (diag.)                0.157 n=31                0.006 n=11                0.479 n=10                0.000 n=10   
+cited mandatory (diag.)                    0.800 n=31                0.800 n=11                0.800 n=10                0.800 n=10   
+cited discretionary (diag.)                0.159 n=31                0.013 n=11                0.479 n=10                0.000 n=10   
 oracle recovery                            0.097 n=31                0.000 n=11                0.300 n=10                0.000 n=10   
 unrecovered available (mean)              12.645 n=31               14.000 n=11                9.800 n=10               14.000 n=10   
 numeric fidelity                           1.000 n=31                1.000 n=11                1.000 n=10                1.000 n=10   
-unsupported claim rate                     0.166 n=31                0.049 n=11                0.287 n=10                0.000 n=10   
-violations (count)                            93 n=31                    2 n=11                   61 n=10                   30 n=10   
-failed outputs                                21 n=31                    1 n=11                   10 n=10                   10 n=10   
-missing outputs                                1 n=31                    1 n=11                    0 n=10                    0 n=10   
+unsupported claim rate                     0.172 n=31                0.087 n=11                0.287 n=10                0.000 n=10   
+violations (count)                            95 n=31                    4 n=11                   61 n=10                   30 n=10   
+failed outputs                                22 n=31                    2 n=11                   10 n=10                   10 n=10   
+missing outputs                                0 n=31                    0 n=11                    0 n=10                    0 n=10   
 
 violations by rule (count; every co-occurring violation is kept)
 code                                             overall                      high                    medium                       low
@@ -42,8 +42,8 @@ L2.unit_mismatch                               0 n=31                    0 n=11 
 L2.unsafe_item_not_hedged                      0 n=31                    0 n=11                    0 n=10                    0 n=10   
 L2.safe_item_hedged                           60 n=31                    0 n=11                   30 n=10                   30 n=10   
 L2.stage_tier_unavailable                      0 n=31                    0 n=11                    0 n=10                    0 n=10   
-L2.text_key_dependency_missing                26 n=31                    1 n=11                   25 n=10                    0 n=10   
-L2.text_key_predicate_false                    7 n=31                    1 n=11                    6 n=10                    0 n=10   
+L2.text_key_dependency_missing                27 n=31                    2 n=11                   25 n=10                    0 n=10   
+L2.text_key_predicate_false                    8 n=31                    2 n=11                    6 n=10                    0 n=10   
 L2.rem_latency_double_count                    0 n=31                    0 n=11                    0 n=10                    0 n=10   
 L2.rem_error_differenced                       0 n=31                    0 n=11                    0 n=10                    0 n=10   
 L2.missing_review_flag                         0 n=31                    0 n=11                    0 n=10                    0 n=10   

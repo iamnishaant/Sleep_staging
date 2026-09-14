@@ -1,0 +1,31 @@
+{
+ "ts": "2026-09-13T20:57:37+00:00",
+ "key": {
+  "recording_id": "SC4081E0-PSG",
+  "model": "Phi-3.5-mini-instruct",
+  "model_file": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+  "prompt_id": "P1",
+  "prompt_hash": "9debf798798273930399b2c4edeb9b975c3cc4fd9effb0178116684090c7e515"
+ },
+ "exit_status": 1,
+ "wall_s": 5.8,
+ "prompt_tokens": null,
+ "output_tokens": null,
+ "hit_token_limit": false,
+ "peak_working_set_bytes": 2623840256,
+ "peak_private_bytes": 6161498112,
+ "peak_rss_method": "fresh process per packet; peak working set of that process, read from Windows after exit (GetProcessMemoryInfo); x86 evaluation host, context 12288 - not comparable with the deployment table",
+ "extraction": "no end-of-text marker: cut off at the token limit, or failed",
+ "runtime": "b10927",
+ "settings": {
+  "n_predict": 3000,
+  "context": 12288,
+  "temperature": 0,
+  "seed": 0,
+  "template": "--jinja -cnv -st",
+  "grammar": "report/claims.gbnf"
+ },
+ "text": "",
+ "stderr_tail": "0.00.063.509 I llama_completion: llama backend init\r\n0.00.063.522 I llama_completion: load the model and apply lora adapter, if any\r\n0.00.223.827 W load_arch_hparams: Phi SWA is currently disabled - results might be suboptimal for some models (see https://github.com/ggml-org/llama.cpp/pull/13676)\r\n0.00.237.595 W load: control-looking token:      2 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden\r\n0.05.126.513 E ggml_backend_cpu_buffer_type_alloc_buffer: failed to allocate buffer of size 4831838208\r\n0.05.126.530 E alloc_tensor_range: failed to allocate CPU buffer of size 4831838208\r\n0.05.138.897 E llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache\r\n0.05.138.913 E cmn  common_init_: failed to create context with model 'C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf'\r\n0.05.138.915 E cmn  common_init_: failed to create context with model 'C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf'\r\n0.05.138.923 E llama_completion: error: unable to create context\r\n",
+ "command": "-m C:\\Users\\shahn\\models\\Phi-3.5-mini-instruct-Q4_K_M.gguf --jinja -cnv -st -f C:\\Users\\shahn\\AppData\\Local\\Temp\\tmpsu44f4v8\\SC4081E0-PSG.txt --grammar-file F:\\Sleep_project\\Sleep-Staging\\report\\claims.gbnf -n 3000 -c 12288 --temp 0 --seed 0 --no-display-prompt"
+}

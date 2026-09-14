@@ -426,10 +426,10 @@ python test_evaluate.py           # calibration on oracle witnesses
 python test_reference_schema.py   # 2F responseSchema: generated, agrees with the grammar
 python test_reference_run.py      # 2F runner and scorer, offline: cache, budget, retries
 python test_deploy.py             # deployment arithmetic on a synthetic GGUF file
-python test_candidates.py         # local-candidate harness and scorer, offline: cache, no retries, token limit
+python test_candidates.py         # local-candidate harness and scorer, offline: cache, no retries, token limit, 2G arm B
 ```
 
-368 tests.
+374 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.

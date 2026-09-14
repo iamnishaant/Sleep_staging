@@ -19,7 +19,7 @@ fully clean claim set is rendered into fixed clinician-register wording.
 
 Phase 2 asks how well a model can fill that contract.
 
-The deterministic tier is **finished, frozen and tested** (368 tests). The
+The deterministic tier is **finished, frozen and tested** (374 tests). The
 **local small-model tier** has been measured: all five candidates, on all
 31 dev nights, under P1. None reaches the contract. The best is 4 of 31
 nights at 5/5 (Llama-3.2-3B), and none of those passes. The
@@ -109,7 +109,7 @@ September 2026:
 | SmolLM2-1.7B | 0/31 | 0.019 | 0/31 | 0/434 | 0/31 | 30/31 |
 | Gemma-2-2b | 0/31 | 0.219 | 31/31 | 50/434 | 1/31 | 0/31 |
 | Llama-3.2-3B | 4/31 | 0.310 | 11/31 | 156/434 | 0/31 | 20/31 |
-| Phi-3.5-mini | 0/31 | 0.348 | 20/31 | 102/434 | 9/31 | 0/30 |
+| Phi-3.5-mini | 0/31 | 0.368 | 20/31 | 102/434 | 9/31 | 0/31 |
 
 - **No candidate satisfies the contract on any night.** Llama's four 5/5
   nights also restate the hedged items as plain values. Phi's nine clean
@@ -122,8 +122,9 @@ September 2026:
   - **Phi** hedges the safe facts on medium and low nights.
 - **Numbers are never the problem:** numeric fidelity is 1.000 for four of
   the five.
-- **One Phi packet (SC4081E0) failed on host memory** before generating a
-  token. It counts as missing here, pending a decision.
+- **One Phi packet (SC4081E0) first failed on host memory,** before
+  generating a token. It was generated once on 14 September, and is
+  included above.
 - **The reference model, for contrast:** on its 8 nights so far, it scored
   5/5, with 14 hedged values and a rendered report, every night.
 
@@ -237,7 +238,7 @@ A person starts each session; nothing runs on a timer.
 
 ## 5. Integrity
 
-- **368 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
+- **374 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
   unchanged throughout.
 - **The frozen tier** (`report/` rules, schema, grammar, coverage, oracle,
   evaluator) is untouched by the 2F and deployment work, which lives in
@@ -264,13 +265,8 @@ A person starts each session; nothing runs on a timer.
    - No candidate reaches the contract on any night.
    - The best is Llama-3.2-3B, at 4 of 31 nights at 5/5, none of which
      passes.
-   - One Phi packet failed on host memory, and awaits a decision.
-4. **Open decision: Phi's SC4081E0.** The host could not allocate its KV
-   cache, so no token was generated.
-   - **Option 1:** run it once. That would be its first real generation.
-   - **Option 2:** keep it as a recorded host failure.
-
-   Only Phi's figures change.
+   - One Phi packet first failed on host memory. It was generated once on
+     14 September, and its failed record is kept in `P1-host-failures/`.
 
 ### What we will use
 
@@ -280,7 +276,7 @@ A person starts each session; nothing runs on a timer.
 | Prompt | P1: the frozen `build_prompt` body plus run C's claim-shape rules. P2 is held in reserve. | in use |
 | Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses become the reference set if the rule says the contract is satisfiable. | 8 of 31 |
 | Local runtime | llama.cpp b10927 (CPU), Q4_K_M, grammar-constrained. The grammar stays, and 2G measures what it buys. | in use |
-| Local model, as prompted | None. Not one of the 154 completed generations both passes verification and covers all five mandatory facts. | not usable |
+| Local model, as prompted | None. Not one of the 155 generations both passes verification and covers all five mandatory facts. | not usable |
 | Approach | Distillation: train a small model on the reference set, whose oracle recovery is 1.0 on every night so far. | if 2F routes there |
 | Student model | **Qwen2.5-1.5B**, with Llama-3.2-3B trained alongside as the capacity comparison. | recommendation |
 | Deployment target | Raspberry Pi 5 (8 GB), overnight batch reporting. | analytical |
@@ -362,5 +358,5 @@ applied.
 | `reference/` | the reference-model tier: schema, client, runner, scorer, prompts, cache, logs |
 | `deploy/` | size, memory and throughput analysis; the GGUF reader; results |
 | `candidates/` | the local-candidate harness: runner, scorer, cache, logs, per-model results |
-| `tests/` | 368 tests |
+| `tests/` | 374 tests |
 | `distillation/results/` | evidence packets and split manifests |

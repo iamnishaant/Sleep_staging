@@ -11,6 +11,8 @@ reports:
   - hedged_value as TWO numbers: packets using it at least once (of n), and
     total hedged_value claims (of 14 x n, the discretionary items);
   - how many generations hit the token limit;
+  - for 2G arm B (--arm unconstrained), the same, strict; --normalise adds
+    the declared single-fence reading, exploratory;
   - host wall-clock and peak RSS from the run log. These are x86
     evaluation-host figures, for the run log only.
 
@@ -24,6 +26,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
+import re
 import shutil
 import statistics
 from pathlib import Path
@@ -32,7 +36,7 @@ from deploy.measure import MODELS
 from report import render_report, verify_report
 from report.evaluate import PACKET_DIRS, STRATA, TIERS, evaluate
 from report.render import RenderRefused
-from .run import (CACHE_DIR, CONTEXT, DEV_MANIFEST, PEAK_RSS_METHOD, CandidateRun,
+from .run import (ARM_DIRS, CACHE_DIR, CONTEXT, DEV_MANIFEST, PEAK_RSS_METHOD, CandidateRun,
                   entry_hit_token_limit)
 
 HERE = Path(__file__).resolve().parent
@@ -40,9 +44,20 @@ RESULTS_DIR = HERE / "results"
 DISCRETIONARY_ITEMS = 14
 
 
+def result_dir(out_dir: Path, model_name: str, arm: str = "constrained",
+               normalise: bool = False) -> Path:
+    """Arm A's results stay where the P1 run put them; arm B's sit beside them."""
+    if arm == "constrained":
+        return out_dir / model_name
+    return out_dir / model_name / (ARM_DIRS[arm] + ("-fence" if normalise else ""))
+
+
 def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
-                out_dir: Path = RESULTS_DIR, jobs=None) -> dict:
-    run = CandidateRun(model_name, cache_dir=cache_dir, jobs=jobs, exec_fn=None)
+                out_dir: Path = RESULTS_DIR, jobs=None, arm: str = "constrained",
+                normalise: bool = False) -> dict:
+    if normalise and arm == "constrained":
+        raise ValueError("the fence reading is arm B's secondary reading only")
+    run = CandidateRun(model_name, cache_dir=cache_dir, jobs=jobs, exec_fn=None, arm=arm)
     entries = {}
     for pk, _, key in run.keyed():
         e = run.cached(key)
@@ -50,11 +65,14 @@ def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
             entries[key["recording_id"]] = e
     usable = {r: e for r, e in entries.items() if e["exit_status"] == 0}
 
-    outputs = out_dir / model_name / "outputs"
+    texts = {r: (strip_single_fence(e["text"]) if normalise else e["text"])
+             for r, e in usable.items()}
+    base = result_dir(out_dir, model_name, arm, normalise)
+    outputs = base / "outputs"
     shutil.rmtree(outputs, ignore_errors=True)
     outputs.mkdir(parents=True)
-    for rec, e in usable.items():
-        (outputs / f"{rec}.json").write_text(e["text"], encoding="utf-8")
+    for rec, text in texts.items():
+        (outputs / f"{rec}.json").write_text(text, encoding="utf-8")
     rep = evaluate(outputs, DEV_MANIFEST)
     d = rep.as_dict()
 
@@ -81,7 +99,7 @@ def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
                     "hit_token_limit": entry_hit_token_limit(e)}
         if x.present:
             pk = json.loads((PACKET_DIRS["val"] / f"{rec}.json").read_text(encoding="utf-8"))
-            r = verify_report(usable[rec]["text"], pk)
+            r = verify_report(texts[rec], pk)
             claims = [c for c in (r.claims or []) if isinstance(c, dict)] \
                 if isinstance(r.claims, list) else []
             row["hedged_value"] = sum(c.get("claim_type") == "hedged_value" for c in claims)
@@ -113,14 +131,15 @@ def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
             "peak_working_set_mib_median": round(statistics.median(peaks) / 2**20, 1) if peaks else None,
             "peak_rss_method": PEAK_RSS_METHOD, "context": CONTEXT,
             "hit_token_limit": sum(r.get("hit_token_limit", False) for r in rows)}
-    summary = {"model": model_name, "prompt_id": "P1", "n_cached": len(entries),
+    summary = {"model": model_name, "prompt_id": "P1", "arm": arm,
+               "scoring": "single-fence reading (exploratory)" if normalise else "strict",
+               "n_cached": len(entries),
                "n_failed_processes": len(entries) - len(usable),
                "strata": {s: d["strata"][s] for s in STRATA},
                "extras": {s: extras(v) for s, v in by.items()},
                "per_packet": rows, "host": host}
-    (out_dir / model_name / "summary.json").write_text(json.dumps(summary, indent=1),
-                                                       encoding="utf-8")
-    (out_dir / model_name / "table.txt").write_text(rep.format_table() + "\n", encoding="utf-8")
+    (base / "summary.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
+    (base / "table.txt").write_text(rep.format_table() + "\n", encoding="utf-8")
     summary["table"] = rep.format_table()
     return summary
 
@@ -165,16 +184,131 @@ def compare(models=tuple(MODELS), *, out_dir: Path = RESULTS_DIR) -> dict:
     return out
 
 
+_FENCE = re.compile(r"\A```[A-Za-z0-9_+-]*[ \t]*\n(.*?)\n?[ \t]*```\Z", re.S)
+
+
+def strip_single_fence(text: str) -> str:
+    """Arm B's secondary reading, declared before arm B ran (PHASE2G_ABLATION.md,
+    section 4): if the whole output, trimmed, is one Markdown code fence with no
+    other fence inside, score its body. Nothing else is repaired."""
+    m = _FENCE.match(text.strip())
+    if m is None or "```" in m.group(1):
+        return text
+    return m.group(1)
+
+
+def mcnemar_exact(b: int, c: int) -> float:
+    """Two-sided exact McNemar on the discordant cells. Descriptive only."""
+    n = b + c
+    if n == 0:
+        return 1.0
+    return min(1.0, 2 * sum(math.comb(n, i) for i in range(min(b, c) + 1)) / 2 ** n)
+
+
+# The codes claims.gbnf makes ungeneratable, except by truncation (PHASE2G_ABLATION.md,
+# section 2). Any of them in arm A is a harness fault, investigated before a result is read.
+UNGENERATABLE = ("L1.not_an_array", "L1.not_an_object", "L1.missing_base_field",
+                 "L1.unknown_claim_type", "L1.missing_required_field", "L1.unknown_field",
+                 "L1.forbidden_derived_field", "L1.bad_field_type", "L1.unknown_evidence_id",
+                 "L1.unknown_reason_key", "L1.unknown_subject", "L1.unknown_text_key",
+                 "L1.bad_cites_arity", "L2.bad_subject_for_type")
+
+
+def grammar_check(summary: dict) -> dict:
+    rules = summary["strata"]["overall"]["per_rule"]
+    return {c: rules[c]["count"] for c in UNGENERATABLE if rules.get(c, {}).get("count")}
+
+
+MEASURES = {
+    "schema_valid": lambda r: r["present"] and not any(v.startswith("L1.") for v in r["violations"]),
+    "five_of_five": lambda r: r["present"] and r["mandatory"] == 5,
+    "rendered": lambda r: r["rendered"],
+}
+
+
+def paired(a: dict, b: dict) -> dict:
+    """Per measure, the 2x2 of arm A (yes/no) against arm B (yes/no) over the same packets."""
+    ra = {r["recording_id"]: r for r in a["per_packet"]}
+    rb = {r["recording_id"]: r for r in b["per_packet"]}
+    if set(ra) != set(rb):
+        raise ValueError("the two arms were scored over different packets")
+    out = {}
+    for name, f in MEASURES.items():
+        cells = {"both": 0, "a_only": 0, "b_only": 0, "neither": 0}
+        for rec in ra:
+            x, y = f(ra[rec]), f(rb[rec])
+            cells["both" if x and y else "a_only" if x else "b_only" if y else "neither"] += 1
+        cells["mcnemar_exact_p"] = round(mcnemar_exact(cells["a_only"], cells["b_only"]), 4)
+        out[name] = cells
+    return out
+
+
+def _headline(s: dict) -> dict:
+    o, e = s["strata"]["overall"], s["extras"]["overall"]
+    return {"schema_valid": f"{o['schema_validity_rate_num']}/{o['schema_validity_rate_den']}",
+            "five_of_five": f"{o['n_mandatory_full']}/{e['n']}",
+            "mandatory_mean": o["mandatory_coverage"],
+            "hedged_packets": e["hedged_packets"], "hedged_claims": e["hedged_claims"],
+            "rendered": f"{e['rendered']}/{e['n']}",
+            "hit_token_limit": f"{e['hit_token_limit']}/{e['n']}",
+            "top_violations": top_codes(o)}
+
+
+def ablation(models=tuple(MODELS), *, out_dir: Path = RESULTS_DIR) -> dict:
+    """2G: each model's arm A (the P1 run) against arm B, strict and fence-read."""
+    def load(p):
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+    per_model, lines = {}, []
+    for m in models:
+        a = load(result_dir(out_dir, m) / "summary.json")
+        b = load(result_dir(out_dir, m, "unconstrained") / "summary.json")
+        bf = load(result_dir(out_dir, m, "unconstrained", True) / "summary.json")
+        if a is None or b is None:
+            raise SystemExit(f"{m}: arm {'A' if a is None else 'B'} is not scored yet")
+        arms = {"A": a, "B strict": b, **({"B fence": bf} if bf else {})}
+        rep = {"grammar_check_arm_a": grammar_check(a),
+               "arms": {k: _headline(s) for k, s in arms.items()},
+               "paired_strict": paired(a, b),
+               "paired_fence": paired(a, bf) if bf else None}
+        per_model[m] = rep
+        fault = rep["grammar_check_arm_a"]
+        lines.append(m + (f"   HARNESS FAULT: arm A shows {fault}" if fault else ""))
+        for k, h in rep["arms"].items():
+            lines.append(f"  {k:<9} valid {h['schema_valid']:>6}  5/5 {h['five_of_five']:>6}  "
+                         f"hedged {h['hedged_packets']:>6} {h['hedged_claims']:>8}  "
+                         f"rendered {h['rendered']:>6}  capped {h['hit_token_limit']:>6}")
+        for label in ("strict", "fence"):
+            pt = rep[f"paired_{label}"]
+            if pt:
+                lines.append(f"  paired, B {label}: " + "; ".join(
+                    f"{meas} A-only {c['a_only']} B-only {c['b_only']} (p={c['mcnemar_exact_p']})"
+                    for meas, c in pt.items()))
+    table = "\n".join(lines)
+    out = {"models": per_model, "table": table,
+           "note": "McNemar p-values are descriptive only: 31 packets and five models."}
+    (out_dir / "ablation.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (out_dir / "ablation.txt").write_text(table + "\n", encoding="utf-8")
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--model")
     g.add_argument("--compare", action="store_true")
+    g.add_argument("--ablation", action="store_true", help="2G: arm A against arm B, per model")
+    ap.add_argument("--arm", choices=tuple(ARM_DIRS), default="constrained")
+    ap.add_argument("--normalise", action="store_true",
+                    help="arm B's declared single-fence reading (exploratory)")
     a = ap.parse_args(argv)
     if a.compare:
         print(compare()["table"])
         return 0
-    s = score_model(a.model)
+    if a.ablation:
+        print(ablation()["table"])
+        return 0
+    s = score_model(a.model, arm=a.arm, normalise=a.normalise)
     print(s["table"])
     for stratum, e in s["extras"].items():
         print(f"  {stratum:<8} {e}")

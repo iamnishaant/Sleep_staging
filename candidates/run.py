@@ -2,6 +2,9 @@
 
     python -m candidates.run --model Qwen2.5-1.5B-Instruct          the plan; runs nothing
     python -m candidates.run --model Qwen2.5-1.5B-Instruct --go     every uncached packet
+    python -m candidates.run --model Qwen2.5-1.5B-Instruct --arm unconstrained --go
+                                2G ablation arm B: the grammar removed (gated, see
+                                report/PHASE2G_ABLATION.md)
 
 SETTINGS are the diagnostics' (runs A-C, PHASE2_NOTES), and the reference run's
 where they apply:
@@ -56,6 +59,8 @@ CACHE_DIR = HERE / "cache"
 LOG_PATH = HERE / "logs" / "runs.jsonl"
 GRAMMAR = ROOT / "report" / "claims.gbnf"
 PROMPT_ID = "P1"
+ARMS = ("constrained", "unconstrained")        # 2G: grammar on (the P1 run), grammar off
+ARM_DIRS = {"constrained": PROMPT_ID, "unconstrained": f"{PROMPT_ID}-nogrammar"}
 N_PREDICT = 3000
 CONTEXT = 12288
 END_MARK = "[end of text]"
@@ -65,9 +70,11 @@ PEAK_RSS_METHOD = ("fresh process per packet; peak working set of that process, 
                    f"context {CONTEXT} - not comparable with the deployment table")
 
 
-def command(model_file: str, prompt_file: Path) -> list[str]:
+def command(model_file: str, prompt_file: Path, arm: str = "constrained") -> list[str]:
+    """Arm B is arm A with exactly two arguments removed: --grammar-file and its path."""
+    grammar = ["--grammar-file", str(GRAMMAR)] if arm == "constrained" else []
     return [str(LLAMA), "-m", str(MODEL_DIR / model_file), "--jinja", "-cnv", "-st",
-            "-f", str(prompt_file), "--grammar-file", str(GRAMMAR),
+            "-f", str(prompt_file), *grammar,
             "-n", str(N_PREDICT), "-c", str(CONTEXT), "--temp", "0", "--seed", "0",
             "--no-display-prompt"]
 
@@ -120,9 +127,13 @@ def exec_llama(cmd: list[str]) -> dict:
 
 class CandidateRun:
     def __init__(self, model_name: str, *, cache_dir: Path = CACHE_DIR,
-                 log_path: Path = LOG_PATH, exec_fn=exec_llama, jobs=None):
+                 log_path: Path = LOG_PATH, exec_fn=exec_llama, jobs=None,
+                 arm: str = "constrained"):
         if model_name not in MODELS:
             raise SystemExit(f"unknown model {model_name!r}; one of {sorted(MODELS)}")
+        if arm not in ARMS:
+            raise SystemExit(f"unknown arm {arm!r}; one of {ARMS}")
+        self.arm = arm
         self.model_name, self.model_file = model_name, MODELS[model_name]
         self.cache_dir, self.log_path, self.exec_fn = cache_dir, log_path, exec_fn
         self.jobs = dev_jobs(prompts=(PROMPT_ID,)) if jobs is None else jobs
@@ -139,10 +150,12 @@ class CandidateRun:
             text = build(prompt_id, pk)
             yield pk, text, {"recording_id": pk["recording_id"], "model": self.model_name,
                              "model_file": self.model_file, "prompt_id": prompt_id,
-                             "prompt_hash": prompt_hash(text)}
+                             "prompt_hash": prompt_hash(text),
+                             # arm A keeps the P1 run's key, so its cache stays valid
+                             **({"grammar": "none"} if self.arm == "unconstrained" else {})}
 
     def cache_path(self, key: dict) -> Path:
-        return (self.cache_dir / key["model"] / key["prompt_id"]
+        return (self.cache_dir / key["model"] / ARM_DIRS[self.arm]
                 / f"{key['recording_id']}__{key['prompt_hash'][:16]}.json")
 
     def cached(self, key: dict) -> dict | None:
@@ -167,14 +180,15 @@ class CandidateRun:
             for i, (pk, text, key) in enumerate(todo, 1):
                 prompt_file = Path(tmp) / f"{key['recording_id']}.txt"
                 prompt_file.write_text(text, encoding="utf-8", newline="\n")
-                cmd = command(self.model_file, prompt_file)
+                cmd = command(self.model_file, prompt_file, self.arm)
                 r = self.exec_fn(cmd)                   # exactly once: no retries
                 out, note = extract_output(r["stdout"])
                 tokens = parse_tokens(r["stderr"])
                 capped = hit_token_limit(tokens["output_tokens"], END_MARK in r["stdout"])
                 record = {
                     "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                    "key": key, "exit_status": r["exit_status"], "wall_s": r["wall_s"],
+                    "key": key, "arm": self.arm, "exit_status": r["exit_status"],
+                    "wall_s": r["wall_s"],
                     **tokens, "hit_token_limit": capped,
                     "peak_working_set_bytes": r.get("peak_working_set_bytes"),
                     "peak_private_bytes": r.get("peak_private_bytes"),
@@ -182,7 +196,9 @@ class CandidateRun:
                     "runtime": RUNTIME, "settings": {"n_predict": N_PREDICT, "context": CONTEXT,
                                                      "temperature": 0, "seed": 0,
                                                      "template": "--jinja -cnv -st",
-                                                     "grammar": "report/claims.gbnf"}}
+                                                     "grammar": ("report/claims.gbnf"
+                                                                 if self.arm == "constrained"
+                                                                 else "none")}}
                 self.log_path.parent.mkdir(parents=True, exist_ok=True)
                 with self.log_path.open("a", encoding="utf-8") as f:
                     f.write(json.dumps(record) + "\n")
@@ -204,11 +220,14 @@ class CandidateRun:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--model", required=True, choices=sorted(MODELS))
+    ap.add_argument("--arm", choices=ARMS, default="constrained",
+                    help="unconstrained is 2G ablation arm B: the grammar removed and nothing "
+                         "else changed. It runs only once the 2G gate is open.")
     ap.add_argument("--go", action="store_true", help="actually generate")
     a = ap.parse_args(argv)
-    run = CandidateRun(a.model)
+    run = CandidateRun(a.model, arm=a.arm)
     pending = run.pending()
-    print(f"{a.model} under {PROMPT_ID}: {len(run.jobs) - len(pending)} cached, "
+    print(f"{a.model} under {PROMPT_ID}, {a.arm}: {len(run.jobs) - len(pending)} cached, "
           f"{len(pending)} pending")
     if not a.go:
         print("plan only - nothing generated. Add --go to run.")

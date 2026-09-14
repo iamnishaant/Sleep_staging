@@ -11,10 +11,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from candidates.run import (CONTEXT, END_MARK, N_PREDICT, PROMPT_ID, CandidateRun, command,
+from candidates.run import (ARM_DIRS, CONTEXT, END_MARK, N_PREDICT, PROMPT_ID, CandidateRun,
+                            command,
                             entry_hit_token_limit, extract_output, hit_token_limit,
                             parse_tokens)
-from candidates.score import compare, score_model
+from candidates.score import (UNGENERATABLE, ablation, compare, grammar_check, mcnemar_exact,
+                              score_model, strip_single_fence)
 from reference.prompts import build, shape_block
 from reference.run import dev_jobs
 from report.evaluate import PACKET_DIRS
@@ -185,6 +187,77 @@ class TestScoring(Case):
         self.assertLessEqual(len(r["top_violations"]), 3)
         self.assertEqual((h["context"], h["hit_token_limit"]), (CONTEXT, "0/31"))
         self.assertIn("run log only", (self.dir / "out" / "comparison.txt").read_text())
+
+
+class TestAblationHarness(Case):
+    """2G arm B, built but not run: PHASE2G_ABLATION.md sections 3, 4 and 7."""
+
+    def test_arm_b_differs_from_arm_a_by_exactly_the_grammar_arguments(self):
+        a = command("m.gguf", Path("p.txt"))
+        b = command("m.gguf", Path("p.txt"), "unconstrained")
+        i = a.index("--grammar-file")
+        self.assertEqual(a[:i] + a[i + 2:], b)
+        self.assertEqual(a, command("m.gguf", Path("p.txt"), "constrained"))
+
+    def test_an_arm_b_run_never_writes_arm_a_and_keys_apart(self):
+        fake = FakeLlama()
+        b = CandidateRun(MODEL, cache_dir=self.dir / "cache", log_path=self.dir / "log.jsonl",
+                         exec_fn=fake, jobs=JOBS[:2], arm="unconstrained")
+        b.run()
+        self.assertFalse((self.dir / "cache" / MODEL / "P1").exists())
+        self.assertEqual(len(list((self.dir / "cache" / MODEL / ARM_DIRS["unconstrained"])
+                                  .glob("*.json"))), 2)
+        self.assertTrue(all("--grammar-file" not in cmd for _, cmd in fake.calls))
+        a = CandidateRun(MODEL, cache_dir=self.dir / "cache", log_path=self.dir / "log.jsonl",
+                         exec_fn=fake, jobs=JOBS[:2])
+        key_a, key_b = next(a.keyed())[2], next(b.keyed())[2]
+        self.assertEqual(key_b, dict(key_a, grammar="none"))
+        self.assertNotEqual(a.cache_path(key_a), b.cache_path(key_b))
+        row = json.loads((self.dir / "log.jsonl").read_text().splitlines()[0])
+        self.assertEqual((row["arm"], row["settings"]["grammar"]), ("unconstrained", "none"))
+
+    def test_the_fence_reading_strips_one_wrapping_fence_and_nothing_else(self):
+        self.assertEqual(strip_single_fence('```json\n[{"a": 1}]\n```'), '[{"a": 1}]')
+        self.assertEqual(strip_single_fence("```\n[]\n```\n"), "[]")
+        for untouched in ("[]", "Here it is:\n```json\n[]\n```",
+                          "```json\n[]\n```\n```json\n[]\n```", "[]\n```"):
+            self.assertEqual(strip_single_fence(untouched), untouched)
+
+    def test_mcnemar_is_exact_and_two_sided(self):
+        self.assertEqual(mcnemar_exact(0, 0), 1.0)
+        self.assertAlmostEqual(mcnemar_exact(0, 5), 0.0625)
+        self.assertEqual(mcnemar_exact(3, 3), 1.0)
+
+    def test_the_grammar_check_flags_only_ungeneratable_codes(self):
+        s = {"strata": {"overall": {"per_rule": {
+            "L1.unknown_field": {"count": 2}, "L1.malformed_json": {"count": 1},
+            "L1.duplicate_claim_id": {"count": 1}, "L2.bad_subject_for_type": {"count": 0}}}}}
+        self.assertEqual(grammar_check(s), {"L1.unknown_field": 2})
+        self.assertEqual(len(UNGENERATABLE), 14)
+
+    def test_paired_tables_and_the_ablation_report(self):
+        r0, r1 = JOBS[0][1]["recording_id"], JOBS[1][1]["recording_id"]
+        w0, w1 = (json.dumps(oracle(JOBS[i][1]).witness) for i in (0, 1))
+        arms = {"constrained": {r0: w0, r1: w1},
+                "unconstrained": {r0: w0, r1: "```json\n" + w1 + "\n```"}}
+        for arm, texts in arms.items():
+            CandidateRun(MODEL, cache_dir=self.dir / "cache", log_path=self.dir / "log.jsonl",
+                         exec_fn=FakeLlama(text=lambda rec, t=texts: t[rec]), jobs=JOBS[:2],
+                         arm=arm).run()
+        out = self.dir / "out"
+        score_model(MODEL, cache_dir=self.dir / "cache", out_dir=out, jobs=JOBS)
+        score_model(MODEL, cache_dir=self.dir / "cache", out_dir=out, jobs=JOBS, arm="unconstrained")
+        score_model(MODEL, cache_dir=self.dir / "cache", out_dir=out, jobs=JOBS,
+                    arm="unconstrained", normalise=True)
+        rep = ablation([MODEL], out_dir=out)["models"][MODEL]
+        strict, fence = rep["paired_strict"]["schema_valid"], rep["paired_fence"]["schema_valid"]
+        self.assertEqual((strict["both"], strict["a_only"], strict["b_only"], strict["neither"]),
+                         (1, 1, 0, 29))
+        self.assertEqual((fence["both"], fence["a_only"], fence["b_only"]), (2, 0, 0))
+        self.assertEqual(rep["grammar_check_arm_a"], {})
+        self.assertEqual(rep["arms"]["B strict"]["five_of_five"], "1/31")
+        with self.assertRaises(ValueError):
+            score_model(MODEL, cache_dir=self.dir / "cache", out_dir=out, jobs=JOBS, normalise=True)
 
 
 if __name__ == "__main__":
