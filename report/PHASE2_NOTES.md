@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 385
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 391
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -3114,6 +3114,66 @@ template exactly as llama.cpp `--jinja` does.
 about 1 MB in all. The manifest carries each file's sha256.
 
 **Tests:** `tests/test_student_set.py`, 8 tests (377 → 385).
+
+---
+
+## The Kaggle training kit (14 September 2026)
+
+Nothing has been trained. Training waits for the 2F rule and 2G.
+
+### Template parity, established against llama.cpp itself
+
+- **The saved templates.** The GGUF chat templates are in `student/templates/`,
+  with their sha256s.
+- **The references.** `llama-server` b10927, bound to localhost only, rendered
+  one training prompt per student through `/apply-template`.
+- **Qwen.** llama.cpp inserts the default system message ("You are Qwen,
+  created by Alibaba Cloud…"). There is no date.
+- **Llama: the date problem.** The template calls `strftime_now`. Unpinned,
+  the rendering carried "Today Date: 14 Sep 2026". A model trained on one
+  day and evaluated on another would see different prompts.
+- **Llama: the fix.** The date is pinned to "26 Jul 2024", the template's own
+  fallback.
+  - `llama-completion` has no template-arguments flag, so evaluation pins the
+    date with a template file: the GGUF template plus one leading line.
+  - Pinned by argument and pinned by file, the renderings are identical.
+- **BOS.** llama.cpp omits the BOS text from its rendering and adds the BOS
+  token when tokenising. The parity check strips a leading BOS before
+  comparing.
+- **Offline check.** The GGUF templates, rendered the way transformers renders
+  chat templates (sandboxed jinja2 with `trim_blocks` and `lstrip_blocks`),
+  reproduce both llama.cpp references exactly.
+
+### The kit
+
+- **`student/kaggle_sft.py`**, with the design's fixed settings:
+
+  | setting | value |
+  |---|---|
+  | LoRA | rank 16, alpha 32, dropout 0.05, on the 7 projections |
+  | optimiser | learning rate 2e-4, cosine schedule, no warmup |
+  | epochs | 3, or the fallback of 5 |
+  | batch | effective batch 8 |
+  | seed | 0 |
+  | maximum sequence | 3,072 tokens |
+
+  - **Loss:** on target tokens only, and every target ends on the
+    end-of-turn token.
+  - **Output:** the best epoch by validation loss is kept, merged and saved.
+    `--convert-only` writes an f16 GGUF with llama.cpp's converter at b10927.
+  - **Refusals:** a data-hash mismatch, a parity failure, an over-long
+    sequence, or a non-finite loss.
+  - **Precision:** bf16 wherever the GPU supports it. Otherwise Qwen's base
+    runs in fp32 and Llama's in fp16, with fp16 autocast and fp32 adapters.
+- **`student/pack_kaggle.py`** builds the upload bundle: 49 KiB, 8 files,
+  git-ignored.
+- **`student/KAGGLE.md`** gives the steps.
+- **Tests:** `tests/test_kaggle_sft.py`, 6 tests (385 → 391).
+
+**A correction to the design.** The design sized the sequence limit on a
+witness of about 805 tokens. Measured with the students' own tokenizers, the
+longest target is 973 tokens for Qwen and 933 for Llama. The 3,072 limit
+still covers the longest pair with room to spare: 2,050 and 1,977 tokens.
 
 ---
 

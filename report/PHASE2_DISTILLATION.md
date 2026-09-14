@@ -173,8 +173,13 @@ The reasons are in `report/PHASE2_STATUS.md`, "What we will use".
 | optimiser | learning rate 2e-4, cosine schedule, 3 epochs, effective batch 8, seed 0 |
 | maximum sequence | 3,072 tokens |
 
-The sequence limit covers a prompt of about 1,100 tokens, a witness of about
-805, and the template overhead.
+The sequence limit covers the longest measured pair, plus the template
+overhead:
+
+- **Qwen:** 1,077 prompt tokens and 973 target tokens.
+- **Llama:** 1,044 prompt tokens and 933 target tokens.
+
+An earlier estimate of about 805 target tokens was low (section 4.2).
 
 **Training-time validation.** Seven of the 69 training subjects (about 14
 nights) are held out of training, drawn as section 3.3 fixes. They are used
@@ -212,6 +217,19 @@ staging students there, and `evaluate_student.py` reproduces the validation
 figures Kaggle reported. Conversion, quantisation and evaluation then run
 locally, with the existing harness.
 
+**The kit, built on 14 September:**
+
+- **`student/kaggle_sft.py`** trains with exactly the settings above.
+  - It refuses on a data-hash mismatch, a template-parity failure, an
+    over-long sequence or a non-finite loss.
+  - It keeps the best adapter by validation loss and merges it.
+  - It converts to an f16 GGUF with llama.cpp b10927.
+- **`student/pack_kaggle.py`** zips exactly what the notebook reads.
+- **`student/KAGGLE.md`** gives the steps, from upload to local
+  quantisation.
+
+Nothing has been trained.
+
 ### 4.2 The training set
 
 `python -m student.build_set` writes `student/trainset/train.jsonl`,
@@ -230,12 +248,23 @@ each file's sha256.
 - **Lengths:** the longest prompt and target come to 1,077 + 973 tokens for
   Qwen, and 1,044 + 933 for Llama. These were measured with `llama-tokenize`,
   excluding the template, and sit well inside the 3,072 limit.
-- **A requirement for training: template parity.** The trainer must render
-  each chat template exactly as llama.cpp `--jinja` does at evaluation.
-  - Qwen2.5 inserts its default system message.
-  - Llama 3.2 writes a date into its system header, so the same date must be
-    pinned for training and evaluation.
-  - Check by rendering one prompt both ways before any training.
+- **Template parity, resolved.** The trainer must render each chat template
+  exactly as llama.cpp `--jinja` does at evaluation.
+  - **The references:** `llama-server` b10927 rendered one training prompt
+    per student (`student/templates/rendered_reference.json`). The GGUF
+    templates are saved beside it, with their sha256s.
+  - **Qwen:** llama.cpp inserts Qwen's default system message, and there is
+    no date. The evaluation flags are unchanged.
+  - **Llama:** the template writes that day's date; unpinned, it rendered
+    "14 Sep 2026". It is pinned to "26 Jul 2024", the template's own
+    fallback: as `date_string` in training, and at evaluation with
+    `--chat-template-file student/templates/Llama-3.2-3B-Instruct.pinned.jinja`,
+    because `llama-completion` has no template-arguments flag. Both
+    pinnings render identically.
+  - **Checked offline:** the GGUF templates, rendered the way transformers
+    renders chat templates, reproduce llama.cpp's renderings exactly
+    (`tests/test_kaggle_sft.py`). On Kaggle, `kaggle_sft.py` refuses to
+    train unless the real tokenizer does the same.
 
 ## 5. Success criteria on dev
 
@@ -319,6 +348,6 @@ which no oracle exists.
 | 2. Choose the targets (section 3.2) | **decided**: A, the oracle's claim sets | none |
 | 3. Choose where to train (section 4.1) | **decided**: Kaggle | none |
 | 4. Build the training set (prompt and target pairs), with tests | **done**: `student/trainset`, 123 training and 14 validation nights; 8 tests | steps 2 and 3 |
-| 5. Train Qwen, then Llama | not started | the 2F rule and 2G |
+| 5. Train Qwen, then Llama | **ready**: the Kaggle kit is built and tested, not run | the 2F rule and 2G |
 | 6. Convert, quantise, and evaluate on dev with the P1 harness | not started | step 5 |
 | 7. Evaluate once on the test set | not started | every choice frozen |

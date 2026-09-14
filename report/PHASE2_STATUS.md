@@ -19,7 +19,7 @@ fully clean claim set is rendered into fixed clinician-register wording.
 
 Phase 2 asks how well a model can fill that contract.
 
-The deterministic tier is **finished, frozen and tested** (385 tests). The
+The deterministic tier is **finished, frozen and tested** (391 tests). The
 **local small-model tier** has been measured: all five candidates, on all
 31 dev nights, under P1. None reaches the contract. The best is 4 of 31
 nights at 5/5 (Llama-3.2-3B), and none of those passes. The
@@ -238,7 +238,7 @@ A person starts each session; nothing runs on a timer.
 
 ## 5. Integrity
 
-- **385 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
+- **391 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
   unchanged throughout.
 - **The frozen tier** (`report/` rules, schema, grammar, coverage, oracle,
   evaluator) is untouched by the 2F and deployment work, which lives in
@@ -339,6 +339,8 @@ applied.
   - **Done:** the training set, `student/trainset`, with 123 training and 14
     validation nights. Every target is checked against the grammar, the
     verifier and the oracle.
+  - **Ready, not run:** the Kaggle training kit (`student/KAGGLE.md`). Its
+    chat-template parity is checked against llama.cpp's own rendering.
 
 ### Last
 
@@ -365,7 +367,7 @@ applied.
 | `reference/` | the reference-model tier: schema, client, runner, scorer, prompts, cache, logs |
 | `deploy/` | size, memory and throughput analysis; the GGUF reader; results |
 | `candidates/` | the local-candidate harness: runner, scorer, cache, logs, per-model results |
-| `student/` | the distillation training set: its builder, and the data |
-| `tests/` | 385 tests |
+| `student/` | the distillation training set and its builder, the chat-template references, and the Kaggle training kit (`KAGGLE.md`) |
+| `tests/` | 391 tests |
 | `distillation/results/` | evidence packets and split manifests |
 | `distillation/results/phase2_train_packets/` | the 137 training packets for distillation |
