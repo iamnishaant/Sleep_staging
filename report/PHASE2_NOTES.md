@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 374
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 377
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2997,6 +2997,64 @@ at context 4,096.
   5/5, 14 hedged values and a rendered report on every night), the gap is
   large for every candidate. That is the "gap large" condition for
   distillation. It is conditional on the 2F rule at 31 reference responses.
+
+---
+
+## Distillation groundwork: the training packets (14 September 2026)
+
+The design is `report/PHASE2_DISTILLATION.md`, written before any training
+data existed. This section records the one step taken now: building the
+training packets. Nothing has been trained.
+
+### Probabilities
+
+`distillation/cache_train_probs.py` (new) caches `student_N4kd`'s
+probabilities on the 137 training nights, from 69 subjects.
+
+- **What it reuses:** `evaluate_student.py`'s loader, provenance guard and
+  `collect()`, unchanged.
+- **What it writes:** only `results/probs_student_N4kd_train/`. That folder is
+  git-ignored, like every probability cache.
+- **Its guard:** it refuses to run if training and held-out recordings
+  overlap.
+- **Why not `evaluate_student.py` itself:** it caches only val and test, and
+  it also rewrites merged results, so it was not run.
+
+**The model has seen these nights.** Median mean entropy is 0.443 nats (range
+0.211–0.882), against 0.523 on validation, and median kappa is 0.777.
+
+### Packets
+
+The command was
+`build_packet.py --model student_N4kd --split train --out distillation/results/phase2_train_packets`.
+
+- **137 written, 0 skipped,** 26 MB in all.
+- **Attribution is null,** because no gate-3a artefact exists for the
+  training split. `build_prompt` does not read attribution.
+- **Test-packet md5 unchanged** before and after.
+
+| nights | high | medium | low | total | cohorts |
+|---|---:|---:|---:|---:|---|
+| training | 78 (57%) | 24 (18%) | 35 (26%) | 137 | SC 107, ST 30 |
+| dev | 11 | 10 | 10 | 31 | SC 23, ST 8 |
+
+**Agreement with dev.** Every training packet carries the dev packets' 19
+evidence ids and safe-to-assert flags exactly. The N1 warning is `low` on all
+137, as it is on dev.
+
+**The oracle works on the training nights.** Its maximal claim set verifies
+and renders on all 137, at about 2,800 characters each (dev median: 2,807).
+Option A's targets are therefore usable as they stand.
+
+**Tier balance.** The rule is no rebalancing, fixed after the mix was
+measured and before any training (design, section 3.3).
+
+**Tests.** `tests/test_training_packets.py` asserts three things:
+
+- the 137 recordings are exactly the training split;
+- they are disjoint from dev and test by recording and by subject (test
+  packets are identified by filename only);
+- they share dev's evidence signature.
 
 ---
 

@@ -1,0 +1,11115 @@
+{
+  "schema_version": "1.3",
+  "recording_id": "ST7011J0-PSG",
+  "subject_id": "ST701",
+  "cohort": "ST",
+  "n_epochs": 1092,
+  "epoch_seconds": 30,
+  "recording_duration_min": 546.0,
+  "provenance": {
+    "model": "student_N4kd",
+    "model_checkpoint": "distillation/results/students/student_N4kd/student_best.pt",
+    "model_sha256": "ec4448ea148cdf5f917eed1bc0b876b016731d8eadcd78dfd7cdc78bb01d0029",
+    "model_parameters": 139606,
+    "model_encoder": "multiscale",
+    "model_eeg_scale": 15849.46,
+    "git_commit": "b14de32d80247a8e32d756941b7aa3c7d2c11bae",
+    "generated_at": "2026-09-14T08:56:04+00:00",
+    "calibration_temperature": 1.2847,
+    "hypnogram_decoder": "minrun REM L=3",
+    "hypnogram_decoder_spec": {
+      "method": "min_run",
+      "length": 3,
+      "targets": [
+        "REM"
+      ]
+    },
+    "generator": "distillation/build_packet.py",
+    "schema_version": "1.3"
+  },
+  "hypnogram": {
+    "predicted_stages": [
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "W",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N1",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "W",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N2",
+      "N2",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "N2",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N3",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "W",
+      "W",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "W",
+      "N1",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "N1",
+      "N1",
+      "REM",
+      "REM",
+      "REM",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "N2",
+      "N2",
+      "N2",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "REM",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N3",
+      "N3",
+      "N3",
+      "N2",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N3",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N3",
+      "N3",
+      "N3",
+      "N2",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N2",
+      "N2",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "N3",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N3",
+      "N3",
+      "N2",
+      "N3",
+      "N2",
+      "N3",
+      "N2",
+      "N3",
+      "N3",
+      "N2",
+      "N3",
+      "N3",
+      "N2",
+      "N2",
+      "N2",
+      "N2",
+      "N3",
+      "N3",
+      "N2",
+      "N2",
+      "N3",
+      "N2",
+      "W",
+      "N2",
+      "N2",
+      "W",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "N1",
+      "N1",
+      "N1",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W",
+      "W"
+    ],
+    "stage_runs": [
+      {
+        "stage": "W",
+        "start_epoch": 0,
+        "n_epochs": 9,
+        "start_sec": 0,
+        "duration_sec": 270
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 9,
+        "n_epochs": 1,
+        "start_sec": 270,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 10,
+        "n_epochs": 3,
+        "start_sec": 300,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 13,
+        "n_epochs": 2,
+        "start_sec": 390,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 15,
+        "n_epochs": 1,
+        "start_sec": 450,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 16,
+        "n_epochs": 5,
+        "start_sec": 480,
+        "duration_sec": 150
+      },
+      {
+        "stage": "W",
+        "start_epoch": 21,
+        "n_epochs": 1,
+        "start_sec": 630,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 22,
+        "n_epochs": 7,
+        "start_sec": 660,
+        "duration_sec": 210
+      },
+      {
+        "stage": "W",
+        "start_epoch": 29,
+        "n_epochs": 1,
+        "start_sec": 870,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 30,
+        "n_epochs": 1,
+        "start_sec": 900,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 31,
+        "n_epochs": 1,
+        "start_sec": 930,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 32,
+        "n_epochs": 1,
+        "start_sec": 960,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 33,
+        "n_epochs": 1,
+        "start_sec": 990,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 34,
+        "n_epochs": 2,
+        "start_sec": 1020,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 36,
+        "n_epochs": 2,
+        "start_sec": 1080,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 38,
+        "n_epochs": 3,
+        "start_sec": 1140,
+        "duration_sec": 90
+      },
+      {
+        "stage": "W",
+        "start_epoch": 41,
+        "n_epochs": 1,
+        "start_sec": 1230,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 42,
+        "n_epochs": 4,
+        "start_sec": 1260,
+        "duration_sec": 120
+      },
+      {
+        "stage": "W",
+        "start_epoch": 46,
+        "n_epochs": 2,
+        "start_sec": 1380,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 48,
+        "n_epochs": 14,
+        "start_sec": 1440,
+        "duration_sec": 420
+      },
+      {
+        "stage": "W",
+        "start_epoch": 62,
+        "n_epochs": 1,
+        "start_sec": 1860,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 63,
+        "n_epochs": 6,
+        "start_sec": 1890,
+        "duration_sec": 180
+      },
+      {
+        "stage": "W",
+        "start_epoch": 69,
+        "n_epochs": 1,
+        "start_sec": 2070,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 70,
+        "n_epochs": 3,
+        "start_sec": 2100,
+        "duration_sec": 90
+      },
+      {
+        "stage": "W",
+        "start_epoch": 73,
+        "n_epochs": 1,
+        "start_sec": 2190,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 74,
+        "n_epochs": 5,
+        "start_sec": 2220,
+        "duration_sec": 150
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 79,
+        "n_epochs": 3,
+        "start_sec": 2370,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 82,
+        "n_epochs": 2,
+        "start_sec": 2460,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 84,
+        "n_epochs": 1,
+        "start_sec": 2520,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 85,
+        "n_epochs": 1,
+        "start_sec": 2550,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 86,
+        "n_epochs": 5,
+        "start_sec": 2580,
+        "duration_sec": 150
+      },
+      {
+        "stage": "W",
+        "start_epoch": 91,
+        "n_epochs": 1,
+        "start_sec": 2730,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 92,
+        "n_epochs": 3,
+        "start_sec": 2760,
+        "duration_sec": 90
+      },
+      {
+        "stage": "W",
+        "start_epoch": 95,
+        "n_epochs": 2,
+        "start_sec": 2850,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 97,
+        "n_epochs": 13,
+        "start_sec": 2910,
+        "duration_sec": 390
+      },
+      {
+        "stage": "W",
+        "start_epoch": 110,
+        "n_epochs": 3,
+        "start_sec": 3300,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 113,
+        "n_epochs": 1,
+        "start_sec": 3390,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 114,
+        "n_epochs": 1,
+        "start_sec": 3420,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 115,
+        "n_epochs": 5,
+        "start_sec": 3450,
+        "duration_sec": 150
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 120,
+        "n_epochs": 1,
+        "start_sec": 3600,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 121,
+        "n_epochs": 1,
+        "start_sec": 3630,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 122,
+        "n_epochs": 3,
+        "start_sec": 3660,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 125,
+        "n_epochs": 11,
+        "start_sec": 3750,
+        "duration_sec": 330
+      },
+      {
+        "stage": "W",
+        "start_epoch": 136,
+        "n_epochs": 1,
+        "start_sec": 4080,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 137,
+        "n_epochs": 2,
+        "start_sec": 4110,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 139,
+        "n_epochs": 3,
+        "start_sec": 4170,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 142,
+        "n_epochs": 5,
+        "start_sec": 4260,
+        "duration_sec": 150
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 147,
+        "n_epochs": 3,
+        "start_sec": 4410,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 150,
+        "n_epochs": 1,
+        "start_sec": 4500,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 151,
+        "n_epochs": 6,
+        "start_sec": 4530,
+        "duration_sec": 180
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 157,
+        "n_epochs": 6,
+        "start_sec": 4710,
+        "duration_sec": 180
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 163,
+        "n_epochs": 2,
+        "start_sec": 4890,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 165,
+        "n_epochs": 1,
+        "start_sec": 4950,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 166,
+        "n_epochs": 1,
+        "start_sec": 4980,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 167,
+        "n_epochs": 1,
+        "start_sec": 5010,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 168,
+        "n_epochs": 1,
+        "start_sec": 5040,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 169,
+        "n_epochs": 18,
+        "start_sec": 5070,
+        "duration_sec": 540
+      },
+      {
+        "stage": "W",
+        "start_epoch": 187,
+        "n_epochs": 1,
+        "start_sec": 5610,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 188,
+        "n_epochs": 1,
+        "start_sec": 5640,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 189,
+        "n_epochs": 3,
+        "start_sec": 5670,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 192,
+        "n_epochs": 3,
+        "start_sec": 5760,
+        "duration_sec": 90
+      },
+      {
+        "stage": "W",
+        "start_epoch": 195,
+        "n_epochs": 5,
+        "start_sec": 5850,
+        "duration_sec": 150
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 200,
+        "n_epochs": 1,
+        "start_sec": 6000,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 201,
+        "n_epochs": 1,
+        "start_sec": 6030,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 202,
+        "n_epochs": 4,
+        "start_sec": 6060,
+        "duration_sec": 120
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 206,
+        "n_epochs": 1,
+        "start_sec": 6180,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 207,
+        "n_epochs": 2,
+        "start_sec": 6210,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 209,
+        "n_epochs": 26,
+        "start_sec": 6270,
+        "duration_sec": 780
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 235,
+        "n_epochs": 3,
+        "start_sec": 7050,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 238,
+        "n_epochs": 1,
+        "start_sec": 7140,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 239,
+        "n_epochs": 2,
+        "start_sec": 7170,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 241,
+        "n_epochs": 4,
+        "start_sec": 7230,
+        "duration_sec": 120
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 245,
+        "n_epochs": 1,
+        "start_sec": 7350,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 246,
+        "n_epochs": 15,
+        "start_sec": 7380,
+        "duration_sec": 450
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 261,
+        "n_epochs": 1,
+        "start_sec": 7830,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 262,
+        "n_epochs": 9,
+        "start_sec": 7860,
+        "duration_sec": 270
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 271,
+        "n_epochs": 2,
+        "start_sec": 8130,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 273,
+        "n_epochs": 17,
+        "start_sec": 8190,
+        "duration_sec": 510
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 290,
+        "n_epochs": 1,
+        "start_sec": 8700,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 291,
+        "n_epochs": 1,
+        "start_sec": 8730,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 292,
+        "n_epochs": 4,
+        "start_sec": 8760,
+        "duration_sec": 120
+      },
+      {
+        "stage": "W",
+        "start_epoch": 296,
+        "n_epochs": 3,
+        "start_sec": 8880,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 299,
+        "n_epochs": 6,
+        "start_sec": 8970,
+        "duration_sec": 180
+      },
+      {
+        "stage": "W",
+        "start_epoch": 305,
+        "n_epochs": 1,
+        "start_sec": 9150,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 306,
+        "n_epochs": 2,
+        "start_sec": 9180,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 308,
+        "n_epochs": 45,
+        "start_sec": 9240,
+        "duration_sec": 1350
+      },
+      {
+        "stage": "W",
+        "start_epoch": 353,
+        "n_epochs": 1,
+        "start_sec": 10590,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 354,
+        "n_epochs": 1,
+        "start_sec": 10620,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 355,
+        "n_epochs": 15,
+        "start_sec": 10650,
+        "duration_sec": 450
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 370,
+        "n_epochs": 36,
+        "start_sec": 11100,
+        "duration_sec": 1080
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 406,
+        "n_epochs": 2,
+        "start_sec": 12180,
+        "duration_sec": 60
+      },
+      {
+        "stage": "REM",
+        "start_epoch": 408,
+        "n_epochs": 11,
+        "start_sec": 12240,
+        "duration_sec": 330
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 419,
+        "n_epochs": 1,
+        "start_sec": 12570,
+        "duration_sec": 30
+      },
+      {
+        "stage": "REM",
+        "start_epoch": 420,
+        "n_epochs": 17,
+        "start_sec": 12600,
+        "duration_sec": 510
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 437,
+        "n_epochs": 2,
+        "start_sec": 13110,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 439,
+        "n_epochs": 2,
+        "start_sec": 13170,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 441,
+        "n_epochs": 11,
+        "start_sec": 13230,
+        "duration_sec": 330
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 452,
+        "n_epochs": 9,
+        "start_sec": 13560,
+        "duration_sec": 270
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 461,
+        "n_epochs": 45,
+        "start_sec": 13830,
+        "duration_sec": 1350
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 506,
+        "n_epochs": 1,
+        "start_sec": 15180,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 507,
+        "n_epochs": 1,
+        "start_sec": 15210,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 508,
+        "n_epochs": 1,
+        "start_sec": 15240,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 509,
+        "n_epochs": 1,
+        "start_sec": 15270,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 510,
+        "n_epochs": 2,
+        "start_sec": 15300,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 512,
+        "n_epochs": 2,
+        "start_sec": 15360,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 514,
+        "n_epochs": 1,
+        "start_sec": 15420,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 515,
+        "n_epochs": 1,
+        "start_sec": 15450,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 516,
+        "n_epochs": 2,
+        "start_sec": 15480,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 518,
+        "n_epochs": 5,
+        "start_sec": 15540,
+        "duration_sec": 150
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 523,
+        "n_epochs": 16,
+        "start_sec": 15690,
+        "duration_sec": 480
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 539,
+        "n_epochs": 3,
+        "start_sec": 16170,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 542,
+        "n_epochs": 1,
+        "start_sec": 16260,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 543,
+        "n_epochs": 1,
+        "start_sec": 16290,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 544,
+        "n_epochs": 44,
+        "start_sec": 16320,
+        "duration_sec": 1320
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 588,
+        "n_epochs": 1,
+        "start_sec": 17640,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 589,
+        "n_epochs": 2,
+        "start_sec": 17670,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 591,
+        "n_epochs": 2,
+        "start_sec": 17730,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 593,
+        "n_epochs": 1,
+        "start_sec": 17790,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 594,
+        "n_epochs": 14,
+        "start_sec": 17820,
+        "duration_sec": 420
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 608,
+        "n_epochs": 2,
+        "start_sec": 18240,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 610,
+        "n_epochs": 1,
+        "start_sec": 18300,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 611,
+        "n_epochs": 5,
+        "start_sec": 18330,
+        "duration_sec": 150
+      },
+      {
+        "stage": "W",
+        "start_epoch": 616,
+        "n_epochs": 1,
+        "start_sec": 18480,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 617,
+        "n_epochs": 1,
+        "start_sec": 18510,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 618,
+        "n_epochs": 2,
+        "start_sec": 18540,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 620,
+        "n_epochs": 4,
+        "start_sec": 18600,
+        "duration_sec": 120
+      },
+      {
+        "stage": "W",
+        "start_epoch": 624,
+        "n_epochs": 2,
+        "start_sec": 18720,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 626,
+        "n_epochs": 16,
+        "start_sec": 18780,
+        "duration_sec": 480
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 642,
+        "n_epochs": 9,
+        "start_sec": 19260,
+        "duration_sec": 270
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 651,
+        "n_epochs": 1,
+        "start_sec": 19530,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 652,
+        "n_epochs": 21,
+        "start_sec": 19560,
+        "duration_sec": 630
+      },
+      {
+        "stage": "W",
+        "start_epoch": 673,
+        "n_epochs": 10,
+        "start_sec": 20190,
+        "duration_sec": 300
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 683,
+        "n_epochs": 5,
+        "start_sec": 20490,
+        "duration_sec": 150
+      },
+      {
+        "stage": "W",
+        "start_epoch": 688,
+        "n_epochs": 1,
+        "start_sec": 20640,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 689,
+        "n_epochs": 1,
+        "start_sec": 20670,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 690,
+        "n_epochs": 1,
+        "start_sec": 20700,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 691,
+        "n_epochs": 1,
+        "start_sec": 20730,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 692,
+        "n_epochs": 2,
+        "start_sec": 20760,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 694,
+        "n_epochs": 1,
+        "start_sec": 20820,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 695,
+        "n_epochs": 2,
+        "start_sec": 20850,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 697,
+        "n_epochs": 1,
+        "start_sec": 20910,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 698,
+        "n_epochs": 9,
+        "start_sec": 20940,
+        "duration_sec": 270
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 707,
+        "n_epochs": 1,
+        "start_sec": 21210,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 708,
+        "n_epochs": 3,
+        "start_sec": 21240,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 711,
+        "n_epochs": 2,
+        "start_sec": 21330,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 713,
+        "n_epochs": 33,
+        "start_sec": 21390,
+        "duration_sec": 990
+      },
+      {
+        "stage": "W",
+        "start_epoch": 746,
+        "n_epochs": 1,
+        "start_sec": 22380,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 747,
+        "n_epochs": 3,
+        "start_sec": 22410,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 750,
+        "n_epochs": 19,
+        "start_sec": 22500,
+        "duration_sec": 570
+      },
+      {
+        "stage": "REM",
+        "start_epoch": 769,
+        "n_epochs": 43,
+        "start_sec": 23070,
+        "duration_sec": 1290
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 812,
+        "n_epochs": 4,
+        "start_sec": 24360,
+        "duration_sec": 120
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 816,
+        "n_epochs": 11,
+        "start_sec": 24480,
+        "duration_sec": 330
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 827,
+        "n_epochs": 3,
+        "start_sec": 24810,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 830,
+        "n_epochs": 1,
+        "start_sec": 24900,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 831,
+        "n_epochs": 3,
+        "start_sec": 24930,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 834,
+        "n_epochs": 3,
+        "start_sec": 25020,
+        "duration_sec": 90
+      },
+      {
+        "stage": "REM",
+        "start_epoch": 837,
+        "n_epochs": 3,
+        "start_sec": 25110,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 840,
+        "n_epochs": 4,
+        "start_sec": 25200,
+        "duration_sec": 120
+      },
+      {
+        "stage": "REM",
+        "start_epoch": 844,
+        "n_epochs": 7,
+        "start_sec": 25320,
+        "duration_sec": 210
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 851,
+        "n_epochs": 3,
+        "start_sec": 25530,
+        "duration_sec": 90
+      },
+      {
+        "stage": "REM",
+        "start_epoch": 854,
+        "n_epochs": 28,
+        "start_sec": 25620,
+        "duration_sec": 840
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 882,
+        "n_epochs": 6,
+        "start_sec": 26460,
+        "duration_sec": 180
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 888,
+        "n_epochs": 11,
+        "start_sec": 26640,
+        "duration_sec": 330
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 899,
+        "n_epochs": 3,
+        "start_sec": 26970,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 902,
+        "n_epochs": 1,
+        "start_sec": 27060,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 903,
+        "n_epochs": 27,
+        "start_sec": 27090,
+        "duration_sec": 810
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 930,
+        "n_epochs": 9,
+        "start_sec": 27900,
+        "duration_sec": 270
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 939,
+        "n_epochs": 1,
+        "start_sec": 28170,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 940,
+        "n_epochs": 6,
+        "start_sec": 28200,
+        "duration_sec": 180
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 946,
+        "n_epochs": 3,
+        "start_sec": 28380,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 949,
+        "n_epochs": 1,
+        "start_sec": 28470,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 950,
+        "n_epochs": 5,
+        "start_sec": 28500,
+        "duration_sec": 150
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 955,
+        "n_epochs": 2,
+        "start_sec": 28650,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 957,
+        "n_epochs": 5,
+        "start_sec": 28710,
+        "duration_sec": 150
+      },
+      {
+        "stage": "W",
+        "start_epoch": 962,
+        "n_epochs": 1,
+        "start_sec": 28860,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 963,
+        "n_epochs": 4,
+        "start_sec": 28890,
+        "duration_sec": 120
+      },
+      {
+        "stage": "W",
+        "start_epoch": 967,
+        "n_epochs": 1,
+        "start_sec": 29010,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 968,
+        "n_epochs": 2,
+        "start_sec": 29040,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 970,
+        "n_epochs": 2,
+        "start_sec": 29100,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 972,
+        "n_epochs": 3,
+        "start_sec": 29160,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 975,
+        "n_epochs": 1,
+        "start_sec": 29250,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 976,
+        "n_epochs": 1,
+        "start_sec": 29280,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 977,
+        "n_epochs": 4,
+        "start_sec": 29310,
+        "duration_sec": 120
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 981,
+        "n_epochs": 1,
+        "start_sec": 29430,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 982,
+        "n_epochs": 1,
+        "start_sec": 29460,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 983,
+        "n_epochs": 3,
+        "start_sec": 29490,
+        "duration_sec": 90
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 986,
+        "n_epochs": 24,
+        "start_sec": 29580,
+        "duration_sec": 720
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1010,
+        "n_epochs": 2,
+        "start_sec": 30300,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1012,
+        "n_epochs": 1,
+        "start_sec": 30360,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1013,
+        "n_epochs": 1,
+        "start_sec": 30390,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1014,
+        "n_epochs": 1,
+        "start_sec": 30420,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1015,
+        "n_epochs": 1,
+        "start_sec": 30450,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1016,
+        "n_epochs": 1,
+        "start_sec": 30480,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1017,
+        "n_epochs": 2,
+        "start_sec": 30510,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1019,
+        "n_epochs": 1,
+        "start_sec": 30570,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1020,
+        "n_epochs": 2,
+        "start_sec": 30600,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1022,
+        "n_epochs": 4,
+        "start_sec": 30660,
+        "duration_sec": 120
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1026,
+        "n_epochs": 2,
+        "start_sec": 30780,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1028,
+        "n_epochs": 2,
+        "start_sec": 30840,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N3",
+        "start_epoch": 1030,
+        "n_epochs": 1,
+        "start_sec": 30900,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1031,
+        "n_epochs": 1,
+        "start_sec": 30930,
+        "duration_sec": 30
+      },
+      {
+        "stage": "W",
+        "start_epoch": 1032,
+        "n_epochs": 1,
+        "start_sec": 30960,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N2",
+        "start_epoch": 1033,
+        "n_epochs": 2,
+        "start_sec": 30990,
+        "duration_sec": 60
+      },
+      {
+        "stage": "W",
+        "start_epoch": 1035,
+        "n_epochs": 2,
+        "start_sec": 31050,
+        "duration_sec": 60
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 1037,
+        "n_epochs": 5,
+        "start_sec": 31110,
+        "duration_sec": 150
+      },
+      {
+        "stage": "W",
+        "start_epoch": 1042,
+        "n_epochs": 1,
+        "start_sec": 31260,
+        "duration_sec": 30
+      },
+      {
+        "stage": "N1",
+        "start_epoch": 1043,
+        "n_epochs": 3,
+        "start_sec": 31290,
+        "duration_sec": 90
+      },
+      {
+        "stage": "W",
+        "start_epoch": 1046,
+        "n_epochs": 46,
+        "start_sec": 31380,
+        "duration_sec": 1380
+      }
+    ],
+    "n_runs": 208,
+    "source": "decoded - see the `decoding` block. NOT the argmax of `probabilities.calibrated`."
+  },
+  "decoding": {
+    "applied": true,
+    "method": "min_run",
+    "spec": {
+      "method": "min_run",
+      "length": 3,
+      "targets": [
+        "REM"
+      ]
+    },
+    "description": "minrun REM L=3",
+    "input": "probabilities.calibrated",
+    "changes_decisions": true,
+    "epochs_changed_vs_argmax": 9,
+    "epochs_changed_pct": 0.82,
+    "reproducible_from_this_packet": true,
+    "why": "The model decides each 30-second epoch independently, which sprays isolated REM epochs into non-REM sleep: REM periods came out at 2.01x the expert count while total transitions were only 1.14x. A REM-targeted minimum-run rule removes those epochs and the spurious transitions they created.",
+    "selection": "maximise (metrics improved - metrics degraded), subject to validation kappa not falling below argmax; ties broken by false-SOREMP count, then by REM_Periods relative error",
+    "fitted_on": "validation split",
+    "artefact": "distillation/results/sequence_decoding.json",
+    "consumer_note": "Through schema 1.0 the hypnogram was the argmax of these probabilities. From 1.1 it is not. Recomputing it by argmax will disagree with `hypnogram.predicted_stages`."
+  },
+  "probabilities": {
+    "stages": [
+      "W",
+      "N1",
+      "N2",
+      "N3",
+      "REM"
+    ],
+    "calibrated": [
+      [
+        0.43328,
+        0.25972,
+        0.01574,
+        0.00063,
+        0.29063
+      ],
+      [
+        0.853,
+        0.0662,
+        0.00838,
+        0.00198,
+        0.07044
+      ],
+      [
+        0.86756,
+        0.07318,
+        0.00817,
+        0.00192,
+        0.04917
+      ],
+      [
+        0.81955,
+        0.11125,
+        0.01067,
+        0.00122,
+        0.0573
+      ],
+      [
+        0.6122,
+        0.26266,
+        0.01827,
+        0.00113,
+        0.10575
+      ],
+      [
+        0.5803,
+        0.35305,
+        0.01453,
+        0.00049,
+        0.05163
+      ],
+      [
+        0.59705,
+        0.33249,
+        0.01426,
+        0.00053,
+        0.05567
+      ],
+      [
+        0.54911,
+        0.37049,
+        0.01652,
+        0.0006,
+        0.06328
+      ],
+      [
+        0.67289,
+        0.18628,
+        0.01783,
+        0.00159,
+        0.12141
+      ],
+      [
+        0.42136,
+        0.48858,
+        0.02145,
+        0.00042,
+        0.06819
+      ],
+      [
+        0.77111,
+        0.15688,
+        0.01341,
+        0.00117,
+        0.05742
+      ],
+      [
+        0.58398,
+        0.34804,
+        0.01685,
+        0.00074,
+        0.0504
+      ],
+      [
+        0.75981,
+        0.18372,
+        0.0127,
+        0.00115,
+        0.04263
+      ],
+      [
+        0.40664,
+        0.52767,
+        0.01499,
+        0.0003,
+        0.05039
+      ],
+      [
+        0.38115,
+        0.53259,
+        0.0186,
+        0.00045,
+        0.06721
+      ],
+      [
+        0.63431,
+        0.28973,
+        0.02025,
+        0.00104,
+        0.05467
+      ],
+      [
+        0.35843,
+        0.58277,
+        0.01346,
+        0.00023,
+        0.0451
+      ],
+      [
+        0.41339,
+        0.50328,
+        0.01797,
+        0.00063,
+        0.06473
+      ],
+      [
+        0.37163,
+        0.55257,
+        0.01559,
+        0.00045,
+        0.05976
+      ],
+      [
+        0.31601,
+        0.56335,
+        0.02292,
+        0.00065,
+        0.09706
+      ],
+      [
+        0.43949,
+        0.44289,
+        0.0257,
+        0.00101,
+        0.0909
+      ],
+      [
+        0.61413,
+        0.25724,
+        0.02491,
+        0.00203,
+        0.10169
+      ],
+      [
+        0.38947,
+        0.47278,
+        0.03159,
+        0.00112,
+        0.10503
+      ],
+      [
+        0.39121,
+        0.48228,
+        0.03497,
+        0.00127,
+        0.09028
+      ],
+      [
+        0.40549,
+        0.48078,
+        0.02897,
+        0.00113,
+        0.08362
+      ],
+      [
+        0.31591,
+        0.60002,
+        0.02155,
+        0.00043,
+        0.06208
+      ],
+      [
+        0.37471,
+        0.52414,
+        0.0288,
+        0.00094,
+        0.07142
+      ],
+      [
+        0.30352,
+        0.60935,
+        0.02401,
+        0.00042,
+        0.0627
+      ],
+      [
+        0.40711,
+        0.47953,
+        0.02834,
+        0.0012,
+        0.08381
+      ],
+      [
+        0.44317,
+        0.44175,
+        0.04657,
+        0.00193,
+        0.06658
+      ],
+      [
+        0.31856,
+        0.5162,
+        0.03713,
+        0.00127,
+        0.12683
+      ],
+      [
+        0.53098,
+        0.391,
+        0.02715,
+        0.00112,
+        0.04975
+      ],
+      [
+        0.43235,
+        0.47869,
+        0.02374,
+        0.00077,
+        0.06446
+      ],
+      [
+        0.63796,
+        0.17477,
+        0.02599,
+        0.00333,
+        0.15794
+      ],
+      [
+        0.43693,
+        0.45345,
+        0.02888,
+        0.00107,
+        0.07968
+      ],
+      [
+        0.38533,
+        0.53852,
+        0.02227,
+        0.00048,
+        0.05339
+      ],
+      [
+        0.61852,
+        0.29916,
+        0.02606,
+        0.0013,
+        0.05496
+      ],
+      [
+        0.72807,
+        0.16022,
+        0.01882,
+        0.00146,
+        0.09143
+      ],
+      [
+        0.41183,
+        0.51318,
+        0.02159,
+        0.00055,
+        0.05286
+      ],
+      [
+        0.42226,
+        0.49998,
+        0.02469,
+        0.00063,
+        0.05244
+      ],
+      [
+        0.37036,
+        0.558,
+        0.02466,
+        0.00052,
+        0.04645
+      ],
+      [
+        0.6048,
+        0.31662,
+        0.02305,
+        0.00121,
+        0.05432
+      ],
+      [
+        0.45483,
+        0.48177,
+        0.02494,
+        0.00072,
+        0.03774
+      ],
+      [
+        0.40505,
+        0.52698,
+        0.01977,
+        0.00058,
+        0.04762
+      ],
+      [
+        0.32852,
+        0.58555,
+        0.02367,
+        0.00048,
+        0.06177
+      ],
+      [
+        0.33971,
+        0.57026,
+        0.02924,
+        0.00059,
+        0.0602
+      ],
+      [
+        0.54757,
+        0.2071,
+        0.02652,
+        0.00203,
+        0.21678
+      ],
+      [
+        0.71439,
+        0.13686,
+        0.01696,
+        0.00158,
+        0.13022
+      ],
+      [
+        0.16988,
+        0.69036,
+        0.02987,
+        0.0003,
+        0.10958
+      ],
+      [
+        0.25341,
+        0.62011,
+        0.02924,
+        0.00062,
+        0.09662
+      ],
+      [
+        0.3048,
+        0.60666,
+        0.02559,
+        0.00043,
+        0.06253
+      ],
+      [
+        0.32215,
+        0.57684,
+        0.03075,
+        0.00066,
+        0.06959
+      ],
+      [
+        0.28428,
+        0.60563,
+        0.03455,
+        0.00076,
+        0.07478
+      ],
+      [
+        0.29523,
+        0.61783,
+        0.02987,
+        0.00072,
+        0.05635
+      ],
+      [
+        0.27944,
+        0.61817,
+        0.04249,
+        0.00122,
+        0.05867
+      ],
+      [
+        0.12408,
+        0.6764,
+        0.11445,
+        0.00225,
+        0.08281
+      ],
+      [
+        0.26547,
+        0.59875,
+        0.08572,
+        0.00267,
+        0.04739
+      ],
+      [
+        0.27921,
+        0.58739,
+        0.05335,
+        0.00172,
+        0.07833
+      ],
+      [
+        0.2838,
+        0.60205,
+        0.04837,
+        0.00157,
+        0.0642
+      ],
+      [
+        0.18955,
+        0.68819,
+        0.07739,
+        0.0017,
+        0.04317
+      ],
+      [
+        0.21369,
+        0.53755,
+        0.16806,
+        0.00734,
+        0.07335
+      ],
+      [
+        0.139,
+        0.46492,
+        0.36085,
+        0.02465,
+        0.01058
+      ],
+      [
+        0.46039,
+        0.30802,
+        0.14883,
+        0.03117,
+        0.05159
+      ],
+      [
+        0.37402,
+        0.40493,
+        0.17909,
+        0.01875,
+        0.0232
+      ],
+      [
+        0.19031,
+        0.57219,
+        0.20135,
+        0.00782,
+        0.02833
+      ],
+      [
+        0.15672,
+        0.4811,
+        0.33615,
+        0.01558,
+        0.01046
+      ],
+      [
+        0.28613,
+        0.57452,
+        0.1169,
+        0.00366,
+        0.01878
+      ],
+      [
+        0.17349,
+        0.65681,
+        0.12563,
+        0.00292,
+        0.04115
+      ],
+      [
+        0.22034,
+        0.5988,
+        0.1557,
+        0.00451,
+        0.02066
+      ],
+      [
+        0.38411,
+        0.35623,
+        0.22593,
+        0.02685,
+        0.00688
+      ],
+      [
+        0.18501,
+        0.59149,
+        0.20956,
+        0.0045,
+        0.00944
+      ],
+      [
+        0.26131,
+        0.34707,
+        0.33688,
+        0.04549,
+        0.00924
+      ],
+      [
+        0.2655,
+        0.3674,
+        0.31296,
+        0.04137,
+        0.01276
+      ],
+      [
+        0.69686,
+        0.22275,
+        0.05928,
+        0.00937,
+        0.01174
+      ],
+      [
+        0.28043,
+        0.58078,
+        0.11856,
+        0.00498,
+        0.01525
+      ],
+      [
+        0.31215,
+        0.55787,
+        0.11417,
+        0.00526,
+        0.01055
+      ],
+      [
+        0.16301,
+        0.64783,
+        0.16792,
+        0.00552,
+        0.01573
+      ],
+      [
+        0.13348,
+        0.58823,
+        0.26111,
+        0.00929,
+        0.00789
+      ],
+      [
+        0.1456,
+        0.58907,
+        0.25275,
+        0.00632,
+        0.00627
+      ],
+      [
+        0.09655,
+        0.42034,
+        0.45776,
+        0.02061,
+        0.00474
+      ],
+      [
+        0.05705,
+        0.16367,
+        0.48358,
+        0.28996,
+        0.00574
+      ],
+      [
+        0.03743,
+        0.20675,
+        0.61347,
+        0.13856,
+        0.00379
+      ],
+      [
+        0.26034,
+        0.5157,
+        0.20132,
+        0.01471,
+        0.00794
+      ],
+      [
+        0.14815,
+        0.47434,
+        0.33786,
+        0.0324,
+        0.00726
+      ],
+      [
+        0.05099,
+        0.29007,
+        0.58331,
+        0.07222,
+        0.00341
+      ],
+      [
+        0.25297,
+        0.38007,
+        0.33987,
+        0.02294,
+        0.00415
+      ],
+      [
+        0.15349,
+        0.37201,
+        0.41061,
+        0.05652,
+        0.00737
+      ],
+      [
+        0.03287,
+        0.29554,
+        0.60736,
+        0.0608,
+        0.00343
+      ],
+      [
+        0.05778,
+        0.21922,
+        0.58618,
+        0.13316,
+        0.00366
+      ],
+      [
+        0.26223,
+        0.18369,
+        0.33636,
+        0.20929,
+        0.00843
+      ],
+      [
+        0.06935,
+        0.27348,
+        0.6023,
+        0.0503,
+        0.00457
+      ],
+      [
+        0.62969,
+        0.1941,
+        0.15042,
+        0.01907,
+        0.00672
+      ],
+      [
+        0.16507,
+        0.55454,
+        0.26538,
+        0.00948,
+        0.00552
+      ],
+      [
+        0.22172,
+        0.55325,
+        0.21277,
+        0.00719,
+        0.00507
+      ],
+      [
+        0.09359,
+        0.46748,
+        0.41322,
+        0.02232,
+        0.00339
+      ],
+      [
+        0.70741,
+        0.20736,
+        0.04621,
+        0.00899,
+        0.03003
+      ],
+      [
+        0.84654,
+        0.10845,
+        0.02131,
+        0.00376,
+        0.01994
+      ],
+      [
+        0.39621,
+        0.53347,
+        0.05584,
+        0.00162,
+        0.01286
+      ],
+      [
+        0.38195,
+        0.54822,
+        0.05394,
+        0.00163,
+        0.01425
+      ],
+      [
+        0.34445,
+        0.58285,
+        0.05675,
+        0.00194,
+        0.01401
+      ],
+      [
+        0.34762,
+        0.58928,
+        0.04689,
+        0.00171,
+        0.01449
+      ],
+      [
+        0.32089,
+        0.53006,
+        0.13717,
+        0.00498,
+        0.0069
+      ],
+      [
+        0.22669,
+        0.54097,
+        0.21763,
+        0.00749,
+        0.00722
+      ],
+      [
+        0.25253,
+        0.60825,
+        0.11897,
+        0.00273,
+        0.01752
+      ],
+      [
+        0.25305,
+        0.37389,
+        0.31265,
+        0.04583,
+        0.01458
+      ],
+      [
+        0.1555,
+        0.44885,
+        0.35911,
+        0.02745,
+        0.00909
+      ],
+      [
+        0.36222,
+        0.44516,
+        0.17,
+        0.01168,
+        0.01095
+      ],
+      [
+        0.34224,
+        0.59257,
+        0.04407,
+        0.00098,
+        0.02014
+      ],
+      [
+        0.32865,
+        0.55281,
+        0.09988,
+        0.00263,
+        0.01604
+      ],
+      [
+        0.43757,
+        0.50593,
+        0.03191,
+        0.00098,
+        0.02361
+      ],
+      [
+        0.85012,
+        0.10704,
+        0.01441,
+        0.00159,
+        0.02685
+      ],
+      [
+        0.60934,
+        0.321,
+        0.05123,
+        0.00332,
+        0.01511
+      ],
+      [
+        0.5241,
+        0.43676,
+        0.02482,
+        0.00096,
+        0.01337
+      ],
+      [
+        0.43778,
+        0.52575,
+        0.02071,
+        0.00065,
+        0.01511
+      ],
+      [
+        0.68966,
+        0.26746,
+        0.02472,
+        0.0015,
+        0.01666
+      ],
+      [
+        0.44506,
+        0.51466,
+        0.02595,
+        0.00076,
+        0.01357
+      ],
+      [
+        0.39882,
+        0.56817,
+        0.02306,
+        0.00048,
+        0.00947
+      ],
+      [
+        0.379,
+        0.58429,
+        0.02691,
+        0.00058,
+        0.00921
+      ],
+      [
+        0.21658,
+        0.57603,
+        0.19392,
+        0.00701,
+        0.00646
+      ],
+      [
+        0.35053,
+        0.57224,
+        0.06483,
+        0.00201,
+        0.0104
+      ],
+      [
+        0.15116,
+        0.39294,
+        0.39912,
+        0.04893,
+        0.00785
+      ],
+      [
+        0.36825,
+        0.49974,
+        0.11163,
+        0.00465,
+        0.01572
+      ],
+      [
+        0.7316,
+        0.2244,
+        0.0232,
+        0.00164,
+        0.01915
+      ],
+      [
+        0.48437,
+        0.45853,
+        0.02747,
+        0.00104,
+        0.02859
+      ],
+      [
+        0.85525,
+        0.08719,
+        0.01027,
+        0.00177,
+        0.04551
+      ],
+      [
+        0.34431,
+        0.58044,
+        0.03538,
+        0.00092,
+        0.03895
+      ],
+      [
+        0.41391,
+        0.51424,
+        0.02992,
+        0.00097,
+        0.04096
+      ],
+      [
+        0.35857,
+        0.57185,
+        0.02869,
+        0.00072,
+        0.04017
+      ],
+      [
+        0.42678,
+        0.51734,
+        0.02232,
+        0.00067,
+        0.03289
+      ],
+      [
+        0.33535,
+        0.58563,
+        0.02787,
+        0.00102,
+        0.05013
+      ],
+      [
+        0.37377,
+        0.54593,
+        0.04637,
+        0.00165,
+        0.03228
+      ],
+      [
+        0.32474,
+        0.5815,
+        0.0529,
+        0.00194,
+        0.03891
+      ],
+      [
+        0.44776,
+        0.45494,
+        0.03951,
+        0.00194,
+        0.05585
+      ],
+      [
+        0.27235,
+        0.57768,
+        0.04009,
+        0.00148,
+        0.1084
+      ],
+      [
+        0.28511,
+        0.5995,
+        0.04377,
+        0.00123,
+        0.0704
+      ],
+      [
+        0.32665,
+        0.55059,
+        0.06691,
+        0.00211,
+        0.05375
+      ],
+      [
+        0.59073,
+        0.17238,
+        0.02988,
+        0.00522,
+        0.20179
+      ],
+      [
+        0.35133,
+        0.53112,
+        0.04435,
+        0.00185,
+        0.07136
+      ],
+      [
+        0.2513,
+        0.5961,
+        0.05467,
+        0.00174,
+        0.09619
+      ],
+      [
+        0.5046,
+        0.37178,
+        0.04636,
+        0.00324,
+        0.07402
+      ],
+      [
+        0.65739,
+        0.22253,
+        0.05266,
+        0.00561,
+        0.0618
+      ],
+      [
+        0.56707,
+        0.30331,
+        0.04024,
+        0.00201,
+        0.08736
+      ],
+      [
+        0.2083,
+        0.64892,
+        0.09829,
+        0.00242,
+        0.04208
+      ],
+      [
+        0.1858,
+        0.59609,
+        0.18625,
+        0.007,
+        0.02487
+      ],
+      [
+        0.13318,
+        0.41233,
+        0.40615,
+        0.03739,
+        0.01096
+      ],
+      [
+        0.1605,
+        0.41675,
+        0.38637,
+        0.02514,
+        0.01124
+      ],
+      [
+        0.14297,
+        0.62012,
+        0.21374,
+        0.00566,
+        0.01752
+      ],
+      [
+        0.04928,
+        0.36062,
+        0.52328,
+        0.05154,
+        0.01528
+      ],
+      [
+        0.06834,
+        0.32237,
+        0.52853,
+        0.07105,
+        0.00971
+      ],
+      [
+        0.02666,
+        0.3249,
+        0.59886,
+        0.03903,
+        0.01054
+      ],
+      [
+        0.1341,
+        0.4396,
+        0.37317,
+        0.03658,
+        0.01655
+      ],
+      [
+        0.05128,
+        0.14955,
+        0.63052,
+        0.15055,
+        0.0181
+      ],
+      [
+        0.01923,
+        0.29797,
+        0.65062,
+        0.02204,
+        0.01014
+      ],
+      [
+        0.02216,
+        0.2048,
+        0.71199,
+        0.05249,
+        0.00857
+      ],
+      [
+        0.01753,
+        0.19864,
+        0.72864,
+        0.04653,
+        0.00866
+      ],
+      [
+        0.04066,
+        0.27495,
+        0.58702,
+        0.08173,
+        0.01565
+      ],
+      [
+        0.02065,
+        0.37383,
+        0.56043,
+        0.0302,
+        0.01489
+      ],
+      [
+        0.05563,
+        0.52638,
+        0.38979,
+        0.01387,
+        0.01432
+      ],
+      [
+        0.2872,
+        0.52199,
+        0.13835,
+        0.00981,
+        0.04265
+      ],
+      [
+        0.23861,
+        0.60603,
+        0.1075,
+        0.00344,
+        0.04442
+      ],
+      [
+        0.20856,
+        0.64939,
+        0.07836,
+        0.00233,
+        0.06136
+      ],
+      [
+        0.27122,
+        0.62277,
+        0.06497,
+        0.00225,
+        0.03878
+      ],
+      [
+        0.18186,
+        0.58828,
+        0.19904,
+        0.00758,
+        0.02323
+      ],
+      [
+        0.08412,
+        0.4152,
+        0.46196,
+        0.02544,
+        0.01328
+      ],
+      [
+        0.03764,
+        0.35726,
+        0.56618,
+        0.02843,
+        0.01049
+      ],
+      [
+        0.1393,
+        0.58292,
+        0.24917,
+        0.00948,
+        0.01913
+      ],
+      [
+        0.02868,
+        0.39241,
+        0.54864,
+        0.01581,
+        0.01446
+      ],
+      [
+        0.05757,
+        0.50325,
+        0.40934,
+        0.01407,
+        0.01577
+      ],
+      [
+        0.02146,
+        0.21057,
+        0.63847,
+        0.11772,
+        0.01178
+      ],
+      [
+        0.08919,
+        0.53772,
+        0.34274,
+        0.00767,
+        0.02268
+      ],
+      [
+        0.21637,
+        0.62459,
+        0.11447,
+        0.00295,
+        0.04162
+      ],
+      [
+        0.23798,
+        0.54354,
+        0.18909,
+        0.00615,
+        0.02325
+      ],
+      [
+        0.38296,
+        0.51105,
+        0.04713,
+        0.00135,
+        0.0575
+      ],
+      [
+        0.27973,
+        0.609,
+        0.06791,
+        0.00199,
+        0.04137
+      ],
+      [
+        0.19239,
+        0.68191,
+        0.06623,
+        0.00136,
+        0.05811
+      ],
+      [
+        0.31773,
+        0.60403,
+        0.04872,
+        0.00159,
+        0.02793
+      ],
+      [
+        0.35326,
+        0.58339,
+        0.03276,
+        0.00088,
+        0.02972
+      ],
+      [
+        0.25761,
+        0.66248,
+        0.04359,
+        0.00096,
+        0.03537
+      ],
+      [
+        0.4319,
+        0.51355,
+        0.03068,
+        0.00081,
+        0.02305
+      ],
+      [
+        0.30895,
+        0.58167,
+        0.04515,
+        0.00154,
+        0.06269
+      ],
+      [
+        0.31967,
+        0.51347,
+        0.12791,
+        0.0062,
+        0.03275
+      ],
+      [
+        0.35034,
+        0.52843,
+        0.06517,
+        0.00306,
+        0.05299
+      ],
+      [
+        0.24682,
+        0.62693,
+        0.08632,
+        0.00258,
+        0.03734
+      ],
+      [
+        0.42637,
+        0.47649,
+        0.04608,
+        0.00174,
+        0.04933
+      ],
+      [
+        0.33013,
+        0.56784,
+        0.07374,
+        0.00162,
+        0.02666
+      ],
+      [
+        0.28774,
+        0.58352,
+        0.06886,
+        0.00181,
+        0.05807
+      ],
+      [
+        0.23132,
+        0.57553,
+        0.16423,
+        0.00476,
+        0.02416
+      ],
+      [
+        0.67917,
+        0.19779,
+        0.02534,
+        0.00306,
+        0.09463
+      ],
+      [
+        0.43467,
+        0.4691,
+        0.03216,
+        0.00119,
+        0.06287
+      ],
+      [
+        0.77878,
+        0.12381,
+        0.02036,
+        0.00317,
+        0.07388
+      ],
+      [
+        0.75845,
+        0.15805,
+        0.02129,
+        0.00193,
+        0.06029
+      ],
+      [
+        0.65844,
+        0.28171,
+        0.02976,
+        0.00145,
+        0.02864
+      ],
+      [
+        0.4562,
+        0.48985,
+        0.02367,
+        0.00072,
+        0.02956
+      ],
+      [
+        0.38789,
+        0.55114,
+        0.027,
+        0.00065,
+        0.03333
+      ],
+      [
+        0.45523,
+        0.49345,
+        0.02759,
+        0.00074,
+        0.02298
+      ],
+      [
+        0.51324,
+        0.43158,
+        0.02938,
+        0.00106,
+        0.02474
+      ],
+      [
+        0.51081,
+        0.44092,
+        0.02327,
+        0.0008,
+        0.02421
+      ],
+      [
+        0.78003,
+        0.15625,
+        0.02075,
+        0.00232,
+        0.04065
+      ],
+      [
+        0.87411,
+        0.08736,
+        0.01319,
+        0.00208,
+        0.02325
+      ],
+      [
+        0.4979,
+        0.45896,
+        0.02403,
+        0.00081,
+        0.0183
+      ],
+      [
+        0.44594,
+        0.48856,
+        0.04491,
+        0.00167,
+        0.01893
+      ],
+      [
+        0.82006,
+        0.12616,
+        0.02244,
+        0.006,
+        0.02534
+      ],
+      [
+        0.39567,
+        0.5297,
+        0.0531,
+        0.00177,
+        0.01977
+      ],
+      [
+        0.2432,
+        0.64663,
+        0.08463,
+        0.00222,
+        0.02332
+      ],
+      [
+        0.19938,
+        0.67412,
+        0.10453,
+        0.00292,
+        0.01905
+      ],
+      [
+        0.12462,
+        0.53653,
+        0.31003,
+        0.01556,
+        0.01326
+      ],
+      [
+        0.04583,
+        0.39767,
+        0.51921,
+        0.02966,
+        0.00764
+      ],
+      [
+        0.12182,
+        0.62553,
+        0.23356,
+        0.00696,
+        0.01213
+      ],
+      [
+        0.05581,
+        0.50737,
+        0.4125,
+        0.01678,
+        0.00754
+      ],
+      [
+        0.00793,
+        0.10169,
+        0.78945,
+        0.09687,
+        0.00405
+      ],
+      [
+        0.00893,
+        0.12953,
+        0.77491,
+        0.08284,
+        0.00378
+      ],
+      [
+        0.01161,
+        0.11063,
+        0.78704,
+        0.08562,
+        0.00511
+      ],
+      [
+        0.00879,
+        0.14075,
+        0.79353,
+        0.0525,
+        0.00443
+      ],
+      [
+        0.01098,
+        0.14808,
+        0.76626,
+        0.07077,
+        0.00392
+      ],
+      [
+        0.01124,
+        0.0565,
+        0.68346,
+        0.24548,
+        0.00332
+      ],
+      [
+        0.01311,
+        0.12276,
+        0.7382,
+        0.12242,
+        0.00351
+      ],
+      [
+        0.01773,
+        0.29336,
+        0.65428,
+        0.02976,
+        0.00487
+      ],
+      [
+        0.00891,
+        0.13461,
+        0.79115,
+        0.06134,
+        0.004
+      ],
+      [
+        0.00473,
+        0.12246,
+        0.83076,
+        0.03942,
+        0.00263
+      ],
+      [
+        0.01114,
+        0.13049,
+        0.77575,
+        0.07916,
+        0.00345
+      ],
+      [
+        0.00517,
+        0.08736,
+        0.81097,
+        0.0941,
+        0.00241
+      ],
+      [
+        0.00454,
+        0.0544,
+        0.81675,
+        0.12034,
+        0.00397
+      ],
+      [
+        0.0035,
+        0.06531,
+        0.8523,
+        0.07458,
+        0.0043
+      ],
+      [
+        0.00706,
+        0.1518,
+        0.80441,
+        0.03198,
+        0.00475
+      ],
+      [
+        0.00318,
+        0.03334,
+        0.61196,
+        0.34915,
+        0.00238
+      ],
+      [
+        0.00407,
+        0.08398,
+        0.85533,
+        0.05261,
+        0.00401
+      ],
+      [
+        0.0051,
+        0.06637,
+        0.72214,
+        0.20353,
+        0.00286
+      ],
+      [
+        0.01003,
+        0.19533,
+        0.75514,
+        0.03494,
+        0.00456
+      ],
+      [
+        0.00539,
+        0.06054,
+        0.83209,
+        0.09836,
+        0.00361
+      ],
+      [
+        0.00781,
+        0.1722,
+        0.77423,
+        0.04206,
+        0.00371
+      ],
+      [
+        0.00795,
+        0.19609,
+        0.75209,
+        0.04083,
+        0.00304
+      ],
+      [
+        0.01353,
+        0.27407,
+        0.67796,
+        0.02842,
+        0.00602
+      ],
+      [
+        0.00436,
+        0.0626,
+        0.71361,
+        0.21681,
+        0.00261
+      ],
+      [
+        0.00701,
+        0.19042,
+        0.74961,
+        0.04943,
+        0.00354
+      ],
+      [
+        0.004,
+        0.10201,
+        0.81184,
+        0.07795,
+        0.0042
+      ],
+      [
+        0.36195,
+        0.54488,
+        0.08046,
+        0.00332,
+        0.00939
+      ],
+      [
+        0.09511,
+        0.70114,
+        0.19024,
+        0.004,
+        0.0095
+      ],
+      [
+        0.16226,
+        0.5886,
+        0.23506,
+        0.0074,
+        0.00668
+      ],
+      [
+        0.02984,
+        0.45086,
+        0.499,
+        0.01494,
+        0.00536
+      ],
+      [
+        0.28271,
+        0.61485,
+        0.0902,
+        0.00318,
+        0.00906
+      ],
+      [
+        0.04794,
+        0.53407,
+        0.40068,
+        0.01043,
+        0.00687
+      ],
+      [
+        0.03873,
+        0.28073,
+        0.60648,
+        0.0673,
+        0.00676
+      ],
+      [
+        0.01718,
+        0.20608,
+        0.74388,
+        0.02844,
+        0.00442
+      ],
+      [
+        0.02151,
+        0.42713,
+        0.52967,
+        0.01561,
+        0.00608
+      ],
+      [
+        0.01065,
+        0.19422,
+        0.72491,
+        0.06516,
+        0.00506
+      ],
+      [
+        0.09684,
+        0.63661,
+        0.25049,
+        0.00556,
+        0.01049
+      ],
+      [
+        0.02055,
+        0.33532,
+        0.62195,
+        0.01578,
+        0.0064
+      ],
+      [
+        0.01552,
+        0.27136,
+        0.68687,
+        0.01924,
+        0.00701
+      ],
+      [
+        0.00677,
+        0.18666,
+        0.76093,
+        0.04113,
+        0.0045
+      ],
+      [
+        0.0068,
+        0.10586,
+        0.82321,
+        0.06021,
+        0.00393
+      ],
+      [
+        0.00563,
+        0.14829,
+        0.81373,
+        0.02808,
+        0.00426
+      ],
+      [
+        0.00496,
+        0.10442,
+        0.76326,
+        0.1243,
+        0.00307
+      ],
+      [
+        0.0049,
+        0.07764,
+        0.83973,
+        0.07397,
+        0.00377
+      ],
+      [
+        0.00414,
+        0.08148,
+        0.77937,
+        0.13181,
+        0.00321
+      ],
+      [
+        0.00443,
+        0.1156,
+        0.79682,
+        0.07992,
+        0.00323
+      ],
+      [
+        0.00252,
+        0.02911,
+        0.65007,
+        0.31469,
+        0.00362
+      ],
+      [
+        0.00585,
+        0.10928,
+        0.79934,
+        0.07846,
+        0.00707
+      ],
+      [
+        0.00298,
+        0.0627,
+        0.79213,
+        0.136,
+        0.00619
+      ],
+      [
+        0.0029,
+        0.03222,
+        0.72906,
+        0.2266,
+        0.00922
+      ],
+      [
+        0.00289,
+        0.03487,
+        0.76646,
+        0.18819,
+        0.00759
+      ],
+      [
+        0.00454,
+        0.03839,
+        0.55327,
+        0.39621,
+        0.00759
+      ],
+      [
+        0.2931,
+        0.30892,
+        0.26381,
+        0.07704,
+        0.05714
+      ],
+      [
+        0.06274,
+        0.43114,
+        0.46001,
+        0.02117,
+        0.02495
+      ],
+      [
+        0.01722,
+        0.22973,
+        0.70021,
+        0.04017,
+        0.01266
+      ],
+      [
+        0.01093,
+        0.16926,
+        0.74319,
+        0.06731,
+        0.0093
+      ],
+      [
+        0.01967,
+        0.26569,
+        0.66651,
+        0.03515,
+        0.01298
+      ],
+      [
+        0.02168,
+        0.37328,
+        0.56371,
+        0.02469,
+        0.01664
+      ],
+      [
+        0.05235,
+        0.35498,
+        0.53984,
+        0.03455,
+        0.01827
+      ],
+      [
+        0.01324,
+        0.15535,
+        0.76918,
+        0.04724,
+        0.015
+      ],
+      [
+        0.03729,
+        0.36107,
+        0.54824,
+        0.03771,
+        0.0157
+      ],
+      [
+        0.01758,
+        0.21434,
+        0.69842,
+        0.05547,
+        0.0142
+      ],
+      [
+        0.35585,
+        0.40963,
+        0.18315,
+        0.01307,
+        0.0383
+      ],
+      [
+        0.07037,
+        0.50192,
+        0.3891,
+        0.0164,
+        0.02222
+      ],
+      [
+        0.01647,
+        0.26334,
+        0.65276,
+        0.05178,
+        0.01565
+      ],
+      [
+        0.01313,
+        0.20413,
+        0.72993,
+        0.03773,
+        0.01508
+      ],
+      [
+        0.00979,
+        0.15802,
+        0.74979,
+        0.07333,
+        0.00906
+      ],
+      [
+        0.00704,
+        0.09743,
+        0.77581,
+        0.11029,
+        0.00944
+      ],
+      [
+        0.00611,
+        0.09376,
+        0.79823,
+        0.09125,
+        0.01065
+      ],
+      [
+        0.01384,
+        0.22475,
+        0.69303,
+        0.0504,
+        0.01798
+      ],
+      [
+        0.00351,
+        0.04446,
+        0.75531,
+        0.18404,
+        0.01268
+      ],
+      [
+        0.00657,
+        0.05733,
+        0.7946,
+        0.12234,
+        0.01916
+      ],
+      [
+        0.00849,
+        0.07972,
+        0.78714,
+        0.1047,
+        0.01995
+      ],
+      [
+        0.00505,
+        0.06919,
+        0.78416,
+        0.12665,
+        0.01496
+      ],
+      [
+        0.00563,
+        0.05932,
+        0.80866,
+        0.10859,
+        0.0178
+      ],
+      [
+        0.00553,
+        0.04231,
+        0.84133,
+        0.07293,
+        0.0379
+      ],
+      [
+        0.00323,
+        0.02726,
+        0.59321,
+        0.35727,
+        0.01903
+      ],
+      [
+        0.00545,
+        0.07722,
+        0.82068,
+        0.06267,
+        0.03398
+      ],
+      [
+        0.01878,
+        0.23157,
+        0.66453,
+        0.02635,
+        0.05877
+      ],
+      [
+        0.02038,
+        0.15519,
+        0.6447,
+        0.11099,
+        0.06874
+      ],
+      [
+        0.01792,
+        0.32698,
+        0.47184,
+        0.01024,
+        0.17301
+      ],
+      [
+        0.03864,
+        0.36293,
+        0.23596,
+        0.00616,
+        0.35632
+      ],
+      [
+        0.03622,
+        0.27684,
+        0.39918,
+        0.02561,
+        0.26215
+      ],
+      [
+        0.03884,
+        0.29597,
+        0.26778,
+        0.00984,
+        0.38757
+      ],
+      [
+        0.09529,
+        0.43165,
+        0.1571,
+        0.00513,
+        0.31084
+      ],
+      [
+        0.14573,
+        0.49076,
+        0.10413,
+        0.00309,
+        0.25629
+      ],
+      [
+        0.08217,
+        0.40251,
+        0.1481,
+        0.00518,
+        0.36204
+      ],
+      [
+        0.37894,
+        0.27875,
+        0.0895,
+        0.00612,
+        0.24669
+      ],
+      [
+        0.46094,
+        0.32307,
+        0.06688,
+        0.00217,
+        0.14694
+      ],
+      [
+        0.41304,
+        0.39963,
+        0.07838,
+        0.00231,
+        0.10665
+      ],
+      [
+        0.36761,
+        0.47643,
+        0.04902,
+        0.00164,
+        0.1053
+      ],
+      [
+        0.2805,
+        0.55845,
+        0.05698,
+        0.0016,
+        0.10246
+      ],
+      [
+        0.37705,
+        0.46811,
+        0.08176,
+        0.00189,
+        0.07119
+      ],
+      [
+        0.38484,
+        0.48996,
+        0.0582,
+        0.00157,
+        0.06543
+      ],
+      [
+        0.37789,
+        0.49346,
+        0.06711,
+        0.00191,
+        0.05963
+      ],
+      [
+        0.33393,
+        0.55193,
+        0.06162,
+        0.00154,
+        0.05098
+      ],
+      [
+        0.46166,
+        0.40977,
+        0.08223,
+        0.00262,
+        0.04372
+      ],
+      [
+        0.30325,
+        0.59602,
+        0.05759,
+        0.00158,
+        0.04157
+      ],
+      [
+        0.17741,
+        0.67595,
+        0.10403,
+        0.00266,
+        0.03995
+      ],
+      [
+        0.0399,
+        0.34483,
+        0.56814,
+        0.03338,
+        0.01375
+      ],
+      [
+        0.01941,
+        0.21626,
+        0.69573,
+        0.05474,
+        0.01385
+      ],
+      [
+        0.00679,
+        0.11188,
+        0.78839,
+        0.08276,
+        0.01018
+      ],
+      [
+        0.00695,
+        0.12465,
+        0.82201,
+        0.0329,
+        0.0135
+      ],
+      [
+        0.00634,
+        0.09046,
+        0.8031,
+        0.08965,
+        0.01045
+      ],
+      [
+        0.01031,
+        0.22053,
+        0.72248,
+        0.03553,
+        0.01114
+      ],
+      [
+        0.01057,
+        0.16766,
+        0.76787,
+        0.0439,
+        0.01
+      ],
+      [
+        0.00711,
+        0.1686,
+        0.78587,
+        0.02477,
+        0.01365
+      ],
+      [
+        0.00514,
+        0.08505,
+        0.78372,
+        0.11692,
+        0.00917
+      ],
+      [
+        0.00736,
+        0.10118,
+        0.80615,
+        0.0777,
+        0.00761
+      ],
+      [
+        0.01453,
+        0.25937,
+        0.68117,
+        0.03216,
+        0.01277
+      ],
+      [
+        0.00648,
+        0.09722,
+        0.79291,
+        0.09558,
+        0.00781
+      ],
+      [
+        0.0169,
+        0.27888,
+        0.66259,
+        0.0275,
+        0.01413
+      ],
+      [
+        0.00847,
+        0.17091,
+        0.76776,
+        0.03965,
+        0.01322
+      ],
+      [
+        0.00462,
+        0.07768,
+        0.78648,
+        0.12307,
+        0.00815
+      ],
+      [
+        0.00784,
+        0.12659,
+        0.785,
+        0.07304,
+        0.00753
+      ],
+      [
+        0.00486,
+        0.06007,
+        0.81866,
+        0.10854,
+        0.00787
+      ],
+      [
+        0.03039,
+        0.36358,
+        0.56456,
+        0.02713,
+        0.01434
+      ],
+      [
+        0.0097,
+        0.14452,
+        0.77576,
+        0.0596,
+        0.01041
+      ],
+      [
+        0.00534,
+        0.09103,
+        0.78803,
+        0.10675,
+        0.00885
+      ],
+      [
+        0.00713,
+        0.11886,
+        0.79832,
+        0.06899,
+        0.0067
+      ],
+      [
+        0.00531,
+        0.06165,
+        0.6584,
+        0.26823,
+        0.0064
+      ],
+      [
+        0.02506,
+        0.23062,
+        0.66719,
+        0.0701,
+        0.00704
+      ],
+      [
+        0.00811,
+        0.18068,
+        0.75512,
+        0.04938,
+        0.00672
+      ],
+      [
+        0.01093,
+        0.095,
+        0.72622,
+        0.16239,
+        0.00546
+      ],
+      [
+        0.0079,
+        0.10806,
+        0.72945,
+        0.15001,
+        0.00458
+      ],
+      [
+        0.00763,
+        0.09696,
+        0.73669,
+        0.1531,
+        0.00563
+      ],
+      [
+        0.0051,
+        0.12188,
+        0.8341,
+        0.03006,
+        0.00887
+      ],
+      [
+        0.00393,
+        0.08419,
+        0.83919,
+        0.068,
+        0.00469
+      ],
+      [
+        0.00513,
+        0.06592,
+        0.70738,
+        0.21486,
+        0.00671
+      ],
+      [
+        0.00938,
+        0.093,
+        0.75175,
+        0.14082,
+        0.00506
+      ],
+      [
+        0.02175,
+        0.16875,
+        0.68713,
+        0.1158,
+        0.00657
+      ],
+      [
+        0.01338,
+        0.2089,
+        0.71835,
+        0.05497,
+        0.0044
+      ],
+      [
+        0.00749,
+        0.14383,
+        0.78398,
+        0.06064,
+        0.00406
+      ],
+      [
+        0.01167,
+        0.20994,
+        0.73976,
+        0.03293,
+        0.0057
+      ],
+      [
+        0.01494,
+        0.30324,
+        0.6488,
+        0.02502,
+        0.00799
+      ],
+      [
+        0.01096,
+        0.16588,
+        0.71197,
+        0.10464,
+        0.00655
+      ],
+      [
+        0.02502,
+        0.3824,
+        0.56347,
+        0.02219,
+        0.00693
+      ],
+      [
+        0.01197,
+        0.15463,
+        0.74588,
+        0.08218,
+        0.00534
+      ],
+      [
+        0.00574,
+        0.08215,
+        0.8374,
+        0.06734,
+        0.00736
+      ],
+      [
+        0.00635,
+        0.10882,
+        0.82531,
+        0.05108,
+        0.00844
+      ],
+      [
+        0.01151,
+        0.17901,
+        0.7456,
+        0.05981,
+        0.00407
+      ],
+      [
+        0.00824,
+        0.15882,
+        0.75846,
+        0.07018,
+        0.0043
+      ],
+      [
+        0.0063,
+        0.08359,
+        0.77108,
+        0.13475,
+        0.00428
+      ],
+      [
+        0.12764,
+        0.29121,
+        0.379,
+        0.17537,
+        0.02678
+      ],
+      [
+        0.39682,
+        0.30316,
+        0.22638,
+        0.05666,
+        0.01698
+      ],
+      [
+        0.10242,
+        0.5386,
+        0.33595,
+        0.01435,
+        0.00868
+      ],
+      [
+        0.08363,
+        0.41402,
+        0.46575,
+        0.02983,
+        0.00677
+      ],
+      [
+        0.05326,
+        0.24499,
+        0.6275,
+        0.06928,
+        0.00497
+      ],
+      [
+        0.0202,
+        0.26796,
+        0.66868,
+        0.03922,
+        0.00394
+      ],
+      [
+        0.014,
+        0.26127,
+        0.6964,
+        0.02418,
+        0.00415
+      ],
+      [
+        0.01163,
+        0.15989,
+        0.7701,
+        0.05537,
+        0.00301
+      ],
+      [
+        0.00614,
+        0.06816,
+        0.62453,
+        0.29821,
+        0.00298
+      ],
+      [
+        0.00456,
+        0.09053,
+        0.84592,
+        0.05593,
+        0.00307
+      ],
+      [
+        0.00279,
+        0.03775,
+        0.85057,
+        0.10571,
+        0.00318
+      ],
+      [
+        0.00469,
+        0.05532,
+        0.79444,
+        0.14325,
+        0.00229
+      ],
+      [
+        0.00221,
+        0.03591,
+        0.72856,
+        0.23053,
+        0.00278
+      ],
+      [
+        0.0025,
+        0.02459,
+        0.74009,
+        0.22972,
+        0.0031
+      ],
+      [
+        0.0016,
+        0.01703,
+        0.77766,
+        0.19925,
+        0.00446
+      ],
+      [
+        0.00279,
+        0.02574,
+        0.64181,
+        0.32661,
+        0.00305
+      ],
+      [
+        0.00109,
+        0.01426,
+        0.59735,
+        0.38453,
+        0.00278
+      ],
+      [
+        0.00173,
+        0.01438,
+        0.60711,
+        0.37305,
+        0.00373
+      ],
+      [
+        0.00092,
+        0.00688,
+        0.28176,
+        0.70856,
+        0.00187
+      ],
+      [
+        0.00065,
+        0.00423,
+        0.22028,
+        0.77315,
+        0.00169
+      ],
+      [
+        0.00078,
+        0.00349,
+        0.15528,
+        0.83907,
+        0.00138
+      ],
+      [
+        0.00067,
+        0.00534,
+        0.2316,
+        0.76056,
+        0.00184
+      ],
+      [
+        0.00054,
+        0.0029,
+        0.16025,
+        0.83512,
+        0.00119
+      ],
+      [
+        0.00054,
+        0.00301,
+        0.12407,
+        0.87043,
+        0.00196
+      ],
+      [
+        0.00088,
+        0.00369,
+        0.08796,
+        0.90549,
+        0.00198
+      ],
+      [
+        0.00045,
+        0.00266,
+        0.12036,
+        0.87503,
+        0.0015
+      ],
+      [
+        0.00098,
+        0.00705,
+        0.21979,
+        0.76908,
+        0.0031
+      ],
+      [
+        0.00076,
+        0.00369,
+        0.08795,
+        0.90482,
+        0.00277
+      ],
+      [
+        0.00051,
+        0.00327,
+        0.14561,
+        0.84861,
+        0.00199
+      ],
+      [
+        0.00089,
+        0.00405,
+        0.08611,
+        0.90503,
+        0.00392
+      ],
+      [
+        0.00064,
+        0.00386,
+        0.11997,
+        0.87264,
+        0.00289
+      ],
+      [
+        0.00053,
+        0.00313,
+        0.13212,
+        0.86188,
+        0.00234
+      ],
+      [
+        0.00044,
+        0.00264,
+        0.17826,
+        0.81598,
+        0.00268
+      ],
+      [
+        0.00124,
+        0.00315,
+        0.04712,
+        0.94413,
+        0.00436
+      ],
+      [
+        0.0008,
+        0.00364,
+        0.18749,
+        0.80471,
+        0.00337
+      ],
+      [
+        0.00064,
+        0.00249,
+        0.06796,
+        0.92627,
+        0.00263
+      ],
+      [
+        0.00072,
+        0.00305,
+        0.0781,
+        0.913,
+        0.00513
+      ],
+      [
+        0.00051,
+        0.00173,
+        0.06154,
+        0.93351,
+        0.00271
+      ],
+      [
+        0.0007,
+        0.00312,
+        0.08833,
+        0.90245,
+        0.0054
+      ],
+      [
+        0.00103,
+        0.00251,
+        0.04132,
+        0.94959,
+        0.00555
+      ],
+      [
+        0.00089,
+        0.00228,
+        0.04933,
+        0.94331,
+        0.0042
+      ],
+      [
+        0.00082,
+        0.00502,
+        0.1882,
+        0.79682,
+        0.00914
+      ],
+      [
+        0.00153,
+        0.00363,
+        0.04804,
+        0.93635,
+        0.01046
+      ],
+      [
+        0.00147,
+        0.00437,
+        0.06303,
+        0.92112,
+        0.01002
+      ],
+      [
+        0.00127,
+        0.00358,
+        0.05295,
+        0.93346,
+        0.00875
+      ],
+      [
+        0.00109,
+        0.00424,
+        0.08328,
+        0.89987,
+        0.01152
+      ],
+      [
+        0.00161,
+        0.00455,
+        0.05966,
+        0.92214,
+        0.01204
+      ],
+      [
+        0.00133,
+        0.00586,
+        0.11513,
+        0.85972,
+        0.01796
+      ],
+      [
+        0.00163,
+        0.00496,
+        0.06573,
+        0.90571,
+        0.02197
+      ],
+      [
+        0.00224,
+        0.00577,
+        0.06146,
+        0.90534,
+        0.02518
+      ],
+      [
+        0.00218,
+        0.00608,
+        0.06748,
+        0.90078,
+        0.02349
+      ],
+      [
+        0.00405,
+        0.00842,
+        0.06454,
+        0.88036,
+        0.04263
+      ],
+      [
+        0.00312,
+        0.00674,
+        0.05804,
+        0.89636,
+        0.03573
+      ],
+      [
+        0.00321,
+        0.00755,
+        0.07077,
+        0.87405,
+        0.04442
+      ],
+      [
+        0.00751,
+        0.04922,
+        0.46893,
+        0.17636,
+        0.29798
+      ],
+      [
+        0.00824,
+        0.07388,
+        0.44459,
+        0.0762,
+        0.3971
+      ],
+      [
+        0.00869,
+        0.07429,
+        0.17156,
+        0.01679,
+        0.72866
+      ],
+      [
+        0.00872,
+        0.08177,
+        0.19581,
+        0.01021,
+        0.7035
+      ],
+      [
+        0.01858,
+        0.08968,
+        0.28848,
+        0.10999,
+        0.49327
+      ],
+      [
+        0.00837,
+        0.10615,
+        0.18138,
+        0.00839,
+        0.69572
+      ],
+      [
+        0.00757,
+        0.08444,
+        0.19614,
+        0.01064,
+        0.70121
+      ],
+      [
+        0.00307,
+        0.04179,
+        0.05624,
+        0.00217,
+        0.89674
+      ],
+      [
+        0.00523,
+        0.05881,
+        0.07761,
+        0.00317,
+        0.85518
+      ],
+      [
+        0.0086,
+        0.08356,
+        0.11173,
+        0.00594,
+        0.79016
+      ],
+      [
+        0.05233,
+        0.14974,
+        0.05458,
+        0.00362,
+        0.73973
+      ],
+      [
+        0.09362,
+        0.19187,
+        0.043,
+        0.00152,
+        0.67
+      ],
+      [
+        0.01083,
+        0.15627,
+        0.16334,
+        0.00388,
+        0.66568
+      ],
+      [
+        0.01222,
+        0.13095,
+        0.44637,
+        0.02689,
+        0.38357
+      ],
+      [
+        0.01375,
+        0.14985,
+        0.18295,
+        0.00639,
+        0.64706
+      ],
+      [
+        0.01267,
+        0.10683,
+        0.11151,
+        0.00516,
+        0.76383
+      ],
+      [
+        0.00711,
+        0.09311,
+        0.06771,
+        0.00145,
+        0.83062
+      ],
+      [
+        0.00809,
+        0.08901,
+        0.05754,
+        0.00143,
+        0.84393
+      ],
+      [
+        0.00381,
+        0.05089,
+        0.05352,
+        0.00109,
+        0.8907
+      ],
+      [
+        0.00552,
+        0.06725,
+        0.05204,
+        0.00129,
+        0.87389
+      ],
+      [
+        0.00683,
+        0.07523,
+        0.03786,
+        0.00067,
+        0.8794
+      ],
+      [
+        0.0116,
+        0.09544,
+        0.05447,
+        0.00151,
+        0.83699
+      ],
+      [
+        0.01472,
+        0.08167,
+        0.09183,
+        0.00591,
+        0.80588
+      ],
+      [
+        0.01345,
+        0.16477,
+        0.13164,
+        0.00345,
+        0.6867
+      ],
+      [
+        0.00993,
+        0.10394,
+        0.07812,
+        0.00193,
+        0.80608
+      ],
+      [
+        0.02343,
+        0.1004,
+        0.04978,
+        0.00141,
+        0.82498
+      ],
+      [
+        0.03037,
+        0.19612,
+        0.08698,
+        0.00197,
+        0.68457
+      ],
+      [
+        0.03086,
+        0.15098,
+        0.08447,
+        0.00296,
+        0.73073
+      ],
+      [
+        0.00861,
+        0.10724,
+        0.06679,
+        0.00105,
+        0.81631
+      ],
+      [
+        0.22457,
+        0.29155,
+        0.05234,
+        0.00139,
+        0.43015
+      ],
+      [
+        0.10473,
+        0.27198,
+        0.05303,
+        0.00197,
+        0.56829
+      ],
+      [
+        0.10277,
+        0.3478,
+        0.29457,
+        0.0129,
+        0.24196
+      ],
+      [
+        0.0747,
+        0.36327,
+        0.23254,
+        0.00752,
+        0.32198
+      ],
+      [
+        0.08263,
+        0.37653,
+        0.37953,
+        0.01221,
+        0.14909
+      ],
+      [
+        0.08545,
+        0.29214,
+        0.44003,
+        0.01238,
+        0.16999
+      ],
+      [
+        0.81908,
+        0.09065,
+        0.02544,
+        0.00349,
+        0.06134
+      ],
+      [
+        0.69419,
+        0.0932,
+        0.02878,
+        0.00409,
+        0.17974
+      ],
+      [
+        0.82161,
+        0.05008,
+        0.01831,
+        0.00877,
+        0.10123
+      ],
+      [
+        0.79659,
+        0.06979,
+        0.02065,
+        0.00853,
+        0.10444
+      ],
+      [
+        0.73787,
+        0.11066,
+        0.03059,
+        0.00448,
+        0.1164
+      ],
+      [
+        0.80079,
+        0.10006,
+        0.02484,
+        0.00368,
+        0.07063
+      ],
+      [
+        0.62044,
+        0.2991,
+        0.0389,
+        0.00184,
+        0.03972
+      ],
+      [
+        0.63659,
+        0.25731,
+        0.05893,
+        0.00382,
+        0.04335
+      ],
+      [
+        0.80818,
+        0.103,
+        0.02756,
+        0.00351,
+        0.05775
+      ],
+      [
+        0.53714,
+        0.37659,
+        0.04515,
+        0.00208,
+        0.03903
+      ],
+      [
+        0.45406,
+        0.42476,
+        0.05205,
+        0.00228,
+        0.06685
+      ],
+      [
+        0.42258,
+        0.49404,
+        0.04146,
+        0.00126,
+        0.04066
+      ],
+      [
+        0.42075,
+        0.46284,
+        0.05609,
+        0.00229,
+        0.05803
+      ],
+      [
+        0.34252,
+        0.48857,
+        0.10395,
+        0.00427,
+        0.0607
+      ],
+      [
+        0.10766,
+        0.46159,
+        0.38213,
+        0.02203,
+        0.02659
+      ],
+      [
+        0.10349,
+        0.46329,
+        0.38014,
+        0.02508,
+        0.02801
+      ],
+      [
+        0.26131,
+        0.45331,
+        0.20251,
+        0.00937,
+        0.07351
+      ],
+      [
+        0.12259,
+        0.54253,
+        0.23189,
+        0.00719,
+        0.0958
+      ],
+      [
+        0.1548,
+        0.45629,
+        0.33067,
+        0.01958,
+        0.03866
+      ],
+      [
+        0.17025,
+        0.40798,
+        0.35233,
+        0.02701,
+        0.04243
+      ],
+      [
+        0.04884,
+        0.34034,
+        0.56024,
+        0.03464,
+        0.01595
+      ],
+      [
+        0.06218,
+        0.26916,
+        0.59838,
+        0.04621,
+        0.02408
+      ],
+      [
+        0.03477,
+        0.22539,
+        0.62503,
+        0.10372,
+        0.01109
+      ],
+      [
+        0.01819,
+        0.19097,
+        0.71954,
+        0.06332,
+        0.00798
+      ],
+      [
+        0.03423,
+        0.16129,
+        0.70097,
+        0.09266,
+        0.01085
+      ],
+      [
+        0.00818,
+        0.08152,
+        0.805,
+        0.09952,
+        0.00578
+      ],
+      [
+        0.01265,
+        0.17575,
+        0.75515,
+        0.05029,
+        0.00616
+      ],
+      [
+        0.00836,
+        0.13829,
+        0.80194,
+        0.04619,
+        0.00523
+      ],
+      [
+        0.00779,
+        0.09264,
+        0.70864,
+        0.18485,
+        0.00608
+      ],
+      [
+        0.01237,
+        0.17364,
+        0.76066,
+        0.04726,
+        0.00607
+      ],
+      [
+        0.04387,
+        0.43371,
+        0.48294,
+        0.01104,
+        0.02845
+      ],
+      [
+        0.01772,
+        0.208,
+        0.73687,
+        0.03047,
+        0.00695
+      ],
+      [
+        0.01426,
+        0.20156,
+        0.73201,
+        0.04881,
+        0.00336
+      ],
+      [
+        0.00966,
+        0.11643,
+        0.75761,
+        0.11248,
+        0.00382
+      ],
+      [
+        0.00753,
+        0.08642,
+        0.77855,
+        0.12474,
+        0.00275
+      ],
+      [
+        0.00472,
+        0.07449,
+        0.87856,
+        0.03673,
+        0.00551
+      ],
+      [
+        0.03921,
+        0.34264,
+        0.56839,
+        0.04031,
+        0.00945
+      ],
+      [
+        0.0092,
+        0.14701,
+        0.79677,
+        0.04185,
+        0.00518
+      ],
+      [
+        0.00401,
+        0.04537,
+        0.87067,
+        0.07328,
+        0.00666
+      ],
+      [
+        0.00325,
+        0.03737,
+        0.78468,
+        0.17013,
+        0.00457
+      ],
+      [
+        0.00368,
+        0.03291,
+        0.7233,
+        0.23526,
+        0.00485
+      ],
+      [
+        0.00383,
+        0.04506,
+        0.8772,
+        0.06916,
+        0.00475
+      ],
+      [
+        0.00326,
+        0.04027,
+        0.80829,
+        0.14527,
+        0.00291
+      ],
+      [
+        0.00276,
+        0.04184,
+        0.8474,
+        0.10494,
+        0.00307
+      ],
+      [
+        0.00323,
+        0.03233,
+        0.86404,
+        0.09671,
+        0.0037
+      ],
+      [
+        0.00224,
+        0.0306,
+        0.90855,
+        0.05385,
+        0.00476
+      ],
+      [
+        0.0031,
+        0.02728,
+        0.80005,
+        0.16592,
+        0.00365
+      ],
+      [
+        0.0023,
+        0.02076,
+        0.57934,
+        0.39461,
+        0.00298
+      ],
+      [
+        0.0048,
+        0.06561,
+        0.82643,
+        0.09872,
+        0.00443
+      ],
+      [
+        0.02461,
+        0.26954,
+        0.67293,
+        0.02606,
+        0.00685
+      ],
+      [
+        0.00756,
+        0.11948,
+        0.76623,
+        0.10421,
+        0.00251
+      ],
+      [
+        0.00663,
+        0.09291,
+        0.78493,
+        0.11183,
+        0.00369
+      ],
+      [
+        0.01202,
+        0.13573,
+        0.7424,
+        0.10724,
+        0.00259
+      ],
+      [
+        0.00509,
+        0.06514,
+        0.78939,
+        0.13776,
+        0.00261
+      ],
+      [
+        0.00322,
+        0.03407,
+        0.76781,
+        0.19123,
+        0.00366
+      ],
+      [
+        0.00478,
+        0.05845,
+        0.80432,
+        0.12981,
+        0.00263
+      ],
+      [
+        0.00462,
+        0.07553,
+        0.82374,
+        0.09322,
+        0.00289
+      ],
+      [
+        0.00376,
+        0.05047,
+        0.8224,
+        0.11941,
+        0.00396
+      ],
+      [
+        0.00584,
+        0.08879,
+        0.77682,
+        0.12508,
+        0.00347
+      ],
+      [
+        0.007,
+        0.06977,
+        0.67748,
+        0.24018,
+        0.00557
+      ],
+      [
+        0.00746,
+        0.04965,
+        0.48886,
+        0.44908,
+        0.00494
+      ],
+      [
+        0.00826,
+        0.11586,
+        0.7894,
+        0.08244,
+        0.00404
+      ],
+      [
+        0.0076,
+        0.1024,
+        0.7851,
+        0.09779,
+        0.00711
+      ],
+      [
+        0.01272,
+        0.12249,
+        0.66906,
+        0.18607,
+        0.00966
+      ],
+      [
+        0.03834,
+        0.27855,
+        0.6183,
+        0.05595,
+        0.00885
+      ],
+      [
+        0.14906,
+        0.46584,
+        0.32463,
+        0.01823,
+        0.04224
+      ],
+      [
+        0.06154,
+        0.41257,
+        0.46786,
+        0.026,
+        0.03203
+      ],
+      [
+        0.2253,
+        0.23776,
+        0.21304,
+        0.24347,
+        0.08043
+      ],
+      [
+        0.16414,
+        0.57675,
+        0.20018,
+        0.00711,
+        0.05181
+      ],
+      [
+        0.35616,
+        0.24875,
+        0.21231,
+        0.07204,
+        0.11074
+      ],
+      [
+        0.25652,
+        0.24672,
+        0.22998,
+        0.17288,
+        0.0939
+      ],
+      [
+        0.25504,
+        0.5868,
+        0.10034,
+        0.00604,
+        0.05178
+      ],
+      [
+        0.35666,
+        0.50916,
+        0.07944,
+        0.00495,
+        0.04979
+      ],
+      [
+        0.49453,
+        0.4016,
+        0.06198,
+        0.00469,
+        0.0372
+      ],
+      [
+        0.41677,
+        0.45921,
+        0.07347,
+        0.0086,
+        0.04195
+      ],
+      [
+        0.72098,
+        0.1827,
+        0.04808,
+        0.01224,
+        0.03599
+      ],
+      [
+        0.44776,
+        0.43949,
+        0.07103,
+        0.00687,
+        0.03485
+      ],
+      [
+        0.27033,
+        0.58022,
+        0.09952,
+        0.00546,
+        0.04448
+      ],
+      [
+        0.21111,
+        0.50579,
+        0.23462,
+        0.01783,
+        0.03065
+      ],
+      [
+        0.30938,
+        0.52474,
+        0.11201,
+        0.00716,
+        0.04672
+      ],
+      [
+        0.21836,
+        0.54362,
+        0.18904,
+        0.01017,
+        0.03882
+      ],
+      [
+        0.1582,
+        0.6064,
+        0.19101,
+        0.00675,
+        0.03765
+      ],
+      [
+        0.06413,
+        0.40122,
+        0.47761,
+        0.03705,
+        0.01999
+      ],
+      [
+        0.08235,
+        0.36473,
+        0.48055,
+        0.04216,
+        0.03021
+      ],
+      [
+        0.03693,
+        0.42089,
+        0.48338,
+        0.03815,
+        0.02066
+      ],
+      [
+        0.02444,
+        0.20964,
+        0.66901,
+        0.08199,
+        0.01492
+      ],
+      [
+        0.0259,
+        0.21843,
+        0.63756,
+        0.10638,
+        0.01174
+      ],
+      [
+        0.01829,
+        0.15938,
+        0.67717,
+        0.13353,
+        0.01162
+      ],
+      [
+        0.0125,
+        0.23357,
+        0.69715,
+        0.04569,
+        0.01109
+      ],
+      [
+        0.019,
+        0.14691,
+        0.6356,
+        0.19233,
+        0.00616
+      ],
+      [
+        0.00843,
+        0.10904,
+        0.78683,
+        0.08942,
+        0.00628
+      ],
+      [
+        0.00733,
+        0.08139,
+        0.72112,
+        0.18634,
+        0.00382
+      ],
+      [
+        0.00945,
+        0.17592,
+        0.71664,
+        0.09172,
+        0.00627
+      ],
+      [
+        0.00754,
+        0.08706,
+        0.78327,
+        0.11784,
+        0.00429
+      ],
+      [
+        0.00751,
+        0.16639,
+        0.76312,
+        0.05787,
+        0.00511
+      ],
+      [
+        0.00626,
+        0.11951,
+        0.78473,
+        0.0841,
+        0.00541
+      ],
+      [
+        0.00636,
+        0.0768,
+        0.74952,
+        0.16305,
+        0.00428
+      ],
+      [
+        0.00776,
+        0.10031,
+        0.74196,
+        0.14689,
+        0.00307
+      ],
+      [
+        0.27161,
+        0.52896,
+        0.16033,
+        0.0123,
+        0.0268
+      ],
+      [
+        0.05174,
+        0.47827,
+        0.43197,
+        0.02134,
+        0.01668
+      ],
+      [
+        0.0489,
+        0.4742,
+        0.44355,
+        0.01986,
+        0.01348
+      ],
+      [
+        0.03853,
+        0.42492,
+        0.50411,
+        0.02198,
+        0.01045
+      ],
+      [
+        0.12392,
+        0.62932,
+        0.21716,
+        0.00918,
+        0.02042
+      ],
+      [
+        0.05101,
+        0.37411,
+        0.53954,
+        0.02728,
+        0.00806
+      ],
+      [
+        0.03576,
+        0.35358,
+        0.56996,
+        0.03206,
+        0.00864
+      ],
+      [
+        0.01671,
+        0.25105,
+        0.68755,
+        0.03933,
+        0.00535
+      ],
+      [
+        0.0216,
+        0.23631,
+        0.68908,
+        0.04792,
+        0.00508
+      ],
+      [
+        0.0091,
+        0.08887,
+        0.75279,
+        0.14673,
+        0.00252
+      ],
+      [
+        0.00672,
+        0.10626,
+        0.80298,
+        0.08155,
+        0.00249
+      ],
+      [
+        0.00936,
+        0.16028,
+        0.76336,
+        0.06379,
+        0.00321
+      ],
+      [
+        0.00421,
+        0.06398,
+        0.82307,
+        0.10569,
+        0.00306
+      ],
+      [
+        0.00466,
+        0.07189,
+        0.81127,
+        0.10987,
+        0.00231
+      ],
+      [
+        0.00662,
+        0.10241,
+        0.77084,
+        0.1175,
+        0.00264
+      ],
+      [
+        0.00424,
+        0.12592,
+        0.82151,
+        0.04565,
+        0.00268
+      ],
+      [
+        0.00289,
+        0.06186,
+        0.81222,
+        0.12053,
+        0.00251
+      ],
+      [
+        0.0058,
+        0.08409,
+        0.80659,
+        0.10047,
+        0.00306
+      ],
+      [
+        0.0078,
+        0.17418,
+        0.7623,
+        0.052,
+        0.00372
+      ],
+      [
+        0.01147,
+        0.19112,
+        0.74717,
+        0.04525,
+        0.005
+      ],
+      [
+        0.00556,
+        0.0992,
+        0.84234,
+        0.04895,
+        0.00395
+      ],
+      [
+        0.01622,
+        0.28124,
+        0.67183,
+        0.02568,
+        0.00503
+      ],
+      [
+        0.00923,
+        0.1298,
+        0.78509,
+        0.07335,
+        0.00254
+      ],
+      [
+        0.00345,
+        0.02667,
+        0.6673,
+        0.29917,
+        0.00341
+      ],
+      [
+        0.01159,
+        0.20563,
+        0.69584,
+        0.08332,
+        0.00362
+      ],
+      [
+        0.00855,
+        0.14651,
+        0.75751,
+        0.08439,
+        0.00304
+      ],
+      [
+        0.00432,
+        0.07438,
+        0.76374,
+        0.15422,
+        0.00335
+      ],
+      [
+        0.00631,
+        0.06498,
+        0.71251,
+        0.21367,
+        0.00253
+      ],
+      [
+        0.00393,
+        0.07799,
+        0.78964,
+        0.1265,
+        0.00194
+      ],
+      [
+        0.00933,
+        0.24814,
+        0.69737,
+        0.04111,
+        0.00406
+      ],
+      [
+        0.06543,
+        0.30927,
+        0.54672,
+        0.07319,
+        0.00539
+      ],
+      [
+        0.01495,
+        0.23977,
+        0.677,
+        0.06481,
+        0.00347
+      ],
+      [
+        0.01049,
+        0.169,
+        0.75925,
+        0.05848,
+        0.00278
+      ],
+      [
+        0.00853,
+        0.17978,
+        0.75728,
+        0.05107,
+        0.00335
+      ],
+      [
+        0.00361,
+        0.04535,
+        0.57565,
+        0.37295,
+        0.00244
+      ],
+      [
+        0.01033,
+        0.15946,
+        0.73111,
+        0.09549,
+        0.00361
+      ],
+      [
+        0.00374,
+        0.05454,
+        0.80551,
+        0.13346,
+        0.00275
+      ],
+      [
+        0.00656,
+        0.07757,
+        0.8019,
+        0.11047,
+        0.0035
+      ],
+      [
+        0.01797,
+        0.28037,
+        0.63333,
+        0.06363,
+        0.0047
+      ],
+      [
+        0.00531,
+        0.07757,
+        0.7171,
+        0.19753,
+        0.00249
+      ],
+      [
+        0.00589,
+        0.10026,
+        0.799,
+        0.08863,
+        0.00622
+      ],
+      [
+        0.00411,
+        0.07077,
+        0.80348,
+        0.11796,
+        0.00367
+      ],
+      [
+        0.00704,
+        0.0969,
+        0.77624,
+        0.11519,
+        0.00463
+      ],
+      [
+        0.00591,
+        0.07933,
+        0.74134,
+        0.16967,
+        0.00374
+      ],
+      [
+        0.00853,
+        0.18065,
+        0.728,
+        0.07885,
+        0.00397
+      ],
+      [
+        0.01029,
+        0.17052,
+        0.76318,
+        0.04982,
+        0.00619
+      ],
+      [
+        0.00676,
+        0.07633,
+        0.75806,
+        0.15388,
+        0.00496
+      ],
+      [
+        0.00885,
+        0.11503,
+        0.77693,
+        0.09072,
+        0.00848
+      ],
+      [
+        0.02144,
+        0.21457,
+        0.70524,
+        0.05068,
+        0.00807
+      ],
+      [
+        0.05675,
+        0.52019,
+        0.39403,
+        0.0155,
+        0.01353
+      ],
+      [
+        0.02563,
+        0.31017,
+        0.61702,
+        0.03773,
+        0.00945
+      ],
+      [
+        0.02392,
+        0.34763,
+        0.57416,
+        0.04461,
+        0.00968
+      ],
+      [
+        0.29997,
+        0.25504,
+        0.1636,
+        0.18907,
+        0.09232
+      ],
+      [
+        0.54126,
+        0.36888,
+        0.04879,
+        0.00374,
+        0.03733
+      ],
+      [
+        0.37845,
+        0.53219,
+        0.0528,
+        0.0033,
+        0.03326
+      ],
+      [
+        0.53821,
+        0.41019,
+        0.02785,
+        0.00171,
+        0.02204
+      ],
+      [
+        0.54808,
+        0.38447,
+        0.03744,
+        0.00239,
+        0.02762
+      ],
+      [
+        0.63266,
+        0.30292,
+        0.03714,
+        0.00275,
+        0.02453
+      ],
+      [
+        0.63831,
+        0.32095,
+        0.02115,
+        0.00136,
+        0.01824
+      ],
+      [
+        0.525,
+        0.42699,
+        0.02096,
+        0.00122,
+        0.02583
+      ],
+      [
+        0.68751,
+        0.27449,
+        0.0154,
+        0.00105,
+        0.02155
+      ],
+      [
+        0.82762,
+        0.10884,
+        0.01601,
+        0.00181,
+        0.04572
+      ],
+      [
+        0.66113,
+        0.26849,
+        0.01942,
+        0.00091,
+        0.05006
+      ],
+      [
+        0.65615,
+        0.27321,
+        0.02638,
+        0.00144,
+        0.04281
+      ],
+      [
+        0.68155,
+        0.23331,
+        0.02458,
+        0.00132,
+        0.05925
+      ],
+      [
+        0.76253,
+        0.17444,
+        0.0185,
+        0.00111,
+        0.04341
+      ],
+      [
+        0.54795,
+        0.38325,
+        0.02062,
+        0.00083,
+        0.04734
+      ],
+      [
+        0.55537,
+        0.31055,
+        0.04325,
+        0.00304,
+        0.08779
+      ],
+      [
+        0.56677,
+        0.30638,
+        0.03368,
+        0.00292,
+        0.09025
+      ],
+      [
+        0.32559,
+        0.57284,
+        0.02245,
+        0.00048,
+        0.07865
+      ],
+      [
+        0.3698,
+        0.50503,
+        0.0356,
+        0.001,
+        0.08856
+      ],
+      [
+        0.59633,
+        0.28256,
+        0.02646,
+        0.00159,
+        0.09307
+      ],
+      [
+        0.26904,
+        0.56095,
+        0.02666,
+        0.00081,
+        0.14254
+      ],
+      [
+        0.39074,
+        0.48375,
+        0.02999,
+        0.00088,
+        0.09464
+      ],
+      [
+        0.21661,
+        0.58628,
+        0.03153,
+        0.00073,
+        0.16486
+      ],
+      [
+        0.19411,
+        0.59552,
+        0.04271,
+        0.00078,
+        0.16688
+      ],
+      [
+        0.28343,
+        0.48675,
+        0.02803,
+        0.00077,
+        0.20103
+      ],
+      [
+        0.50672,
+        0.32927,
+        0.03427,
+        0.00133,
+        0.12841
+      ],
+      [
+        0.226,
+        0.49933,
+        0.03022,
+        0.00081,
+        0.24365
+      ],
+      [
+        0.45589,
+        0.36486,
+        0.046,
+        0.00175,
+        0.13151
+      ],
+      [
+        0.43791,
+        0.28177,
+        0.0396,
+        0.00177,
+        0.23895
+      ],
+      [
+        0.12884,
+        0.47251,
+        0.03569,
+        0.00071,
+        0.36225
+      ],
+      [
+        0.18375,
+        0.47539,
+        0.04202,
+        0.00101,
+        0.29783
+      ],
+      [
+        0.17585,
+        0.5366,
+        0.04774,
+        0.00102,
+        0.2388
+      ],
+      [
+        0.1498,
+        0.4835,
+        0.04555,
+        0.00115,
+        0.32
+      ],
+      [
+        0.48511,
+        0.23656,
+        0.04354,
+        0.00248,
+        0.2323
+      ],
+      [
+        0.4226,
+        0.24433,
+        0.04749,
+        0.00194,
+        0.28365
+      ],
+      [
+        0.28454,
+        0.44884,
+        0.04779,
+        0.00114,
+        0.21769
+      ],
+      [
+        0.18486,
+        0.50093,
+        0.06491,
+        0.00172,
+        0.24758
+      ],
+      [
+        0.25815,
+        0.42987,
+        0.05998,
+        0.00224,
+        0.24975
+      ],
+      [
+        0.25883,
+        0.50313,
+        0.07461,
+        0.00276,
+        0.16067
+      ],
+      [
+        0.15852,
+        0.50231,
+        0.07643,
+        0.00237,
+        0.26037
+      ],
+      [
+        0.14429,
+        0.57233,
+        0.06262,
+        0.00157,
+        0.21919
+      ],
+      [
+        0.11661,
+        0.5678,
+        0.11597,
+        0.00274,
+        0.19688
+      ],
+      [
+        0.08635,
+        0.53426,
+        0.21278,
+        0.0041,
+        0.16251
+      ],
+      [
+        0.09098,
+        0.45798,
+        0.06702,
+        0.00179,
+        0.38224
+      ],
+      [
+        0.04371,
+        0.45099,
+        0.10889,
+        0.00181,
+        0.3946
+      ],
+      [
+        0.08969,
+        0.49819,
+        0.10614,
+        0.00267,
+        0.30332
+      ],
+      [
+        0.08101,
+        0.503,
+        0.103,
+        0.00258,
+        0.31041
+      ],
+      [
+        0.04015,
+        0.54602,
+        0.27494,
+        0.00517,
+        0.13372
+      ],
+      [
+        0.04008,
+        0.53951,
+        0.28154,
+        0.00477,
+        0.1341
+      ],
+      [
+        0.03076,
+        0.46398,
+        0.42332,
+        0.00579,
+        0.07615
+      ],
+      [
+        0.04124,
+        0.50041,
+        0.30754,
+        0.00738,
+        0.14343
+      ],
+      [
+        0.00913,
+        0.21258,
+        0.7151,
+        0.03722,
+        0.02597
+      ],
+      [
+        0.0145,
+        0.31792,
+        0.61362,
+        0.01527,
+        0.03868
+      ],
+      [
+        0.00961,
+        0.30725,
+        0.63307,
+        0.0157,
+        0.03438
+      ],
+      [
+        0.01448,
+        0.28509,
+        0.6328,
+        0.00939,
+        0.05824
+      ],
+      [
+        0.01122,
+        0.30666,
+        0.63353,
+        0.01485,
+        0.03374
+      ],
+      [
+        0.01206,
+        0.22729,
+        0.69328,
+        0.03062,
+        0.03675
+      ],
+      [
+        0.02232,
+        0.34672,
+        0.57154,
+        0.00922,
+        0.05019
+      ],
+      [
+        0.01142,
+        0.16596,
+        0.77355,
+        0.0277,
+        0.02137
+      ],
+      [
+        0.01172,
+        0.19185,
+        0.73947,
+        0.03918,
+        0.01778
+      ],
+      [
+        0.04541,
+        0.45744,
+        0.38599,
+        0.01069,
+        0.10048
+      ],
+      [
+        0.0159,
+        0.22218,
+        0.70067,
+        0.02551,
+        0.03574
+      ],
+      [
+        0.02871,
+        0.35158,
+        0.57222,
+        0.02399,
+        0.0235
+      ],
+      [
+        0.01671,
+        0.2933,
+        0.64714,
+        0.02119,
+        0.02167
+      ],
+      [
+        0.00774,
+        0.15257,
+        0.78254,
+        0.04267,
+        0.01448
+      ],
+      [
+        0.0084,
+        0.06877,
+        0.78936,
+        0.11942,
+        0.01406
+      ],
+      [
+        0.01088,
+        0.18669,
+        0.76814,
+        0.02012,
+        0.01416
+      ],
+      [
+        0.01234,
+        0.12117,
+        0.81042,
+        0.04323,
+        0.01283
+      ],
+      [
+        0.02942,
+        0.34309,
+        0.58921,
+        0.02113,
+        0.01715
+      ],
+      [
+        0.02994,
+        0.24615,
+        0.67925,
+        0.02985,
+        0.01481
+      ],
+      [
+        0.01193,
+        0.17305,
+        0.76827,
+        0.03557,
+        0.01119
+      ],
+      [
+        0.01957,
+        0.18579,
+        0.74473,
+        0.03439,
+        0.01553
+      ],
+      [
+        0.00869,
+        0.09874,
+        0.83871,
+        0.04187,
+        0.01199
+      ],
+      [
+        0.03045,
+        0.26415,
+        0.65743,
+        0.03509,
+        0.01288
+      ],
+      [
+        0.01767,
+        0.25715,
+        0.69648,
+        0.01896,
+        0.00974
+      ],
+      [
+        0.0118,
+        0.12857,
+        0.82953,
+        0.01339,
+        0.01671
+      ],
+      [
+        0.0149,
+        0.14212,
+        0.76257,
+        0.06975,
+        0.01066
+      ],
+      [
+        0.02787,
+        0.3036,
+        0.62489,
+        0.03439,
+        0.00926
+      ],
+      [
+        0.02962,
+        0.18106,
+        0.72463,
+        0.0473,
+        0.0174
+      ],
+      [
+        0.06084,
+        0.40506,
+        0.4997,
+        0.01986,
+        0.01453
+      ],
+      [
+        0.06788,
+        0.36298,
+        0.53292,
+        0.01932,
+        0.01689
+      ],
+      [
+        0.0303,
+        0.14685,
+        0.76907,
+        0.0343,
+        0.01948
+      ],
+      [
+        0.69425,
+        0.15777,
+        0.06202,
+        0.02524,
+        0.06072
+      ],
+      [
+        0.8068,
+        0.12215,
+        0.03114,
+        0.00534,
+        0.03457
+      ],
+      [
+        0.65237,
+        0.19204,
+        0.08392,
+        0.02428,
+        0.0474
+      ],
+      [
+        0.81089,
+        0.09123,
+        0.03172,
+        0.01599,
+        0.05017
+      ],
+      [
+        0.84805,
+        0.0833,
+        0.02853,
+        0.00812,
+        0.032
+      ],
+      [
+        0.67609,
+        0.11662,
+        0.06355,
+        0.09249,
+        0.05125
+      ],
+      [
+        0.64877,
+        0.27476,
+        0.04086,
+        0.00203,
+        0.03357
+      ],
+      [
+        0.76958,
+        0.15025,
+        0.03001,
+        0.00314,
+        0.04703
+      ],
+      [
+        0.80184,
+        0.10962,
+        0.03056,
+        0.00789,
+        0.05008
+      ],
+      [
+        0.48313,
+        0.42937,
+        0.04768,
+        0.00202,
+        0.0378
+      ],
+      [
+        0.45453,
+        0.45895,
+        0.05201,
+        0.00243,
+        0.03208
+      ],
+      [
+        0.27709,
+        0.58513,
+        0.08579,
+        0.00309,
+        0.04891
+      ],
+      [
+        0.22371,
+        0.61087,
+        0.1064,
+        0.00392,
+        0.0551
+      ],
+      [
+        0.18675,
+        0.5977,
+        0.16185,
+        0.00653,
+        0.04717
+      ],
+      [
+        0.27567,
+        0.51054,
+        0.17724,
+        0.01033,
+        0.02622
+      ],
+      [
+        0.52403,
+        0.37896,
+        0.05681,
+        0.0032,
+        0.037
+      ],
+      [
+        0.3854,
+        0.49517,
+        0.0604,
+        0.00254,
+        0.05649
+      ],
+      [
+        0.4672,
+        0.37457,
+        0.06826,
+        0.00435,
+        0.08563
+      ],
+      [
+        0.10352,
+        0.55422,
+        0.27956,
+        0.00914,
+        0.05355
+      ],
+      [
+        0.02546,
+        0.29344,
+        0.63497,
+        0.02314,
+        0.02299
+      ],
+      [
+        0.05138,
+        0.32265,
+        0.55711,
+        0.04377,
+        0.02509
+      ],
+      [
+        0.06937,
+        0.61872,
+        0.26904,
+        0.0054,
+        0.03748
+      ],
+      [
+        0.01871,
+        0.15813,
+        0.70816,
+        0.10358,
+        0.01142
+      ],
+      [
+        0.0232,
+        0.19766,
+        0.71849,
+        0.04249,
+        0.01816
+      ],
+      [
+        0.12754,
+        0.60184,
+        0.23077,
+        0.0073,
+        0.03254
+      ],
+      [
+        0.01783,
+        0.25403,
+        0.68781,
+        0.0231,
+        0.01723
+      ],
+      [
+        0.0088,
+        0.07735,
+        0.82629,
+        0.07347,
+        0.01408
+      ],
+      [
+        0.04305,
+        0.36682,
+        0.53874,
+        0.03516,
+        0.01622
+      ],
+      [
+        0.01,
+        0.15018,
+        0.7968,
+        0.02484,
+        0.01819
+      ],
+      [
+        0.02742,
+        0.46152,
+        0.47261,
+        0.01094,
+        0.02751
+      ],
+      [
+        0.01148,
+        0.14956,
+        0.78727,
+        0.03629,
+        0.01541
+      ],
+      [
+        0.01333,
+        0.19495,
+        0.74322,
+        0.02889,
+        0.01961
+      ],
+      [
+        0.00883,
+        0.1011,
+        0.83316,
+        0.03974,
+        0.01717
+      ],
+      [
+        0.01307,
+        0.1346,
+        0.78057,
+        0.05936,
+        0.0124
+      ],
+      [
+        0.08624,
+        0.53612,
+        0.3213,
+        0.0118,
+        0.04453
+      ],
+      [
+        0.01333,
+        0.25771,
+        0.67634,
+        0.03414,
+        0.01848
+      ],
+      [
+        0.00869,
+        0.14765,
+        0.77225,
+        0.05934,
+        0.01207
+      ],
+      [
+        0.00971,
+        0.15163,
+        0.78049,
+        0.04847,
+        0.0097
+      ],
+      [
+        0.2475,
+        0.39695,
+        0.25418,
+        0.04234,
+        0.05903
+      ],
+      [
+        0.10182,
+        0.57273,
+        0.27099,
+        0.00948,
+        0.04498
+      ],
+      [
+        0.01489,
+        0.32673,
+        0.62106,
+        0.01818,
+        0.01914
+      ],
+      [
+        0.00866,
+        0.19726,
+        0.7587,
+        0.01856,
+        0.01682
+      ],
+      [
+        0.01924,
+        0.16447,
+        0.76269,
+        0.04364,
+        0.00995
+      ],
+      [
+        0.00971,
+        0.13922,
+        0.80549,
+        0.03516,
+        0.01043
+      ],
+      [
+        0.01177,
+        0.21328,
+        0.74189,
+        0.0192,
+        0.01386
+      ],
+      [
+        0.02254,
+        0.26509,
+        0.67596,
+        0.0256,
+        0.01081
+      ],
+      [
+        0.01373,
+        0.24671,
+        0.69608,
+        0.03176,
+        0.01171
+      ],
+      [
+        0.0086,
+        0.07828,
+        0.86802,
+        0.0348,
+        0.0103
+      ],
+      [
+        0.00671,
+        0.07901,
+        0.85753,
+        0.04866,
+        0.00809
+      ],
+      [
+        0.01874,
+        0.27093,
+        0.67478,
+        0.02561,
+        0.00993
+      ],
+      [
+        0.00592,
+        0.06808,
+        0.86524,
+        0.05506,
+        0.00571
+      ],
+      [
+        0.00504,
+        0.04512,
+        0.84117,
+        0.10361,
+        0.00506
+      ],
+      [
+        0.00424,
+        0.0499,
+        0.79869,
+        0.14336,
+        0.00381
+      ],
+      [
+        0.01991,
+        0.18475,
+        0.70929,
+        0.07967,
+        0.00639
+      ],
+      [
+        0.01292,
+        0.16639,
+        0.76948,
+        0.04542,
+        0.00579
+      ],
+      [
+        0.01184,
+        0.12506,
+        0.77721,
+        0.0812,
+        0.0047
+      ],
+      [
+        0.01022,
+        0.12627,
+        0.80232,
+        0.05666,
+        0.00453
+      ],
+      [
+        0.00389,
+        0.05451,
+        0.88282,
+        0.05357,
+        0.00521
+      ],
+      [
+        0.01799,
+        0.16985,
+        0.75416,
+        0.0531,
+        0.00489
+      ],
+      [
+        0.00821,
+        0.11652,
+        0.81375,
+        0.0574,
+        0.00412
+      ],
+      [
+        0.00835,
+        0.07299,
+        0.74476,
+        0.17016,
+        0.00374
+      ],
+      [
+        0.00362,
+        0.07,
+        0.86169,
+        0.06012,
+        0.00457
+      ],
+      [
+        0.00581,
+        0.06658,
+        0.77558,
+        0.14813,
+        0.0039
+      ],
+      [
+        0.00546,
+        0.05557,
+        0.8409,
+        0.09407,
+        0.004
+      ],
+      [
+        0.00352,
+        0.03288,
+        0.90008,
+        0.05756,
+        0.00596
+      ],
+      [
+        0.00443,
+        0.05098,
+        0.81508,
+        0.1252,
+        0.0043
+      ],
+      [
+        0.06588,
+        0.40522,
+        0.50079,
+        0.01733,
+        0.01078
+      ],
+      [
+        0.01108,
+        0.20573,
+        0.75439,
+        0.02147,
+        0.00733
+      ],
+      [
+        0.01215,
+        0.14798,
+        0.79766,
+        0.03793,
+        0.00427
+      ],
+      [
+        0.00647,
+        0.07922,
+        0.87319,
+        0.03703,
+        0.00409
+      ],
+      [
+        0.01384,
+        0.27702,
+        0.67923,
+        0.02445,
+        0.00546
+      ],
+      [
+        0.00439,
+        0.08842,
+        0.84297,
+        0.05781,
+        0.00641
+      ],
+      [
+        0.02405,
+        0.28338,
+        0.65766,
+        0.02928,
+        0.00562
+      ],
+      [
+        0.51303,
+        0.311,
+        0.14255,
+        0.01095,
+        0.02247
+      ],
+      [
+        0.09623,
+        0.66191,
+        0.22268,
+        0.00384,
+        0.01533
+      ],
+      [
+        0.06347,
+        0.59739,
+        0.32311,
+        0.00615,
+        0.00988
+      ],
+      [
+        0.08408,
+        0.5939,
+        0.3004,
+        0.00817,
+        0.01344
+      ],
+      [
+        0.00846,
+        0.1172,
+        0.80088,
+        0.07043,
+        0.00303
+      ],
+      [
+        0.01014,
+        0.19421,
+        0.75115,
+        0.04029,
+        0.00421
+      ],
+      [
+        0.00346,
+        0.04948,
+        0.83079,
+        0.11348,
+        0.00279
+      ],
+      [
+        0.06144,
+        0.4404,
+        0.47551,
+        0.01518,
+        0.00748
+      ],
+      [
+        0.00462,
+        0.11052,
+        0.8525,
+        0.02966,
+        0.0027
+      ],
+      [
+        0.00446,
+        0.06051,
+        0.822,
+        0.11076,
+        0.00227
+      ],
+      [
+        0.00411,
+        0.07546,
+        0.84706,
+        0.07061,
+        0.00277
+      ],
+      [
+        0.00342,
+        0.04784,
+        0.84638,
+        0.09927,
+        0.0031
+      ],
+      [
+        0.00292,
+        0.03006,
+        0.84817,
+        0.11638,
+        0.00246
+      ],
+      [
+        0.00234,
+        0.02753,
+        0.82361,
+        0.14372,
+        0.0028
+      ],
+      [
+        0.00206,
+        0.02165,
+        0.91301,
+        0.06046,
+        0.00281
+      ],
+      [
+        0.00139,
+        0.01374,
+        0.52721,
+        0.45596,
+        0.00169
+      ],
+      [
+        0.00141,
+        0.01052,
+        0.62564,
+        0.36011,
+        0.00231
+      ],
+      [
+        0.00125,
+        0.01886,
+        0.87958,
+        0.09724,
+        0.00307
+      ],
+      [
+        0.00097,
+        0.01319,
+        0.73939,
+        0.24422,
+        0.00223
+      ],
+      [
+        0.00105,
+        0.00879,
+        0.53569,
+        0.45216,
+        0.00232
+      ],
+      [
+        0.00068,
+        0.01039,
+        0.60715,
+        0.3795,
+        0.00227
+      ],
+      [
+        0.00111,
+        0.01408,
+        0.67546,
+        0.30712,
+        0.00223
+      ],
+      [
+        0.01029,
+        0.07334,
+        0.51671,
+        0.06159,
+        0.33807
+      ],
+      [
+        0.00834,
+        0.08993,
+        0.17179,
+        0.00516,
+        0.72478
+      ],
+      [
+        0.00667,
+        0.05175,
+        0.04346,
+        0.00101,
+        0.89711
+      ],
+      [
+        0.03754,
+        0.10564,
+        0.08285,
+        0.00286,
+        0.77111
+      ],
+      [
+        0.01373,
+        0.06105,
+        0.06526,
+        0.00212,
+        0.85784
+      ],
+      [
+        0.0241,
+        0.06124,
+        0.05082,
+        0.00217,
+        0.86167
+      ],
+      [
+        0.02327,
+        0.0683,
+        0.06376,
+        0.00188,
+        0.84279
+      ],
+      [
+        0.02613,
+        0.06976,
+        0.05805,
+        0.002,
+        0.84406
+      ],
+      [
+        0.01628,
+        0.0591,
+        0.04439,
+        0.00085,
+        0.87939
+      ],
+      [
+        0.01035,
+        0.05619,
+        0.03353,
+        0.00056,
+        0.89937
+      ],
+      [
+        0.0107,
+        0.04988,
+        0.02857,
+        0.00055,
+        0.9103
+      ],
+      [
+        0.00815,
+        0.03836,
+        0.0253,
+        0.00053,
+        0.92766
+      ],
+      [
+        0.0045,
+        0.03511,
+        0.02281,
+        0.00045,
+        0.93713
+      ],
+      [
+        0.00533,
+        0.03456,
+        0.02471,
+        0.00042,
+        0.93498
+      ],
+      [
+        0.00682,
+        0.04084,
+        0.01841,
+        0.0004,
+        0.93352
+      ],
+      [
+        0.00627,
+        0.02348,
+        0.01821,
+        0.00051,
+        0.95154
+      ],
+      [
+        0.00835,
+        0.02728,
+        0.02058,
+        0.00073,
+        0.94306
+      ],
+      [
+        0.00443,
+        0.02033,
+        0.01352,
+        0.00043,
+        0.96129
+      ],
+      [
+        0.00615,
+        0.02934,
+        0.02221,
+        0.0007,
+        0.9416
+      ],
+      [
+        0.00499,
+        0.02012,
+        0.01712,
+        0.00066,
+        0.95712
+      ],
+      [
+        0.00978,
+        0.0385,
+        0.02995,
+        0.00083,
+        0.92094
+      ],
+      [
+        0.00728,
+        0.04526,
+        0.02728,
+        0.00051,
+        0.91967
+      ],
+      [
+        0.00629,
+        0.03033,
+        0.01787,
+        0.00049,
+        0.94503
+      ],
+      [
+        0.0143,
+        0.04448,
+        0.03095,
+        0.00083,
+        0.90945
+      ],
+      [
+        0.01545,
+        0.06775,
+        0.0303,
+        0.00056,
+        0.88594
+      ],
+      [
+        0.01708,
+        0.09729,
+        0.03074,
+        0.00064,
+        0.85426
+      ],
+      [
+        0.00592,
+        0.06274,
+        0.04824,
+        0.00073,
+        0.88236
+      ],
+      [
+        0.01082,
+        0.05715,
+        0.03151,
+        0.00076,
+        0.89977
+      ],
+      [
+        0.04111,
+        0.0995,
+        0.05114,
+        0.00116,
+        0.80711
+      ],
+      [
+        0.05211,
+        0.18897,
+        0.04108,
+        0.00078,
+        0.71706
+      ],
+      [
+        0.01825,
+        0.0812,
+        0.05525,
+        0.00095,
+        0.84436
+      ],
+      [
+        0.02552,
+        0.09888,
+        0.06831,
+        0.00119,
+        0.8061
+      ],
+      [
+        0.04916,
+        0.09235,
+        0.07487,
+        0.00191,
+        0.7817
+      ],
+      [
+        0.01569,
+        0.09917,
+        0.06752,
+        0.0011,
+        0.81652
+      ],
+      [
+        0.0275,
+        0.16216,
+        0.08215,
+        0.00125,
+        0.72694
+      ],
+      [
+        0.04018,
+        0.12441,
+        0.07532,
+        0.00183,
+        0.75826
+      ],
+      [
+        0.04219,
+        0.12211,
+        0.08412,
+        0.00194,
+        0.74964
+      ],
+      [
+        0.02981,
+        0.08726,
+        0.09805,
+        0.00508,
+        0.7798
+      ],
+      [
+        0.06313,
+        0.25094,
+        0.11793,
+        0.0018,
+        0.56621
+      ],
+      [
+        0.0707,
+        0.15982,
+        0.10282,
+        0.00216,
+        0.6645
+      ],
+      [
+        0.13019,
+        0.21632,
+        0.10673,
+        0.00193,
+        0.54483
+      ],
+      [
+        0.10628,
+        0.36511,
+        0.09432,
+        0.00147,
+        0.43282
+      ],
+      [
+        0.05472,
+        0.33701,
+        0.11886,
+        0.00179,
+        0.48762
+      ],
+      [
+        0.04505,
+        0.28867,
+        0.19871,
+        0.00423,
+        0.46334
+      ],
+      [
+        0.03456,
+        0.27901,
+        0.35545,
+        0.00624,
+        0.32474
+      ],
+      [
+        0.02329,
+        0.18286,
+        0.4993,
+        0.01145,
+        0.2831
+      ],
+      [
+        0.02108,
+        0.23407,
+        0.36954,
+        0.00455,
+        0.37076
+      ],
+      [
+        0.01527,
+        0.21068,
+        0.37578,
+        0.00426,
+        0.39401
+      ],
+      [
+        0.06082,
+        0.3514,
+        0.26513,
+        0.00453,
+        0.31811
+      ],
+      [
+        0.06866,
+        0.38913,
+        0.19929,
+        0.00329,
+        0.33963
+      ],
+      [
+        0.07735,
+        0.21689,
+        0.16012,
+        0.00274,
+        0.54291
+      ],
+      [
+        0.02639,
+        0.33681,
+        0.213,
+        0.00294,
+        0.42086
+      ],
+      [
+        0.04612,
+        0.43273,
+        0.15857,
+        0.00222,
+        0.36035
+      ],
+      [
+        0.14534,
+        0.24585,
+        0.15562,
+        0.00357,
+        0.44962
+      ],
+      [
+        0.03767,
+        0.40158,
+        0.23119,
+        0.00344,
+        0.32612
+      ],
+      [
+        0.30985,
+        0.44483,
+        0.10132,
+        0.00194,
+        0.14206
+      ],
+      [
+        0.2081,
+        0.5016,
+        0.11002,
+        0.00285,
+        0.17742
+      ],
+      [
+        0.11589,
+        0.56175,
+        0.13238,
+        0.00177,
+        0.18821
+      ],
+      [
+        0.08584,
+        0.53174,
+        0.2708,
+        0.00479,
+        0.10683
+      ],
+      [
+        0.03738,
+        0.36297,
+        0.42617,
+        0.00593,
+        0.16755
+      ],
+      [
+        0.01464,
+        0.14502,
+        0.69728,
+        0.04197,
+        0.10109
+      ],
+      [
+        0.03147,
+        0.35469,
+        0.47112,
+        0.0111,
+        0.13162
+      ],
+      [
+        0.06628,
+        0.52156,
+        0.26214,
+        0.00491,
+        0.1451
+      ],
+      [
+        0.01205,
+        0.18841,
+        0.59979,
+        0.01603,
+        0.18371
+      ],
+      [
+        0.01538,
+        0.28946,
+        0.54879,
+        0.009,
+        0.13737
+      ],
+      [
+        0.03409,
+        0.31505,
+        0.39602,
+        0.00686,
+        0.24798
+      ],
+      [
+        0.02081,
+        0.25539,
+        0.29029,
+        0.00565,
+        0.42786
+      ],
+      [
+        0.10363,
+        0.29639,
+        0.13493,
+        0.00337,
+        0.46168
+      ],
+      [
+        0.10208,
+        0.39243,
+        0.17285,
+        0.0044,
+        0.32824
+      ],
+      [
+        0.04301,
+        0.37687,
+        0.1283,
+        0.00181,
+        0.45001
+      ],
+      [
+        0.05393,
+        0.34748,
+        0.23376,
+        0.00576,
+        0.35908
+      ],
+      [
+        0.05899,
+        0.36049,
+        0.19222,
+        0.00496,
+        0.38334
+      ],
+      [
+        0.01263,
+        0.14374,
+        0.57634,
+        0.01134,
+        0.25596
+      ],
+      [
+        0.01416,
+        0.15495,
+        0.56063,
+        0.01385,
+        0.25641
+      ],
+      [
+        0.02419,
+        0.30145,
+        0.31228,
+        0.0057,
+        0.35639
+      ],
+      [
+        0.00904,
+        0.14155,
+        0.46798,
+        0.00855,
+        0.37288
+      ],
+      [
+        0.01578,
+        0.19422,
+        0.18603,
+        0.00315,
+        0.60081
+      ],
+      [
+        0.03312,
+        0.23927,
+        0.14581,
+        0.00249,
+        0.57931
+      ],
+      [
+        0.01299,
+        0.16284,
+        0.14489,
+        0.00244,
+        0.67684
+      ],
+      [
+        0.02279,
+        0.17422,
+        0.14044,
+        0.00278,
+        0.65977
+      ],
+      [
+        0.05414,
+        0.21521,
+        0.1156,
+        0.00213,
+        0.61292
+      ],
+      [
+        0.09463,
+        0.30005,
+        0.11427,
+        0.00187,
+        0.48919
+      ],
+      [
+        0.04156,
+        0.28503,
+        0.12576,
+        0.00221,
+        0.54543
+      ],
+      [
+        0.01876,
+        0.27182,
+        0.40153,
+        0.00789,
+        0.3
+      ],
+      [
+        0.01327,
+        0.15254,
+        0.43378,
+        0.00747,
+        0.39294
+      ],
+      [
+        0.01023,
+        0.12669,
+        0.44316,
+        0.01066,
+        0.40926
+      ],
+      [
+        0.00992,
+        0.12352,
+        0.13086,
+        0.00229,
+        0.7334
+      ],
+      [
+        0.00656,
+        0.11222,
+        0.23056,
+        0.00356,
+        0.6471
+      ],
+      [
+        0.01304,
+        0.13933,
+        0.12464,
+        0.00236,
+        0.72062
+      ],
+      [
+        0.01159,
+        0.15832,
+        0.11881,
+        0.00128,
+        0.71
+      ],
+      [
+        0.04237,
+        0.1694,
+        0.1578,
+        0.00267,
+        0.62776
+      ],
+      [
+        0.02194,
+        0.15711,
+        0.09425,
+        0.00158,
+        0.72512
+      ],
+      [
+        0.00862,
+        0.10603,
+        0.09136,
+        0.00128,
+        0.7927
+      ],
+      [
+        0.0072,
+        0.11042,
+        0.19103,
+        0.00331,
+        0.68804
+      ],
+      [
+        0.00926,
+        0.13295,
+        0.21077,
+        0.00346,
+        0.64356
+      ],
+      [
+        0.0216,
+        0.16404,
+        0.10431,
+        0.00142,
+        0.70863
+      ],
+      [
+        0.00823,
+        0.13175,
+        0.15722,
+        0.00189,
+        0.7009
+      ],
+      [
+        0.01055,
+        0.13852,
+        0.07701,
+        0.00076,
+        0.77316
+      ],
+      [
+        0.00751,
+        0.12771,
+        0.1148,
+        0.00128,
+        0.7487
+      ],
+      [
+        0.00951,
+        0.11992,
+        0.09212,
+        0.00109,
+        0.77736
+      ],
+      [
+        0.01045,
+        0.13619,
+        0.08523,
+        0.00102,
+        0.76712
+      ],
+      [
+        0.0341,
+        0.13972,
+        0.10853,
+        0.00197,
+        0.71569
+      ],
+      [
+        0.01127,
+        0.1671,
+        0.10106,
+        0.00086,
+        0.71971
+      ],
+      [
+        0.00905,
+        0.15389,
+        0.12567,
+        0.00125,
+        0.71014
+      ],
+      [
+        0.00757,
+        0.15636,
+        0.20288,
+        0.00182,
+        0.63138
+      ],
+      [
+        0.00779,
+        0.12322,
+        0.11088,
+        0.00137,
+        0.75674
+      ],
+      [
+        0.00762,
+        0.11973,
+        0.09904,
+        0.00114,
+        0.77246
+      ],
+      [
+        0.01001,
+        0.17865,
+        0.14223,
+        0.00122,
+        0.6679
+      ],
+      [
+        0.00779,
+        0.1395,
+        0.15474,
+        0.00127,
+        0.69669
+      ],
+      [
+        0.01163,
+        0.18551,
+        0.1309,
+        0.00117,
+        0.67078
+      ],
+      [
+        0.00816,
+        0.11979,
+        0.15469,
+        0.00218,
+        0.71517
+      ],
+      [
+        0.02695,
+        0.2888,
+        0.18255,
+        0.00253,
+        0.49917
+      ],
+      [
+        0.01061,
+        0.27002,
+        0.25636,
+        0.00218,
+        0.46083
+      ],
+      [
+        0.13382,
+        0.25733,
+        0.245,
+        0.00612,
+        0.35774
+      ],
+      [
+        0.07695,
+        0.47879,
+        0.17401,
+        0.00191,
+        0.26834
+      ],
+      [
+        0.07339,
+        0.40368,
+        0.24444,
+        0.00347,
+        0.27503
+      ],
+      [
+        0.0459,
+        0.43818,
+        0.32301,
+        0.00439,
+        0.18852
+      ],
+      [
+        0.10266,
+        0.41804,
+        0.37442,
+        0.01356,
+        0.09132
+      ],
+      [
+        0.03327,
+        0.48175,
+        0.37395,
+        0.00476,
+        0.10627
+      ],
+      [
+        0.04958,
+        0.51863,
+        0.24898,
+        0.00274,
+        0.18007
+      ],
+      [
+        0.02022,
+        0.27227,
+        0.58324,
+        0.01685,
+        0.10742
+      ],
+      [
+        0.01125,
+        0.11281,
+        0.81565,
+        0.0188,
+        0.0415
+      ],
+      [
+        0.01231,
+        0.12853,
+        0.8075,
+        0.02049,
+        0.03117
+      ],
+      [
+        0.01413,
+        0.09749,
+        0.82698,
+        0.02613,
+        0.03527
+      ],
+      [
+        0.00763,
+        0.08081,
+        0.83964,
+        0.05064,
+        0.02128
+      ],
+      [
+        0.01279,
+        0.17238,
+        0.76453,
+        0.01804,
+        0.03227
+      ],
+      [
+        0.0096,
+        0.06979,
+        0.86583,
+        0.02512,
+        0.02966
+      ],
+      [
+        0.03822,
+        0.12812,
+        0.4785,
+        0.32279,
+        0.03238
+      ],
+      [
+        0.01165,
+        0.14318,
+        0.73297,
+        0.09498,
+        0.01722
+      ],
+      [
+        0.00428,
+        0.05274,
+        0.76742,
+        0.16587,
+        0.00969
+      ],
+      [
+        0.00451,
+        0.03725,
+        0.82276,
+        0.12107,
+        0.01441
+      ],
+      [
+        0.00342,
+        0.01454,
+        0.39778,
+        0.57673,
+        0.00752
+      ],
+      [
+        0.0035,
+        0.02188,
+        0.47233,
+        0.49484,
+        0.00744
+      ],
+      [
+        0.00284,
+        0.01861,
+        0.44964,
+        0.52322,
+        0.00569
+      ],
+      [
+        0.002,
+        0.01436,
+        0.62261,
+        0.35043,
+        0.01059
+      ],
+      [
+        0.00323,
+        0.0177,
+        0.36503,
+        0.6058,
+        0.00823
+      ],
+      [
+        0.00231,
+        0.01493,
+        0.45534,
+        0.51986,
+        0.00755
+      ],
+      [
+        0.00664,
+        0.01736,
+        0.18122,
+        0.78571,
+        0.00908
+      ],
+      [
+        0.0038,
+        0.01831,
+        0.28528,
+        0.68304,
+        0.00957
+      ],
+      [
+        0.00394,
+        0.01605,
+        0.34842,
+        0.62517,
+        0.00641
+      ],
+      [
+        0.00697,
+        0.02722,
+        0.2678,
+        0.68214,
+        0.01587
+      ],
+      [
+        0.0033,
+        0.01367,
+        0.22543,
+        0.74738,
+        0.01022
+      ],
+      [
+        0.00268,
+        0.01097,
+        0.26271,
+        0.71672,
+        0.00691
+      ],
+      [
+        0.00522,
+        0.01756,
+        0.17814,
+        0.78632,
+        0.01275
+      ],
+      [
+        0.00326,
+        0.0175,
+        0.40018,
+        0.56679,
+        0.01227
+      ],
+      [
+        0.00251,
+        0.01089,
+        0.2167,
+        0.7605,
+        0.00939
+      ],
+      [
+        0.00372,
+        0.01501,
+        0.20554,
+        0.76707,
+        0.00865
+      ],
+      [
+        0.00368,
+        0.01011,
+        0.12783,
+        0.84953,
+        0.00885
+      ],
+      [
+        0.00321,
+        0.01027,
+        0.1887,
+        0.79012,
+        0.0077
+      ],
+      [
+        0.00551,
+        0.01727,
+        0.16469,
+        0.79592,
+        0.01661
+      ],
+      [
+        0.01021,
+        0.03569,
+        0.29305,
+        0.64523,
+        0.01583
+      ],
+      [
+        0.00804,
+        0.0207,
+        0.1496,
+        0.80108,
+        0.02058
+      ],
+      [
+        0.00614,
+        0.01609,
+        0.13131,
+        0.83198,
+        0.01449
+      ],
+      [
+        0.00626,
+        0.01908,
+        0.17104,
+        0.78605,
+        0.01757
+      ],
+      [
+        0.00561,
+        0.02003,
+        0.19814,
+        0.75958,
+        0.01664
+      ],
+      [
+        0.00812,
+        0.02418,
+        0.17931,
+        0.76896,
+        0.01943
+      ],
+      [
+        0.00722,
+        0.02084,
+        0.1581,
+        0.79825,
+        0.0156
+      ],
+      [
+        0.01224,
+        0.04526,
+        0.29249,
+        0.61329,
+        0.03672
+      ],
+      [
+        0.00924,
+        0.0328,
+        0.23029,
+        0.70389,
+        0.02378
+      ],
+      [
+        0.00852,
+        0.02718,
+        0.23873,
+        0.71114,
+        0.01443
+      ],
+      [
+        0.00691,
+        0.02316,
+        0.24898,
+        0.70132,
+        0.01962
+      ],
+      [
+        0.01714,
+        0.05257,
+        0.2864,
+        0.61414,
+        0.02975
+      ],
+      [
+        0.18036,
+        0.23002,
+        0.33317,
+        0.21131,
+        0.04514
+      ],
+      [
+        0.05099,
+        0.29906,
+        0.56276,
+        0.07313,
+        0.01406
+      ],
+      [
+        0.17504,
+        0.24829,
+        0.34138,
+        0.20117,
+        0.03412
+      ],
+      [
+        0.11183,
+        0.37391,
+        0.45583,
+        0.04236,
+        0.01606
+      ],
+      [
+        0.02449,
+        0.20609,
+        0.67253,
+        0.08549,
+        0.01141
+      ],
+      [
+        0.03201,
+        0.11161,
+        0.53248,
+        0.308,
+        0.01589
+      ],
+      [
+        0.021,
+        0.13891,
+        0.67887,
+        0.15105,
+        0.01017
+      ],
+      [
+        0.01969,
+        0.11656,
+        0.7656,
+        0.08548,
+        0.01267
+      ],
+      [
+        0.02003,
+        0.12271,
+        0.7657,
+        0.07247,
+        0.01909
+      ],
+      [
+        0.01045,
+        0.02939,
+        0.30583,
+        0.64517,
+        0.00915
+      ],
+      [
+        0.11726,
+        0.27453,
+        0.50109,
+        0.08855,
+        0.01856
+      ],
+      [
+        0.08199,
+        0.32993,
+        0.51853,
+        0.05942,
+        0.01013
+      ],
+      [
+        0.00695,
+        0.06848,
+        0.80635,
+        0.10484,
+        0.01339
+      ],
+      [
+        0.00832,
+        0.03463,
+        0.61195,
+        0.32941,
+        0.01569
+      ],
+      [
+        0.00726,
+        0.03535,
+        0.55753,
+        0.38745,
+        0.01241
+      ],
+      [
+        0.00602,
+        0.0341,
+        0.59289,
+        0.35052,
+        0.01648
+      ],
+      [
+        0.00568,
+        0.02893,
+        0.37026,
+        0.5797,
+        0.01543
+      ],
+      [
+        0.0038,
+        0.01963,
+        0.45609,
+        0.50318,
+        0.0173
+      ],
+      [
+        0.01184,
+        0.03796,
+        0.25994,
+        0.65629,
+        0.03398
+      ],
+      [
+        0.00466,
+        0.02894,
+        0.48376,
+        0.46676,
+        0.01587
+      ],
+      [
+        0.00616,
+        0.02025,
+        0.21264,
+        0.74128,
+        0.01968
+      ],
+      [
+        0.0035,
+        0.01921,
+        0.37961,
+        0.57966,
+        0.01802
+      ],
+      [
+        0.00384,
+        0.01415,
+        0.19561,
+        0.77614,
+        0.01025
+      ],
+      [
+        0.00592,
+        0.03121,
+        0.44324,
+        0.48582,
+        0.03381
+      ],
+      [
+        0.00519,
+        0.01684,
+        0.22291,
+        0.7376,
+        0.01746
+      ],
+      [
+        0.15487,
+        0.19684,
+        0.32495,
+        0.24714,
+        0.0762
+      ],
+      [
+        0.06709,
+        0.1379,
+        0.37565,
+        0.36723,
+        0.05213
+      ],
+      [
+        0.02066,
+        0.04634,
+        0.21963,
+        0.67623,
+        0.03714
+      ],
+      [
+        0.01049,
+        0.02962,
+        0.23285,
+        0.70694,
+        0.02011
+      ],
+      [
+        0.03587,
+        0.05122,
+        0.18501,
+        0.67472,
+        0.05318
+      ],
+      [
+        0.00675,
+        0.02372,
+        0.35164,
+        0.60485,
+        0.01303
+      ],
+      [
+        0.00796,
+        0.02387,
+        0.24549,
+        0.70484,
+        0.01784
+      ],
+      [
+        0.53813,
+        0.22076,
+        0.16404,
+        0.03916,
+        0.03792
+      ],
+      [
+        0.43577,
+        0.4624,
+        0.0738,
+        0.00331,
+        0.02472
+      ],
+      [
+        0.37548,
+        0.50642,
+        0.08591,
+        0.00436,
+        0.02782
+      ],
+      [
+        0.42481,
+        0.49156,
+        0.05711,
+        0.00289,
+        0.02363
+      ],
+      [
+        0.37583,
+        0.47382,
+        0.09999,
+        0.00581,
+        0.04455
+      ],
+      [
+        0.53819,
+        0.33372,
+        0.09494,
+        0.00875,
+        0.0244
+      ],
+      [
+        0.29051,
+        0.60164,
+        0.07652,
+        0.00221,
+        0.02912
+      ],
+      [
+        0.32324,
+        0.54528,
+        0.0932,
+        0.00519,
+        0.03309
+      ],
+      [
+        0.5421,
+        0.23201,
+        0.13405,
+        0.0319,
+        0.05995
+      ],
+      [
+        0.44494,
+        0.38457,
+        0.11889,
+        0.00933,
+        0.04226
+      ],
+      [
+        0.24503,
+        0.6272,
+        0.08631,
+        0.00307,
+        0.03839
+      ],
+      [
+        0.30665,
+        0.50647,
+        0.1423,
+        0.00776,
+        0.03683
+      ],
+      [
+        0.20209,
+        0.61792,
+        0.14946,
+        0.00478,
+        0.02574
+      ],
+      [
+        0.17801,
+        0.35777,
+        0.36435,
+        0.05624,
+        0.04363
+      ],
+      [
+        0.12086,
+        0.54702,
+        0.29036,
+        0.00847,
+        0.03329
+      ],
+      [
+        0.02399,
+        0.25688,
+        0.65136,
+        0.0506,
+        0.01717
+      ],
+      [
+        0.03549,
+        0.3289,
+        0.58042,
+        0.03183,
+        0.02336
+      ],
+      [
+        0.02874,
+        0.26253,
+        0.63472,
+        0.04842,
+        0.0256
+      ],
+      [
+        0.02836,
+        0.1242,
+        0.75995,
+        0.05409,
+        0.0334
+      ],
+      [
+        0.05981,
+        0.48956,
+        0.42112,
+        0.01332,
+        0.01619
+      ],
+      [
+        0.35109,
+        0.26474,
+        0.2683,
+        0.07559,
+        0.04028
+      ],
+      [
+        0.11099,
+        0.53146,
+        0.31276,
+        0.01201,
+        0.03278
+      ],
+      [
+        0.04917,
+        0.49024,
+        0.43436,
+        0.01174,
+        0.01449
+      ],
+      [
+        0.09227,
+        0.56016,
+        0.31596,
+        0.00864,
+        0.02298
+      ],
+      [
+        0.01177,
+        0.1094,
+        0.8047,
+        0.0592,
+        0.01493
+      ],
+      [
+        0.02209,
+        0.25589,
+        0.68095,
+        0.0261,
+        0.01498
+      ],
+      [
+        0.01162,
+        0.10987,
+        0.79324,
+        0.07188,
+        0.01338
+      ],
+      [
+        0.01263,
+        0.24894,
+        0.70058,
+        0.02431,
+        0.01355
+      ],
+      [
+        0.01595,
+        0.20368,
+        0.71941,
+        0.05233,
+        0.00863
+      ],
+      [
+        0.00705,
+        0.11518,
+        0.82385,
+        0.03893,
+        0.01499
+      ],
+      [
+        0.01552,
+        0.20402,
+        0.712,
+        0.05405,
+        0.0144
+      ],
+      [
+        0.00871,
+        0.1248,
+        0.81392,
+        0.03415,
+        0.01842
+      ],
+      [
+        0.03512,
+        0.42374,
+        0.51903,
+        0.0121,
+        0.01
+      ],
+      [
+        0.00727,
+        0.10429,
+        0.79991,
+        0.08251,
+        0.00603
+      ],
+      [
+        0.01221,
+        0.09985,
+        0.83895,
+        0.03263,
+        0.01635
+      ],
+      [
+        0.00939,
+        0.14476,
+        0.77292,
+        0.06492,
+        0.00802
+      ],
+      [
+        0.00683,
+        0.10006,
+        0.81982,
+        0.0613,
+        0.01198
+      ],
+      [
+        0.07872,
+        0.28518,
+        0.48125,
+        0.13755,
+        0.0173
+      ],
+      [
+        0.0116,
+        0.15573,
+        0.73296,
+        0.09518,
+        0.00453
+      ],
+      [
+        0.00934,
+        0.14223,
+        0.76234,
+        0.0813,
+        0.00479
+      ],
+      [
+        0.00483,
+        0.07144,
+        0.8093,
+        0.10978,
+        0.00464
+      ],
+      [
+        0.00449,
+        0.04657,
+        0.84483,
+        0.09496,
+        0.00915
+      ],
+      [
+        0.00244,
+        0.03992,
+        0.75401,
+        0.19846,
+        0.00517
+      ],
+      [
+        0.00335,
+        0.02812,
+        0.73382,
+        0.2317,
+        0.003
+      ],
+      [
+        0.00283,
+        0.02559,
+        0.66167,
+        0.30552,
+        0.00439
+      ],
+      [
+        0.00629,
+        0.05318,
+        0.55795,
+        0.37752,
+        0.00506
+      ],
+      [
+        0.00255,
+        0.02464,
+        0.78262,
+        0.18654,
+        0.00366
+      ],
+      [
+        0.00176,
+        0.02996,
+        0.83605,
+        0.12749,
+        0.00474
+      ],
+      [
+        0.00211,
+        0.01553,
+        0.35714,
+        0.62218,
+        0.00304
+      ],
+      [
+        0.00214,
+        0.0147,
+        0.42326,
+        0.55713,
+        0.00277
+      ],
+      [
+        0.00212,
+        0.0282,
+        0.73032,
+        0.23401,
+        0.00535
+      ],
+      [
+        0.00225,
+        0.01972,
+        0.45879,
+        0.51485,
+        0.00439
+      ],
+      [
+        0.00247,
+        0.01408,
+        0.50189,
+        0.47716,
+        0.0044
+      ],
+      [
+        0.00236,
+        0.0152,
+        0.33634,
+        0.64311,
+        0.00299
+      ],
+      [
+        0.00249,
+        0.02665,
+        0.57709,
+        0.38613,
+        0.00765
+      ],
+      [
+        0.00193,
+        0.01258,
+        0.35873,
+        0.62369,
+        0.00307
+      ],
+      [
+        0.00183,
+        0.01531,
+        0.48796,
+        0.4909,
+        0.00399
+      ],
+      [
+        0.00237,
+        0.01655,
+        0.57538,
+        0.39925,
+        0.00645
+      ],
+      [
+        0.0021,
+        0.00908,
+        0.17275,
+        0.81299,
+        0.00309
+      ],
+      [
+        0.00257,
+        0.01418,
+        0.27576,
+        0.6995,
+        0.00798
+      ],
+      [
+        0.00727,
+        0.08174,
+        0.72611,
+        0.17002,
+        0.01486
+      ],
+      [
+        0.00373,
+        0.03672,
+        0.60959,
+        0.34095,
+        0.00901
+      ],
+      [
+        0.03688,
+        0.10099,
+        0.42716,
+        0.32812,
+        0.10686
+      ],
+      [
+        0.02355,
+        0.11342,
+        0.54714,
+        0.25865,
+        0.05725
+      ],
+      [
+        0.0443,
+        0.06781,
+        0.284,
+        0.53669,
+        0.0672
+      ],
+      [
+        0.02316,
+        0.04862,
+        0.37397,
+        0.52181,
+        0.03244
+      ],
+      [
+        0.0303,
+        0.08048,
+        0.50723,
+        0.33076,
+        0.05122
+      ],
+      [
+        0.03663,
+        0.07645,
+        0.38476,
+        0.3589,
+        0.14326
+      ],
+      [
+        0.0535,
+        0.0889,
+        0.31501,
+        0.44085,
+        0.10175
+      ],
+      [
+        0.10097,
+        0.14569,
+        0.3651,
+        0.26886,
+        0.11938
+      ],
+      [
+        0.36406,
+        0.24669,
+        0.18963,
+        0.0461,
+        0.15352
+      ],
+      [
+        0.04143,
+        0.15082,
+        0.55364,
+        0.13917,
+        0.11494
+      ],
+      [
+        0.17404,
+        0.16058,
+        0.26058,
+        0.17707,
+        0.22773
+      ],
+      [
+        0.56462,
+        0.2055,
+        0.13915,
+        0.0244,
+        0.06633
+      ],
+      [
+        0.5033,
+        0.27006,
+        0.13534,
+        0.01867,
+        0.07262
+      ],
+      [
+        0.33853,
+        0.40152,
+        0.19379,
+        0.01485,
+        0.05131
+      ],
+      [
+        0.32673,
+        0.42862,
+        0.18075,
+        0.01772,
+        0.04619
+      ],
+      [
+        0.27204,
+        0.39541,
+        0.24873,
+        0.02632,
+        0.0575
+      ],
+      [
+        0.28713,
+        0.29898,
+        0.27853,
+        0.06285,
+        0.0725
+      ],
+      [
+        0.14266,
+        0.38505,
+        0.38354,
+        0.03246,
+        0.0563
+      ],
+      [
+        0.6532,
+        0.21082,
+        0.06643,
+        0.01107,
+        0.05848
+      ],
+      [
+        0.3884,
+        0.42602,
+        0.12659,
+        0.00987,
+        0.04913
+      ],
+      [
+        0.27491,
+        0.44113,
+        0.20199,
+        0.01655,
+        0.06542
+      ],
+      [
+        0.34691,
+        0.3965,
+        0.15862,
+        0.01621,
+        0.08176
+      ],
+      [
+        0.42938,
+        0.41804,
+        0.1069,
+        0.00749,
+        0.03818
+      ],
+      [
+        0.44083,
+        0.428,
+        0.08913,
+        0.00717,
+        0.03487
+      ],
+      [
+        0.43147,
+        0.41381,
+        0.11477,
+        0.00908,
+        0.03087
+      ],
+      [
+        0.78973,
+        0.12485,
+        0.04619,
+        0.00918,
+        0.03005
+      ],
+      [
+        0.77409,
+        0.13579,
+        0.05286,
+        0.00912,
+        0.02814
+      ],
+      [
+        0.82321,
+        0.10955,
+        0.04276,
+        0.00598,
+        0.0185
+      ],
+      [
+        0.88445,
+        0.07106,
+        0.02822,
+        0.00545,
+        0.01083
+      ],
+      [
+        0.82912,
+        0.10654,
+        0.04152,
+        0.00536,
+        0.01746
+      ],
+      [
+        0.85108,
+        0.09103,
+        0.03453,
+        0.00501,
+        0.01835
+      ],
+      [
+        0.87053,
+        0.07807,
+        0.03068,
+        0.00396,
+        0.01676
+      ],
+      [
+        0.83366,
+        0.09611,
+        0.04011,
+        0.00671,
+        0.02342
+      ],
+      [
+        0.84609,
+        0.09859,
+        0.03512,
+        0.00315,
+        0.01704
+      ],
+      [
+        0.90291,
+        0.06445,
+        0.02034,
+        0.0023,
+        0.01
+      ],
+      [
+        0.75643,
+        0.1813,
+        0.0413,
+        0.00353,
+        0.01743
+      ],
+      [
+        0.85455,
+        0.10371,
+        0.02757,
+        0.00286,
+        0.01132
+      ],
+      [
+        0.74416,
+        0.18854,
+        0.04294,
+        0.00375,
+        0.02061
+      ],
+      [
+        0.8108,
+        0.14339,
+        0.03028,
+        0.00233,
+        0.0132
+      ],
+      [
+        0.86668,
+        0.09134,
+        0.02645,
+        0.00272,
+        0.01281
+      ],
+      [
+        0.8432,
+        0.10327,
+        0.02831,
+        0.0032,
+        0.02203
+      ],
+      [
+        0.89213,
+        0.07082,
+        0.02071,
+        0.00287,
+        0.01347
+      ],
+      [
+        0.83732,
+        0.12377,
+        0.02544,
+        0.00235,
+        0.01111
+      ],
+      [
+        0.89364,
+        0.07294,
+        0.01909,
+        0.00406,
+        0.01027
+      ],
+      [
+        0.91625,
+        0.05379,
+        0.01673,
+        0.00254,
+        0.01069
+      ],
+      [
+        0.91901,
+        0.05689,
+        0.01482,
+        0.00176,
+        0.00752
+      ],
+      [
+        0.91174,
+        0.05758,
+        0.01614,
+        0.0021,
+        0.01245
+      ],
+      [
+        0.95737,
+        0.0297,
+        0.00754,
+        0.00103,
+        0.00436
+      ],
+      [
+        0.93119,
+        0.04608,
+        0.01214,
+        0.00148,
+        0.00912
+      ],
+      [
+        0.96051,
+        0.02969,
+        0.00665,
+        0.00066,
+        0.00249
+      ],
+      [
+        0.93969,
+        0.04135,
+        0.01128,
+        0.0016,
+        0.00608
+      ],
+      [
+        0.95385,
+        0.03273,
+        0.00807,
+        0.00094,
+        0.0044
+      ],
+      [
+        0.94512,
+        0.03857,
+        0.0093,
+        0.0012,
+        0.0058
+      ],
+      [
+        0.96509,
+        0.02561,
+        0.00599,
+        0.00067,
+        0.00264
+      ],
+      [
+        0.97289,
+        0.02022,
+        0.00438,
+        0.00056,
+        0.00196
+      ],
+      [
+        0.97239,
+        0.02074,
+        0.00471,
+        0.00062,
+        0.00153
+      ],
+      [
+        0.9792,
+        0.01545,
+        0.00364,
+        0.00059,
+        0.00112
+      ],
+      [
+        0.96457,
+        0.02493,
+        0.00657,
+        0.00102,
+        0.00291
+      ],
+      [
+        0.94663,
+        0.04061,
+        0.00916,
+        0.00093,
+        0.00267
+      ],
+      [
+        0.96608,
+        0.02358,
+        0.00631,
+        0.00137,
+        0.00265
+      ],
+      [
+        0.93206,
+        0.04624,
+        0.01475,
+        0.00299,
+        0.00395
+      ],
+      [
+        0.96807,
+        0.02145,
+        0.00591,
+        0.00228,
+        0.00228
+      ],
+      [
+        0.93409,
+        0.04698,
+        0.01077,
+        0.00319,
+        0.00498
+      ],
+      [
+        0.9581,
+        0.02812,
+        0.00858,
+        0.00184,
+        0.00336
+      ],
+      [
+        0.95432,
+        0.03113,
+        0.00933,
+        0.00172,
+        0.0035
+      ],
+      [
+        0.9527,
+        0.03243,
+        0.00953,
+        0.00179,
+        0.00354
+      ],
+      [
+        0.96356,
+        0.02661,
+        0.00682,
+        0.00117,
+        0.00184
+      ],
+      [
+        0.96375,
+        0.02495,
+        0.00702,
+        0.00168,
+        0.0026
+      ]
+    ],
+    "calibration_temperature": 1.2847,
+    "calibration_note": "Temperature scaling changes confidence, not decisions; argmax is identical before and after (asserted at build time). The DECODER, by contrast, does change decisions - see the `decoding` block.",
+    "argmax_stages_note": "argmax of these probabilities is NOT the shipped hypnogram; it differs on 9 of 1092 epochs in this recording."
+  },
+  "n1_confidence_flag": {
+    "rule": "flag an epoch when the predicted stage is N1 and max probability < 0.5750",
+    "threshold": 0.575,
+    "applied_to": "hypnogram.predicted_stages (the decoded, shipped stages)",
+    "flagged_epochs": [
+      9,
+      13,
+      14,
+      17,
+      18,
+      19,
+      20,
+      22,
+      23,
+      24,
+      26,
+      28,
+      30,
+      32,
+      34,
+      35,
+      38,
+      39,
+      40,
+      42,
+      43,
+      45,
+      60,
+      61,
+      63,
+      64,
+      65,
+      66,
+      71,
+      72,
+      75,
+      82,
+      83,
+      85,
+      92,
+      93,
+      94,
+      97,
+      98,
+      101,
+      102,
+      104,
+      105,
+      106,
+      108,
+      109,
+      113,
+      115,
+      116,
+      119,
+      121,
+      126,
+      127,
+      128,
+      130,
+      132,
+      135,
+      137,
+      144,
+      145,
+      150,
+      157,
+      158,
+      167,
+      169,
+      171,
+      172,
+      178,
+      180,
+      181,
+      183,
+      184,
+      188,
+      192,
+      193,
+      194,
+      200,
+      202,
+      205,
+      208,
+      235,
+      240,
+      261,
+      271,
+      272,
+      290,
+      292,
+      293,
+      294,
+      295,
+      299,
+      300,
+      301,
+      302,
+      303,
+      304,
+      354,
+      437,
+      438,
+      452,
+      453,
+      454,
+      455,
+      456,
+      457,
+      458,
+      459,
+      460,
+      506,
+      513,
+      515,
+      519,
+      520,
+      521,
+      539,
+      540,
+      541,
+      588,
+      593,
+      608,
+      609,
+      611,
+      612,
+      615,
+      617,
+      620,
+      621,
+      622,
+      623,
+      626,
+      627,
+      628,
+      629,
+      630,
+      631,
+      632,
+      633,
+      634,
+      635,
+      636,
+      637,
+      638,
+      639,
+      640,
+      641,
+      651,
+      683,
+      687,
+      689,
+      691,
+      707,
+      711,
+      712,
+      816,
+      817,
+      818,
+      819,
+      820,
+      821,
+      822,
+      823,
+      824,
+      825,
+      826,
+      830,
+      834,
+      835,
+      836,
+      882,
+      883,
+      884,
+      885,
+      886,
+      887,
+      963,
+      964,
+      965,
+      966,
+      969,
+      973,
+      976,
+      981,
+      983,
+      984,
+      985,
+      1037,
+      1038,
+      1039,
+      1040,
+      1041,
+      1043,
+      1044,
+      1045
+    ],
+    "n_n1_epochs": 273,
+    "n_flagged": 193,
+    "fraction_of_n1_flagged": 0.707,
+    "fitted_on": "validation split, 31 recordings, 34,610 epochs",
+    "validation_evidence": {
+      "accuracy_unflagged": 0.6104,
+      "accuracy_flagged": 0.3371,
+      "accuracy_all_n1": 0.5001
+    },
+    "how_to_read": "A flagged epoch is one the model called N1 with low confidence. On validation, unflagged N1 calls were right 61% of the time and flagged ones 34%. This does not make N1 more accurate - it identifies which N1 calls are worth a human's time. N1 remains the model's weakest class.",
+    "provenance_caveat": "The threshold was fitted on argmax validation predictions; it is applied here to the decoded hypnogram, which differs on 9 of 1092 epochs in this recording."
+  },
+  "per_stage": {
+    "W": {
+      "n_epochs_predicted": 160,
+      "fraction_of_night": 0.1465,
+      "mean_calibrated_confidence": 0.6859,
+      "model_reliability_tier": "high",
+      "model_f1_on_unseen_subjects": 0.8973
+    },
+    "N1": {
+      "n_epochs_predicted": 273,
+      "fraction_of_night": 0.25,
+      "mean_calibrated_confidence": 0.5241,
+      "model_reliability_tier": "low",
+      "model_f1_on_unseen_subjects": 0.4301
+    },
+    "N2": {
+      "n_epochs_predicted": 458,
+      "fraction_of_night": 0.4194,
+      "mean_calibrated_confidence": 0.6908,
+      "model_reliability_tier": "high",
+      "model_f1_on_unseen_subjects": 0.8052
+    },
+    "N3": {
+      "n_epochs_predicted": 92,
+      "fraction_of_night": 0.0842,
+      "mean_calibrated_confidence": 0.7422,
+      "model_reliability_tier": "high",
+      "model_f1_on_unseen_subjects": 0.7787
+    },
+    "REM": {
+      "n_epochs_predicted": 109,
+      "fraction_of_night": 0.0998,
+      "mean_calibrated_confidence": 0.7385,
+      "model_reliability_tier": "high",
+      "model_f1_on_unseen_subjects": 0.7769
+    }
+  },
+  "derived_metrics": {
+    "Total_Sleep_Time": 27960.0,
+    "Total_Time_In_Bed": 31380.0,
+    "Sleep_Efficiency": 0.891,
+    "Sleep_Onset_Latency": 270.0,
+    "Wake_After_Sleep_Onset": 3150.0,
+    "W_Duration": 4800.0,
+    "W_Proportion": 0.1717,
+    "N1_Duration": 8190.0,
+    "N1_Proportion": 0.2929,
+    "N2_Duration": 13740.0,
+    "N2_Proportion": 0.4914,
+    "N3_Duration": 2760.0,
+    "N3_Proportion": 0.0987,
+    "R_Duration": 3270.0,
+    "R_Proportion": 0.117,
+    "Light_Deep_Ratio": 7.9457,
+    "REM_Latency": 11970.0,
+    "REM_Periods": 6.0,
+    "Stage_Transitions": 205.0,
+    "Transition_Rate": 22.5275,
+    "Stage_Transition_Entropy": 2.9677,
+    "Mean_Segment_Duration": 151.0194,
+    "Segment_Duration_Variance": 58258.6695,
+    "Wake_Interruptions_per_Hour": 6.0515
+  },
+  "derived_metric_reliability": {
+    "measured_on": "validation split",
+    "safe_to_assert": [
+      "Sleep_Efficiency",
+      "Total_Sleep_Time",
+      "Total_Time_In_Bed"
+    ],
+    "assert_with_error_bound": [
+      "Mean_Segment_Duration",
+      "N1_Proportion",
+      "N2_Duration",
+      "N2_Proportion",
+      "R_Duration",
+      "R_Proportion",
+      "Stage_Transition_Entropy",
+      "Stage_Transitions",
+      "Transition_Rate",
+      "W_Duration",
+      "W_Proportion",
+      "Wake_After_Sleep_Onset"
+    ],
+    "do_not_assert_without_caveat": [
+      "Light_Deep_Ratio",
+      "N1_Duration",
+      "N3_Duration",
+      "N3_Proportion",
+      "REM_Latency",
+      "REM_Periods",
+      "Segment_Duration_Variance",
+      "Sleep_Onset_Latency",
+      "Wake_Interruptions_per_Hour"
+    ],
+    "per_metric": {
+      "Light_Deep_Ratio": {
+        "tier": "unreliable",
+        "reason": "mean relative error 138% on validation.",
+        "mean_abs_error": 50.0428,
+        "mean_relative_error": 1.3833,
+        "mean_relative_error_argmax": 1.3704,
+        "predicted_mean": 33.8785,
+        "expert_mean": 36.1757,
+        "predicted_over_expert": 0.9365,
+        "unit": "count_or_ratio"
+      },
+      "Mean_Segment_Duration": {
+        "tier": "fragile",
+        "reason": "derived from run structure, which inherits per-epoch noise; mean relative error 37% on validation.",
+        "mean_abs_error": 1.7378,
+        "mean_relative_error": 0.3731,
+        "mean_relative_error_argmax": 0.347,
+        "predicted_mean": 4.8019,
+        "expert_mean": 4.6579,
+        "predicted_over_expert": 1.0309,
+        "unit": "minutes"
+      },
+      "N1_Duration": {
+        "tier": "unreliable",
+        "reason": "mean relative error 41% on validation.",
+        "mean_abs_error": 27.0323,
+        "mean_relative_error": 0.4096,
+        "mean_relative_error_argmax": 0.4108,
+        "predicted_mean": 68.4194,
+        "expert_mean": 66.0,
+        "predicted_over_expert": 1.0367,
+        "unit": "minutes"
+      },
+      "N1_Proportion": {
+        "tier": "fragile",
+        "reason": "mean relative error 38% on validation.",
+        "mean_abs_error": 0.0592,
+        "mean_relative_error": 0.3838,
+        "mean_relative_error_argmax": 0.3853,
+        "predicted_mean": 0.1616,
+        "expert_mean": 0.1542,
+        "predicted_over_expert": 1.0479,
+        "unit": "count_or_ratio"
+      },
+      "N2_Duration": {
+        "tier": "fragile",
+        "reason": "mean relative error 20% on validation.",
+        "mean_abs_error": 45.7419,
+        "mean_relative_error": 0.1998,
+        "mean_relative_error_argmax": 0.2037,
+        "predicted_mean": 200.8226,
+        "expert_mean": 228.9839,
+        "predicted_over_expert": 0.877,
+        "unit": "minutes"
+      },
+      "N2_Proportion": {
+        "tier": "fragile",
+        "reason": "mean relative error 21% on validation.",
+        "mean_abs_error": 0.1137,
+        "mean_relative_error": 0.2088,
+        "mean_relative_error_argmax": 0.2139,
+        "predicted_mean": 0.4694,
+        "expert_mean": 0.5442,
+        "predicted_over_expert": 0.8624,
+        "unit": "count_or_ratio"
+      },
+      "N3_Duration": {
+        "tier": "unreliable",
+        "reason": "mean relative error 54% on validation.",
+        "mean_abs_error": 27.0645,
+        "mean_relative_error": 0.539,
+        "mean_relative_error_argmax": 0.5397,
+        "predicted_mean": 70.8871,
+        "expert_mean": 50.2097,
+        "predicted_over_expert": 1.4118,
+        "unit": "minutes"
+      },
+      "N3_Proportion": {
+        "tier": "unreliable",
+        "reason": "mean relative error 54% on validation.",
+        "mean_abs_error": 0.0647,
+        "mean_relative_error": 0.5371,
+        "mean_relative_error_argmax": 0.5377,
+        "predicted_mean": 0.1664,
+        "expert_mean": 0.1204,
+        "predicted_over_expert": 1.3822,
+        "unit": "count_or_ratio"
+      },
+      "REM_Latency": {
+        "tier": "unreliable",
+        "reason": "depends on a single epoch. Even on the decoded hypnogram it produced a false sleep-onset-REM reading - a narcolepsy red flag - on 2 of 31 validation nights (mean relative error 30%).",
+        "mean_abs_error": 48.2097,
+        "mean_relative_error": 0.3037,
+        "mean_relative_error_argmax": 0.4324,
+        "predicted_mean": 127.4677,
+        "expert_mean": 158.7419,
+        "predicted_over_expert": 0.803,
+        "unit": "minutes"
+      },
+      "REM_Periods": {
+        "tier": "unreliable",
+        "reason": "counts contiguous runs, so it tracks prediction fragmentation as well as physiology. Decoding moved it from 1.20x to 0.62x of the expert count; mean relative error 45%.",
+        "mean_abs_error": 4.2258,
+        "mean_relative_error": 0.4549,
+        "mean_relative_error_argmax": 0.4618,
+        "predicted_mean": 5.7742,
+        "expert_mean": 9.2903,
+        "predicted_over_expert": 0.6215,
+        "unit": "count_or_ratio"
+      },
+      "R_Duration": {
+        "tier": "fragile",
+        "reason": "mean relative error 26% on validation.",
+        "mean_abs_error": 20.0,
+        "mean_relative_error": 0.259,
+        "mean_relative_error_argmax": 0.2739,
+        "predicted_mean": 88.2097,
+        "expert_mean": 77.2097,
+        "predicted_over_expert": 1.1425,
+        "unit": "minutes"
+      },
+      "R_Proportion": {
+        "tier": "fragile",
+        "reason": "mean relative error 25% on validation.",
+        "mean_abs_error": 0.0448,
+        "mean_relative_error": 0.2472,
+        "mean_relative_error_argmax": 0.261,
+        "predicted_mean": 0.2027,
+        "expert_mean": 0.1812,
+        "predicted_over_expert": 1.1186,
+        "unit": "count_or_ratio"
+      },
+      "Segment_Duration_Variance": {
+        "tier": "unreliable",
+        "reason": "derived from run structure, which inherits per-epoch noise; mean relative error 93% on validation.",
+        "mean_abs_error": 589626.4845,
+        "mean_relative_error": 0.9335,
+        "mean_relative_error_argmax": 0.8806,
+        "predicted_mean": 579883.8051,
+        "expert_mean": 631644.5968,
+        "predicted_over_expert": 0.9181,
+        "unit": "count_or_ratio"
+      },
+      "Sleep_Efficiency": {
+        "tier": "robust",
+        "reason": "aggregates over the whole night; per-epoch errors average out.",
+        "mean_abs_error": 0.03,
+        "mean_relative_error": 0.0368,
+        "mean_relative_error_argmax": 0.037,
+        "predicted_mean": 0.827,
+        "expert_mean": 0.8144,
+        "predicted_over_expert": 1.0154,
+        "unit": "count_or_ratio"
+      },
+      "Sleep_Onset_Latency": {
+        "tier": "unreliable",
+        "reason": "mean relative error 85% on validation.",
+        "mean_abs_error": 21.5806,
+        "mean_relative_error": 0.849,
+        "mean_relative_error_argmax": 0.849,
+        "predicted_mean": 42.7742,
+        "expert_mean": 25.4194,
+        "predicted_over_expert": 1.6827,
+        "unit": "minutes"
+      },
+      "Stage_Transition_Entropy": {
+        "tier": "fragile",
+        "reason": "derived from run structure, which inherits per-epoch noise; mean relative error 10% on validation.",
+        "mean_abs_error": 0.2894,
+        "mean_relative_error": 0.0969,
+        "mean_relative_error_argmax": 0.0816,
+        "predicted_mean": 2.8795,
+        "expert_mean": 2.9857,
+        "predicted_over_expert": 0.9644,
+        "unit": "count_or_ratio"
+      },
+      "Stage_Transitions": {
+        "tier": "fragile",
+        "reason": "derived from run structure, which inherits per-epoch noise; mean relative error 25% on validation.",
+        "mean_abs_error": 30.8387,
+        "mean_relative_error": 0.2492,
+        "mean_relative_error_argmax": 0.2516,
+        "predicted_mean": 114.3226,
+        "expert_mean": 123.7419,
+        "predicted_over_expert": 0.9239,
+        "unit": "count_or_ratio"
+      },
+      "Total_Sleep_Time": {
+        "tier": "robust",
+        "reason": "aggregates over the whole night; per-epoch errors average out.",
+        "mean_abs_error": 17.7419,
+        "mean_relative_error": 0.042,
+        "mean_relative_error_argmax": 0.0422,
+        "predicted_mean": 428.3387,
+        "expert_mean": 422.4032,
+        "predicted_over_expert": 1.0141,
+        "unit": "minutes"
+      },
+      "Total_Time_In_Bed": {
+        "tier": "robust",
+        "reason": "aggregates over the whole night; per-epoch errors average out.",
+        "mean_abs_error": 5.4516,
+        "mean_relative_error": 0.0102,
+        "mean_relative_error_argmax": 0.0102,
+        "predicted_mean": 534.1452,
+        "expert_mean": 535.3065,
+        "predicted_over_expert": 0.9978,
+        "unit": "minutes"
+      },
+      "Transition_Rate": {
+        "tier": "fragile",
+        "reason": "derived from run structure, which inherits per-epoch noise; mean relative error 24% on validation.",
+        "mean_abs_error": 3.344,
+        "mean_relative_error": 0.2427,
+        "mean_relative_error_argmax": 0.245,
+        "predicted_mean": 12.682,
+        "expert_mean": 13.7806,
+        "predicted_over_expert": 0.9203,
+        "unit": "count_or_ratio"
+      },
+      "W_Duration": {
+        "tier": "fragile",
+        "reason": "mean relative error 13% on validation.",
+        "mean_abs_error": 17.7419,
+        "mean_relative_error": 0.1306,
+        "mean_relative_error_argmax": 0.1311,
+        "predicted_mean": 129.8871,
+        "expert_mean": 135.8226,
+        "predicted_over_expert": 0.9563,
+        "unit": "minutes"
+      },
+      "W_Proportion": {
+        "tier": "fragile",
+        "reason": "mean relative error 17% on validation.",
+        "mean_abs_error": 0.055,
+        "mean_relative_error": 0.1737,
+        "mean_relative_error_argmax": 0.1743,
+        "predicted_mean": 0.2991,
+        "expert_mean": 0.3168,
+        "predicted_over_expert": 0.9441,
+        "unit": "count_or_ratio"
+      },
+      "Wake_After_Sleep_Onset": {
+        "tier": "fragile",
+        "reason": "mean relative error 35% on validation.",
+        "mean_abs_error": 30.1935,
+        "mean_relative_error": 0.3451,
+        "mean_relative_error_argmax": 0.3455,
+        "predicted_mean": 63.0323,
+        "expert_mean": 87.4839,
+        "predicted_over_expert": 0.7205,
+        "unit": "minutes"
+      },
+      "Wake_Interruptions_per_Hour": {
+        "tier": "unreliable",
+        "reason": "derived from run structure, which inherits per-epoch noise; mean relative error 45% on validation.",
+        "mean_abs_error": 1.1469,
+        "mean_relative_error": 0.4472,
+        "mean_relative_error_argmax": 0.4546,
+        "predicted_mean": 2.1457,
+        "expert_mean": 2.5645,
+        "predicted_over_expert": 0.8367,
+        "unit": "count_or_ratio"
+      }
+    },
+    "note": "Only aggregate metrics survive per-epoch prediction error. Single-event metrics (REM latency) and run-structure metrics (REM periods, transitions) inherit it directly."
+  },
+  "night_confidence": {
+    "tier": "low",
+    "mean_entropy_nats": 0.8597,
+    "tier_boundaries_nats": {
+      "high_max": 0.6083,
+      "medium_max": 0.6981
+    },
+    "boundaries_fitted_on": "validation split entropy tertiles",
+    "requires_ground_truth": false
+  },
+  "evidence_items": [
+    {
+      "id": "arch.total_sleep_time",
+      "label": "Total sleep time",
+      "value": 466.0,
+      "unit": "minutes",
+      "assertion_level": "factual",
+      "metric_reliability": "robust",
+      "safe_to_assert": true,
+      "mean_abs_error": 17.7419,
+      "error_unit": "minutes",
+      "error_measured_on": "validation split"
+    },
+    {
+      "id": "arch.time_in_bed",
+      "label": "Time in bed",
+      "value": 523.0,
+      "unit": "minutes",
+      "assertion_level": "factual",
+      "metric_reliability": "robust",
+      "safe_to_assert": true,
+      "mean_abs_error": 5.4516,
+      "error_unit": "minutes",
+      "error_measured_on": "validation split"
+    },
+    {
+      "id": "arch.sleep_efficiency",
+      "label": "Sleep efficiency",
+      "value": 0.891,
+      "unit": "fraction",
+      "assertion_level": "factual",
+      "metric_reliability": "robust",
+      "safe_to_assert": true,
+      "mean_abs_error": 0.03,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split"
+    },
+    {
+      "id": "arch.sleep_onset_latency",
+      "label": "Sleep onset latency",
+      "value": 4.5,
+      "unit": "minutes",
+      "assertion_level": "factual",
+      "metric_reliability": "unreliable",
+      "safe_to_assert": false,
+      "mean_abs_error": 21.5806,
+      "error_unit": "minutes",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 85% on validation."
+    },
+    {
+      "id": "arch.waso",
+      "label": "Wake after sleep onset",
+      "value": 52.5,
+      "unit": "minutes",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 30.1935,
+      "error_unit": "minutes",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 35% on validation."
+    },
+    {
+      "id": "arch.rem_latency",
+      "label": "REM latency",
+      "value": 199.5,
+      "unit": "minutes",
+      "assertion_level": "factual",
+      "metric_reliability": "unreliable",
+      "safe_to_assert": false,
+      "mean_abs_error": 48.2097,
+      "error_unit": "minutes",
+      "error_measured_on": "validation split",
+      "caveat": "depends on a single epoch. Even on the decoded hypnogram it produced a false sleep-onset-REM reading - a narcolepsy red flag - on 2 of 31 validation nights (mean relative error 30%).",
+      "note": null
+    },
+    {
+      "id": "arch.rem_latency_sustained",
+      "label": "REM latency to first sustained REM period",
+      "value": 199.5,
+      "unit": "minutes",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 53.05,
+      "error_unit": "minutes",
+      "error_measured_on": "validation split",
+      "definition": "time from sleep onset to the first run of >=3 consecutive REM epochs",
+      "duplicates": "arch.rem_latency",
+      "caveat": "The decoder already enforces a minimum REM run, so this resolves to the same epoch as arch.rem_latency and is not an independent check. Its error (53.05 min) is measured against the expert's first SUSTAINED REM period while arch.rem_latency's (48.2097 min) is measured against the expert's first REM epoch - different references, so the two numbers must not be differenced. Both remain large against clinical thresholds.",
+      "note": null
+    },
+    {
+      "id": "arch.rem_periods",
+      "label": "REM periods",
+      "value": 6,
+      "unit": "count",
+      "assertion_level": "factual",
+      "metric_reliability": "unreliable",
+      "safe_to_assert": false,
+      "mean_abs_error": 4.2258,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "counts contiguous runs, so it tracks prediction fragmentation as well as physiology. Decoding moved it from 1.20x to 0.62x of the expert count; mean relative error 45%."
+    },
+    {
+      "id": "arch.stage_transitions",
+      "label": "Stage transitions",
+      "value": 205,
+      "unit": "count",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 30.8387,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "derived from run structure, which inherits per-epoch noise; mean relative error 25% on validation."
+    },
+    {
+      "id": "arch.transition_rate",
+      "label": "Transition rate",
+      "value": 22.527,
+      "unit": "per hour",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 3.344,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "derived from run structure, which inherits per-epoch noise; mean relative error 24% on validation."
+    },
+    {
+      "id": "arch.light_deep_ratio",
+      "label": "Light-to-deep sleep ratio",
+      "value": 7.946,
+      "unit": "ratio",
+      "assertion_level": "factual",
+      "metric_reliability": "unreliable",
+      "safe_to_assert": false,
+      "mean_abs_error": 50.0428,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 138% on validation."
+    },
+    {
+      "id": "arch.wake_interruptions_per_hour",
+      "label": "Wake interruptions",
+      "value": 6.052,
+      "unit": "per hour",
+      "assertion_level": "factual",
+      "metric_reliability": "unreliable",
+      "safe_to_assert": false,
+      "mean_abs_error": 1.1469,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "derived from run structure, which inherits per-epoch noise; mean relative error 45% on validation."
+    },
+    {
+      "id": "stage.W.fraction",
+      "label": "W as a fraction of the night",
+      "value": 0.1465,
+      "unit": "fraction",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 0.055,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 17% on validation.",
+      "model_reliability": "high"
+    },
+    {
+      "id": "stage.N1.fraction",
+      "label": "N1 as a fraction of the night",
+      "value": 0.25,
+      "unit": "fraction",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 0.0592,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 38% on validation.",
+      "model_reliability": "low"
+    },
+    {
+      "id": "stage.N2.fraction",
+      "label": "N2 as a fraction of the night",
+      "value": 0.4194,
+      "unit": "fraction",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 0.1137,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 21% on validation.",
+      "model_reliability": "high"
+    },
+    {
+      "id": "stage.N3.fraction",
+      "label": "N3 as a fraction of the night",
+      "value": 0.0842,
+      "unit": "fraction",
+      "assertion_level": "factual",
+      "metric_reliability": "unreliable",
+      "safe_to_assert": false,
+      "mean_abs_error": 0.0647,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 54% on validation.",
+      "model_reliability": "high"
+    },
+    {
+      "id": "stage.REM.fraction",
+      "label": "REM as a fraction of the night",
+      "value": 0.0998,
+      "unit": "fraction",
+      "assertion_level": "factual",
+      "metric_reliability": "fragile",
+      "safe_to_assert": false,
+      "mean_abs_error": 0.0448,
+      "error_unit": "count_or_ratio",
+      "error_measured_on": "validation split",
+      "caveat": "mean relative error 25% on validation.",
+      "model_reliability": "high"
+    },
+    {
+      "id": "night.confidence",
+      "label": "Night-level confidence",
+      "value": "low",
+      "unit": "tier",
+      "assertion_level": "factual",
+      "safe_to_assert": true,
+      "mean_entropy_nats": 0.8597,
+      "basis": "prediction entropy; Spearman rho -0.590 against per-recording kappa on held-out data (n=29)"
+    },
+    {
+      "id": "model.n1_reliability_warning",
+      "label": "N1 is low-reliability in this model",
+      "value": "low",
+      "unit": "tier",
+      "assertion_level": "factual",
+      "safe_to_assert": true,
+      "model_f1": 0.4301,
+      "basis": "representation-bound: no decision threshold improves N1 by more than +0.0086"
+    }
+  ],
+  "attribution": null,
+  "attribution_quality": {
+    "status": "not_run",
+    "gate": "3a",
+    "preregistration": "distillation/PREREGISTRATION_gate3a.md"
+  },
+  "risk": null,
+  "risk_available": false,
+  "limitations": [
+    "Staging is from a single EEG channel (Fpz-Cz): the raw waveform plus 34 spectral features derived from that same channel. No EOG or EMG is used.",
+    "N1 is representation-bound: pairwise N1-vs-N2 AUC ~0.81, unchanged across every model variant, and no decision threshold improves N1 F1 by more than +0.0086.",
+    "Night-level confidence predicts agreement with the expert scorer, which is not the same as clinical correctness - both can be wrong on the same night.",
+    "The hypnogram is decoded with a REM-targeted minimum-run rule, so REM runs shorter than 3 epochs cannot appear in it by construction. A genuine brief REM intrusion would therefore be absorbed rather than reported. On validation the rule moved REM period counts from 2.01x the expert value to 0.83x - closer, but now slightly UNDER-counting, so REM fragmentation should be read as a lower bound.",
+    "No EOG or EMG is used. AASM scoring defines REM partly by eye movements and N1 partly by slow rolling eye movements, both of which are unavailable to this model."
+  ],
+  "_ground_truth_withheld": true
+}
