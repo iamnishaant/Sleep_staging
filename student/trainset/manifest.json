@@ -1,0 +1,76 @@
+{
+ "design": "report/PHASE2_DISTILLATION.md",
+ "decisions": {
+  "targets": "the oracle's verified claim sets (option A), 14 September 2026",
+  "training": "on Kaggle, 14 September 2026"
+ },
+ "generator": "student/build_set.py",
+ "git_commit": "1cc5af3bd8a49f6180e7b7dc914d61aef92cb237",
+ "created_at": "2026-09-14T09:32:48+00:00",
+ "packets": "distillation/results/phase2_train_packets",
+ "prompt_id": "P1",
+ "target": "oracle witness in the grammar's field order: claim_id, claim_type, cites, subject, then the type's own fields",
+ "checks": [
+  "accepted by report/claims.gbnf (report/gbnf.py Grammar)",
+  "passes the frozen verifier and renders",
+  "round-trips to the oracle's claims"
+ ],
+ "grammar_sha256": "142835c8dcd58bfc04757eae7300bfe19d44e90c101098f982795bb5b7e57120",
+ "held_out": {
+  "subjects": [
+   "SC407",
+   "SC451",
+   "SC476",
+   "SC480",
+   "SC482",
+   "ST706",
+   "ST712"
+  ],
+  "seed": 0,
+  "rule": "7 subjects; seed 0, then 1, 2, ... until all three tiers are covered"
+ },
+ "splits": {
+  "train": {
+   "file": "student/trainset/train.jsonl",
+   "nights": 123,
+   "subjects": 62,
+   "tiers": {
+    "high": 70,
+    "medium": 21,
+    "low": 32
+   },
+   "sha256": "011c2edb8c0504474d35a56ae316b83a9529fcc291c35e5d171ad202d8fdab20"
+  },
+  "valid": {
+   "file": "student/trainset/valid.jsonl",
+   "nights": 14,
+   "subjects": 7,
+   "tiers": {
+    "high": 8,
+    "medium": 3,
+    "low": 3
+   },
+   "sha256": "bf0ba00c548bda5bf2b636946957c2bc65f49ca06335e1ca34126b30006a33f2"
+  }
+ },
+ "all_tiers": {
+  "high": 78,
+  "medium": 24,
+  "low": 35
+ },
+ "token_lengths": {
+  "tokens": {
+   "Qwen2.5-1.5B-Instruct": {
+    "longest_prompt": 1077,
+    "longest_target": 973
+   },
+   "Llama-3.2-3B-Instruct": {
+    "longest_prompt": 1044,
+    "longest_target": 933
+   }
+  },
+  "max_sequence": 3072,
+  "measured_with": "llama-tokenize b10927, no BOS, chat template excluded"
+ },
+ "template_parity": "The trainer must render each student's chat template exactly as llama.cpp --jinja does at evaluation, with the prompt as the only user message and no system message. Check by rendering one prompt both ways before training. Qwen2.5 inserts its default system message when none is given. Llama 3.2 writes a date into its system header, so pin the same date_string for training and evaluation."
+}

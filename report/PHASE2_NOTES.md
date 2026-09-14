@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 377
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 385
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -3055,6 +3055,65 @@ measured and before any training (design, section 3.3).
 - they are disjoint from dev and test by recording and by subject (test
   packets are identified by filename only);
 - they share dev's evidence signature.
+
+---
+
+## Distillation training set (14 September 2026)
+
+**The two decisions, taken on 14 September:**
+
+- the targets are the oracle's verified claim sets (option A);
+- training runs on Kaggle.
+
+`student/build_set.py` (new) builds the training set from the 137 training
+packets.
+
+**Prompts.** Each is `reference.prompts.build("P1", packet)`, the exact text
+`candidates.run` sends. It is stored as the user message, and the trainer
+applies the chat template.
+
+**Targets.** Each is the oracle's witness, re-serialised in the grammar's
+field order.
+
+- **A finding: the oracle's field order breaks the grammar.**
+  - The oracle emits `claim_id, subject, cites, claim_type, ...`.
+  - `claims.gbnf` requires `claim_id, claim_type, cites, subject, ...`.
+  - The frozen matcher rejects the oracle's raw text.
+  - Targets used as they stood would have taught the student a form the
+    grammar forbids at inference.
+- **Checks, run on all 137:**
+  - accepted by the frozen grammar matcher (`report/gbnf.py`);
+  - passes the verifier and renders;
+  - parses back to the oracle's claims.
+- **The matcher agrees with llama.cpp.** It accepts every grammar-constrained
+  output from the five-model run that ended normally, once Windows line
+  endings are undone.
+
+**Split:**
+
+| split | nights | subjects | high | medium | low |
+|---|---:|---:|---:|---:|---:|
+| train | 123 | 62 | 70 | 21 | 32 |
+| valid (held out) | 14 | 7 | 8 | 3 | 3 |
+
+The held-out subjects are SC407, SC451, SC476, SC480, SC482, ST706 and ST712.
+The seed-0 draw covered all three tiers.
+
+**Lengths.** The longest prompt and target come to 1,077 + 973 tokens for
+Qwen, and 1,044 + 933 for Llama. These were measured with `llama-tokenize`,
+excluding the template, and sit well inside the 3,072 limit.
+
+**A requirement recorded for training.** The trainer must render each chat
+template exactly as llama.cpp `--jinja` does.
+
+- Qwen2.5 inserts its default system message.
+- Llama 3.2 writes a date into its system header, so the same date must be
+  pinned for training and evaluation.
+
+**Files:** `student/trainset/train.jsonl`, `valid.jsonl` and `manifest.json`,
+about 1 MB in all. The manifest carries each file's sha256.
+
+**Tests:** `tests/test_student_set.py`, 8 tests (377 → 385).
 
 ---
 

@@ -1,8 +1,8 @@
 # Distillation: design
 
-**Written 14 September 2026, before any training data or student model
-exists.** The only step taken so far is building the training packets
-(section 3). This document fixes the following before any student is trained:
+**Written 14 September 2026, before any student model exists.** The
+training packets (section 3) and the training set (section 4.2) are built.
+Nothing has been trained. This document fixes the following before any student is trained:
 
 - the training data;
 - the students;
@@ -95,7 +95,7 @@ that entropy, so the tier mix leans high:
 
 The low and medium nights are what teach the review flag and the tier keys.
 
-### 3.2 Targets: decision required
+### 3.2 Targets: decided, option A
 
 | option | what | cost | verified clean |
 |---|---|---|---|
@@ -112,8 +112,23 @@ The low and medium nights are what teach the review flag and the tier keys.
 - **C is worth having only as evidence** that the reference and the oracle
   agree beyond the dev nights. It is not needed as training data.
 
-**Target format:** each witness serialised as the JSON array the grammar
-accepts, in the oracle's claim order and claim ids.
+**Decided on 14 September 2026: option A.**
+
+**Target format:** each witness is serialised in the grammar's field order:
+`claim_id`, `claim_type`, `cites`, `subject`, then the type's own fields. The
+claims keep the oracle's order and claim ids.
+
+- **Why the order matters.** The oracle emits its fields in another order
+  (`claim_id`, `subject`, `cites`, `claim_type`), and `claims.gbnf` rejects
+  that. A student trained on the oracle's raw text would learn a form the
+  grammar forbids at inference.
+- **How every target is checked:**
+  - the frozen grammar matcher (`report/gbnf.py`) accepts it;
+  - it passes the verifier and renders;
+  - it parses back to the oracle's claims.
+- **The matcher itself is cross-checked** against llama.cpp. It accepts
+  every grammar-constrained output from the five-model run that ended
+  normally.
 
 ### 3.3 Tier balance
 
@@ -182,7 +197,7 @@ unchanged). That is the only tuning on dev.
 The distilled model is then measured on exactly the same footing as the five
 candidates.
 
-### 4.1 Where to train: decision required
+### 4.1 Where to train: decided, Kaggle
 
 This host cannot realistically train the students.
 
@@ -192,10 +207,35 @@ This host cannot realistically train the students.
   but only after installing a CUDA build of PyTorch.
 - **Llama 3B** would not fit.
 
-**Recommendation: Kaggle's GPUs** (16 GB). The project already trained its
+**Decided on 14 September 2026: Kaggle's GPUs** (16 GB). The project already trained its
 staging students there, and `evaluate_student.py` reproduces the validation
 figures Kaggle reported. Conversion, quantisation and evaluation then run
 locally, with the existing harness.
+
+### 4.2 The training set
+
+`python -m student.build_set` writes `student/trainset/train.jsonl`,
+`valid.jsonl` and `manifest.json`, about 1 MB in all. The manifest carries
+each file's sha256.
+
+| split | nights | subjects | high | medium | low |
+|---|---:|---:|---:|---:|---:|
+| train | 123 | 62 | 70 | 21 | 32 |
+| valid (held out) | 14 | 7 | 8 | 3 | 3 |
+
+- **The held-out subjects** are SC407, SC451, SC476, SC480, SC482, ST706 and
+  ST712. The seed-0 draw already covered all three tiers.
+- **Each record** is a user message (the exact P1 prompt) and an assistant
+  message (the target), with the night's tier and prompt hash.
+- **Lengths:** the longest prompt and target come to 1,077 + 973 tokens for
+  Qwen, and 1,044 + 933 for Llama. These were measured with `llama-tokenize`,
+  excluding the template, and sit well inside the 3,072 limit.
+- **A requirement for training: template parity.** The trainer must render
+  each chat template exactly as llama.cpp `--jinja` does at evaluation.
+  - Qwen2.5 inserts its default system message.
+  - Llama 3.2 writes a date into its system header, so the same date must be
+    pinned for training and evaluation.
+  - Check by rendering one prompt both ways before any training.
 
 ## 5. Success criteria on dev
 
@@ -276,9 +316,9 @@ which no oracle exists.
 | step | status | gate |
 |---|---|---|
 | 1. Build the training packets | **done**: 137 built, 0 skipped; test md5 unchanged | none: local, touches no dev or test file |
-| 2. Choose the targets (section 3.2) | **decision required**; A recommended | none |
-| 3. Choose where to train (section 4.1) | **decision required**; Kaggle recommended | none |
-| 4. Build the training set (prompt and target pairs), with tests | not started | steps 2 and 3 |
+| 2. Choose the targets (section 3.2) | **decided**: A, the oracle's claim sets | none |
+| 3. Choose where to train (section 4.1) | **decided**: Kaggle | none |
+| 4. Build the training set (prompt and target pairs), with tests | **done**: `student/trainset`, 123 training and 14 validation nights; 8 tests | steps 2 and 3 |
 | 5. Train Qwen, then Llama | not started | the 2F rule and 2G |
 | 6. Convert, quantise, and evaluate on dev with the P1 harness | not started | step 5 |
 | 7. Evaluate once on the test set | not started | every choice frozen |

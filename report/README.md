@@ -428,9 +428,10 @@ python test_reference_run.py      # 2F runner and scorer, offline: cache, budget
 python test_deploy.py             # deployment arithmetic on a synthetic GGUF file
 python test_candidates.py         # local-candidate harness and scorer, offline: cache, no retries, token limit, 2G arm B
 python test_training_packets.py   # distillation training packets: the training split, disjoint from dev and test
+python test_student_set.py        # distillation training set: grammar-order targets, exact prompts, the hold-out
 ```
 
-377 tests.
+385 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.

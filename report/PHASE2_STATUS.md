@@ -19,7 +19,7 @@ fully clean claim set is rendered into fixed clinician-register wording.
 
 Phase 2 asks how well a model can fill that contract.
 
-The deterministic tier is **finished, frozen and tested** (377 tests). The
+The deterministic tier is **finished, frozen and tested** (385 tests). The
 **local small-model tier** has been measured: all five candidates, on all
 31 dev nights, under P1. None reaches the contract. The best is 4 of 31
 nights at 5/5 (Llama-3.2-3B), and none of those passes. The
@@ -238,7 +238,7 @@ A person starts each session; nothing runs on a timer.
 
 ## 5. Integrity
 
-- **377 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
+- **385 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
   unchanged throughout.
 - **The frozen tier** (`report/` rules, schema, grammar, coverage, oracle,
   evaluator) is untouched by the 2F and deployment work, which lives in
@@ -274,10 +274,11 @@ A person starts each session; nothing runs on a timer.
 |---|---|---|
 | Safety layer | The frozen schema, grammar, verifier and renderer. Every model output passes through it. | decided |
 | Prompt | P1: the frozen `build_prompt` body plus run C's claim-shape rules. P2 is held in reserve. | in use |
-| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses decide the 2F rule and measure the gap. If option B is chosen, it also labels the training nights. | 8 of 31 |
+| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses decide the 2F rule and measure the gap. | 8 of 31 |
 | Local runtime | llama.cpp b10927 (CPU), Q4_K_M, grammar-constrained. The grammar stays, and 2G measures what it buys. | in use |
 | Local model, as prompted | None. Not one of the 155 generations both passes verification and covers all five mandatory facts. | not usable |
-| Approach | Distillation on the 137 training nights (69 subjects, disjoint from dev and test). Recommended targets: the oracle's verified claim sets. Design: `report/PHASE2_DISTILLATION.md`. | if 2F routes there |
+| Approach | Distillation on the 137 training nights (69 subjects, disjoint from dev and test), with the oracle's verified claim sets as targets. Design: `report/PHASE2_DISTILLATION.md`. | decided; runs if 2F routes there |
+| Training | On Kaggle. The training set is built: `student/trainset`, with 123 training and 14 validation nights. | decided |
 | Student model | **Qwen2.5-1.5B**, with Llama-3.2-3B trained alongside as the capacity comparison. | recommendation |
 | Deployment target | Raspberry Pi 5 (8 GB), overnight batch reporting. | analytical |
 
@@ -333,8 +334,11 @@ applied.
   designed in `report/PHASE2_DISTILLATION.md`.
   - **Done:** the 137 training packets are built, and the oracle's claim set
     verifies and renders on all of them.
-  - **Open decision:** the training targets. The oracle is recommended.
-  - **Open decision:** where to train. Kaggle is recommended.
+  - **Decided:** the oracle's claim sets are the targets, and training runs
+    on Kaggle.
+  - **Done:** the training set, `student/trainset`, with 123 training and 14
+    validation nights. Every target is checked against the grammar, the
+    verifier and the oracle.
 
 ### Last
 
@@ -361,6 +365,7 @@ applied.
 | `reference/` | the reference-model tier: schema, client, runner, scorer, prompts, cache, logs |
 | `deploy/` | size, memory and throughput analysis; the GGUF reader; results |
 | `candidates/` | the local-candidate harness: runner, scorer, cache, logs, per-model results |
-| `tests/` | 377 tests |
+| `student/` | the distillation training set: its builder, and the data |
+| `tests/` | 385 tests |
 | `distillation/results/` | evidence packets and split manifests |
 | `distillation/results/phase2_train_packets/` | the 137 training packets for distillation |
