@@ -11,12 +11,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from candidates.run import (ARM_DIRS, CONTEXT, END_MARK, N_PREDICT, PROMPT_ID, CandidateRun,
-                            command,
+from candidates.run import (ARM_DIRS, CHAT_TEMPLATES, CONTEXT, END_MARK, N_PREDICT, PROMPT_ID,
+                            CandidateRun, command,
                             entry_hit_token_limit, extract_output, hit_token_limit,
                             parse_tokens)
 from candidates.score import (UNGENERATABLE, ablation, compare, grammar_check, mcnemar_exact,
                               score_model, strip_single_fence)
+from deploy.measure import MODEL_DIR, MODELS
 from reference.prompts import build, shape_block
 from reference.run import dev_jobs
 from report.evaluate import PACKET_DIRS
@@ -258,6 +259,43 @@ class TestAblationHarness(Case):
         self.assertEqual(rep["arms"]["B strict"]["five_of_five"], "1/31")
         with self.assertRaises(ValueError):
             score_model(MODEL, cache_dir=self.dir / "cache", out_dir=out, jobs=JOBS, normalise=True)
+
+
+class TestPinnedTemplate(Case):
+    """Llama 3.2's template reads the date. It is pinned; no other candidate's reads it."""
+    LLAMA = "Llama-3.2-3B-Instruct"
+
+    def test_only_llama_is_pinned_and_its_key_and_command_say_so(self):
+        self.assertEqual(set(CHAT_TEMPLATES), {self.LLAMA})
+        pinned = CHAT_TEMPLATES[self.LLAMA]
+        self.assertTrue(pinned.read_text(encoding="utf-8")
+                        .startswith('{%- set date_string = "26 Jul 2024" %}'))
+        llama = CandidateRun(self.LLAMA, cache_dir=self.dir, log_path=self.dir / "l.jsonl",
+                             exec_fn=FakeLlama(), jobs=JOBS[:1])
+        qwen = CandidateRun(MODEL, cache_dir=self.dir, log_path=self.dir / "l.jsonl",
+                            exec_fn=FakeLlama(), jobs=JOBS[:1])
+        self.assertTrue(next(llama.keyed())[2]["chat_template"]
+                        .startswith("student/templates/Llama-3.2-3B-Instruct.pinned.jinja@"))
+        self.assertNotIn("chat_template", next(qwen.keyed())[2])
+        cmd = command("m.gguf", Path("p.txt"), template=pinned)
+        self.assertEqual(cmd[cmd.index("--chat-template-file") + 1], str(pinned))
+        self.assertNotIn("--chat-template-file", command("m.gguf", Path("p.txt")))
+
+    def test_a_pinned_run_passes_the_flag_and_logs_the_template(self):
+        fake = FakeLlama()
+        CandidateRun(self.LLAMA, cache_dir=self.dir / "c", log_path=self.dir / "l.jsonl",
+                     exec_fn=fake, jobs=JOBS[:1]).run()
+        self.assertIn("--chat-template-file", fake.calls[0][1])
+        row = json.loads((self.dir / "l.jsonl").read_text().splitlines()[0])
+        self.assertTrue(row["settings"]["chat_template"].startswith("student/templates/"))
+        self.assertIn("chat_template", row["key"])
+
+    @unittest.skipUnless(MODEL_DIR.exists(), "model files not present")
+    def test_no_other_candidate_template_reads_the_date(self):
+        from deploy.gguf import read_gguf
+        for name, f in MODELS.items():
+            t = read_gguf(MODEL_DIR / f).get("metadata", {}).get("tokenizer.chat_template", "")
+            self.assertEqual("strftime_now" in t, name == self.LLAMA, name)
 
 
 if __name__ == "__main__":

@@ -35,12 +35,21 @@ the deployment section, where timing is analytical and Pi-targeted.
 
 HIT_TOKEN_LIMIT is logged per generation: the generation was stopped by the
 3,000-token cap rather than by end of generation. The cap is generous against
-the ~805-token oracle witness, so reaching it is degenerate repetition, and
+the ~973-token longest target, so reaching it is degenerate repetition, and
 an observation, not a configuration problem. The cap is not raised.
+
+LLAMA'S DATE. Llama 3.2's chat template writes the current date into its
+system header (strftime_now), so its prompt changed with the day it ran. It is
+pinned to the template's own fallback, "26 Jul 2024", with
+--chat-template-file student/templates/Llama-3.2-3B-Instruct.pinned.jinja, the
+flag the student/ kit uses; llama-completion has no template-arguments flag.
+No other candidate's template reads the date. The pinned template's path and
+sha256 join Llama's cache key, so pinned and unpinned generations never mix.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -61,6 +70,10 @@ GRAMMAR = ROOT / "report" / "claims.gbnf"
 PROMPT_ID = "P1"
 ARMS = ("constrained", "unconstrained")        # 2G: grammar on (the P1 run), grammar off
 ARM_DIRS = {"constrained": PROMPT_ID, "unconstrained": f"{PROMPT_ID}-nogrammar"}
+# Chat templates that read the date, pinned so a run is reproducible on any day
+# (LLAMA'S DATE above). Of the five GGUFs, only Llama 3.2's template reads it.
+CHAT_TEMPLATES = {"Llama-3.2-3B-Instruct":
+                  ROOT / "student" / "templates" / "Llama-3.2-3B-Instruct.pinned.jinja"}
 N_PREDICT = 3000
 CONTEXT = 12288
 END_MARK = "[end of text]"
@@ -70,11 +83,14 @@ PEAK_RSS_METHOD = ("fresh process per packet; peak working set of that process, 
                    f"context {CONTEXT} - not comparable with the deployment table")
 
 
-def command(model_file: str, prompt_file: Path, arm: str = "constrained") -> list[str]:
-    """Arm B is arm A with exactly two arguments removed: --grammar-file and its path."""
+def command(model_file: str, prompt_file: Path, arm: str = "constrained",
+            template: Path | None = None) -> list[str]:
+    """Arm B is arm A with exactly two arguments removed: --grammar-file and its path.
+    A pinned chat template, where one applies, is passed with --chat-template-file."""
     grammar = ["--grammar-file", str(GRAMMAR)] if arm == "constrained" else []
+    pinned = ["--chat-template-file", str(template)] if template else []
     return [str(LLAMA), "-m", str(MODEL_DIR / model_file), "--jinja", "-cnv", "-st",
-            "-f", str(prompt_file), *grammar,
+            "-f", str(prompt_file), *grammar, *pinned,
             "-n", str(N_PREDICT), "-c", str(CONTEXT), "--temp", "0", "--seed", "0",
             "--no-display-prompt"]
 
@@ -134,6 +150,10 @@ class CandidateRun:
         if arm not in ARMS:
             raise SystemExit(f"unknown arm {arm!r}; one of {ARMS}")
         self.arm = arm
+        self.template = CHAT_TEMPLATES.get(model_name)
+        self.template_tag = None if self.template is None else (
+            f"{self.template.relative_to(ROOT).as_posix()}@"
+            + hashlib.sha256(self.template.read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16])
         self.model_name, self.model_file = model_name, MODELS[model_name]
         self.cache_dir, self.log_path, self.exec_fn = cache_dir, log_path, exec_fn
         self.jobs = dev_jobs(prompts=(PROMPT_ID,)) if jobs is None else jobs
@@ -152,7 +172,9 @@ class CandidateRun:
                              "model_file": self.model_file, "prompt_id": prompt_id,
                              "prompt_hash": prompt_hash(text),
                              # arm A keeps the P1 run's key, so its cache stays valid
-                             **({"grammar": "none"} if self.arm == "unconstrained" else {})}
+                             **({"grammar": "none"} if self.arm == "unconstrained" else {}),
+                             # a pinned template joins the key: pinned and unpinned never mix
+                             **({"chat_template": self.template_tag} if self.template else {})}
 
     def cache_path(self, key: dict) -> Path:
         return (self.cache_dir / key["model"] / ARM_DIRS[self.arm]
@@ -180,7 +202,7 @@ class CandidateRun:
             for i, (pk, text, key) in enumerate(todo, 1):
                 prompt_file = Path(tmp) / f"{key['recording_id']}.txt"
                 prompt_file.write_text(text, encoding="utf-8", newline="\n")
-                cmd = command(self.model_file, prompt_file, self.arm)
+                cmd = command(self.model_file, prompt_file, self.arm, self.template)
                 r = self.exec_fn(cmd)                   # exactly once: no retries
                 out, note = extract_output(r["stdout"])
                 tokens = parse_tokens(r["stderr"])
@@ -198,7 +220,9 @@ class CandidateRun:
                                                      "template": "--jinja -cnv -st",
                                                      "grammar": ("report/claims.gbnf"
                                                                  if self.arm == "constrained"
-                                                                 else "none")}}
+                                                                 else "none"),
+                                                     "chat_template": (self.template_tag
+                                                                       or "embedded in the GGUF")}}
                 self.log_path.parent.mkdir(parents=True, exist_ok=True)
                 with self.log_path.open("a", encoding="utf-8") as f:
                     f.write(json.dumps(record) + "\n")
