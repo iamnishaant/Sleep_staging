@@ -19,10 +19,10 @@ fully clean claim set is rendered into fixed clinician-register wording.
 
 Phase 2 asks how well a model can fill that contract.
 
-The deterministic tier is **finished, frozen and tested** (391 tests). The
+The deterministic tier is **finished, frozen and tested** (394 tests). The
 **local small-model tier** has been measured: all five candidates, on all
-31 dev nights, under P1. None reaches the contract. The best is 4 of 31
-nights at 5/5 (Llama-3.2-3B), and none of those passes. The
+31 dev nights, under P1. None reaches the contract. The best is 2 of 31
+nights at 5/5 (Llama-3.2-3B, date pinned), and neither passes. The
 **reference run** with a strong hosted model (Gemini 3.8 Flash) is **in
 progress**, at 8 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
 5-class target are done: measured memory and analytical throughput.
@@ -108,10 +108,10 @@ September 2026:
 | Qwen2.5-1.5B | 0/31 | 0.497 | 0/31 | 0/434 | 0/31 | 1/31 |
 | SmolLM2-1.7B | 0/31 | 0.019 | 0/31 | 0/434 | 0/31 | 30/31 |
 | Gemma-2-2b | 0/31 | 0.219 | 31/31 | 50/434 | 1/31 | 0/31 |
-| Llama-3.2-3B | 4/31 | 0.310 | 11/31 | 156/434 | 0/31 | 20/31 |
+| Llama-3.2-3B | 2/31 | 0.297 | 11/31 | 159/434 | 0/31 | 20/31 |
 | Phi-3.5-mini | 0/31 | 0.368 | 20/31 | 102/434 | 9/31 | 0/31 |
 
-- **No candidate satisfies the contract on any night.** Llama's four 5/5
+- **No candidate satisfies the contract on any night.** Llama's two 5/5
   nights also restate the hedged items as plain values. Phi's nine clean
   reports stop at 4 of 5 facts.
 - **Each fails differently:**
@@ -125,6 +125,10 @@ September 2026:
 - **One Phi packet (SC4081E0) first failed on host memory,** before
   generating a token. It was generated once on 14 September, and is
   included above.
+- **Llama was re-run with its date pinned,** using
+  `--chat-template-file student/templates/Llama-3.2-3B-Instruct.pinned.jinja`.
+  Only 3 of its 31 outputs matched the unpinned run, and its 5/5 count moved
+  from 4 to 2. Its figures here are the pinned run's.
 - **The reference model, for contrast:** on its 8 nights so far, it scored
   5/5, with 14 hedged values and a rendered report, every night.
 
@@ -238,7 +242,7 @@ A person starts each session; nothing runs on a timer.
 
 ## 5. Integrity
 
-- **391 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
+- **394 tests pass.** Test-packet md5 `050fffe46d035008d643435ee826dd92`,
   unchanged throughout.
 - **The frozen tier** (`report/` rules, schema, grammar, coverage, oracle,
   evaluator) is untouched by the 2F and deployment work, which lives in
@@ -263,8 +267,8 @@ A person starts each session; nothing runs on a timer.
 3. **Done: the five local models on the same 31 dev nights, under P1**
    (§2.2).
    - No candidate reaches the contract on any night.
-   - The best is Llama-3.2-3B, at 4 of 31 nights at 5/5, none of which
-     passes.
+   - The best is Llama-3.2-3B, at 2 of 31 nights at 5/5 with its date
+     pinned, neither of which passes.
    - One Phi packet first failed on host memory. It was generated once on
      14 September, and its failed record is kept in `P1-host-failures/`.
 
@@ -297,8 +301,8 @@ A person starts each session; nothing runs on a timer.
 
 **Why Llama-3.2-3B alongside:**
 
-- **Capacity:** it is the only model to reach 5/5 (4 nights), and the only
-  one that hedges all 14 items when it finishes.
+- **Capacity:** it is the only model to reach 5/5 (2 nights, date pinned),
+  and the only one that hedges all 14 items when it finishes.
 - **What it tests:** whether that extra capacity is worth about twice the
   memory, and 266–380 s per report on a Pi 5.
 
@@ -368,6 +372,6 @@ applied.
 | `deploy/` | size, memory and throughput analysis; the GGUF reader; results |
 | `candidates/` | the local-candidate harness: runner, scorer, cache, logs, per-model results |
 | `student/` | the distillation training set and its builder, the chat-template references, and the Kaggle training kit (`KAGGLE.md`) |
-| `tests/` | 391 tests |
+| `tests/` | 394 tests |
 | `distillation/results/` | evidence packets and split manifests |
 | `distillation/results/phase2_train_packets/` | the 137 training packets for distillation |

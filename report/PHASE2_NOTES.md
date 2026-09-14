@@ -3,7 +3,7 @@
 **Nishant Shah · Team 40 · Project 48**
 **Started: 11 September 2026**
 **Status: 2A-2E complete, register A pinned, local runtime verified, rule 10 fixed,
-rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 391
+rendering gated on a clean result, cited coverage added, 2F preflight done, reference runner built — 394
 tests, all passing. Reference run: 3 of 31 P1 responses cached, with P2 in
 reserve; the reference model is Gemini 3.8 Flash. Deployment: size and peak memory
 measured on the x86 evaluation host; throughput predicted analytically for the
@@ -2709,7 +2709,7 @@ generation.
 | Qwen2.5-1.5B | 0/31 | 0.497 | 0/31 | 0/434 | 0/31 | `text_key_dependency_missing` 53, `rem_latency_double_count` 26, `text_key_predicate_false` 17 |
 | SmolLM2-1.7B | 0/31 | 0.019 | 0/31 | 0/434 | 0/31 | `malformed_json` 30, `unsafe_item_not_hedged` 14, `uncited_quantity` 1 |
 | Gemma-2-2b | 0/31 | 0.219 | 31/31 | 50/434 | 1/31 | `text_key_predicate_false` 22, `text_key_dependency_missing` 20, `unsafe_item_not_hedged` 1 |
-| Llama-3.2-3B | **4/31** | 0.310 | 11/31 | 156/434 | 0/31 | `unsafe_item_not_hedged` 150, `malformed_json` 20, `text_key_predicate_false` 9 |
+| Llama-3.2-3B | **2/31** | 0.297 | 11/31 | 159/434 | 0/31 | `unsafe_item_not_hedged` 145, `malformed_json` 20, `text_key_predicate_false` 9 |
 | Phi-3.5-mini | 0/31 | 0.368 | 20/31 | 102/434 | **9/31** | `safe_item_hedged` 60, `text_key_dependency_missing` 27, `text_key_predicate_false` 8 |
 
 This table is written by `candidates/results/comparison.{json,txt}`
@@ -2724,7 +2724,7 @@ as 0.
 | Qwen2.5-1.5B | 1 | 0 | 15 | 13 | 2 | 0 |
 | SmolLM2-1.7B | 30 | 0 | 0 | 1 | 0 | 0 |
 | Gemma-2-2b | 0 | 28 | 3 | 0 | 0 | 0 |
-| Llama-3.2-3B | 20 | 0 | 0 | 0 | 7 | 4 |
+| Llama-3.2-3B | 20 | 0 | 0 | 0 | 9 | 2 |
 | Phi-3.5-mini | 5 | 15 | 0 | 2 | 9 | 0 |
 
 Phi's row includes SC4081E0, first a host failure and generated once on 14
@@ -2740,7 +2740,7 @@ the second is total `hedged_value` claims out of 14 per packet.
 | Qwen2.5-1.5B | 0/31 · 0/434 | 0/11 · 0/154 | 0/10 · 0/140 | 0/10 · 0/140 |
 | SmolLM2-1.7B | 0/31 · 0/434 | 0/11 · 0/154 | 0/10 · 0/140 | 0/10 · 0/140 |
 | Gemma-2-2b | 31/31 · 50/434 | 11/11 · 19/154 | 10/10 · 21/140 | 10/10 · 10/140 |
-| Llama-3.2-3B | 11/31 · 156/434 | 3/11 · 42/154 | 4/10 · 58/140 | 4/10 · 56/140 |
+| Llama-3.2-3B | 11/31 · 159/434 | 6/11 · 86/154 | 3/10 · 42/140 | 2/10 · 31/140 |
 | Phi-3.5-mini | 20/31 · 102/434 | 0/11 · 0/154 | 10/10 · 72/140 | 10/10 · 30/140 |
 
 **Three models use the form, and none applies the rule** (hedge exactly the
@@ -2758,7 +2758,7 @@ the second is total `hedged_value` claims out of 14 per packet.
 | Qwen2.5-1.5B | 1/31 | 0 | 1 | 0 |
 | SmolLM2-1.7B | 30/31 | 10 | 10 | 10 |
 | Gemma-2-2b | 0/31 | 0 | 0 | 0 |
-| Llama-3.2-3B | 20/31 | 8 | 6 | 6 |
+| Llama-3.2-3B | 20/31 | 5 | 7 | 8 |
 | Phi-3.5-mini | 0/31 | 0 | 0 | 0 |
 
 That is **51 of the 155 generations.**
@@ -2838,28 +2838,27 @@ The per-rule counts are:
 - **Its one passing night is thin.** SC4321E0 (high tier) renders with 4
   claims: 1 mandatory fact and 2 hedged values.
 
-**Llama-3.2-3B-Instruct**
+**Llama-3.2-3B-Instruct** (date pinned; the unpinned run is compared below)
 
 | metric | overall | high | medium | low |
 |---|---:|---:|---:|---:|
-| schema-valid | 11/31 | 3/11 | 4/10 | 4/10 |
+| schema-valid | 11/31 | 6/11 | 3/10 | 2/10 |
 | overall pass | 0/31 | 0 | 0 | 0 |
-| mandatory mean | 0.310 | 0.218 | 0.320 | 0.400 |
-| packets at 5/5 | **4** | 0 | 0 | 4 |
-| discretionary coverage | 0.353 | 0.273 | 0.393 | 0.400 |
-| cited mandatory / discretionary | 0.355 / 0.353 | 0.273 / 0.273 | 0.400 / 0.393 | 0.400 / 0.400 |
-| oracle recovery · unrecovered available | 0.353 · 9.06 | 0.273 · 10.18 | 0.393 · 8.5 | 0.400 · 8.4 |
+| mandatory mean | 0.297 | 0.436 | 0.240 | 0.200 |
+| packets at 5/5 | **2** | 0 | 0 | 2 |
+| discretionary coverage | 0.353 | 0.539 | 0.300 | 0.200 |
+| cited mandatory / discretionary | 0.355 / 0.353 | 0.545 / 0.539 | 0.300 / 0.300 | 0.200 / 0.200 |
+| oracle recovery · unrecovered available | 0.353 · 9.06 | 0.539 · 6.45 | 0.300 · 9.8 | 0.200 · 11.2 |
 | numeric fidelity | 1.000 | 1.000 | 1.000 | 1.000 |
 | rendered | 0/31 | 0 | 0 | 0 |
-| violations | 186 | 51 | 73 | 62 |
+| violations | 180 | 92 | 49 | 39 |
 
 The per-rule counts are:
 
-- `L2.unsafe_item_not_hedged` 150 (40 / 54 / 56);
-- `L1.malformed_json` 20 (8 / 6 / 6);
-- `L2.text_key_predicate_false` 9 (3 / 6 / 0);
-- `L2.text_key_dependency_missing` 4 (medium);
-- `L2.safe_item_hedged` 3 (medium).
+- `L2.unsafe_item_not_hedged` 145 (78 / 39 / 28);
+- `L1.malformed_json` 20 (5 / 7 / 8);
+- `L2.text_key_predicate_false` 9 (6 / 3 / 0);
+- `L2.safe_item_hedged` 6 (3 / 0 / 3).
 
 **What its outputs look like:**
 
@@ -2868,9 +2867,9 @@ The per-rule counts are:
   come as values, and each discretionary item appears twice: once as a
   `value` and once as a `hedged_value`. The plain copies are the 150
   unhedged violations.
-- **Its 5/5 nights still fail.** The four nights at 5/5 are all low tier
-  (SC4581G0, SC4582G0, ST7081J0, ST7151J0), and each fails on 14 unhedged
-  duplicates.
+- **Its 5/5 nights still fail.** The two nights at 5/5 are both low tier
+  (SC4111E0 and ST7081J0). They fail on 17 and 14 violations, mostly
+  unhedged duplicates.
 
 **Phi-3.5-mini-instruct**
 
@@ -2949,11 +2948,12 @@ reports are the "clean but incomplete" case at scale: 0 violations with 4 of
 | Qwen2.5-1.5B | 588.3 | 13.22 / 14.85 / 99.65 | 2,037.6 / 2,037.3 | 12,288 |
 | SmolLM2-1.7B | 6,708.3 | 95.10 / 204.13 / 289.61 | 4,152.9 / 4,152.5 | 12,288 |
 | Gemma-2-2b | 957.1 | 27.19 / 31.67 / 41.34 | 3,594.4 / 3,594.2 | 12,288 |
-| Llama-3.2-3B | 6,935.7 | 145.66 / 251.79 / 350.01 | 4,743.4 / 4,743.2 | 12,288 |
+| Llama-3.2-3B | 7,795.7 | 164.72 / 275.35 / 318.88 | 4,743.4 / 4,743.1 | 12,288 |
 | Phi-3.5-mini | 4,699.3 | 63.06 / 139.09 / 423.76 | 8,169.6 / 6,941.7 | 12,288 |
 
-**Total: 19,888.7 s, about 5 h 31 min.** That excludes the two interrupted
-packets, the probe and the 5.8 s host failure.
+**Total: 20,748.7 s, about 5 h 46 min,** with Llama's pinned run. It
+excludes the two interrupted packets, the probe, the 5.8 s host failure,
+and the archived unpinned Llama run (6,935.7 s).
 
 **How peak RSS was gathered:**
 
@@ -2975,7 +2975,7 @@ at context 4,096.
 
 ### What the five show
 
-- **No local candidate satisfies the contract on any night.** Llama's four
+- **No local candidate satisfies the contract on any night.** Llama's two
   5/5 nights fail on unhedged duplicates, and Phi's nine clean reports stop
   at 4 of 5 facts.
 - **Each fails in a different way:**
@@ -3174,6 +3174,80 @@ Nothing has been trained. Training waits for the 2F rule and 2G.
 witness of about 805 tokens. Measured with the students' own tokenizers, the
 longest target is 973 tokens for Qwen and 933 for Llama. The 3,072 limit
 still covers the longest pair with room to spare: 2,050 and 1,977 tokens.
+
+---
+
+## Llama-3.2-3B re-run with its date pinned (14 September 2026)
+
+### Why
+
+**Llama 3.2's chat template writes the current date into its system header**
+(`strftime_now`). So the prompts in the first Llama run carried the date of
+the day it ran, and a re-run on another day would see a different prompt.
+Of the five GGUF templates, only Llama's reads the date. That is now a test.
+
+**The flag:** `--chat-template-file student/templates/Llama-3.2-3B-Instruct.pinned.jinja`.
+
+- **What it pins:** the date `26 Jul 2024`, the template's own fallback. It
+  is the flag the `student/` kit uses.
+- **Why a file:** `llama-completion` has no template-arguments flag.
+- **Checked before the run,** on a synthetic prompt (not a dev packet), with
+  one token and `--verbose-prompt`:
+  - pinned, `llama-completion` renders "Today Date: 26 Jul 2024";
+  - unpinned, it renders "Today Date: 14 Sep 2026".
+- **Where it is recorded:** the template's path and sha256 join Llama's cache
+  key and every log row
+  (`student/templates/Llama-3.2-3B-Instruct.pinned.jinja@0544edf737278740`).
+
+### The other three models were not regenerated
+
+- **Their runs are already complete.** SmolLM2, Gemma and Phi were run at
+  identical settings, their templates do not read the date, and llama.cpp at
+  temperature 0 and seed 0 is deterministic.
+- **A spot check confirmed it.** SC4111E0 was regenerated once per model,
+  outside the cache and the log, and each output is byte-identical to the
+  committed one:
+
+  | model | time | output | notes |
+  |---|---:|---:|---|
+  | Gemma | 52 s | 776 chars | |
+  | Phi | 137 s | 924 chars | |
+  | SmolLM2 | 301 s | 8,392 chars | capped at the token limit |
+
+- **The harness agrees.** Its plan-only mode reports 31 cached and 0 pending
+  for each of the three.
+
+**The unpinned Llama run is archived,** not deleted:
+`candidates/cache/Llama-3.2-3B-Instruct/P1-unpinned-date/` and
+`candidates/results/Llama-3.2-3B-Instruct/unpinned-date/`.
+
+### Pinned against unpinned
+
+| Llama-3.2-3B | unpinned (archived) | pinned (official) |
+|---|---:|---:|
+| packets at 5/5 | 4 | 2 |
+| mandatory mean | 0.310 | 0.297 |
+| hedged_value | 11/31 · 156/434 | 11/31 · 159/434 |
+| hit the token limit | 20/31 | 20/31 |
+| schema-valid | 11/31 | 11/31 |
+| rendered | 0/31 | 0/31 |
+| violations | 186 | 180 |
+
+- **Only 3 of the 31 outputs are identical** between the two runs.
+- **10 nights changed** their count of mandatory facts.
+- **The capped nights changed too.** Five nights that looped unpinned now end,
+  and five that ended now loop.
+
+**Reading.** A date line that carries no task information changes 28 of 31
+greedy outputs.
+
+- **The failure mode is stable.** Llama loops on 20 of 31 nights, and every
+  night that finishes restates the hedged items as plain values.
+- **The per-night outcomes are not.** So neither are small counts like 5/5:
+  the move from 4 to 2 is within that sensitivity.
+- **Two consequences:** the date is pinned, and single-night outcomes for a
+  loop-prone model should not be read as stable.
+- **Llama's figures elsewhere in these notes are the pinned run's.**
 
 ---
 

@@ -1,0 +1,467 @@
+[
+  {
+    "claim_id": "c1",
+    "claim_type": "value",
+    "cites": [
+      "arch.total_sleep_time"
+    ],
+    "subject": "this_recording",
+    "value": 401,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c2",
+    "claim_type": "value",
+    "cites": [
+      "arch.time_in_bed"
+    ],
+    "subject": "this_recording",
+    "value": 565,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c3",
+    "claim_type": "value",
+    "cites": [
+      "arch.sleep_efficiency"
+    ],
+    "subject": "this_recording",
+    "value": 0.7097,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c4",
+    "claim_type": "value",
+    "cites": [
+      "arch.sleep_onset_latency"
+    ],
+    "subject": "this_recording",
+    "value": 36.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c5",
+    "claim_type": "value",
+    "cites": [
+      "arch.waso"
+    ],
+    "subject": "this_recording",
+    "value": 127.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c6",
+    "claim_type": "value",
+    "cites": [
+      "arch.rem_latency"
+    ],
+    "subject": "this_recording",
+    "value": 104,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c7",
+    "claim_type": "value",
+    "cites": [
+      "arch.rem_latency_sustained"
+    ],
+    "subject": "this_recording",
+    "value": 104,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c8",
+    "claim_type": "value",
+    "cites": [
+      "arch.rem_periods"
+    ],
+    "subject": "this_recording",
+    "value": 6,
+    "unit": "count"
+  },
+  {
+    "claim_id": "c9",
+    "claim_type": "value",
+    "cites": [
+      "arch.stage_transitions"
+    ],
+    "subject": "this_recording",
+    "value": 213,
+    "unit": "count"
+  },
+  {
+    "claim_id": "c10",
+    "claim_type": "value",
+    "cites": [
+      "arch.transition_rate"
+    ],
+    "subject": "this_recording",
+    "value": 20.663,
+    "unit": "per hour"
+  },
+  {
+    "claim_id": "c11",
+    "claim_type": "value",
+    "cites": [
+      "arch.light_deep_ratio"
+    ],
+    "subject": "this_recording",
+    "value": 8.639,
+    "unit": "ratio"
+  },
+  {
+    "claim_id": "c12",
+    "claim_type": "value",
+    "cites": [
+      "arch.wake_interruptions_per_hour"
+    ],
+    "subject": "this_recording",
+    "value": 7.032,
+    "unit": "per hour"
+  },
+  {
+    "claim_id": "c13",
+    "claim_type": "value",
+    "cites": [
+      "stage.W.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.3517,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c14",
+    "claim_type": "value",
+    "cites": [
+      "stage.N1.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.215,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c15",
+    "claim_type": "value",
+    "cites": [
+      "stage.N2.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.2878,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c16",
+    "claim_type": "value",
+    "cites": [
+      "stage.N3.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.0582,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c17",
+    "claim_type": "value",
+    "cites": [
+      "stage.REM.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.0873,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c18",
+    "claim_type": "review_flag",
+    "cites": [
+      "night.confidence"
+    ],
+    "subject": "this_recording",
+    "reason_key": "low_night_confidence"
+  },
+  {
+    "claim_id": "c19",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.waso"
+    ],
+    "subject": "this_recording",
+    "value": 127.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c20",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_latency"
+    ],
+    "subject": "this_recording",
+    "value": 104,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c21",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_latency_sustained"
+    ],
+    "subject": "this_recording",
+    "value": 104,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c22",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_periods"
+    ],
+    "subject": "this_recording",
+    "value": 6,
+    "unit": "count"
+  },
+  {
+    "claim_id": "c23",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.stage_transitions"
+    ],
+    "subject": "this_recording",
+    "value": 213,
+    "unit": "count"
+  },
+  {
+    "claim_id": "c24",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.transition_rate"
+    ],
+    "subject": "this_recording",
+    "value": 20.663,
+    "unit": "per hour"
+  },
+  {
+    "claim_id": "c25",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.light_deep_ratio"
+    ],
+    "subject": "this_recording",
+    "value": 8.639,
+    "unit": "ratio"
+  },
+  {
+    "claim_id": "c26",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.wake_interruptions_per_hour"
+    ],
+    "subject": "this_recording",
+    "value": 7.032,
+    "unit": "per hour"
+  },
+  {
+    "claim_id": "c27",
+    "claim_type": "hedged_value",
+    "cites": [
+      "stage.W.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.3517,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c28",
+    "claim_type": "hedged_value",
+    "cites": [
+      "stage.N1.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.215,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c29",
+    "claim_type": "hedged_value",
+    "cites": [
+      "stage.N2.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.2878,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c30",
+    "claim_type": "hedged_value",
+    "cites": [
+      "stage.N3.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.0582,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c31",
+    "claim_type": "hedged_value",
+    "cites": [
+      "stage.REM.fraction"
+    ],
+    "subject": "this_recording",
+    "value": 0.0873,
+    "unit": "fraction"
+  },
+  {
+    "claim_id": "c32",
+    "claim_type": "observation",
+    "cites": [
+      "arch.total_sleep_time",
+      "arch.time_in_bed",
+      "arch.sleep_efficiency",
+      "arch.sleep_onset_latency",
+      "arch.waso",
+      "arch.rem_latency",
+      "arch.rem_latency_sustained",
+      "arch.rem_periods",
+      "arch.stage_transitions",
+      "arch.transition_rate",
+      "arch.light_deep_ratio",
+      "arch.wake_interruptions_per_hour",
+      "stage.W.fraction",
+      "stage.N1.fraction",
+      "stage.N2.fraction",
+      "stage.N3.fraction",
+      "stage.REM.fraction"
+    ],
+    "subject": "this_recording",
+    "text_key": "n1_reliability_is_low"
+  },
+  {
+    "claim_id": "c33",
+    "claim_type": "observation",
+    "cites": [
+      "arch.total_sleep_time",
+      "arch.time_in_bed",
+      "arch.sleep_efficiency",
+      "arch.sleep_onset_latency",
+      "arch.waso",
+      "arch.rem_latency",
+      "arch.rem_latency_sustained",
+      "arch.rem_periods",
+      "arch.stage_transitions",
+      "arch.transition_rate",
+      "arch.light_deep_ratio",
+      "arch.wake_interruptions_per_hour",
+      "stage.W.fraction",
+      "stage.N1.fraction",
+      "stage.N2.fraction",
+      "stage.N3.fraction",
+      "stage.REM.fraction"
+    ],
+    "subject": "this_recording",
+    "text_key": "tier_is_high"
+  },
+  {
+    "claim_id": "c34",
+    "claim_type": "observation",
+    "cites": [
+      "arch.total_sleep_time",
+      "arch.time_in_bed",
+      "arch.sleep_efficiency",
+      "arch.sleep_onset_latency",
+      "arch.waso",
+      "arch.rem_latency",
+      "arch.rem_latency_sustained",
+      "arch.rem_periods",
+      "arch.stage_transitions",
+      "arch.transition_rate",
+      "arch.light_deep_ratio",
+      "arch.wake_interruptions_per_hour",
+      "stage.W.fraction",
+      "stage.N1.fraction",
+      "stage.N2.fraction",
+      "stage.N3.fraction",
+      "stage.REM.fraction"
+    ],
+    "subject": "this_recording",
+    "text_key": "tier_is_low"
+  },
+  {
+    "claim_id": "c35",
+    "claim_type": "observation",
+    "cites": [
+      "arch.total_sleep_time",
+      "arch.time_in_bed",
+      "arch.sleep_efficiency",
+      "arch.sleep_onset_latency",
+      "arch.waso",
+      "arch.rem_latency",
+      "arch.rem_latency_sustained",
+      "arch.rem_periods",
+      "arch.stage_transitions",
+      "arch.transition_rate",
+      "arch.light_deep_ratio",
+      "arch.wake_interruptions_per_hour",
+      "stage.W.fraction",
+      "stage.N1.fraction",
+      "stage.N2.fraction",
+      "stage.N3.fraction",
+      "stage.REM.fraction"
+    ],
+    "subject": "this_recording",
+    "text_key": "tier_is_medium"
+  },
+  {
+    "claim_id": "c36",
+    "claim_type": "review_flag",
+    "cites": [
+      "night.confidence"
+    ],
+    "subject": "this_recording",
+    "reason_key": "low_night_confidence"
+  },
+  {
+    "claim_id": "c37",
+    "claim_type": "review_flag",
+    "cites": [
+      "model.n1_reliability_warning"
+    ],
+    "subject": "this_recording",
+    "reason_key": "n1_low_reliability"
+  },
+  {
+    "claim_id": "c38",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.waso"
+    ],
+    "subject": "this_recording",
+    "value": 127.5,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c39",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_latency"
+    ],
+    "subject": "this_recording",
+    "value": 104,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c40",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_latency_sustained"
+    ],
+    "subject": "this_recording",
+    "value": 104,
+    "unit": "minutes"
+  },
+  {
+    "claim_id": "c41",
+    "claim_type": "hedged_value",
+    "cites": [
+      "arch.rem_periods"
+    ],
+    "subject": "this_recording",
+    "value": 6,
+    "

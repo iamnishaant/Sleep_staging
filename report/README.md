@@ -426,13 +426,13 @@ python test_evaluate.py           # calibration on oracle witnesses
 python test_reference_schema.py   # 2F responseSchema: generated, agrees with the grammar
 python test_reference_run.py      # 2F runner and scorer, offline: cache, budget, retries
 python test_deploy.py             # deployment arithmetic on a synthetic GGUF file
-python test_candidates.py         # local-candidate harness and scorer, offline: cache, no retries, token limit, 2G arm B
+python test_candidates.py         # local-candidate harness and scorer, offline: cache, no retries, token limit, 2G arm B, Llama's pinned date
 python test_training_packets.py   # distillation training packets: the training split, disjoint from dev and test
 python test_student_set.py        # distillation training set: grammar-order targets, exact prompts, the hold-out
 python test_kaggle_sft.py         # Kaggle kit, offline: template parity with llama.cpp, masking, the bundle
 ```
 
-391 tests.
+394 tests.
 
 The renderer's wording is pinned byte-for-byte against six golden reports in
 `tests/golden/register_a/`, one test packet and one dev packet per tier.
