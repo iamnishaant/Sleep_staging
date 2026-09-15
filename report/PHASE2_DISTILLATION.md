@@ -105,7 +105,7 @@ The low and medium nights are what teach the review flag and the tier keys.
 | option | what | cost | verified clean |
 |---|---|---|---|
 | **A. Oracle witness** | The oracle's maximal verified claim set for each training packet | Free and instant, and deterministic | Yes, by construction |
-| B. Reference model | Gemini 3.8 Flash under P1, on each training packet | About a month at the free tier's current ~4 successful responses a day (9 of 41 attempts succeed) | Only after verification; failures would need handling |
+| B. Reference model | Gemini 3.8 Flash under P1, on each training packet | About a month at the free tier's current ~4 successful responses a day (14 of 67 attempts succeed) | Only after verification; failures would need handling |
 | C. A, checked by B | A for all 137, and B on a sample of 20 nights, to show the two agree | About five days of quota | A yes; B checked |
 
 **Recommendation: A.**

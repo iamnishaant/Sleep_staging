@@ -2414,8 +2414,13 @@ Quota is counted per Pacific day, and 503s count against it.
 | 14 Sep | 08:40:54 (70 s) | by hand: `reference/run.py --go` as pid 14644 (parent 17872) | 2 | 0 | 2 | stopped by hand (Ctrl+C) during the 49 s backoff; SC4112E0 skipped | 8 / 31 |
 | 14 Sep | 12:41:51 (112 s) | by hand: `reference/run.py --go` as pid 1180 (parent 25768) | 3 | 0 | 3 | stopped by hand (Ctrl+C) during the 84 s backoff | 8 / 31 |
 | 14 Sep | 18:02:05 (693 s) | by hand: `reference/run.py --go` as pid 11824 (parent 25768) | 9 | 1 | 8 | the breaker: six consecutive failures after SC4321E0's 200; 3 skips; 14 of the day's 20 attempts used | 9 / 31 |
+| 14 Sep | 00:07:08 on 15 Sep (550 s) | by hand: `reference/run.py --go` as pid 37300 | 6 | 0 | 6 | the breaker: six consecutive failures (SC4112E0, SC4322E0, SC4351F0, twice each); 2 skips; the day's 20 used | 9 / 31 |
+| 14 Sep | 00:18:30 on 15 Sep | pid 18220 | 0 | 0 | 0 | declined: the day's budget was used; nothing sent | 9 / 31 |
+| 15 Sep | 08:21:53 (22 s) | by hand: pid 11008 | 1 | 1 | 0 | stopped by hand (Ctrl+C) after SC4112E0's 200 | 10 / 31 |
+| 15 Sep | 08:22:22 (1,299 s) | by hand: pid 32464 | 19 | 4 | 15 | the day's budget (20 of 20); 7 skips; the longest failure run was 5, one short of the breaker | 14 / 31 |
+| 15 Sep | 08:48:37 | pid 32128 | 0 | 0 | 0 | declined: the day's budget was used; nothing sent | 14 / 31 |
 
-**Run attempts so far: 41, of which 9 succeeded and 32 returned 503 (78%).**
+**Run attempts so far: 67, of which 14 succeeded and 53 returned 503 (79%).**
 Before the 14 September sessions, the figure was 27 attempts, 8 successes
 and 19 503s (70%).
 
@@ -2435,8 +2440,8 @@ The 09:50 session is the first to run to its budget. Its 16 attempts give a
 | SC4351F0 | 503, then the budget ran out (still pending) |
 
 The three skipped packets were not reached again before the budget ran out.
-**22 P1 packets remain.** At the current rate (9 of 41 attempts succeed,
-about 4 responses per full 20-attempt day), that is roughly 5 more full
+**17 P1 packets remain.** At the current rate (14 of 67 attempts succeed,
+about 4 responses per full 20-attempt day), that is roughly 4 more full
 days.
 
 **The 14 September sessions:**
@@ -2445,6 +2450,22 @@ days.
 - **18:02 UTC:** SC4112E0 returned 503 twice more. SC4321E0 then returned
   200. SC4322E0, SC4351F0 and SC4352F0 returned 503 twice each, and the
   breaker stopped the session.
+
+**The sessions since, Pacific 14 and 15 September:**
+
+- **00:07 UTC on 15 Sep (Pacific 14 Sep):** SC4112E0, SC4322E0 and SC4351F0
+  returned 503 twice each, and the breaker stopped the session. A launch at
+  00:18 was declined on the used budget.
+- **08:21 UTC, 15 Sep:** SC4112E0 returned 200. The session was then
+  stopped by hand.
+- **08:22 UTC, 15 Sep:** 19 attempts, up to the day's budget.
+  - **Saved:** SC4352F0 (after one 503), SC4461F0, SC4462F0 and SC4581G0.
+  - **Skipped after 503 twice each:** SC4322E0, SC4351F0, SC4441E0,
+    SC4442E0, SC4561F0, SC4562F0 and SC4582G0.
+  - **The longest failure run** was 5, one short of the breaker.
+  - **A launch at 08:48** was declined on the used budget.
+- **Backoff waits reached 165–167 s.** That is by design: the runner caps
+  the exponential part at 160 s, then adds up to 10 s of jitter.
 
 A correction to a figure given in conversation on 14 September: "26 of 34
 (76%)" double-counted the 08:40 session. After the two morning sessions,
@@ -2458,11 +2479,12 @@ zero violations: 5/5 mandatory, 14/14 discretionary, 17/17 numbers exact,
 oracle recovery is 1.0 on each night. The 8 are six high, one medium and one
 low tier (manifest order), so the harder tiers are under-sampled. **The
 decision rule is applied at 31, not now.** The ninth response, SC4321E0
-(saved 14 September), is also high-confidence, and is not scored.
+(saved 14 September), is also high-confidence, and is not scored. Five more
+were saved on 15 September: SC4112E0, SC4352F0, SC4461F0, SC4462F0 and
+SC4581G0. None is scored.
 
 **The interim is front-loaded.** The run's manifest order puts
-high-confidence nights first: 7 of the 9 saved are high, while the 22 still
-to come are 4 high, 9 medium and 9 low (dev is 11 / 10 / 10). Interim
+high-confidence nights first: 8 of the 14 saved are high, while the 17 still to come are 3 high, 7 medium and 7 low (dev is 11 / 10 / 10). Interim
 figures should be expected to fall as the medium and low tiers arrive. A
 mid-range final result would be consistent with the interim, not a
 reversal of it.

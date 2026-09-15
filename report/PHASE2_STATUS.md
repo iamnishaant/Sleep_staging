@@ -26,13 +26,13 @@ nights at 5/5 (Llama-3.2-3B, date pinned), and neither passes. That count
 is a point observation: changing only the date in Llama's prompt moved it
 from 4 to 2. The
 **reference run** with a strong hosted model (Gemini 3.8 Flash) is **in
-progress**, at 9 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
+progress**, at 14 of 31 dev nights. **Deployment numbers** for a Raspberry Pi
 5-class target are done: measured memory and analytical throughput.
 
 Next:
 
-- finish the reference run. 9 of 31 are saved, and 7 of those 9 are
-  high-confidence nights, so the harder tiers are barely sampled;
+- finish the reference run. 14 of 31 are saved, and 8 of those 14 are
+  high-confidence nights, so the harder tiers are still under-sampled;
 - apply the pre-registered rule.
 
 **Training is conditional.** If the reference run clears the pre-registered
@@ -67,8 +67,7 @@ nights, one medium and one low, in manifest order, so the harder tiers are
 under-sampled. The pre-registered decision rule applies at 31 nights (§6).
 
 **The interim is front-loaded.** The run's manifest order puts
-high-confidence nights first: 7 of the 9 saved are high, while the 22 still
-to come are 4 high, 9 medium and 9 low (dev is 11 / 10 / 10). Interim
+high-confidence nights first: 8 of the 14 saved are high, while the 17 still to come are 3 high, 7 medium and 7 low (dev is 11 / 10 / 10). Interim
 figures should be expected to fall as the medium and low tiers arrive. A
 mid-range final result would be consistent with the interim, not a
 reversal of it.
@@ -251,16 +250,21 @@ variant) is held in reserve.
 | 14 Sep | 08:40 UTC | 2 | 0 | 2 | stopped by hand during a backoff wait |
 | 14 Sep | 12:41 UTC | 3 | 0 | 3 | stopped by hand during a backoff wait |
 | 14 Sep | 18:02 UTC | 9 | 1 | 8 | six failures in a row (the breaker) |
-| **total** | | **41** | **9** | **32 (78%)** | |
+| 14 Sep | 00:07 UTC on 15 Sep | 6 | 0 | 6 | six failures in a row (the breaker) |
+| 15 Sep | 08:21 UTC | 1 | 1 | 0 | stopped by hand after its first response |
+| 15 Sep | 08:22 UTC | 19 | 4 | 15 | daily budget |
+| **total** | | **67** | **14** | **53 (79%)** | |
 
-**Progress: 9 of 31, with 22 remaining.**
+**Progress: 14 of 31, with 17 remaining.**
 
-- **The rate:** 9 of 41 attempts succeed, which is about 4 responses per
-  full 20-attempt day.
-- **The estimate:** roughly 5 more full days.
-- **The sample so far:** 7 of the 9 saved nights are high-confidence,
-  because the manifest order puts them first. SC4321E0, the ninth, is
-  saved but not scored.
+- **The rate:** 14 of 67 attempts succeed, about 4 responses per full
+  20-attempt day.
+- **The estimate:** roughly 4 more full days.
+- **The sample so far:** 8 of the 14 saved nights are high-confidence,
+  because the manifest order puts them first. The 17 to come are 3 high,
+  7 medium and 7 low. Six saved responses are not yet scored.
+- **Two launches sent nothing:** at 00:18 and 08:48 UTC on 15 September,
+  the runner declined because the day's budget was already used.
 
 **Running a session** (after 07:00 UTC, when the Pacific day resets):
 
@@ -312,7 +316,7 @@ A person starts each session; nothing runs on a timer.
 |---|---|---|
 | Safety layer | The frozen schema, grammar, verifier and renderer. Every model output passes through it. | decided |
 | Prompt | P1: the frozen `build_prompt` body plus run C's claim-shape rules. P2 is held in reserve. | in use |
-| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses decide the 2F rule and measure the gap. | 9 of 31 |
+| Reference model | Gemini 3.8 Flash, thinking off, structured output. Its 31 responses decide the 2F rule and measure the gap. | 14 of 31 |
 | Local runtime | llama.cpp b10927 (CPU), Q4_K_M, grammar-constrained. The grammar stays, and 2G measures what it buys. | in use |
 | Local model, as prompted | None. Not one of the 155 generations both passes verification and covers all five mandatory facts. | not usable |
 | Approach | Distillation on the 137 training nights (69 subjects, disjoint from dev and test), with the oracle's verified claim sets as targets. Design: `report/PHASE2_DISTILLATION.md`. | if the rule routes there |
