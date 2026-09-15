@@ -2460,6 +2460,13 @@ low tier (manifest order), so the harder tiers are under-sampled. **The
 decision rule is applied at 31, not now.** The ninth response, SC4321E0
 (saved 14 September), is also high-confidence, and is not scored.
 
+**The interim is front-loaded.** The run's manifest order puts
+high-confidence nights first: 7 of the 9 saved are high, while the 22 still
+to come are 4 high, 9 medium and 9 low (dev is 11 / 10 / 10). Interim
+figures should be expected to fall as the medium and low tiers arrive. A
+mid-range final result would be consistent with the interim, not a
+reversal of it.
+
 ---
 
 ## 2F reference run: skip-and-requeue and a session breaker (13 September 2026)
@@ -2690,6 +2697,8 @@ These are not deployment figures.
   - 0 of 31 reports render.
 - **For contrast,** the reference model's interim result is 8 of 8 at 5/5,
   with 14 hedged values per night.
+- **That interim is front-loaded:** 6 of its 8 nights are high-confidence,
+  so it should be expected to fall as the medium and low tiers arrive.
 
 ---
 
@@ -3035,6 +3044,9 @@ at context 4,096.
   5/5, 14 hedged values and a rendered report on every night), the gap is
   large for every candidate. That is the "gap large" condition for
   distillation. It is conditional on the 2F rule at 31 reference responses.
+  The interim is front-loaded with high-confidence nights (6 of the 8), so
+  it should be expected to fall as the medium and low tiers arrive. A
+  mid-range final result would be consistent with it, not a reversal.
 
 ---
 

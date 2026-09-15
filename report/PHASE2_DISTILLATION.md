@@ -111,7 +111,8 @@ The low and medium nights are what teach the review flag and the tier keys.
 **Recommendation: A.**
 
 - **The reference adds no content.** Its 8 responses so far recover the
-  oracle's content exactly (oracle recovery 1.0 on every night).
+  oracle's content exactly (oracle recovery 1.0 on every night). Those 8 are
+  interim and front-loaded with high-confidence nights (6 of the 8).
 - **B's cost buys nothing.** It would spend about a month of quota to produce
   what A produces deterministically.
 - **C is worth having only as evidence** that the reference and the oracle

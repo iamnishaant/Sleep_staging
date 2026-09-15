@@ -2,8 +2,10 @@
 
     python -m student.build_set          writes student/trainset/{train,valid}.jsonl and manifest.json
 
-Decided 14 September 2026 (report/PHASE2_DISTILLATION.md): the targets are the
-oracle's verified claim sets (option A), and training runs on Kaggle.
+Training waits for the gate in report/PHASE2_DISTILLATION.md: it runs only if
+the 2F rule, applied at 31 reference responses, finds the contract
+satisfiable. Decided 14 September 2026, for if it runs: the targets are the
+oracle's verified claim sets (option A), and the venue is Kaggle.
 
 PROMPT. reference.prompts.build("P1", packet): the exact text candidates.run
 sends at inference. It is stored as the user message, and the trainer applies

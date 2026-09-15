@@ -47,7 +47,7 @@ The 2G grammar ablation is designed and waiting in
 
 ## 2. Headline results so far
 
-### 2.1 The reference model satisfies the contract: interim, 8 of 31 nights
+### 2.1 Reference model: interim results, 8 of 31 nights
 
 Gemini 3.8 Flash was run with thinking off, temperature 0, the structured-output
 schema, and prompt P1.
@@ -66,7 +66,14 @@ schema, and prompt P1.
 nights, one medium and one low, in manifest order, so the harder tiers are
 under-sampled. The pre-registered decision rule applies at 31 nights (§6).
 
-### 2.2 The local small models do not: one night, then all 31, then all five
+**The interim is front-loaded.** The run's manifest order puts
+high-confidence nights first: 7 of the 9 saved are high, while the 22 still
+to come are 4 high, 9 medium and 9 low (dev is 11 / 10 / 10). Interim
+figures should be expected to fall as the medium and low tiers arrive. A
+mid-range final result would be consistent with the interim, not a
+reversal of it.
+
+### 2.2 Local small models: one night, then all 31, then all five
 
 This was Qwen2.5-1.5B-Instruct (Q4_K_M, llama.cpp, grammar-constrained,
 temperature 0) on dev night SC4111E0, run under five prompt variants. It is
@@ -145,7 +152,9 @@ September 2026:
     unit, and single nights are not. Its figures here are the pinned
     run's.
 - **The reference model, for contrast:** on its 8 nights so far, it scored
-  5/5, with 14 hedged values and a rendered report, every night.
+  5/5, with 14 hedged values and a rendered report, every night. Those 8
+  are front-loaded with high-confidence nights (6 of the 8), so the figures
+  should be expected to fall as the medium and low tiers arrive (§2.1).
 
 See PHASE2_NOTES, "all five models under P1".
 
