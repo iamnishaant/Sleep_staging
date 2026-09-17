@@ -123,15 +123,15 @@ which don't reason), temperature 0, structured output, and the same prompt
 | around 12 | prompt design may be the limit | run the reserve prompt P2 |
 | near zero | the contract itself is the ceiling | report that finding |
 
-**Where it stands (15 September).** 14 of 31 responses are saved, and 8 are
+**Where it stands (17 September).** 19 of 31 responses are saved, and 8 are
 scored. All 8 scored nights reach 5/5 with zero violations, 14/14
 discretionary items, 17/17 numbers exact and 14 `hedged_value` claims each.
 Every one renders.
 
 **The caution.** The run's manifest order front-loads high-confidence nights:
 
-- 8 of the 14 saved nights are high-confidence;
-- the 17 still to come are 3 high, 7 medium and 7 low.
+- 9 of the 19 saved nights are high-confidence;
+- the 12 still to come are 2 high, 4 medium and 6 low.
 
 Interim figures should be expected to fall as the harder tiers arrive. A
 mid-range final result would be consistent with the interim, not a reversal
@@ -140,8 +140,8 @@ of it.
 **Operations.** The free tier allows 20 requests a day, and failed requests
 count against it.
 
-- **So far:** 67 attempts, 14 saved and 53 HTTP 503 "high demand" errors
-  (79%). That is about 4 saved nights per full day.
+- **So far:** 87 attempts, 19 saved and 68 HTTP 503 "high demand" errors
+  (78%). That is about 4 saved nights per full day.
 - **The runner** saves every response, never re-requests a saved night, moves
   on after two 503s on one night, and stops after six failures in a row.
 - **A person starts every session.** Nothing runs on a timer.

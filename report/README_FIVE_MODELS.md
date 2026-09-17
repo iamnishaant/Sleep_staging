@@ -503,7 +503,7 @@ mapping the training targets show on every night.
 
 ## 9. Caveats
 
-- **The reference is interim:** 14 of 31 saved and 8 scored, 6 of those high
+- **The reference is interim:** 19 of 31 saved and 8 scored, 6 of those high
   confidence. Whether the contract is achievable is decided at 31 nights, and
   training depends on that rule.
 - **"Chosen" means recommended, not selected.** The formal selection happens

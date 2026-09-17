@@ -1,0 +1,33 @@
+{
+ "key": {
+  "recording_id": "SC4561F0-PSG",
+  "prompt_id": "P1",
+  "prompt_hash": "e3133d105153dca042e799d24110389d0f3043aeff3208c75b857e231d42657b",
+  "model": "gemini-3.8-flash"
+ },
+ "settings": {
+  "thinking": {
+   "thinkingBudget": 0
+  },
+  "max_output_tokens": 16384,
+  "temperature": 0.0,
+  "seed": 0
+ },
+ "ts": "2026-09-17T02:06:04+00:00",
+ "http_status": 200,
+ "session_id": "20260917T020132Z-13284",
+ "attempts": 2,
+ "retry_causes": [
+  "HTTP 503"
+ ],
+ "text": "[\n  {\n    \"claim_id\": \"c1\",\n    \"claim_type\": \"value\",\n    \"cites\": [\"arch.total_sleep_time\"],\n    \"subject\": \"this_recording\",\n    \"value\": 401.0,\n    \"unit\": \"minutes\"\n  },\n  {\n    \"claim_id\": \"c2\",\n    \"claim_type\": \"value\",\n    \"cites\": [\"arch.time_in_bed\"],\n    \"subject\": \"this_recording\",\n    \"value\": 565.0,\n    \"unit\": \"minutes\"\n  },\n  {\n    \"claim_id\": \"c3\",\n    \"claim_type\": \"value\",\n    \"cites\": [\"arch.sleep_efficiency\"],\n    \"subject\": \"this_recording\",\n    \"value\": 0.7097,\n    \"unit\": \"fraction\"\n  },\n  {\n    \"claim_id\": \"c4\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.sleep_onset_latency\"],\n    \"subject\": \"this_recording\",\n    \"value\": 36.5,\n    \"unit\": \"minutes\"\n  },\n  {\n    \"claim_id\": \"c5\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.waso\"],\n    \"subject\": \"this_recording\",\n    \"value\": 127.5,\n    \"unit\": \"minutes\"\n  },\n  {\n    \"claim_id\": \"c6\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.rem_latency\"],\n    \"subject\": \"this_recording\",\n    \"value\": 104.0,\n    \"unit\": \"minutes\"\n  },\n  {\n    \"claim_id\": \"c7\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.rem_latency_sustained\"],\n    \"subject\": \"this_recording\",\n    \"value\": 104.0,\n    \"unit\": \"minutes\"\n  },\n  {\n    \"claim_id\": \"c8\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.rem_periods\"],\n    \"subject\": \"this_recording\",\n    \"value\": 6,\n    \"unit\": \"count\"\n  },\n  {\n    \"claim_id\": \"c9\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.stage_transitions\"],\n    \"subject\": \"this_recording\",\n    \"value\": 213,\n    \"unit\": \"count\"\n  },\n  {\n    \"claim_id\": \"c10\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.transition_rate\"],\n    \"subject\": \"this_recording\",\n    \"value\": 20.663,\n    \"unit\": \"per hour\"\n  },\n  {\n    \"claim_id\": \"c11\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.light_deep_ratio\"],\n    \"subject\": \"this_recording\",\n    \"value\": 8.639,\n    \"unit\": \"ratio\"\n  },\n  {\n    \"claim_id\": \"c12\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"arch.wake_interruptions_per_hour\"],\n    \"subject\": \"this_recording\",\n    \"value\": 7.032,\n    \"unit\": \"per hour\"\n  },\n  {\n    \"claim_id\": \"c13\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"stage.W.fraction\"],\n    \"subject\": \"this_recording\",\n    \"value\": 0.3517,\n    \"unit\": \"fraction\"\n  },\n  {\n    \"claim_id\": \"c14\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"stage.N1.fraction\"],\n    \"subject\": \"this_recording\",\n    \"value\": 0.215,\n    \"unit\": \"fraction\"\n  },\n  {\n    \"claim_id\": \"c15\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"stage.N2.fraction\"],\n    \"subject\": \"this_recording\",\n    \"value\": 0.2878,\n    \"unit\": \"fraction\"\n  },\n  {\n    \"claim_id\": \"c16\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"stage.N3.fraction\"],\n    \"subject\": \"this_recording\",\n    \"value\": 0.0582,\n    \"unit\": \"fraction\"\n  },\n  {\n    \"claim_id\": \"c17\",\n    \"claim_type\": \"hedged_value\",\n    \"cites\": [\"stage.REM.fraction\"],\n    \"subject\": \"this_recording\",\n    \"value\": 0.0873,\n    \"unit\": \"fraction\"\n  },\n  {\n    \"claim_id\": \"c18\",\n    \"claim_type\": \"observation\",\n    \"cites\": [\"night.confidence\"],\n    \"subject\": \"this_recording\",\n    \"text_key\": \"tier_is_medium\"\n  },\n  {\n    \"claim_id\": \"c19\",\n    \"claim_type\": \"observation\",\n    \"cites\": [\"model.n1_reliability_warning\"],\n    \"subject\": \"this_recording\",\n    \"text_key\": \"n1_reliability_is_low\"\n  }\n]",
+ "finish_reason": "STOP",
+ "model_version": "gemini-3.8-flash",
+ "prompt_feedback": null,
+ "usage": {
+  "prompt_tokens": 1172,
+  "output_tokens": 1396,
+  "thinking_tokens": null,
+  "total_tokens": 2568
+ }
+}

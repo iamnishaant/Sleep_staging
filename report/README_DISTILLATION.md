@@ -71,13 +71,13 @@ If the rule lands mid-range (around 12), the reserve prompt P2 runs first. If
 it lands near zero, the contract itself is the ceiling, and distillation is
 moot.
 
-**Where it stands (15 September).** The reference run is at 14 of 31 nights,
+**Where it stands (17 September).** The reference run is at 19 of 31 nights,
 8 of them scored.
 
 - **The interim result:** all 8 scored nights reach 5/5.
 - **Why it is front-loaded:** the run's order puts high-confidence nights
-  first. 8 of the 14 saved are high, and the 17 to come are 3 high, 7 medium
-  and 7 low.
+  first. 9 of the 19 saved are high, and the 12 to come are 2 high, 4 medium
+  and 6 low.
 
 The gate is genuinely open.
 
@@ -367,7 +367,7 @@ A result reached that way can't be tuned after the fact.
 | Targets (oracle, grammar order) | ✅ decided, built and checked |
 | Training set (123 + 14) | ✅ built |
 | Kaggle kit and parity references | ✅ built and tested, not run |
-| **The gate (2F rule at 31)** | ⏳ waiting on the reference run: 14 of 31 saved |
+| **The gate (2F rule at 31)** | ⏳ waiting on the reference run: 19 of 31 saved |
 | Training, dev evaluation and the test set | ⬜ only if the rule routes here |
 
 **Tests:** 17 cover this work. The training packets have 3, the training set

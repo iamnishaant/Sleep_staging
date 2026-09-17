@@ -2419,8 +2419,10 @@ Quota is counted per Pacific day, and 503s count against it.
 | 15 Sep | 08:21:53 (22 s) | by hand: pid 11008 | 1 | 1 | 0 | stopped by hand (Ctrl+C) after SC4112E0's 200 | 10 / 31 |
 | 15 Sep | 08:22:22 (1,299 s) | by hand: pid 32464 | 19 | 4 | 15 | the day's budget (20 of 20); 7 skips; the longest failure run was 5, one short of the breaker | 14 / 31 |
 | 15 Sep | 08:48:37 | pid 32128 | 0 | 0 | 0 | declined: the day's budget was used; nothing sent | 14 / 31 |
+| 16 Sep | 01:47:27 on 17 Sep (540 s) | by hand: pid 25296 | 6 | 0 | 6 | the breaker: six consecutive failures (SC4322E0, SC4351F0, SC4441E0, twice each); 2 skips; 6 of the day's 20 attempts used | 14 / 31 |
+| 16 Sep | 02:01:32 on 17 Sep (498 s) | by hand: pid 13284, launched 5 minutes after the breaker stopped the previous session | 14 | 5 | 9 | the day's budget (20 of 20, counting both of the day's sessions); 3 skips | 19 / 31 |
 
-**Run attempts so far: 67, of which 14 succeeded and 53 returned 503 (79%).**
+**Run attempts so far: 87, of which 19 succeeded and 68 returned 503 (78%).**
 Before the 14 September sessions, the figure was 27 attempts, 8 successes
 and 19 503s (70%).
 
@@ -2440,8 +2442,8 @@ The 09:50 session is the first to run to its budget. Its 16 attempts give a
 | SC4351F0 | 503, then the budget ran out (still pending) |
 
 The three skipped packets were not reached again before the budget ran out.
-**17 P1 packets remain.** At the current rate (14 of 67 attempts succeed,
-about 4 responses per full 20-attempt day), that is roughly 4 more full
+**12 P1 packets remain.** At the current rate (19 of 87 attempts succeed,
+about 4 responses per full 20-attempt day), that is roughly 3 more full
 days.
 
 **The 14 September sessions:**
@@ -2467,6 +2469,28 @@ days.
 - **Backoff waits reached 165–167 s.** That is by design: the runner caps
   the exponential part at 160 s, then adds up to 10 s of jitter.
 
+**The two sessions of Pacific 16 September.** Together they used the day's
+20 attempts and saved 5 responses, taking the run from 14 to 19 of 31.
+
+- **01:47 UTC on 17 Sep: six attempts, all 503, nothing saved.** SC4322E0,
+  SC4351F0 and SC4441E0 returned 503 twice each; the first two were skipped
+  and requeued, and the breaker stopped the session on the third. It is the
+  second session to return no response at all, after 13 September's 09:08.
+- **02:01 UTC: 14 attempts, 5 saved, 9 503s (64%), 3 skips**, ending on the
+  day's budget.
+  - **Saved:** SC4322E0 (high, first attempt), SC4441E0 (medium),
+    SC4442E0 (medium, first attempt), SC4561F0 (medium) and SC4582G0 (low).
+  - **Skipped after 503 twice each:** SC4351F0, SC4562F0 and SC4671G0.
+- **The breaker's judgement was right and stale within minutes.** It stopped
+  the first session on the evidence in front of it, and the service answered
+  the very next packet 5 minutes later. The breaker spends nothing while
+  waiting, so the cost of being wrong this way is a relaunch, which is the
+  behaviour the design intends.
+- **The first session's untouched allowance is why the day still saved 5.**
+  Had it run to the budget on 503s, the day would have ended at 14 of 31.
+- **A 503 rate of 1.0 in one session is not new.** Over all 87 attempts the
+  rate is 78%, and the per-session rate has ranged from 0 to 1.0.
+
 A correction to a figure given in conversation on 14 September: "26 of 34
 (76%)" double-counted the 08:40 session. After the two morning sessions,
 the true figure was 24 of 32 (75%).
@@ -2484,7 +2508,7 @@ were saved on 15 September: SC4112E0, SC4352F0, SC4461F0, SC4462F0 and
 SC4581G0. None is scored.
 
 **The interim is front-loaded.** The run's manifest order puts
-high-confidence nights first: 8 of the 14 saved are high, while the 17 still to come are 3 high, 7 medium and 7 low (dev is 11 / 10 / 10). Interim
+high-confidence nights first: 9 of the 19 saved are high, while the 12 still to come are 2 high, 4 medium and 6 low (dev is 11 / 10 / 10). Interim
 figures should be expected to fall as the medium and low tiers arrive. A
 mid-range final result would be consistent with the interim, not a
 reversal of it.
