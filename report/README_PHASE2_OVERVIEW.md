@@ -300,6 +300,37 @@ result trustworthy:
 
 ---
 
+
+
+## the basic version
+The basic version
+Phase 1 gave you a scorer. A small neural network reads a night of sleep signals and labels every 30 seconds as Wake, N1, N2, N3 or REM, then computes the clinic numbers — how long they slept, how efficiently, how long to fall asleep. It also says how much it trusts itself, which matters because it's good at Wake and bad at N1.
+
+All of that is numbers. Your project is about explainable sleep staging, and a table of numbers doesn't explain anything. A written paragraph does. That's Phase 2.
+
+The catch: a language model writes that paragraph instantly, and eventually invents something. In a sleep report, a confident wrong number is worse than no report, because nobody reading it can tell. Good writing is exactly what a wrong number looks like.
+
+So the design says: don't trust the model. It doesn't write prose at all. It writes small structured claims, each one pointing at the exact fact it's using. A verifier checks every claim against the source data — 30 ways to be rejected, and it never gives the benefit of the doubt. Only claims that survive get turned into English, by fixed templates. If anything fails, no report is printed.
+
+The report has to state 5 facts plainly (sleep time, time in bed, efficiency, the night's confidence, the N1 warning) and hedge 14 others — the ones the pipeline isn't reliable enough to assert. Getting that backwards is a failure either way: hedging solid facts makes it useless, stating shaky ones makes it dangerous.
+
+What you've tested so far: five small models that could run on a Raspberry Pi. All five scored zero across 155 reports. But they're not failing at maths — there's exactly one wrong number in all 155. They read the packet fine and copy numbers exactly. They fail at the rules: which kind of statement to use, which evidence to cite. And each fails differently, so it isn't one model's quirk.
+
+That leaves two possibilities, which is the whole reason for the reference run:
+
+the contract is impossible, and training a small model is wasted effort, or
+the contract is fine and small models are just too weak when merely asked.
+Gemini gets the identical packets, prompt and verifier. It's the ceiling test. So far every night it has answered is perfect — pointing at the second explanation, which means the gap is a capability gap, and the fix is to train rather than to ask.
+
+And the fix is narrow. The small models already do the hard part — reading the packet, finding the evidence, copying numbers. They just don't know the mapping. That's what a few hundred worked examples teach.
+
+Then the rule decides, written before any results existed: 25+ of 31 → train; around 12 → try the reserve prompt; near zero → stop and report that the contract is the ceiling. That last one is a real result too, not a failure.
+
+Your job right now is three more days of python -m reference.run --go, once a day after 07:00 UTC, changing nothing, and relaunching if it stops early.
+
+The README covers all of this with the tables, plus a glossary of every term and a guide to which document holds what. Say the word if you'd like it as a shareable page too.
+
+
 ## 11. Where everything lives
 
 | document | what it covers |
