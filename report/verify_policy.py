@@ -208,7 +208,13 @@ def rule_no_uncited_quantity(claim, idx) -> list[Violation]:
     if "value" not in claim:
         return []
     supported = {idx[r].get("value") for r in claim.get("cites", []) if r in idx}
-    if claim["value"] not in supported:
+    try:
+        in_supported = claim["value"] in supported
+    except TypeError:
+        # claim["value"] is unhashable (e.g. a list produced by an unconstrained
+        # model). The grammar prevents this in arm A; here it counts as uncited.
+        in_supported = False
+    if not in_supported:
         return [Violation(V.UNCITED_QUANTITY, claim.get("claim_id"),
                           claimed=claim["value"],
                           cited=sorted(claim.get("cites", [])))]

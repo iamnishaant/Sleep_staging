@@ -50,6 +50,7 @@ MODELS = {
     "Gemma-2-2b-it": "gemma-2-2b-it-Q4_K_M.gguf",
     "Llama-3.2-3B-Instruct": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
     "Phi-3.5-mini-instruct": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+    "Qwen-Student": r"F:\Sleep_project\Sleep-Staging\student\slm_models\qwen2.5-1.5b-instruct-student-q4_k_m.gguf",
 }
 
 # Lines of llama.cpp's load log that break memory down; kept verbatim.

@@ -101,3 +101,41 @@ processed_sleepedf_mc/tensors/
 processed_sleepedf_pernorm/**/tensors/
 processed_sleepedf_pernorm/**/spectral/
 processed_sleepedf_pernorm/**/*.zip
+
+#------------------slm models--------------
+student/slm_model/
+*.gguf
+# Presentations a
+
+# Large generated caches and results
+candidates/cache/
+candidates/results/
+reference/cache/
+reference/results/
+reference/reference_set/
+
+# Python / Environment / Virtualenvs
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+*.json
+*.jsonl
+
+Final Year Project (2).pdf
+MidReview_Presentation_Team40.pptx
+MidReview_Presentation_Team40_v2.pptx
+Presentation 3.pdf
+Presentation 4.pdf
+Sleep_Staging_Phase2_Status_Report.docx
+Updated_ppt.pdf
+updated ppt.odp
+
+candidates/logs/runs.jsonl
+reference/logs/run.jsonl
+reference/logs/sessions.jsonl
+
+
