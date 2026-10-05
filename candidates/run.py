@@ -144,25 +144,42 @@ def exec_llama(cmd: list[str]) -> dict:
 class CandidateRun:
     def __init__(self, model_name: str, *, cache_dir: Path = CACHE_DIR,
                  log_path: Path = LOG_PATH, exec_fn=exec_llama, jobs=None,
-                 arm: str = "constrained"):
+                 arm: str = "constrained", is_test: bool = False):
         if model_name not in MODELS:
             raise SystemExit(f"unknown model {model_name!r}; one of {sorted(MODELS)}")
         if arm not in ARMS:
             raise SystemExit(f"unknown arm {arm!r}; one of {ARMS}")
         self.arm = arm
+        self.is_test = is_test
         self.template = CHAT_TEMPLATES.get(model_name)
         self.template_tag = None if self.template is None else (
             f"{self.template.relative_to(ROOT).as_posix()}@"
             + hashlib.sha256(self.template.read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16])
         self.model_name, self.model_file = model_name, MODELS[model_name]
         self.cache_dir, self.log_path, self.exec_fn = cache_dir, log_path, exec_fn
-        self.jobs = dev_jobs(prompts=(PROMPT_ID,)) if jobs is None else jobs
+        
+        if jobs is None:
+            from report.evaluate import PACKET_DIRS
+            manifest = TEST_MANIFEST if is_test else DEV_MANIFEST
+            packet_dir = PACKET_DIRS["test"] if is_test else PACKET_DIRS["val"]
+            rows = json.loads(manifest.read_text(encoding="utf-8"))
+            packets = []
+            for r in rows:
+                rec = r["recording_id"]
+                pk = json.loads((packet_dir / f"{rec}.json").read_text(encoding="utf-8"))
+                packets.append((PROMPT_ID, pk))
+            self.jobs = packets
+        else:
+            self.jobs = jobs
+            
         dev_ids, test_ids = _manifest_ids(DEV_MANIFEST), _manifest_ids(TEST_MANIFEST)
         for prompt_id, pk in self.jobs:
             rec = pk["recording_id"]
             if prompt_id != PROMPT_ID:
                 raise SystemExit(f"{rec}: prompt {prompt_id!r} is not {PROMPT_ID}")
-            if rec not in dev_ids or rec in test_ids:
+            if is_test and rec not in test_ids:
+                raise SystemExit(f"{rec}: not a test packet - refused")
+            if not is_test and (rec not in dev_ids or rec in test_ids):
                 raise SystemExit(f"{rec}: not a dev packet - refused")
 
     def keyed(self):
@@ -247,11 +264,13 @@ def main(argv=None) -> int:
     ap.add_argument("--arm", choices=ARMS, default="constrained",
                     help="unconstrained is 2G ablation arm B: the grammar removed and nothing "
                          "else changed. It runs only once the 2G gate is open.")
+    ap.add_argument("--test", action="store_true", help="evaluate on the test set instead of dev")
     ap.add_argument("--go", action="store_true", help="actually generate")
     a = ap.parse_args(argv)
-    run = CandidateRun(a.model, arm=a.arm)
+    run = CandidateRun(a.model, arm=a.arm, is_test=a.test)
     pending = run.pending()
-    print(f"{a.model} under {PROMPT_ID}, {a.arm}: {len(run.jobs) - len(pending)} cached, "
+    split_name = "TEST" if a.test else "dev"
+    print(f"{a.model} under {PROMPT_ID}, {a.arm} ({split_name}): {len(run.jobs) - len(pending)} cached, "
           f"{len(pending)} pending")
     if not a.go:
         print("plan only - nothing generated. Add --go to run.")

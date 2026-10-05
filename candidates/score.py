@@ -36,7 +36,7 @@ from deploy.measure import MODELS
 from report import render_report, verify_report
 from report.evaluate import PACKET_DIRS, STRATA, TIERS, evaluate
 from report.render import RenderRefused
-from .run import (ARM_DIRS, CACHE_DIR, CONTEXT, DEV_MANIFEST, PEAK_RSS_METHOD, CandidateRun,
+from .run import (ARM_DIRS, CACHE_DIR, CONTEXT, DEV_MANIFEST, TEST_MANIFEST, PEAK_RSS_METHOD, CandidateRun,
                   entry_hit_token_limit)
 
 HERE = Path(__file__).resolve().parent
@@ -54,10 +54,11 @@ def result_dir(out_dir: Path, model_name: str, arm: str = "constrained",
 
 def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
                 out_dir: Path = RESULTS_DIR, jobs=None, arm: str = "constrained",
-                normalise: bool = False) -> dict:
+                normalise: bool = False, is_test: bool = False) -> dict:
     if normalise and arm == "constrained":
         raise ValueError("the fence reading is arm B's secondary reading only")
-    run = CandidateRun(model_name, cache_dir=cache_dir, jobs=jobs, exec_fn=None, arm=arm)
+    run = CandidateRun(model_name, cache_dir=cache_dir, jobs=jobs, exec_fn=None, arm=arm, is_test=is_test)
+    packet_dir = PACKET_DIRS["test"] if is_test else PACKET_DIRS["val"]
     entries = {}
     for pk, _, key in run.keyed():
         e = run.cached(key)
@@ -73,7 +74,8 @@ def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
     outputs.mkdir(parents=True)
     for rec, text in texts.items():
         (outputs / f"{rec}.json").write_text(text, encoding="utf-8")
-    rep = evaluate(outputs, DEV_MANIFEST)
+    manifest = TEST_MANIFEST if is_test else DEV_MANIFEST
+    rep = evaluate(outputs, manifest)
     d = rep.as_dict()
 
     rows = []
@@ -98,7 +100,7 @@ def score_model(model_name: str, *, cache_dir: Path = CACHE_DIR,
                     "extraction": e["extraction"],
                     "hit_token_limit": entry_hit_token_limit(e)}
         if x.present:
-            pk = json.loads((PACKET_DIRS["val"] / f"{rec}.json").read_text(encoding="utf-8"))
+            pk = json.loads((packet_dir / f"{rec}.json").read_text(encoding="utf-8"))
             r = verify_report(texts[rec], pk)
             claims = [c for c in (r.claims or []) if isinstance(c, dict)] \
                 if isinstance(r.claims, list) else []
@@ -301,6 +303,7 @@ def main(argv=None) -> int:
     ap.add_argument("--arm", choices=tuple(ARM_DIRS), default="constrained")
     ap.add_argument("--normalise", action="store_true",
                     help="arm B's declared single-fence reading (exploratory)")
+    ap.add_argument("--test", action="store_true", help="evaluate on the test set instead of dev")
     a = ap.parse_args(argv)
     if a.compare:
         print(compare()["table"])
@@ -308,7 +311,7 @@ def main(argv=None) -> int:
     if a.ablation:
         print(ablation()["table"])
         return 0
-    s = score_model(a.model, arm=a.arm, normalise=a.normalise)
+    s = score_model(a.model, arm=a.arm, normalise=a.normalise, is_test=a.test)
     print(s["table"])
     for stratum, e in s["extras"].items():
         print(f"  {stratum:<8} {e}")

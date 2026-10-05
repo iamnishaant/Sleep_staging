@@ -51,6 +51,8 @@ MODELS = {
     "Llama-3.2-3B-Instruct": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
     "Phi-3.5-mini-instruct": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
     "Qwen-Student": r"F:\Sleep_project\Sleep-Staging\student\slm_models\qwen2.5-1.5b-instruct-student-q4_k_m.gguf",
+    "Qwen-Student-5ep": r"F:\Sleep_project\Sleep-Staging\student\slm_models\qwen2.5-1.5b-instruct-student-5ep-q4_k_m.gguf",
+    "Llama-Student": r"F:\Sleep_project\Sleep-Staging\student\slm_models\llama-3.2-3b-instruct-student-q4_k_m.gguf",
 }
 
 # Lines of llama.cpp's load log that break memory down; kept verbatim.
