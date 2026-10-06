@@ -212,7 +212,7 @@ def run_pipeline(packet: dict, *, verbose: bool = True) -> dict:
             "packet": packet,
         }, indent=2, ensure_ascii=False), encoding="utf-8")
         if verbose:
-            print(f"[{rec_id}] → Routed to human review: {review_file}")
+            print(f"[{rec_id}] -> Routed to human review: {review_file}")
         return {"status": "FAIL", "violations": violations, "audit": audit_entry}
 
     # ── PASS path — render ────────────────────────────────────────────────────
@@ -290,7 +290,7 @@ def main(argv=None) -> int:
             failed += 1
 
     total = passed + failed
-    print(f"\n{'─'*60}")
+    print(f"\n{'-'*60}")
     print(f"  PASS : {passed}/{total}")
     print(f"  FAIL : {failed}/{total}")
     print(f"  Audit log : {AUDIT_LOG}")
