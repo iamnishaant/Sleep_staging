@@ -1,0 +1,98 @@
+GPU: Tesla T4 (sm_75)
+  CORRECTED LABELS: train+val labels replaced from corrected_labels_train_val.json (939 never-scored epochs ignored). Not comparable with stored-label runs.
+
+========================================================================
+EXPERIMENT N6adv_base_s0_cv2_fixlabels   components {'eog': False, 'tf': False, 'local': False, 'recipe': False}
+========================================================================
+  cv_fold 2 | alpha 1.0 | warm start False | test 15 subj NEVER LOADED
+  per-recording caches () for 168 recordings in 6s
+  preloaded EEG + spectral for 168 recordings (2.5 GB) in 6s
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+  parameters 139,606 (new 0; N4kd 139,606; budget 200,000)
+ep   0  | loss 1.4718 | mF1 0.3847 | k 0.3159 | acc 0.4982 | W=0.582 N1=0.094 N2=0.596 N3=0.487 REM=0.164  <- best
+ep   1  | loss 1.0927 | mF1 0.5516 | k 0.5155 | acc 0.6415 | W=0.746 N1=0.129 N2=0.698 N3=0.733 REM=0.452  <- best
+ep   2  | loss 0.8703 | mF1 0.6188 | k 0.5943 | acc 0.6952 | W=0.816 N1=0.238 N2=0.754 N3=0.752 REM=0.535  <- best
+ep   3  | loss 0.7671 | mF1 0.6420 | k 0.6129 | acc 0.7052 | W=0.810 N1=0.234 N2=0.807 N3=0.784 REM=0.576  <- best
+ep   4  | loss 0.7185 | mF1 0.6725 | k 0.6645 | acc 0.7453 | W=0.876 N1=0.287 N2=0.798 N3=0.746 REM=0.655  <- best
+ep   5  | loss 0.6832 | mF1 0.6941 | k 0.6740 | acc 0.7507 | W=0.886 N1=0.334 N2=0.798 N3=0.797 REM=0.654  <- best
+ep   6  | loss 0.6598 | mF1 0.6875 | k 0.6727 | acc 0.7486 | W=0.885 N1=0.336 N2=0.787 N3=0.752 REM=0.677
+ep   7  | loss 0.6346 | mF1 0.6919 | k 0.6597 | acc 0.7375 | W=0.854 N1=0.353 N2=0.804 N3=0.785 REM=0.662
+ep   8  | loss 0.6137 | mF1 0.7017 | k 0.6852 | acc 0.7610 | W=0.864 N1=0.344 N2=0.825 N3=0.782 REM=0.693  <- best
+ep   9  | loss 0.5986 | mF1 0.7198 | k 0.7091 | acc 0.7780 | W=0.901 N1=0.362 N2=0.827 N3=0.810 REM=0.699  <- best
+ep  10  | loss 0.5867 | mF1 0.7208 | k 0.7120 | acc 0.7800 | W=0.890 N1=0.379 N2=0.827 N3=0.787 REM=0.720  <- best
+ep  11  | loss 0.5763 | mF1 0.7353 | k 0.7151 | acc 0.7815 | W=0.902 N1=0.423 N2=0.823 N3=0.803 REM=0.725  <- best
+ep  12  | loss 0.5599 | mF1 0.7258 | k 0.7032 | acc 0.7702 | W=0.908 N1=0.418 N2=0.795 N3=0.789 REM=0.718
+ep  13  | loss 0.5521 | mF1 0.7275 | k 0.7102 | acc 0.7764 | W=0.904 N1=0.412 N2=0.807 N3=0.784 REM=0.731
+ep  14  | loss 0.5472 | mF1 0.7413 | k 0.7263 | acc 0.7896 | W=0.908 N1=0.442 N2=0.822 N3=0.792 REM=0.743  <- best
+ep  15  | loss 0.5319 | mF1 0.7370 | k 0.7266 | acc 0.7904 | W=0.910 N1=0.414 N2=0.822 N3=0.798 REM=0.742
+ep  16  | loss 0.5220 | mF1 0.7459 | k 0.7266 | acc 0.7899 | W=0.906 N1=0.455 N2=0.821 N3=0.806 REM=0.741  <- best
+ep  17  | loss 0.5153 | mF1 0.7229 | k 0.7183 | acc 0.7840 | W=0.909 N1=0.389 N2=0.811 N3=0.781 REM=0.724
+ep  18  | loss 0.5089 | mF1 0.7426 | k 0.7335 | acc 0.7963 | W=0.912 N1=0.445 N2=0.820 N3=0.785 REM=0.751
+ep  19  | loss 0.5044 | mF1 0.7337 | k 0.7186 | acc 0.7831 | W=0.919 N1=0.459 N2=0.788 N3=0.739 REM=0.763
+ep  20  | loss 0.4953 | mF1 0.7339 | k 0.7339 | acc 0.7974 | W=0.914 N1=0.391 N2=0.830 N3=0.808 REM=0.727
+ep  21  | loss 0.4891 | mF1 0.7478 | k 0.7363 | acc 0.7987 | W=0.908 N1=0.462 N2=0.827 N3=0.794 REM=0.748  <- best
+ep  22  | loss 0.4822 | mF1 0.7454 | k 0.7318 | acc 0.7941 | W=0.905 N1=0.466 N2=0.814 N3=0.780 REM=0.761
+ep  23  | loss 0.4749 | mF1 0.7515 | k 0.7395 | acc 0.8003 | W=0.906 N1=0.474 N2=0.822 N3=0.788 REM=0.767  <- best
+ep  24  | loss 0.4640 | mF1 0.7550 | k 0.7374 | acc 0.7979 | W=0.917 N1=0.469 N2=0.816 N3=0.797 REM=0.776  <- best
+ep  25  | loss 0.4617 | mF1 0.7307 | k 0.7253 | acc 0.7897 | W=0.907 N1=0.423 N2=0.801 N3=0.737 REM=0.784
+ep  26  | loss 0.4546 | mF1 0.7551 | k 0.7363 | acc 0.7973 | W=0.902 N1=0.479 N2=0.818 N3=0.801 REM=0.776  <- best
+ep  27  | loss 0.4487 | mF1 0.7664 | k 0.7526 | acc 0.8101 | W=0.912 N1=0.493 N2=0.835 N3=0.810 REM=0.782  <- best
+ep  28  | loss 0.4436 | mF1 0.7635 | k 0.7460 | acc 0.8045 | W=0.908 N1=0.490 N2=0.823 N3=0.818 REM=0.778
+ep  29  | loss 0.4417 | mF1 0.7600 | k 0.7473 | acc 0.8053 | W=0.916 N1=0.482 N2=0.825 N3=0.789 REM=0.787
+ep  30  | loss 0.4384 | mF1 0.7644 | k 0.7474 | acc 0.8051 | W=0.918 N1=0.500 N2=0.826 N3=0.799 REM=0.780
+ep  31  | loss 0.4343 | mF1 0.7564 | k 0.7395 | acc 0.7991 | W=0.912 N1=0.481 N2=0.813 N3=0.789 REM=0.786
+ep  32  | loss 0.4288 | mF1 0.7613 | k 0.7472 | acc 0.8054 | W=0.919 N1=0.490 N2=0.827 N3=0.797 REM=0.775
+ep  33  | loss 0.4276 | mF1 0.7719 | k 0.7597 | acc 0.8154 | W=0.920 N1=0.496 N2=0.838 N3=0.805 REM=0.800  <- best
+ep  34  | loss 0.4201 | mF1 0.7590 | k 0.7452 | acc 0.8039 | W=0.918 N1=0.481 N2=0.822 N3=0.793 REM=0.782
+ep  35  | loss 0.4214 | mF1 0.7629 | k 0.7451 | acc 0.8033 | W=0.914 N1=0.502 N2=0.818 N3=0.793 REM=0.788
+ep  36  | loss 0.4141 | mF1 0.7658 | k 0.7482 | acc 0.8060 | W=0.907 N1=0.508 N2=0.828 N3=0.795 REM=0.791
+ep  37  | loss 0.4123 | mF1 0.7561 | k 0.7350 | acc 0.7951 | W=0.911 N1=0.497 N2=0.805 N3=0.777 REM=0.790
+ep  38  | loss 0.4086 | mF1 0.7633 | k 0.7434 | acc 0.8029 | W=0.904 N1=0.479 N2=0.819 N3=0.813 REM=0.801
+ep  39  | loss 0.4072 | mF1 0.7533 | k 0.7373 | acc 0.7969 | W=0.917 N1=0.505 N2=0.806 N3=0.751 REM=0.788
+ep  40  | loss 0.4043 | mF1 0.7613 | k 0.7436 | acc 0.8023 | W=0.909 N1=0.494 N2=0.816 N3=0.796 REM=0.792
+ep  41  | loss 0.4067 | mF1 0.7711 | k 0.7577 | acc 0.8138 | W=0.914 N1=0.493 N2=0.838 N3=0.814 REM=0.796
+ep  42  | loss 0.3993 | mF1 0.7618 | k 0.7462 | acc 0.8039 | W=0.914 N1=0.494 N2=0.816 N3=0.784 REM=0.800
+ep  43  | loss 0.3967 | mF1 0.7579 | k 0.7386 | acc 0.7981 | W=0.910 N1=0.500 N2=0.811 N3=0.786 REM=0.783
+ep  44  | loss 0.3970 | mF1 0.7738 | k 0.7558 | acc 0.8117 | W=0.918 N1=0.510 N2=0.832 N3=0.806 REM=0.803  <- best
+ep  45  | loss 0.3957 | mF1 0.7611 | k 0.7389 | acc 0.7989 | W=0.902 N1=0.500 N2=0.814 N3=0.803 REM=0.786
+ep  46  | loss 0.3888 | mF1 0.7723 | k 0.7613 | acc 0.8176 | W=0.909 N1=0.494 N2=0.842 N3=0.815 REM=0.802
+ep  47  | loss 0.3894 | mF1 0.7740 | k 0.7559 | acc 0.8121 | W=0.909 N1=0.504 N2=0.840 N3=0.817 REM=0.800  <- best
+ep  48  | loss 0.3882 | mF1 0.7672 | k 0.7492 | acc 0.8066 | W=0.914 N1=0.511 N2=0.824 N3=0.789 REM=0.798
+ep  49  | loss 0.3873 | mF1 0.7722 | k 0.7589 | acc 0.8154 | W=0.909 N1=0.495 N2=0.840 N3=0.814 REM=0.804
+ep  50  | loss 0.3851 | mF1 0.7705 | k 0.7588 | acc 0.8155 | W=0.910 N1=0.497 N2=0.840 N3=0.812 REM=0.793
+ep  51  | loss 0.3822 | mF1 0.7707 | k 0.7503 | acc 0.8072 | W=0.909 N1=0.522 N2=0.824 N3=0.799 REM=0.800
+ep  52  | loss 0.3817 | mF1 0.7659 | k 0.7495 | acc 0.8073 | W=0.912 N1=0.512 N2=0.825 N3=0.798 REM=0.782
+ep  53  | loss 0.3806 | mF1 0.7634 | k 0.7463 | acc 0.8046 | W=0.907 N1=0.510 N2=0.820 N3=0.782 REM=0.798
+ep  54  | loss 0.3815 | mF1 0.7680 | k 0.7519 | acc 0.8089 | W=0.911 N1=0.514 N2=0.825 N3=0.791 REM=0.799
+ep  55  | loss 0.3762 | mF1 0.7647 | k 0.7450 | acc 0.8033 | W=0.907 N1=0.512 N2=0.816 N3=0.792 REM=0.796
+ep  56  | loss 0.3770 | mF1 0.7640 | k 0.7473 | acc 0.8054 | W=0.905 N1=0.519 N2=0.820 N3=0.779 REM=0.797
+ep  57  | loss 0.3756 | mF1 0.7688 | k 0.7506 | acc 0.8078 | W=0.907 N1=0.504 N2=0.826 N3=0.806 REM=0.800
+ep  58  | loss 0.3758 | mF1 0.7693 | k 0.7518 | acc 0.8088 | W=0.908 N1=0.515 N2=0.826 N3=0.802 REM=0.795
+ep  59  | loss 0.3740 | mF1 0.7767 | k 0.7599 | acc 0.8155 | W=0.909 N1=0.519 N2=0.838 N3=0.815 REM=0.802  <- best
+ep  60  | loss 0.3751 | mF1 0.7685 | k 0.7516 | acc 0.8086 | W=0.908 N1=0.515 N2=0.825 N3=0.798 REM=0.797
+ep  61  | loss 0.3724 | mF1 0.7581 | k 0.7378 | acc 0.7977 | W=0.905 N1=0.515 N2=0.809 N3=0.782 REM=0.780
+ep  62  | loss 0.3733 | mF1 0.7687 | k 0.7508 | acc 0.8080 | W=0.907 N1=0.517 N2=0.825 N3=0.797 REM=0.798
+ep  63  | loss 0.3728 | mF1 0.7766 | k 0.7602 | acc 0.8157 | W=0.910 N1=0.516 N2=0.837 N3=0.812 REM=0.808
+ep  64  | loss 0.3710 | mF1 0.7753 | k 0.7586 | acc 0.8141 | W=0.910 N1=0.525 N2=0.835 N3=0.804 REM=0.802
+ep  65  | loss 0.3695 | mF1 0.7781 | k 0.7627 | acc 0.8176 | W=0.914 N1=0.514 N2=0.841 N3=0.817 REM=0.804  <- best
+ep  66  | loss 0.3689 | mF1 0.7798 | k 0.7640 | acc 0.8188 | W=0.912 N1=0.523 N2=0.841 N3=0.816 REM=0.807  <- best
+ep  67  | loss 0.3690 | mF1 0.7664 | k 0.7494 | acc 0.8069 | W=0.908 N1=0.518 N2=0.822 N3=0.787 REM=0.796
+ep  68  | loss 0.3712 | mF1 0.7627 | k 0.7437 | acc 0.8026 | W=0.905 N1=0.509 N2=0.817 N3=0.799 REM=0.783
+ep  69  | loss 0.3691 | mF1 0.7726 | k 0.7546 | acc 0.8112 | W=0.908 N1=0.522 N2=0.830 N3=0.805 REM=0.799
+ep  70  | loss 0.3690 | mF1 0.7758 | k 0.7605 | acc 0.8160 | W=0.911 N1=0.516 N2=0.839 N3=0.812 REM=0.801
+ep  71  | loss 0.3683 | mF1 0.7758 | k 0.7593 | acc 0.8150 | W=0.908 N1=0.514 N2=0.837 N3=0.815 REM=0.804
+ep  72  | loss 0.3695 | mF1 0.7726 | k 0.7563 | acc 0.8127 | W=0.909 N1=0.513 N2=0.833 N3=0.812 REM=0.797
+ep  73  | loss 0.3687 | mF1 0.7660 | k 0.7481 | acc 0.8058 | W=0.907 N1=0.518 N2=0.820 N3=0.789 REM=0.796
+ep  74  | loss 0.3682 | mF1 0.7711 | k 0.7556 | acc 0.8119 | W=0.910 N1=0.514 N2=0.830 N3=0.800 REM=0.800
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+
+========================================================================
+RESULT  N6adv_base_s0_cv2_fixlabels  (validation)
+========================================================================
+  acc 0.8188 | kappa 0.7640 | macro-F1 0.7798
+  per-class F1  W=0.912 N1=0.523 N2=0.841 N3=0.816 REM=0.807
+
+  One fold decides nothing. Run all 5 folds for this arm AND for 'base', then summarise_cv.py.
+  Test split was NEVER loaded.

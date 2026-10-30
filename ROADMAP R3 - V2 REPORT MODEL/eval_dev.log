@@ -1,0 +1,41 @@
+[ 1/31] SC4081E0-PSG: 5/5 
+[ 2/31] SC4082E0-PSG: 5/5 
+[ 3/31] SC4111E0-PSG: 5/5 
+[ 4/31] SC4112E0-PSG: 5/5 
+[ 5/31] SC4131E0-PSG: 5/5 
+[ 6/31] SC4171E0-PSG: 5/5 
+[ 7/31] SC4172E0-PSG: 5/5 
+[ 8/31] SC4321E0-PSG: 5/5 
+[ 9/31] SC4322E0-PSG: 5/5 
+[10/31] SC4341F0-PSG: 5/5 
+[11/31] SC4342F0-PSG: 5/5 
+[12/31] SC4351F0-PSG: 5/5 
+[13/31] SC4352F0-PSG: 5/5 
+[14/31] SC4441E0-PSG: 5/5 
+[15/31] SC4442E0-PSG: 5/5 
+[16/31] SC4461F0-PSG: 5/5 
+[17/31] SC4462F0-PSG: 5/5 
+[18/31] SC4561F0-PSG: 5/5 
+[19/31] SC4562F0-PSG: 5/5 
+[20/31] SC4581G0-PSG: 5/5 
+[21/31] SC4582G0-PSG: 5/5 
+[22/31] SC4671G0-PSG: 5/5 
+[23/31] SC4672G0-PSG: 5/5 
+[24/31] ST7081J0-PSG: 5/5 
+[25/31] ST7082J0-PSG: 5/5 
+[26/31] ST7131J0-PSG: 5/5 
+[27/31] ST7132J0-PSG: 5/5 
+[28/31] ST7151J0-PSG: 5/5 
+[29/31] ST7152J0-PSG: 5/5 
+[30/31] ST7201J0-PSG: 5/5 
+[31/31] ST7202J0-PSG: 5/5 
+{
+ "model": "llama-3.2-3b-instruct-student-v2-q4_k_m.gguf",
+ "model_sha256_prefix": "55730aaecc64",
+ "nights": 31,
+ "five_of_five": 31,
+ "verifier_pass": 31,
+ "violations": 0,
+ "numeric_fidelity": "527/527",
+ "accepted": true
+}

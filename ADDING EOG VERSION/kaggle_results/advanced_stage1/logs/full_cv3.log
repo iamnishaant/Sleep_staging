@@ -1,0 +1,189 @@
+GPU: Tesla T4 (sm_75)
+  CORRECTED LABELS: train+val labels replaced from corrected_labels_train_val.json (939 never-scored epochs ignored). Not comparable with stored-label runs.
+
+========================================================================
+EXPERIMENT N6adv_full_s0_cv3_fixlabels   components {'eog': True, 'tf': True, 'local': True, 'recipe': True}
+========================================================================
+  cv_fold 3 | alpha 1.0 | warm start False | test 15 subj NEVER LOADED
+  per-recording caches (EOG quality) for 168 recordings in 148s
+  preloaded EEG + spectral for 168 recordings (2.5 GB) in 6s
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+  parameters 175,599 (new 35,993; N4kd 139,606; budget 200,000)
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   0  | loss 1.5483 | mF1 0.3923 | k 0.3045 | acc 0.5148 | W=0.578 N1=0.090 N2=0.618 N3=0.563 REM=0.113 | gate eog=0.02 tf=0.02  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   1  | loss 1.1373 | mF1 0.5837 | k 0.5433 | acc 0.6587 | W=0.790 N1=0.185 N2=0.757 N3=0.721 REM=0.466 | gate eog=0.09 tf=0.08  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   2  | loss 0.8503 | mF1 0.6780 | k 0.6739 | acc 0.7540 | W=0.850 N1=0.274 N2=0.849 N3=0.774 REM=0.643 | gate eog=0.17 tf=0.22  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   3  | loss 0.7391 | mF1 0.7310 | k 0.7307 | acc 0.7962 | W=0.892 N1=0.352 N2=0.861 N3=0.807 REM=0.743 | gate eog=0.23 tf=0.26  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   4  | loss 0.6663 | mF1 0.7695 | k 0.7594 | acc 0.8170 | W=0.902 N1=0.453 N2=0.864 N3=0.811 REM=0.817 | gate eog=0.28 tf=0.29  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   5  | loss 0.6148 | mF1 0.7862 | k 0.7700 | acc 0.8242 | W=0.903 N1=0.503 N2=0.864 N3=0.821 REM=0.840 | gate eog=0.31 tf=0.30  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   6  | loss 0.5892 | mF1 0.7940 | k 0.7757 | acc 0.8282 | W=0.905 N1=0.527 N2=0.863 N3=0.825 REM=0.851 | gate eog=0.33 tf=0.30  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   7  | loss 0.5813 | mF1 0.7978 | k 0.7788 | acc 0.8304 | W=0.912 N1=0.537 N2=0.860 N3=0.823 REM=0.857 | gate eog=0.35 tf=0.31  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   8  | loss 0.5551 | mF1 0.7992 | k 0.7822 | acc 0.8326 | W=0.916 N1=0.548 N2=0.861 N3=0.810 REM=0.861 | gate eog=0.36 tf=0.31  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep   9  | loss 0.5480 | mF1 0.8020 | k 0.7862 | acc 0.8357 | W=0.919 N1=0.558 N2=0.864 N3=0.802 REM=0.868 | gate eog=0.37 tf=0.30  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  10  | loss 0.5336 | mF1 0.8080 | k 0.7888 | acc 0.8377 | W=0.921 N1=0.562 N2=0.859 N3=0.828 REM=0.871 | gate eog=0.37 tf=0.29  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  11  | loss 0.5275 | mF1 0.8099 | k 0.7907 | acc 0.8391 | W=0.921 N1=0.566 N2=0.860 N3=0.831 REM=0.872 | gate eog=0.37 tf=0.29  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  12  | loss 0.5160 | mF1 0.8112 | k 0.7920 | acc 0.8400 | W=0.922 N1=0.570 N2=0.860 N3=0.831 REM=0.873 | gate eog=0.37 tf=0.28  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  13  | loss 0.5130 | mF1 0.8108 | k 0.7917 | acc 0.8398 | W=0.923 N1=0.570 N2=0.859 N3=0.828 REM=0.874 | gate eog=0.38 tf=0.29
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  14  | loss 0.5089 | mF1 0.8111 | k 0.7926 | acc 0.8405 | W=0.924 N1=0.569 N2=0.859 N3=0.828 REM=0.875 | gate eog=0.38 tf=0.29
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  15  | loss 0.5017 | mF1 0.8112 | k 0.7930 | acc 0.8407 | W=0.921 N1=0.570 N2=0.862 N3=0.829 REM=0.875 | gate eog=0.39 tf=0.29  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  16  | loss 0.4959 | mF1 0.8107 | k 0.7926 | acc 0.8405 | W=0.916 N1=0.571 N2=0.865 N3=0.826 REM=0.875 | gate eog=0.38 tf=0.28
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  17  | loss 0.4913 | mF1 0.8109 | k 0.7930 | acc 0.8408 | W=0.916 N1=0.571 N2=0.866 N3=0.827 REM=0.875 | gate eog=0.38 tf=0.28
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  18  | loss 0.4873 | mF1 0.8110 | k 0.7925 | acc 0.8404 | W=0.915 N1=0.571 N2=0.866 N3=0.828 REM=0.875 | gate eog=0.39 tf=0.28
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  19  | loss 0.4833 | mF1 0.8117 | k 0.7933 | acc 0.8409 | W=0.915 N1=0.572 N2=0.866 N3=0.830 REM=0.875 | gate eog=0.38 tf=0.28  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  20  | loss 0.4778 | mF1 0.8112 | k 0.7931 | acc 0.8408 | W=0.915 N1=0.570 N2=0.866 N3=0.829 REM=0.876 | gate eog=0.38 tf=0.28
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  21  | loss 0.4754 | mF1 0.8122 | k 0.7940 | acc 0.8415 | W=0.915 N1=0.573 N2=0.867 N3=0.830 REM=0.876 | gate eog=0.38 tf=0.27  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  22  | loss 0.4743 | mF1 0.8116 | k 0.7931 | acc 0.8408 | W=0.915 N1=0.571 N2=0.866 N3=0.830 REM=0.876 | gate eog=0.38 tf=0.27
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  23  | loss 0.4666 | mF1 0.8124 | k 0.7939 | acc 0.8414 | W=0.915 N1=0.573 N2=0.866 N3=0.832 REM=0.876 | gate eog=0.38 tf=0.27  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  24  | loss 0.4641 | mF1 0.8125 | k 0.7942 | acc 0.8416 | W=0.915 N1=0.573 N2=0.866 N3=0.832 REM=0.877 | gate eog=0.38 tf=0.27  <- best
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  25  | loss 0.4573 | mF1 0.8118 | k 0.7932 | acc 0.8407 | W=0.915 N1=0.570 N2=0.866 N3=0.832 REM=0.876 | gate eog=0.37 tf=0.26
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  26  | loss 0.4579 | mF1 0.8115 | k 0.7928 | acc 0.8404 | W=0.915 N1=0.571 N2=0.865 N3=0.831 REM=0.876 | gate eog=0.37 tf=0.26
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  27  | loss 0.4534 | mF1 0.8115 | k 0.7926 | acc 0.8403 | W=0.915 N1=0.570 N2=0.865 N3=0.832 REM=0.876 | gate eog=0.36 tf=0.26
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  28  | loss 0.4521 | mF1 0.8113 | k 0.7924 | acc 0.8402 | W=0.915 N1=0.571 N2=0.864 N3=0.830 REM=0.876 | gate eog=0.36 tf=0.26
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  29  | loss 0.4488 | mF1 0.8123 | k 0.7936 | acc 0.8410 | W=0.915 N1=0.573 N2=0.865 N3=0.832 REM=0.877 | gate eog=0.36 tf=0.26
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  30  | loss 0.4467 | mF1 0.8122 | k 0.7934 | acc 0.8409 | W=0.915 N1=0.572 N2=0.865 N3=0.833 REM=0.876 | gate eog=0.36 tf=0.26
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  31  | loss 0.4434 | mF1 0.8123 | k 0.7933 | acc 0.8408 | W=0.915 N1=0.572 N2=0.865 N3=0.833 REM=0.876 | gate eog=0.37 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  32  | loss 0.4361 | mF1 0.8119 | k 0.7928 | acc 0.8404 | W=0.916 N1=0.571 N2=0.864 N3=0.833 REM=0.875 | gate eog=0.37 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  33  | loss 0.4401 | mF1 0.8121 | k 0.7930 | acc 0.8405 | W=0.916 N1=0.571 N2=0.864 N3=0.834 REM=0.876 | gate eog=0.36 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  34  | loss 0.4343 | mF1 0.8119 | k 0.7927 | acc 0.8403 | W=0.916 N1=0.571 N2=0.864 N3=0.834 REM=0.875 | gate eog=0.36 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  35  | loss 0.4346 | mF1 0.8118 | k 0.7928 | acc 0.8404 | W=0.916 N1=0.571 N2=0.864 N3=0.834 REM=0.875 | gate eog=0.36 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  36  | loss 0.4332 | mF1 0.8117 | k 0.7923 | acc 0.8400 | W=0.915 N1=0.572 N2=0.863 N3=0.833 REM=0.875 | gate eog=0.36 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  37  | loss 0.4298 | mF1 0.8119 | k 0.7925 | acc 0.8401 | W=0.916 N1=0.574 N2=0.863 N3=0.832 REM=0.874 | gate eog=0.36 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  38  | loss 0.4281 | mF1 0.8118 | k 0.7924 | acc 0.8400 | W=0.916 N1=0.572 N2=0.863 N3=0.833 REM=0.875 | gate eog=0.35 tf=0.25
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  39  | loss 0.4248 | mF1 0.8124 | k 0.7930 | acc 0.8405 | W=0.917 N1=0.573 N2=0.863 N3=0.835 REM=0.875 | gate eog=0.35 tf=0.24
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  40  | loss 0.4225 | mF1 0.8122 | k 0.7930 | acc 0.8405 | W=0.917 N1=0.572 N2=0.863 N3=0.834 REM=0.874 | gate eog=0.35 tf=0.24
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  41  | loss 0.4187 | mF1 0.8122 | k 0.7929 | acc 0.8404 | W=0.917 N1=0.572 N2=0.863 N3=0.835 REM=0.874 | gate eog=0.35 tf=0.24
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  42  | loss 0.4205 | mF1 0.8122 | k 0.7928 | acc 0.8404 | W=0.917 N1=0.572 N2=0.863 N3=0.835 REM=0.874 | gate eog=0.35 tf=0.24
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  43  | loss 0.4159 | mF1 0.8124 | k 0.7932 | acc 0.8407 | W=0.917 N1=0.573 N2=0.863 N3=0.835 REM=0.874 | gate eog=0.35 tf=0.24
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  44  | loss 0.4158 | mF1 0.8121 | k 0.7928 | acc 0.8403 | W=0.917 N1=0.572 N2=0.863 N3=0.835 REM=0.874 | gate eog=0.35 tf=0.24
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  45  | loss 0.4139 | mF1 0.8121 | k 0.7929 | acc 0.8404 | W=0.917 N1=0.572 N2=0.863 N3=0.835 REM=0.874 | gate eog=0.34 tf=0.23
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  46  | loss 0.4123 | mF1 0.8122 | k 0.7929 | acc 0.8405 | W=0.917 N1=0.572 N2=0.863 N3=0.835 REM=0.874 | gate eog=0.34 tf=0.23
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  47  | loss 0.4103 | mF1 0.8119 | k 0.7927 | acc 0.8404 | W=0.917 N1=0.571 N2=0.863 N3=0.834 REM=0.874 | gate eog=0.34 tf=0.23
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  48  | loss 0.4106 | mF1 0.8118 | k 0.7926 | acc 0.8402 | W=0.917 N1=0.571 N2=0.863 N3=0.834 REM=0.874 | gate eog=0.34 tf=0.23
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+ep  49  | loss 0.4098 | mF1 0.8117 | k 0.7925 | acc 0.8402 | W=0.917 N1=0.571 N2=0.863 N3=0.834 REM=0.874 | gate eog=0.34 tf=0.23
+
+Early stop: no gain for 25 epochs.
+/kaggle/input/datasets/nishaantshah/sleep-staging-advanced/sleep-staging-advanced/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+
+========================================================================
+RESULT  N6adv_full_s0_cv3_fixlabels  (validation)
+========================================================================
+  acc 0.8416 | kappa 0.7942 | macro-F1 0.8125
+  per-class F1  W=0.915 N1=0.573 N2=0.866 N3=0.832 REM=0.877
+
+  EOG switched off (same weights): kappa 0.7806 -> 0.7942
+    W    F1 0.916 -> 0.915 (-0.001)
+    N1   F1 0.554 -> 0.573 (+0.019)
+    N2   F1 0.856 -> 0.866 (+0.010)
+    N3   F1 0.826 -> 0.832 (+0.006)
+    REM  F1 0.848 -> 0.877 (+0.029)
+
+  TF switched off (same weights): kappa 0.7879 -> 0.7942
+    W    F1 0.908 -> 0.915 (+0.007)
+    N1   F1 0.558 -> 0.573 (+0.014)
+    N2   F1 0.865 -> 0.866 (+0.001)
+    N3   F1 0.823 -> 0.832 (+0.009)
+    REM  F1 0.879 -> 0.877 (-0.003)
+
+  One fold decides nothing. Run all 5 folds for this arm AND for 'base', then summarise_cv.py.
+  Test split was NEVER loaded.

@@ -1,0 +1,62 @@
+# Release v1: N4kd EEG staging + frozen Llama-3.2-3B-Student report model.
+#
+# A release is EVERYTHING that can change an output. Its execution manifest (agentic/core/release.py)
+# hashes every file listed here; that hash enters the run identity, so a different release can never
+# reuse another release's outputs.
+#
+# To change the student model: copy this file to v2.yaml, change `staging` (and `report.model` if the
+# report model is retrained), set `pinned` to the new hashes, and select it with --release v2.
+# No agent code changes are needed for that.
+#
+# Paths are relative to the repository root unless absolute. `pinned` hashes are checked before every
+# run; a mismatch refuses the run (IntegrityError).
+
+release: v1
+description: "N4kd EEG staging + frozen Llama-3.2-3B-Student (LoRA SFT, Q4_K_M), llama-completion b10927"
+packet_schema: "1.3"
+
+staging:                      # used by the raw-EDF path (Phase 2); listed now so it is part of v1's identity
+  adapter: n4kd_eeg
+  inputs: ["EEG Fpz-Cz"]
+  checkpoint: distillation/results/students/student_N4kd/student_best.pt
+  tables:
+    reliability_table: distillation/reliability_table.json
+    sequence_decoding: distillation/results/sequence_decoding.json
+    night_confidence: distillation/results/night_confidence.json
+    derived_metric_reliability: distillation/results/derived_metric_reliability.json
+    n1_flag: distillation/results/n1_flag.json
+
+report:
+  prompt_id: P1
+  backend: llama-completion
+  executable: C:/Users/shahn/tools/llama.cpp/b10927/llama-completion.exe   # override: env AGENTIC_LLAMA_BIN
+  runtime_build: b10927
+  model: student/slm_models/llama-3.2-3b-instruct-student-q4_k_m.gguf
+  grammar: report/claims.gbnf
+  # Exactly the frozen evaluation's invocation (candidates/run.py command()), model / prompt / grammar inserted:
+  #   -m <model> --jinja -cnv -st -f <prompt> --grammar-file <grammar> <args>
+  args: ["-n", "3000", "-c", "12288", "--temp", "0", "--seed", "0", "--no-display-prompt"]
+  end_marker: "[end of text]"
+
+code:                         # code whose behaviour shapes the packet, prompt, verdict or page
+  packet_builder: distillation/build_packet.py
+  sequence_decoder: distillation/sequence_decode.py
+  physiological_features: code/Phase2_47/physiological_features.py
+  prompt_builder: reference/prompts.py
+  serializer: report/serialize.py
+  claim_schema: report/claim_schema.py
+  verifier_structure: report/verify_structure.py
+  verifier_policy: report/verify_policy.py
+  violations: report/violations.py
+  renderer: report/render.py
+
+pinned:                       # must match before any run (values from deploy/frozen.json and the Phase 0 golden set)
+  report.model: c196281280f6e4698d44335d99cd1243b52158c41a50cd5120dc170d92de3d25
+  report.grammar: 142835c8dcd58bfc04757eae7300bfe19d44e90c101098f982795bb5b7e57120
+  code.serializer: a3cd37517a8258de8e64409545ef53f31622ce84227a82679ed7b8ee320109db
+  code.verifier_structure: f78f85440914ee437ef7f097106aad8ab2bb8179755b362cb8750a5063835c5b
+  code.verifier_policy: f296bb0968e4970b0a4f00dd17089ef1743b28c6bb5dc413ad45272756c855c8
+  code.violations: 164acb06a70394ce2e219f407e64342fa521441c9764835c38c56c56387671cf
+  code.renderer: d07fae16d94b8e87b3e5fdab920513087ce3bc4fe7671debe628688b1ea4aed6
+  code.prompt_builder: 761d62061e5843b39bf8d88f5ad5226640a8ee1953d4d7266106052f773ea300
+  staging.checkpoint: ec4448ea148cdf5f917eed1bc0b876b016731d8eadcd78dfd7cdc78bb01d0029

@@ -1,0 +1,32 @@
+caching EOG features for all non-test recordings ...
+  done in 73s
+  N5eog_eegonly_s0_cv0     kappa file 0.6987 | recomputed 0.7012  (79s)
+  N5eog_eegonly_s0_cv1     kappa file 0.7115 | recomputed 0.7158  (86s)
+  N5eog_eegonly_s0_cv2     kappa file 0.7083 | recomputed 0.7065  (92s)
+  N5eog_eegonly_s0_cv3     kappa file 0.7417 | recomputed 0.7438  (98s)
+  N5eog_eegonly_s0_cv4     kappa file 0.7061 | recomputed 0.7037  (105s)
+  N5eog_eog_s0_cv0         kappa file 0.7194 | recomputed 0.7191  (116s)
+  N5eog_eog_s0_cv1         kappa file 0.7286 | recomputed 0.7292  (130s)
+  N5eog_eog_s0_cv2         kappa file 0.7208 | recomputed 0.7216  (142s)
+  N5eog_eog_s0_cv3         kappa file 0.7556 | recomputed 0.7552  (153s)
+  N5eog_eog_s0_cv4         kappa file 0.6962 | recomputed 0.6956  (165s)
+
+reproduction: max |kappa difference| vs the run's own result files = 0.0043
+
+=== labels: stored === all 85 subjects pooled (each scored once, by its own fold's model)
+  eegonly  acc 78.75%  kappa 0.7146  macro-F1 74.14  W=89.7 N1=47.4 N2=80.8 N3=74.4 REM=78.5
+  eog      acc 79.46%  kappa 0.7243  macro-F1 75.21  W=90.4 N1=49.4 N2=81.0 N3=74.8 REM=80.4
+  pooled kappa delta +0.0097, 95% CI (subject bootstrap) [+0.0028, +0.0168]
+  per subject: EOG better for 52/85, mean kappa delta +0.0089 (Wilcoxon p=0.0341); accuracy delta +0.61 pts (p=0.0274)
+  SC: kappa 0.7424 -> 0.7514; REM 80.9 -> 83.5; N1 48.6 -> 50.5
+  ST: kappa 0.5571 -> 0.5700; REM 70.6 -> 70.5; N1 39.7 -> 42.7
+
+=== labels: fixed === all 85 subjects pooled (each scored once, by its own fold's model)
+  eegonly  acc 81.08%  kappa 0.7459  macro-F1 76.78  W=91.0 N1=49.5 N2=83.2 N3=78.3 REM=81.8
+  eog      acc 81.95%  kappa 0.7577  macro-F1 78.02  W=91.8 N1=51.6 N2=83.6 N3=78.9 REM=84.2
+  pooled kappa delta +0.0117, 95% CI (subject bootstrap) [+0.0038, +0.0199]
+  per subject: EOG better for 56/85, mean kappa delta +0.0112 (Wilcoxon p=0.00419); accuracy delta +0.76 pts (p=0.00461)
+  SC: kappa 0.7522 -> 0.7627; REM 81.3 -> 84.3; N1 49.5 -> 51.5
+  ST: kappa 0.6912 -> 0.7094; REM 83.5 -> 83.6; N1 49.7 -> 52.3
+
+written F:\Sleep_project\Sleep-Staging\ADDING EOG VERSION\kaggle_results\eog_stageA_seed0\analysis\stageA_analysis.json

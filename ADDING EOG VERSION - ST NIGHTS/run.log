@@ -1,0 +1,19 @@
+168 train+val recordings (test never opened); bad nights: ['ST7201J0-PSG', 'ST7202J0-PSG', 'ST7151J0-PSG']
+  signal stats 40/168  (12s)
+  signal stats 80/168  (24s)
+  signal stats 120/168  (40s)
+  signal stats 160/168  (53s)
+F:\Sleep_project\Sleep-Staging\ADDING EOG VERSION - ST NIGHTS\investigate_st_nights.py:245: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+counterfactual inference (N4kd on CPU)...
+  reproduced cached N4kd validation probabilities: max |diff| 0.0e+00
+  gain 0.5   BAD (3 ST val): k=0.093  ST-val (other): k=0.672  SC-val: k=0.625  ALL 31: k=0.602  (6s)
+  gain 0.6   BAD (3 ST val): k=0.104  ST-val (other): k=0.699  SC-val: k=0.677  ALL 31: k=0.645  (12s)
+  gain 0.7   BAD (3 ST val): k=0.125  ST-val (other): k=0.708  SC-val: k=0.710  ALL 31: k=0.672  (17s)
+  gain 0.85  BAD (3 ST val): k=0.128  ST-val (other): k=0.710  SC-val: k=0.726  ALL 31: k=0.684  (34s)
+  gain 1.0   BAD (3 ST val): k=0.135  ST-val (other): k=0.673  SC-val: k=0.729  ALL 31: k=0.681  (39s)
+  gain 1.2   BAD (3 ST val): k=0.136  ST-val (other): k=0.625  SC-val: k=0.710  ALL 31: k=0.659  (50s)
+  gain 1.4   BAD (3 ST val): k=0.146  ST-val (other): k=0.592  SC-val: k=0.686  ALL 31: k=0.637  (62s)
+  gain 1.7   BAD (3 ST val): k=0.146  ST-val (other): k=0.552  SC-val: k=0.659  ALL 31: k=0.610  (77s)
+  gain 2.0   BAD (3 ST val): k=0.155  ST-val (other): k=0.531  SC-val: k=0.636  ALL 31: k=0.590  (91s)
+wrote F:\Sleep_project\Sleep-Staging\ADDING EOG VERSION - ST NIGHTS\results\ST_NIGHTS_REPORT.md

@@ -1,0 +1,768 @@
+F:\Sleep_project\Sleep-Staging\ADDING EOG VERSION - ADVANCED STUDENT\kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4081E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4082E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4111E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4112E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4131E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4171E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4172E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4321E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4322E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4341F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4342F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4351F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4352F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4441E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4442E0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4461F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4462F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4561F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4562F0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4581G0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4582G0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4671G0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+SC4672G0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7081J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7082J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7131J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7132J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7151J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7152J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7201J0-PSG
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+F:\Sleep_project\Sleep-Staging\agentic\signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+ST7202J0-PSG
+{
+ "summary": {
+  "v0.3 params": {
+   "params": {
+    "run": 5,
+    "gap": 8,
+    "merge": 240
+   },
+   "nights": 31,
+   "R04": 0,
+   "W08": 1,
+   "start_err_median": 0.0,
+   "start_err_p90": 2.0,
+   "end_err_median": 2.0,
+   "end_err_p90": 41.0,
+   "tst_abs_err_median_min": 0.0,
+   "se_abs_err_median_points": 0.18118926041837957,
+   "mean_kappa_change": -0.0011883753587317411,
+   "nights_end_err_over_30": 5,
+   "bar": {
+    "start": true,
+    "end": false,
+    "tst": true,
+    "se": true,
+    "kappa": true
+   }
+  },
+  "refit": {
+   "params": {
+    "run": 5,
+    "gap": 2,
+    "merge": null
+   },
+   "nights": 31,
+   "R04": 0,
+   "W08": 1,
+   "start_err_median": 0.0,
+   "start_err_p90": 2.0,
+   "end_err_median": 3.0,
+   "end_err_p90": 41.0,
+   "tst_abs_err_median_min": 0.0,
+   "se_abs_err_median_points": 0.20477374065227538,
+   "mean_kappa_change": -0.003964662437444608,
+   "nights_end_err_over_30": 6,
+   "bar": {
+    "start": true,
+    "end": false,
+    "tst": true,
+    "se": true,
+    "kappa": true
+   }
+  }
+ },
+ "adopt_refit": false
+}

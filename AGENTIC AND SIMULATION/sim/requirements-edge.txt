@@ -1,0 +1,16 @@
+# Exactly what the agent imports at run time (agentic/, plus the frozen packet builder, verifier, renderer
+# and the two staging adapters). Versions are those this PC runs; every one has a Linux ARM64 wheel for
+# CPython 3.12 (checked 25 Oct 2026 with `pip install --dry-run --platform manylinux2014_aarch64`).
+# torch: the default aarch64 PyPI wheel is CPU-only, which is what the Pi needs.
+# scikit-learn and pandas are imported at load time by distillation/evaluate_student.py, sequence_decode.py
+# and the advanced-student trainer module, so the device needs them.
+# Not here on purpose: xlrd/openpyxl (lights-off sheets, evaluation tools only) and pytest.
+torch==2.10.0
+numpy==2.3.5
+scipy==1.17.0
+pandas==3.0.0
+scikit-learn==1.8.0
+mne==1.12.1
+PyWavelets==1.10.0
+psutil==7.2.2
+PyYAML==6.0.3

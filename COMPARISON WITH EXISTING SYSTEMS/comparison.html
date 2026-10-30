@@ -1,0 +1,288 @@
+<title>Sleep Staging System Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (max 1100px). Comparison sections stack; the three system cards and two-up panels wrap to one column on phones. */
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --fg:#152029; --muted:#5a6672; --line:#d8dee4; --soft:#e9eef2;
+  --ours:#1d6a86; --prop:#7a5aa6; --pub:#8d99a5; --best:#2d7d4f; --weak:#b0462f; --warn:#a8741a;
+  --heat:29,106,134;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f151b; --surface:#151e26; --fg:#e2e8ed; --muted:#94a1ad; --line:#2a3642; --soft:#1b2630;
+  --ours:#5bb3d1; --prop:#b49ae0; --pub:#738290; --best:#5fbf86; --weak:#e2775f; --warn:#d9a648; --heat:91,179,209; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --surface:#151e26; --fg:#e2e8ed; --muted:#94a1ad; --line:#2a3642; --soft:#1b2630;
+  --ours:#5bb3d1; --prop:#b49ae0; --pub:#738290; --best:#5fbf86; --weak:#e2775f; --warn:#d9a648; --heat:91,179,209; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--body);margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:clamp(30px,5vw,44px);font-weight:700}
+h2{font-size:24px;font-weight:600}
+h3{font-size:17px;font-weight:600}
+p{margin:0;max-width:70ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:17px;color:var(--muted)}
+header{display:grid;gap:12px;padding-bottom:24px}
+section{padding-block:32px;border-top:1px solid var(--line);display:grid;gap:16px}
+.cap{font-size:13px;color:var(--muted)}
+code{font-family:var(--mono);font-size:.9em;background:var(--soft);padding:1px 5px;border-radius:3px}
+/* tags for provenance */
+.tag{display:inline-block;font:500 11px/1 var(--mono);padding:3px 6px;border-radius:999px;border:1px solid currentColor;vertical-align:1px;margin-left:4px;white-space:nowrap}
+.tag.m{color:var(--ours)} .tag.p{color:var(--pub)} .tag.e{color:var(--prop)}
+.keyrow{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+/* system cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--pub);border-radius:6px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card.ours{border-top-color:var(--ours)} .card.prop{border-top-color:var(--prop)}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+.card dt{color:var(--muted)} .card dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 11px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+thead th{font:600 11.5px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--soft)}
+tbody tr:last-child td{border-bottom:0}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.t{font-family:var(--body);white-space:normal;min-width:170px}
+tr.ours td{background:color-mix(in srgb,var(--ours) 10%,transparent);font-weight:500}
+tr.ours2 td{background:color-mix(in srgb,var(--ours) 5%,transparent)}
+td.b{color:var(--best);font-weight:600}
+/* matrix */
+.matrix td{white-space:normal;vertical-align:top;text-align:left;font-family:var(--body);min-width:200px}
+.matrix td:first-child{font-weight:600;min-width:150px}
+.matrix th{text-align:left}
+/* charts */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px;overflow-x:auto}
+.chart svg{display:block;min-width:620px;width:100%;height:auto}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:500 13px var(--body);background:var(--surface);color:var(--fg);border:0;border-right:1px solid var(--line);padding:7px 14px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ours);color:var(--bg)}
+.seg button:focus-visible{outline:2px solid var(--ours);outline-offset:2px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.two>*{min-width:0}
+ul.items{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+ul.items li{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--pub);border-radius:4px;padding:10px 12px;font-size:14px}
+ul.items.new li{border-left-color:var(--ours)}
+ul.items.new li.prop{border-left-color:var(--prop)}
+ul.items li b{display:block;font-weight:600;margin-bottom:2px}
+.note{font-size:13.5px;color:var(--muted);background:var(--soft);border-radius:6px;padding:12px 14px}
+a{color:var(--ours)}
+ol.src{margin:0;padding-left:20px;font-size:13.5px;display:grid;gap:4px}
+ol.src li{overflow-wrap:anywhere}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Sleep-EDF · staging + verified reports · 14 Oct 2026</span>
+  <h1>Our sleep system against published work</h1>
+  <p class="lede">The staging student is in the upper-middle of published Sleep-EDF-78 results at 0.18M parameters, and joint-best on N1 and REM. What sets the system apart is what comes after staging: a local report model whose every claim is verified before release.</p>
+  <div class="keyrow"><span><span class="tag m">M</span> measured by us</span><span><span class="tag p">P</span> published by the authors</span><span><span class="tag e">E</span> estimate or target, not yet measured</span></div>
+</header>
+
+<section aria-labelledby="s-three">
+  <h2 id="s-three">The three systems</h2>
+  <div class="cards">
+    <div class="card"><span class="eyebrow">Existing systems</span><h3>Published staging models and LLM studies</h3>
+      <dl><dt>Accuracy (EDF-78)</dt><dd>78.5–85.0%</dd><dt>κ</dt><dd>0.73–0.79</dd><dt>Parameters</dt><dd>0.049M–21M</dd><dt>Written report</dt><dd>general LLMs</dd><dt>Report checked first</dt><dd>not found</dd><dt>Edge</dt><dd>staging only</dd></dl>
+      <span class="cap">Values <span class="tag p">P</span>; protocols differ between papers.</span></div>
+    <div class="card ours"><span class="eyebrow">Our system today</span><h3>EEG + EOG student, verified local reports</h3>
+      <dl><dt>Accuracy, CV SC</dt><dd>83.5%</dd><dt>κ, CV SC</dt><dd>0.776</dd><dt>Test (29 nights)</dt><dd>81.96%, κ 0.756</dd><dt>Parameters</dt><dd>175,599</dd><dt>Report, shipped</dt><dd>29/29, 0 violations</dd><dt>Numeric fidelity</dt><dd>1.000</dd></dl>
+      <span class="cap">All values <span class="tag m">M</span>; x86 CPU, offline.</span></div>
+    <div class="card prop"><span class="eyebrow">Proposed</span><h3>Plus agentic layer and Raspberry Pi 5</h3>
+      <dl><dt>Staging</dt><dd>same model</dd><dt>EOG missing</dt><dd>κ 0.744 (measured)</dd><dt>Night on Pi 5</dt><dd>~6–9 min</dd><dt>Peak memory</dt><dd>~6–8 GB</dd><dt>Fault scenarios</dt><dd>15 planned</dd><dt>Safety invariants</dt><dd>8 planned</dd></dl>
+      <span class="cap">Pi values <span class="tag e">E</span>; not built yet.</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="s-scatter">
+  <h2 id="s-scatter">Performance against model size</h2>
+  <p class="cap">Sleep-EDF-78. Published points use 10- or 20-fold CV on SC subjects. Ours is 5-fold CV over SC + ST, shown for its SC subjects, with corrected labels, so it is close but not identical. The x-axis is logarithmic.</p>
+  <div class="seg" role="group" aria-label="Metric">
+    <button type="button" id="m-acc" data-k="acc" aria-pressed="true">Accuracy</button>
+    <button type="button" id="m-mf1" data-k="mf1" aria-pressed="false">Macro-F1</button>
+    <button type="button" id="m-k" data-k="k" aria-pressed="false">Cohen's κ</button>
+  </div>
+  <div class="chart"><svg id="scatter" viewBox="0 0 900 420" role="img" aria-label="Metric against parameter count"></svg></div>
+</section>
+
+<section aria-labelledby="s-metrics">
+  <h2 id="s-metrics">Overall metrics</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Model</th><th>Inputs</th><th>Params</th><th>Acc %</th><th>Macro-F1</th><th>κ</th><th>Source</th></tr></thead>
+    <tbody id="mtbl"></tbody></table></div>
+  <p class="cap">Green marks the best value in each column. The best published model, MultiChannelSleepNet, is +1.5 accuracy and +0.014 κ above ours, with 74× more parameters and an extra EEG channel.</p>
+</section>
+
+<section aria-labelledby="s-pc">
+  <h2 id="s-pc">Per-class F1</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Model</th><th>Params</th><th>W</th><th>N1</th><th>N2</th><th>N3</th><th>REM</th></tr></thead>
+    <tbody id="pctbl"></tbody></table></div>
+  <p class="cap">Shading follows each column's range. N1 and REM, the stages EOG helps, are joint-best (54.1, 85.8). N2 and N3 are our relative weaknesses, 1–3 points below the best.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Held-out test, corrected labels</th><th>W</th><th>N1</th><th>N2</th><th>N3</th><th>REM</th><th>Acc</th><th>κ</th></tr></thead>
+    <tbody>
+      <tr><td class="t">Shipped N4kd · P / R / F1</td><td>96.8 / 85.3 / 90.7</td><td>40.8 / 51.6 / 45.5</td><td>81.1 / 82.7 / 81.9</td><td>78.3 / 81.5 / 79.9</td><td>79.9 / 76.5 / 78.2</td><td>79.00%</td><td>0.717</td></tr>
+      <tr class="ours"><td class="t">EEG + EOG student · P / R / F1</td><td>95.9 / 87.2 / 91.4</td><td>47.6 / 54.3 / 50.7</td><td>82.7 / 86.1 / 84.3</td><td>79.4 / 82.4 / 80.9</td><td>86.2 / 81.3 / 83.7</td><td>81.96%</td><td>0.756</td></tr>
+      <tr><td class="t">Change in F1</td><td class="b">+0.7</td><td class="b">+5.3</td><td class="b">+2.4</td><td class="b">+1.0</td><td class="b">+5.3</td><td class="b">+2.96</td><td class="b">+0.038</td></tr>
+    </tbody></table></div>
+</section>
+
+<section aria-labelledby="s-size">
+  <h2 id="s-size">Model size</h2>
+  <div class="chart"><svg id="sizes" viewBox="0 0 900 470" role="img" aria-label="Parameter counts, log scale"></svg></div>
+  <div class="two">
+    <div class="note"><b>Student vs teacher.</b> Our 175,599-parameter student is better than its 412,311-parameter teacher on every test metric: 81.96% vs 80.02% accuracy, κ 0.756 vs 0.732. That's 43% of the teacher's size. The usual distillation result is a student that comes close to its teacher; the EOG branch and training recipe take this one past it.</div>
+    <div class="note"><b>The whole system isn't small.</b> The staging model is 0.7 MB. The report model (Llama-3.2-3B-Student, Q4_K_M) is 2.0 GB on disk and peaks at about 4.7 GB of RAM on x86. On an edge device, the report model is the cost.</div>
+  </div>
+</section>
+
+<section aria-labelledby="s-cap">
+  <h2 id="s-cap">Capability by capability</h2>
+  <div class="tbl"><table class="matrix">
+    <thead><tr><th>Capability</th><th>Existing systems</th><th>Our system today</th><th>Proposed</th></tr></thead>
+    <tbody>
+      <tr><td>Written report</td><td>General LLMs reading PSG reports (ChatGPT-4o; local LLMs for OSA, judged not ready) <span class="tag p">P</span></td><td>Local 3B model writes evidence-cited claims under a grammar <span class="tag m">M</span></td><td>Same, plus fallback summary from packet values <span class="tag e">E</span></td></tr>
+      <tr><td>Checked before release</td><td>Not found in the work searched</td><td>Frozen verifier, 30 codes; fidelity 1.000; shipped test 29/29 <span class="tag m">M</span></td><td>Same gate plus 8 agent invariants <span class="tag e">E</span></td></tr>
+      <tr><td>Uncertainty in the output</td><td>Rare (SleepTransformer reports uncertainty) <span class="tag p">P</span></td><td>Calibration, per-stage reliability, night tier, N1 flag; unreliable values must be hedged <span class="tag m">M</span></td><td>Plus signal-quality reasons <span class="tag e">E</span></td></tr>
+      <tr><td>Missing channel</td><td>Usually not reported</td><td>EOG off: κ 0.744, still above the shipped model <span class="tag m">M</span></td><td>Agent routes automatically <span class="tag e">E</span></td></tr>
+      <tr><td>Bad signal</td><td>Goes to the model</td><td>Goes to the model</td><td>QC step: review with a reason code <span class="tag e">E</span></td></tr>
+      <tr><td>LLM runtime</td><td>Cloud or GPU</td><td>x86 CPU, about 70–115 s per report. The evaluated <code>llama-completion</code> path scores 30/31 on dev; <code>llama-server</code> scores 20–23/31 <span class="tag m">M</span></td><td>Evaluated path on Pi 5, about 5–8 min per report <span class="tag e">E</span></td></tr>
+      <tr><td>Edge device</td><td>Staging only on phones and MCUs (Micro SleepNet 48K params, 2.8 ms/epoch) <span class="tag p">P</span></td><td>x86 PC</td><td>Staging + verified report on Raspberry Pi 5, about 6–9 min per night <span class="tag e">E</span></td></tr>
+      <tr><td>Workflow</td><td>Human-run tools</td><td>Script pipeline</td><td>Agent: QC → study period → routing → staging → report → fallback → audit <span class="tag e">E</span></td></tr>
+      <tr><td>Audit</td><td>Rarely described</td><td>Hash-pinned components, audit log, human-review routing <span class="tag m">M</span></td><td>Per-step trace, policy hash, resume after power loss <span class="tag e">E</span></td></tr>
+      <tr><td>Validation</td><td>Dataset CV</td><td>CV, held-out test, logged test access <span class="tag m">M</span></td><td>Simulation ladder: Docker → ARM64 emulation → overnight replay with faults → real Pi <span class="tag e">E</span></td></tr>
+    </tbody></table></div>
+</section>
+
+<section aria-labelledby="s-nov">
+  <h2 id="s-nov">Is there novelty?</h2>
+  <p class="cap">This assessment comes from targeted literature searches on 14 October 2026, not a systematic review. Any paper claim should be phrased "to our knowledge".</p>
+  <div class="two">
+    <div><h3 style="margin-bottom:10px">Established, so not claimed</h3><ul class="items">
+      <li><b>Lightweight CNN + Transformer staging</b>Many published models, some smaller than ours.</li>
+      <li><b>EEG + EOG fusion</b>Used by LightSleepX, SalientSleepNet, LMCSleepNet and others.</li>
+      <li><b>Knowledge distillation and multi-scale front ends</b>Standard techniques.</li>
+      <li><b>Grammar-constrained decoding and local LLMs</b>General tooling.</li>
+    </ul></div>
+    <div><h3 style="margin-bottom:10px">Plausibly new</h3><ul class="items new">
+      <li><b>Verified, evidence-cited sleep reports from a small local LLM</b>Every claim cites a packet field and must pass a frozen verifier before release. Shipped test: 29/29, 0 violations, fidelity 1.000. The same base model without this training scores 2/31.</li>
+      <li><b>Uncertainty carried into the report and enforced</b>Unreliable values must be hedged, and reliable ones must not be. The verifier checks both.</li>
+      <li><b>A sub-200K student that beats its 412K teacher</b>Gated EEG + EOG fusion that starts from the distilled function and still works without EOG.</li>
+      <li><b>A label-alignment finding</b>The drop-then-trim preprocessing shifted 5–7% of labels. Fixing it alone is worth +1.3 to +3 points.</li>
+      <li class="prop"><b>Proposed: an offline, auditable agent on a single-board computer</b>Edge staging exists; we found no end-to-end staging and verified reporting on a Pi-class device. It isn't built yet.</li>
+    </ul></div>
+  </div>
+  <div class="note"><b>To make the claim stronger:</b> run the standard Sleep-EDF-78 protocol once; evaluate on an external dataset; measure on a real Pi 5; and report violation rates of the same LLM with and without the grammar and verifier.</div>
+</section>
+
+<section aria-labelledby="s-src">
+  <h2 id="s-src">Sources</h2>
+  <ol class="src">
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12527093/">LMCSleepNet</a>: Tables 4–5, per-class F1, parameters, channels</li>
+    <li><a href="https://arxiv.org/html/2609.19062">LightSleepX</a>: Tables 1–2, Sleep-EDF-20/78 comparison</li>
+    <li><a href="https://www.biorxiv.org/content/10.1101/2024.08.02.606301v2.full">SleepSatelightFTC</a></li>
+    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10416229/">Micro SleepNet</a>: mobile, 48K parameters</li>
+    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11890353/">ChatGPT-4o on PSG interpretation</a></li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12257169/">Locally run LLMs for OSA</a></li>
+    <li><a href="https://arxiv.org/pdf/2606.25400">BrainAgent</a> · <a href="https://www.emergentmind.com/papers/2602.23605">SleepLM</a> · <a href="https://ar5iv.labs.arxiv.org/html/2301.03441">L-SeqSleepNet</a></li>
+    <li>Our results: <code>COMPARISON WITH EXISTING SYSTEMS/COMPARISON_WITH_EXISTING_SYSTEMS.md</code>, <code>ADDING EOG VERSION - FINAL SUMMARY/numbers.json</code></li>
+  </ol>
+  <p class="cap">Published figures are taken from comparison tables in LMCSleepNet and LightSleepX, which sometimes disagree with each other (AttnSleep's size, for example). Check the original papers before citing.</p>
+</section>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+// [name, inputs, params(M), acc, mf1, kappa, source, kind]
+const M=[
+ ["DeepSleepNet","EEG",21,78.5,75.3,0.73,"P","pub"],
+ ["SleepEEGNet","EEG",2.1,82.8,77.0,0.73,"P","pub"],
+ ["SleepTransformer","EEG",3.7,81.4,74.3,0.74,"P","pub"],
+ ["U-Time","EEG",1.1,81.3,76.3,0.75,"P","pub"],
+ ["SeqSleepNet","EEG",0.164,82.6,76.3,0.76,"P","pub"],
+ ["TinySleepNet","EEG",1.3,83.1,78.1,0.77,"P","pub"],
+ ["LightSleepX","EEG + EOG",0.049,82.6,78.7,0.77,"P","pub"],
+ ["LMCSleepNet","2 EEG + EOG",1.49,84.1,77.7,0.77,"P","pub"],
+ ["SalientSleepNet","2 EEG + EOG",0.9,84.1,79.5,null,"P","pub"],
+ ["SleepSatelightFTC","EEG",0.47,84.8,null,0.787,"P","pub"],
+ ["MultiChannelSleepNet","2 EEG + EOG",13,85.0,79.6,0.79,"P","pub"],
+ ["Ours · shipped N4kd arch. (CV SC)","EEG",0.1396,82.0,77.6,0.756,"M","ours2"],
+ ["Ours · EEG + EOG student (CV SC)","EEG + EOG",0.1756,83.5,79.3,0.776,"M","ours"],
+ ["Ours · student, held-out test SC","EEG + EOG",0.1756,82.1,77.3,0.754,"M","ours2"]
+];
+const fmtP=p=>p>=1?p+"M":(p*1000).toFixed(p<0.1?0:0)+"K";
+// metrics table
+(function(){
+  const best={acc:Math.max(...M.map(r=>r[3])),mf1:Math.max(...M.filter(r=>r[4]).map(r=>r[4])),k:Math.max(...M.filter(r=>r[5]).map(r=>r[5]))};
+  document.getElementById("mtbl").innerHTML=M.map(r=>{
+    const cls=r[7]==="ours"?' class="ours"':r[7]==="ours2"?' class="ours2"':"";
+    const c=(v,b,d)=>v==null?"<td>—</td>":`<td${v===b?' class="b"':""}>${d?v.toFixed(d):v}</td>`;
+    return `<tr${cls}><td class="t">${r[0]}</td><td class="t">${r[1]}</td><td>${r[2]>=1?r[2]+"M":r[2].toFixed(3)+"M"}</td>${c(r[3],best.acc,1)}${c(r[4],best.mf1,1)}${c(r[5],best.k,r[5]&&r[5]<1?3:0)}<td><span class="tag ${r[6]==="M"?"m":"p"}">${r[6]}</span></td></tr>`}).join("");
+})();
+// scatter
+function scatter(key){
+  const svg=document.getElementById("scatter"); svg.innerHTML="";
+  const idx={acc:3,mf1:4,k:5}[key], lab={acc:"Accuracy (%)",mf1:"Macro-F1",k:"Cohen's κ"}[key];
+  const pts=M.filter(r=>r[idx]!=null);
+  const L=70,R=880,T=20,B=370;
+  const lx=v=>Math.log10(v), x0=lx(0.03), x1=lx(40);
+  const X=v=>L+(R-L)*(lx(v)-x0)/(x1-x0);
+  const ys=pts.map(r=>r[idx]); let lo=Math.min(...ys), hi=Math.max(...ys);
+  const pad=(hi-lo)*0.15; lo-=pad; hi+=pad;
+  const Y=v=>B-(B-T)*(v-lo)/(hi-lo);
+  [0.05,0.1,0.2,0.5,1,2,5,10,20].forEach(t=>{el("line",{x1:X(t),x2:X(t),y1:T,y2:B,stroke:"var(--line)","stroke-width":1},svg);
+    const tx=el("text",{x:X(t),y:B+18,"text-anchor":"middle","font-size":11,"font-family":"var(--mono)",fill:"var(--muted)"},svg);tx.textContent=t>=1?t+"M":(t*1000)+"K";});
+  const step=key==="k"?0.01:1; for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step){const yy=Y(v);
+    el("line",{x1:L,x2:R,y1:yy,y2:yy,stroke:"var(--line)","stroke-width":1,"stroke-dasharray":"2 3"},svg);
+    const tx=el("text",{x:L-8,y:yy+4,"text-anchor":"end","font-size":11,"font-family":"var(--mono)",fill:"var(--muted)"},svg);tx.textContent=key==="k"?v.toFixed(2):v.toFixed(0);}
+  const xl=el("text",{x:(L+R)/2,y:B+40,"text-anchor":"middle","font-size":12,fill:"var(--muted)","font-family":"var(--body)"},svg);xl.textContent="Parameters (log scale)";
+  const yl=el("text",{x:18,y:(T+B)/2,"text-anchor":"middle","font-size":12,fill:"var(--muted)","font-family":"var(--body)",transform:`rotate(-90 18 ${(T+B)/2})`},svg);yl.textContent=lab;
+  const placed=[];
+  pts.forEach(r=>{const cx=X(r[2]),cy=Y(r[idx]);const ours=r[7]!=="pub";
+    const col=r[7]==="ours"?"var(--ours)":r[7]==="ours2"?"var(--ours)":"var(--pub)";
+    const c=el("circle",{cx,cy,r:r[7]==="ours"?8:6,fill:r[7]==="ours2"?"var(--surface)":col,stroke:col,"stroke-width":2},svg);
+    const tt=el("title",{},c);tt.textContent=`${r[0]}: ${r[idx]} · ${r[2]}M params`;
+    let ty=cy-11; while(placed.some(p=>Math.abs(p.x-cx)<120&&Math.abs(p.y-ty)<13))ty-=13;
+    placed.push({x:cx,y:ty});
+    const anchor=cx>R-150?"end":"start";
+    const t=el("text",{x:cx+(anchor==="end"?-8:8),y:ty,"text-anchor":anchor,"font-size":ours?12:11,"font-weight":ours?600:400,fill:ours?"var(--ours)":"var(--fg)","font-family":"var(--body)"},svg);
+    t.textContent=r[0].replace("Ours · ","Ours: ");});
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.k===key)));
+}
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>scatter(b.dataset.k)));
+scatter("acc");
+// per-class heat table
+(function(){
+  const P=[["DeepSleepNet","21M",[91.0,47.0,81.0,69.0,79.0],"pub"],["SleepEEGNet","2.1M",[90.3,44.6,85.7,81.6,82.9],"pub"],["TinySleepNet","1.3M",[92.8,51.0,85.3,81.1,80.3],"pub"],
+    ["SalientSleepNet","0.9M",[93.3,54.2,85.8,78.3,85.8],"pub"],["LMCSleepNet","1.49M",[94.2,48.5,85.8,77.6,82.7],"pub"],["MultiChannelSleepNet","13M",[94.0,53.0,86.9,81.8,82.6],"pub"],
+    ["Ours · EEG + EOG student, CV SC","0.176M",[93.1,54.1,84.3,79.0,85.8],"ours"],["Ours · student, held-out test (29 nights)","0.176M",[91.4,50.7,84.3,80.9,83.7],"ours2"],
+    ["Ours · shipped N4kd, held-out test","0.140M",[90.7,45.5,81.9,79.9,78.2],"ours2"]];
+  const lo=[0,1,2,3,4].map(j=>Math.min(...P.map(r=>r[2][j]))), hi=[0,1,2,3,4].map(j=>Math.max(...P.map(r=>r[2][j])));
+  document.getElementById("pctbl").innerHTML=P.map(r=>`<tr${r[3]==="ours"?' class="ours"':''}><td class="t">${r[0]}</td><td>${r[1]}</td>`+r[2].map((v,j)=>{const a=(0.06+0.5*(v-lo[j])/(hi[j]-lo[j]||1)).toFixed(3);
+    return `<td style="background:rgba(var(--heat),${a})${v===hi[j]?";font-weight:700":""}">${v.toFixed(1)}</td>`}).join("")+`</tr>`).join("");
+})();
+// size bars, log scale
+(function(){
+  const S=[["LightSleepX",49000,"pub"],["Micro SleepNet",48226,"pub"],["Ours · shipped N4kd",139606,"ours2"],["SeqSleepNet",164000,"pub"],["Ours · EEG + EOG student",175599,"ours"],
+    ["Our teacher (ENSmc)",412311,"ours2"],["SleepSatelightFTC",470000,"pub"],["SalientSleepNet",900000,"pub"],["TinySleepNet",1300000,"pub"],["LMCSleepNet",1490000,"pub"],
+    ["SleepTransformer",3700000,"pub"],["MultiChannelSleepNet",13000000,"pub"],["DeepSleepNet",21000000,"pub"]];
+  const svg=document.getElementById("sizes"), L=210,R=800,T=10,h=32;
+  const x0=Math.log10(30000), x1=Math.log10(3e7), X=v=>L+(R-L)*(Math.log10(v)-x0)/(x1-x0);
+  [1e5,1e6,1e7].forEach(t=>{el("line",{x1:X(t),x2:X(t),y1:T,y2:T+h*S.length,stroke:"var(--line)","stroke-width":1},svg);
+    const tx=el("text",{x:X(t),y:T+h*S.length+16,"text-anchor":"middle","font-size":11,"font-family":"var(--mono)",fill:"var(--muted)"},svg);tx.textContent=t>=1e6?(t/1e6)+"M":(t/1e3)+"K";});
+  S.forEach((s,i)=>{const y=T+i*h, ours=s[2]!=="pub";
+    const lb=el("text",{x:L-10,y:y+h/2+4,"text-anchor":"end","font-size":12.5,"font-weight":ours?600:400,fill:ours?"var(--ours)":"var(--fg)","font-family":"var(--body)"},svg);lb.textContent=s[0];
+    el("rect",{x:L,y:y+6,width:Math.max(2,X(s[1])-L),height:h-12,rx:2,fill:s[2]==="ours"?"var(--ours)":s[2]==="ours2"?"color-mix(in srgb,var(--ours) 45%,var(--bg))":"var(--pub)"},svg);
+    const v=el("text",{x:X(s[1])+6,y:y+h/2+4,"font-size":11.5,"font-family":"var(--mono)",fill:"var(--muted)"},svg);
+    v.textContent=s[1]>=1e6?(s[1]/1e6).toFixed(s[1]%1e6?2:0)+"M":s[1].toLocaleString("en-US");});
+})();
+</script>

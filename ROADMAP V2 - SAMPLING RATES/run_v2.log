@@ -1,0 +1,452 @@
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:39: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  mne.io.read_raw_edf(str(psg), preload=False, verbose=False).ch_names]
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\ROADMAP V2 - SAMPLING RATES\run_v2.py:40: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(psg), preload=True, verbose=False).pick(channels)
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+F:\Sleep_project\Sleep-Staging\agentic\tools\p2_parity.py:71: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  start = mne.io.read_raw_edf(str(psg), preload=False, verbose=False).info["meas_date"]
+SC4001E0-PSG v1 100Hz: VERIFIED_REPORT []
+SC4001E0-PSG v1 128Hz: VERIFIED_REPORT []
+SC4001E0-PSG v1 256Hz: VERIFIED_REPORT []
+SC4001E0-PSG v2 100Hz: VERIFIED_REPORT []
+SC4001E0-PSG v2 128Hz: VERIFIED_REPORT []
+SC4001E0-PSG v2 256Hz: VERIFIED_REPORT []
+SC4081E0-PSG v1 100Hz: VERIFIED_REPORT []
+SC4081E0-PSG v1 128Hz: VERIFIED_REPORT []
+SC4081E0-PSG v1 256Hz: VERIFIED_REPORT []
+SC4081E0-PSG v2 100Hz: VERIFIED_REPORT []
+SC4081E0-PSG v2 128Hz: VERIFIED_REPORT []
+SC4081E0-PSG v2 256Hz: VERIFIED_REPORT []
+ST7022J0-PSG v1 100Hz: VERIFIED_REPORT ['W02']
+ST7022J0-PSG v1 128Hz: VERIFIED_REPORT ['W02']
+ST7022J0-PSG v1 256Hz: VERIFIED_REPORT ['W02']
+ST7022J0-PSG v2 100Hz: VERIFIED_REPORT ['W02']
+ST7022J0-PSG v2 128Hz: VERIFIED_REPORT ['W02']
+ST7022J0-PSG v2 256Hz: VERIFIED_REPORT ['W02']
+[
+ {
+  "recording_id": "SC4001E0-PSG",
+  "release": "v1",
+  "vs_100hz": {
+   "128": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.9973,
+    "n_epochs": {
+     "ref": 738,
+     "other": 738
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 2,
+     "arch.transition_rate": 0.325,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   },
+   "256": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.9973,
+    "n_epochs": {
+     "ref": 738,
+     "other": 738
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 2,
+     "arch.transition_rate": 0.325,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   }
+  }
+ },
+ {
+  "recording_id": "SC4001E0-PSG",
+  "release": "v2",
+  "vs_100hz": {
+   "128": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.9986,
+    "n_epochs": {
+     "ref": 737,
+     "other": 737
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0014,
+     "stage.N2.fraction": 0.0014,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   },
+   "256": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.9986,
+    "n_epochs": {
+     "ref": 737,
+     "other": 737
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0014,
+     "stage.N2.fraction": 0.0014,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   }
+  }
+ },
+ {
+  "recording_id": "SC4081E0-PSG",
+  "release": "v1",
+  "vs_100hz": {
+   "128": {
+    "outcome_match": true,
+    "hypnogram_agreement": 1.0,
+    "n_epochs": {
+     "ref": 937,
+     "other": 937
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   },
+   "256": {
+    "outcome_match": true,
+    "hypnogram_agreement": 1.0,
+    "n_epochs": {
+     "ref": 937,
+     "other": 937
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   }
+  }
+ },
+ {
+  "recording_id": "SC4081E0-PSG",
+  "release": "v2",
+  "vs_100hz": {
+   "128": {
+    "outcome_match": true,
+    "hypnogram_agreement": 1.0,
+    "n_epochs": {
+     "ref": 936,
+     "other": 936
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   },
+   "256": {
+    "outcome_match": true,
+    "hypnogram_agreement": 1.0,
+    "n_epochs": {
+     "ref": 936,
+     "other": 936
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   }
+  }
+ },
+ {
+  "recording_id": "ST7022J0-PSG",
+  "release": "v1",
+  "vs_100hz": {
+   "128": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.9961,
+    "n_epochs": {
+     "ref": 1025,
+     "other": 1025
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.5,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.001,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.5,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 1,
+     "arch.transition_rate": 0.117,
+     "arch.light_deep_ratio": 0.009,
+     "arch.wake_interruptions_per_hour": 0.001,
+     "stage.W.fraction": 0.001,
+     "stage.N1.fraction": 0.001,
+     "stage.N2.fraction": 0.001,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.001
+    }
+   },
+   "256": {
+    "outcome_match": true,
+    "hypnogram_agreement": 1.0,
+    "n_epochs": {
+     "ref": 1025,
+     "other": 1025
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.0,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.0,
+     "arch.wake_interruptions_per_hour": 0.0,
+     "stage.W.fraction": 0.0,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   }
+  }
+ },
+ {
+  "recording_id": "ST7022J0-PSG",
+  "release": "v2",
+  "vs_100hz": {
+   "128": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.9922,
+    "n_epochs": {
+     "ref": 1025,
+     "other": 1025
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 1.0,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.0019,
+     "arch.sleep_onset_latency": 0.5,
+     "arch.waso": 1.5,
+     "arch.rem_latency": 0.5,
+     "arch.rem_latency_sustained": 0.5,
+     "arch.rem_periods": 1,
+     "arch.stage_transitions": 8,
+     "arch.transition_rate": 0.936,
+     "arch.light_deep_ratio": 0.021,
+     "arch.wake_interruptions_per_hour": 0.136,
+     "stage.W.fraction": 0.0019,
+     "stage.N1.fraction": 0.0,
+     "stage.N2.fraction": 0.001,
+     "stage.N3.fraction": 0.0019,
+     "stage.REM.fraction": 0.0009
+    }
+   },
+   "256": {
+    "outcome_match": true,
+    "hypnogram_agreement": 0.999,
+    "n_epochs": {
+     "ref": 1025,
+     "other": 1025
+    },
+    "metric_abs_diff": {
+     "arch.total_sleep_time": 0.5,
+     "arch.time_in_bed": 0.0,
+     "arch.sleep_efficiency": 0.001,
+     "arch.sleep_onset_latency": 0.0,
+     "arch.waso": 0.5,
+     "arch.rem_latency": 0.0,
+     "arch.rem_latency_sustained": 0.0,
+     "arch.rem_periods": 0,
+     "arch.stage_transitions": 0,
+     "arch.transition_rate": 0.0,
+     "arch.light_deep_ratio": 0.004,
+     "arch.wake_interruptions_per_hour": 0.002,
+     "stage.W.fraction": 0.001,
+     "stage.N1.fraction": 0.001,
+     "stage.N2.fraction": 0.0,
+     "stage.N3.fraction": 0.0,
+     "stage.REM.fraction": 0.0
+    }
+   }
+  }
+ }
+]

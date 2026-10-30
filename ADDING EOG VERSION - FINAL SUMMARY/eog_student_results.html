@@ -1,0 +1,345 @@
+<title>EOG Student Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (max 1080px) of report sections; charts and tables sit inside it, each scrolling on its own when narrow. */
+:root{
+  --bg:#f5f7f9; --surface:#ffffff; --fg:#14202b; --muted:#566573; --line:#d9e0e6; --soft:#eaeff3;
+  --accent:#1d6a86;            /* the new model */
+  --old:#9aa7b2;               /* N4kd */
+  --teacher:#c49a3a;           /* ENSmc */
+  --rem:#c2493d;               /* REM on the hypnogram */
+  --good:#2d7d4f; --bad:#b0462f; --warn:#a8741a;
+  --heat:29,106,134;           /* rgb of the heat-map ink */
+  --display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161c; --surface:#151f27; --fg:#e3e9ee; --muted:#93a2ae; --line:#2a3743; --soft:#1c2832;
+  --accent:#5bb3d1; --old:#6f7d89; --teacher:#d6b058; --rem:#e57366;
+  --good:#5fbf86; --bad:#e2775f; --warn:#d9a648; --heat:91,179,209; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161c; --surface:#151f27; --fg:#e3e9ee; --muted:#93a2ae; --line:#2a3743; --soft:#1c2832;
+  --accent:#5bb3d1; --old:#6f7d89; --teacher:#d6b058; --rem:#e57366;
+  --good:#5fbf86; --bad:#e2775f; --warn:#d9a648; --heat:91,179,209; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:24px;font-weight:600;margin-bottom:6px}
+h3{font-size:17px;font-weight:600}
+p{margin:0;max-width:68ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:17px;color:var(--muted);margin-top:10px}
+section{padding-block:34px;border-top:1px solid var(--line);display:grid;gap:16px}
+header{display:grid;gap:14px;padding-bottom:26px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* hypnogram */
+.hyp{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 12px 6px}
+.hyp svg{display:block;width:100%;height:auto}
+.cap{font-size:12.5px;color:var(--muted)}
+/* key figures */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.kpi .v{font:500 28px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.kpi .d{font-size:13px;color:var(--muted)}
+.up{color:var(--good)} .down{color:var(--bad)}
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+thead th{font:600 12px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--soft)}
+tbody tr:last-child td{border-bottom:0}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.t{font-family:var(--body)}
+tr.hl td{background:color-mix(in srgb,var(--accent) 9%,transparent);font-weight:500}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:baseline}
+/* charts */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px;overflow-x:auto}
+.chart svg{display:block;min-width:560px;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.two>*{min-width:0}
+/* architecture */
+.arch{display:grid;gap:8px;font-size:14px}
+.blk{border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:9px 12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.blk.new{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.blk b{font-weight:600}
+.blk .num{color:var(--muted);font-size:13px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.stack{display:flex;height:26px;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.stack span{display:block;height:100%}
+/* confusion */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:500 13px var(--body);background:var(--surface);color:var(--fg);border:0;padding:7px 14px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cm td{text-align:center;min-width:76px;padding:8px 6px;line-height:1.25}
+.cm td small{display:block;font-size:11px;opacity:.85}
+.cm th{text-align:center}
+.cm th.rl{text-align:left}
+/* lists */
+.lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.lists>div{min-width:0}
+ul.items{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+ul.items li{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--good);border-radius:4px;padding:10px 12px;font-size:14px}
+ul.items.no li{border-left-color:var(--bad)}
+ul.items li b{display:block;font-weight:600;margin-bottom:2px}
+.steps{display:grid;gap:10px;counter-reset:s}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.step::before{counter-increment:s;content:counter(s);font:500 14px/34px var(--mono);text-align:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface)}
+.step>div{min-width:0}
+.pill{display:inline-block;font:500 11.5px/1 var(--mono);padding:4px 7px;border-radius:999px;border:1px solid currentColor;margin-left:6px;vertical-align:2px}
+.pill.ok{color:var(--good)} .pill.no{color:var(--bad)} .pill.mid{color:var(--warn)}
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.road>div{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:8px;align-content:start;min-width:0}
+.road ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
+.note{font-size:13.5px;color:var(--muted);background:var(--soft);border-radius:6px;padding:12px 14px}
+code{font-family:var(--mono);font-size:.9em;background:var(--soft);padding:1px 5px;border-radius:3px}
+@media (prefers-reduced-motion:no-preference){.seg button{transition:background .15s}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Sleep-EDF · 30-s epochs · corrected labels · 14 Oct 2026</span>
+  <h1>Adding EOG to the sleep-staging student</h1>
+  <p class="lede">The 175,599-parameter EEG + EOG student reaches 81.96% accuracy and κ 0.756 on the held-out test set. That beats the shipped N4kd and the 412K-parameter teacher it learned from. This page covers what got there, what didn't help, and what to do next.</p>
+  <div class="hyp" aria-label="Hypnogram">
+    <svg id="hyp" viewBox="0 0 1000 150" role="img" aria-label="Predicted hypnogram of one validation night"></svg>
+    <div class="cap">The Stage 3 model's hypnogram for one validation night (SC4081E0, 1,134 epochs ≈ 9.5 h). REM is shown in red.</div>
+  </div>
+</header>
+
+<section aria-labelledby="s-head">
+  <h2 id="s-head">Held-out test result</h2>
+  <p class="cap">29 recordings from 15 subjects, never used for training or selection; 33,365 scored epochs; corrected expert labels.</p>
+  <div class="kpis">
+    <div class="kpi"><span class="eyebrow">Accuracy</span><span class="v">81.96%</span><span class="d"><span class="up">+2.96 pts</span> vs N4kd 79.00%</span></div>
+    <div class="kpi"><span class="eyebrow">Cohen's κ</span><span class="v">0.756</span><span class="d"><span class="up">+0.038</span> (95% CI +0.019 to +0.057)</span></div>
+    <div class="kpi"><span class="eyebrow">N1 / REM F1</span><span class="v">50.7 / 83.7</span><span class="d"><span class="up">+5.3 / +5.3</span> vs N4kd</span></div>
+    <div class="kpi"><span class="eyebrow">Parameters</span><span class="v">175,599</span><span class="d">under the 200K budget; 43% of the teacher</span></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Model</th><th>Params</th><th>Input</th><th>Acc</th><th>κ</th><th>Macro F1</th><th>W</th><th>N1</th><th>N2</th><th>N3</th><th>REM</th></tr></thead>
+    <tbody id="headtbl"></tbody>
+  </table></div>
+  <p class="cap">Better than N4kd for 13 of 15 test subjects (Wilcoxon p = 0.0009). Before the label fix, N4kd was reported at 77.73% / κ 0.700 on the old labels. That number isn't comparable with this table.</p>
+</section>
+
+<section aria-labelledby="s-f1">
+  <h2 id="s-f1">Per-stage F1 on test</h2>
+  <div class="legend"><span><i class="sw" style="background:var(--teacher)"></i>ENSmc teacher</span><span><i class="sw" style="background:var(--old)"></i>N4kd (shipped)</span><span><i class="sw" style="background:var(--accent)"></i>Stage 3 full</span></div>
+  <div class="chart"><svg id="f1chart" viewBox="0 0 760 300" role="img" aria-label="Per-stage F1 for three models"></svg></div>
+</section>
+
+<section aria-labelledby="s-arch">
+  <h2 id="s-arch">Architecture and parameter count</h2>
+  <p>N4kd's backbone is kept unchanged. Three branches are added, each through a gate that starts closed (zero projection, gate bias −4), so training begins from exactly N4kd's function. During training, modality dropout switches EOG and the TF branch off for a quarter of the sequences. As a result, the model still works when a channel is missing.</p>
+  <div class="two">
+    <div class="arch">
+      <div class="row">
+        <div class="blk"><b>EEG Fpz-Cz</b><span class="num">100 Hz · 3,000 samples/epoch</span></div>
+        <div class="blk new"><b>EOG horizontal</b><span class="num">15 Hz low-pass</span></div>
+      </div>
+      <div class="blk"><b>Multi-scale epoch encoder</b><span class="num">fine k50/s6 + coarse k200/s25 · 4 tokens · 28,689</span></div>
+      <div class="row">
+        <div class="blk new"><b>EOG branch</b><span class="num">saccade k50 + slow k400 + 8 features · 15,088</span></div>
+        <div class="blk new"><b>TF branch</b><span class="num">STFT 0.5–30 Hz at 0.5 Hz · 16,168</span></div>
+      </div>
+      <div class="blk"><b>Spectral features + fusion</b><span class="num">34 Welch features · 10,624</span></div>
+      <div class="blk new"><b>Local context</b><span class="num">depthwise conv over ±3 epochs · 4,672</span></div>
+      <div class="blk"><b>Transformer</b><span class="num">2 layers · d 64 · 2 heads · 256 epochs ≈ 2 h · 99,968</span></div>
+      <div class="row">
+        <div class="blk"><b>5-class head</b><span class="num">325</span></div>
+        <div class="blk new"><b>Transition head</b><span class="num">training only · 65</span></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:12px;align-content:start;min-width:0">
+      <div class="stack" id="stack" aria-label="Parameter share by part"></div>
+      <div class="tbl"><table><thead><tr><th>Part</th><th>Params</th><th>Share</th></tr></thead><tbody id="ptbl"></tbody></table></div>
+      <p class="cap">Teacher ENSmc = 121,099 + 139,606 + 151,606 = 412,311 parameters (three EEG models averaged).</p>
+    </div>
+  </div>
+  <div class="note"><b>Training (Stage 3).</b> Warm start from N4kd, with the backbone frozen for 10 epochs and then trained at 0.1× learning rate. Knowledge distillation from ENSmc (α 0.5, T 3), on corrected labels. Boundary-aware label smoothing (ε 0.2) and an auxiliary transition loss (0.1). Flat or stuck epochs are left out of the loss. Gain augmentation of 0.75–1.33×, EMA weights, and AdamW at 3e-4 for 75 epochs, with sequences of 256 epochs. Three seeds, which agree within 0.001 κ on validation.</div>
+</section>
+
+<section aria-labelledby="s-path">
+  <h2 id="s-path">How it got there</h2>
+  <div class="steps">
+    <div class="step"><div><h3>Label-alignment bug found and fixed <span class="pill ok">biggest early gain</span></h3><p>The preprocessing dropped unscored epochs from the labels before computing the trim, then cut the full signal. This shifted the labels on 54/137 train, 13/31 validation and 13/29 test recordings, and 5–7% of all labels were wrong. Re-scoring the same N4kd against corrected labels: validation 76.1% → 79.2%, test 77.7% → 79.0%.</p></div></div>
+    <div class="step"><div><h3>Stage A: EOG alone, 5-fold CV <span class="pill mid">formally not shown</span></h3><p>κ +0.011, but the CI was [−0.004, +0.026], so it failed the pre-set bar. Paired person by person (85 subjects) the gain was clear: +0.012 κ, CI [+0.004, +0.020], p = 0.004. EOG was kept.</p></div></div>
+    <div class="step"><div><h3>Stage 1: advanced arms, 5-fold CV, corrected labels <span class="pill ok">full HELPS</span></h3><p><code>full</code> vs <code>base</code>: κ +0.018 [+0.0095, +0.026], better in all 5 folds and for 65/85 subjects. <code>full_eeg</code> (no EOG) gained only +0.007, below the bar. EOG's own share is +0.011 (p = 6e-5).</p></div></div>
+    <div class="step"><div><h3>Stage 3: production training, 3 seeds <span class="pill ok">bar passed</span></h3><p>Validation κ 0.742–0.743 against a pre-set bar of 0.732. N1 F1 0.560–0.566 (bar 0.538), REM F1 0.834–0.840 (bar 0.802). Seed 1 was chosen on validation macro-F1.</p></div></div>
+    <div class="step"><div><h3>One test evaluation <span class="pill ok">81.96%, κ 0.756</span></h3><p>The checkpoint hash was recorded before any test data was read. The official N4kd figures were reproduced first. The run is logged and refuses to run twice.</p></div></div>
+    <div class="step"><div><h3>Into the report pipeline <span class="pill mid">27/29 on test</span></h3><p>All tables were refitted on validation. Packets were rebuilt, and the frozen Llama-3.2-3B report model was run unchanged. Dev scored 30/31 at 5/5 with 0 violations, the same as before. Test scored 27/29 (was 29/29): the verifier blocked one report, and one report left out a mandatory item.</p></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="s-pc">
+  <h2 id="s-pc">Per-class precision, recall and confusion on test</h2>
+  <div class="seg" role="group" aria-label="Model">
+    <button type="button" id="b0" data-m="Stage 3 full" aria-pressed="true">Stage 3 full</button>
+    <button type="button" id="b1" data-m="N4kd (shipped)" aria-pressed="false">N4kd (shipped)</button>
+    <button type="button" id="b2" data-m="ENSmc teacher" aria-pressed="false">ENSmc teacher</button>
+  </div>
+  <div class="two">
+    <div class="tbl"><table><thead><tr><th>Stage</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr></thead><tbody id="pctbl"></tbody></table></div>
+    <div class="tbl"><table class="cm"><thead><tr><th class="rl">expert ↓ model →</th><th>W</th><th>N1</th><th>N2</th><th>N3</th><th>REM</th></tr></thead><tbody id="cmtbl"></tbody></table></div>
+  </div>
+  <p class="cap">Confusion counts, with the row percentage underneath. Against N4kd, the new model cut N2→N1 errors from 1,147 to 863 and REM→N1 from 381 to 199. The largest confusion that remains is N1 ↔ N2.</p>
+</section>
+
+<section aria-labelledby="s-coh">
+  <h2 id="s-coh">By cohort, and with a branch switched off</h2>
+  <div class="two">
+    <div class="tbl"><table>
+      <thead><tr><th>Test cohort</th><th>N4kd κ</th><th>Stage 3 κ</th><th>N1 F1</th><th>REM F1</th></tr></thead>
+      <tbody>
+        <tr><td class="t">SC · 12 subjects</td><td>0.720</td><td>0.754</td><td>45.0 → 49.3</td><td>77.2 → 82.7</td></tr>
+        <tr><td class="t">ST · 3 subjects</td><td>0.678</td><td>0.746</td><td>48.8 → 59.5</td><td>81.6 → 86.9</td></tr>
+      </tbody></table></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Same weights</th><th>Acc</th><th>κ</th><th>N1</th><th>REM</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td class="t">All branches on</td><td>81.96%</td><td>0.756</td><td>50.7</td><td>83.7</td></tr>
+        <tr><td class="t">EOG off</td><td>81.10%</td><td>0.744</td><td>48.7</td><td>81.4</td></tr>
+        <tr><td class="t">TF branch off</td><td>80.85%</td><td>0.742</td><td>48.9</td><td>82.5</td></tr>
+        <tr><td class="t">+ N4kd's REM decoder</td><td>81.96%</td><td>0.756</td><td>50.8</td><td>83.8</td></tr>
+      </tbody></table></div>
+  </div>
+  <p class="cap">With EOG switched off the model still beats N4kd (κ 0.744 vs 0.717), so a recording without an EOG channel loses about 2 points of REM and N1 rather than failing. ST has only 3 test subjects, so read its row as indicative.</p>
+</section>
+
+<section aria-labelledby="s-wd">
+  <h2 id="s-wd">What worked and what didn't</h2>
+  <div class="lists">
+    <div><h3 style="margin-bottom:10px">Worked</h3><ul class="items">
+      <li><b>Correcting the labels</b>N4kd +3.1 pts on validation and +1.3 on test, from scoring alone.</li>
+      <li><b>EOG as its own gated branch</b>+0.011 κ over the EEG-only arm in CV. On test, removing it costs 0.012 κ, 2.3 pts of REM and 2.0 of N1.</li>
+      <li><b>Time-frequency (sigma band) branch</b>Removing it costs 0.014 κ on test, mostly N2 and REM.</li>
+      <li><b>Closed gates, warm start, modality dropout</b>Seeds agree within 0.001 κ, and the model degrades gracefully without EOG.</li>
+      <li><b>Distillation, then beating the teacher</b>κ 0.756 vs ENSmc 0.732, at 43% of its size.</li>
+      <li><b>ST (telemetry) nights</b>κ 0.678 → 0.746 and N1 48.8 → 59.5, helped by gain augmentation and the quality mask.</li>
+      <li><b>Calibration for free</b>A fitted temperature of 1.002 means no correction is needed.</li>
+      <li><b>Preloading data on Kaggle</b>12 ms → 0.4 ms per window, so Stage 1 fitted in one session.</li>
+      <li><b>The frozen verifier</b>It blocked every bad report in every run.</li>
+    </ul></div>
+    <div><h3 style="margin-bottom:10px">Didn't work, or didn't help</h3><ul class="items no">
+      <li><b>Five fold means as the only test</b>Too coarse for a ~0.01 κ effect. Person-level pairing was needed.</li>
+      <li><b>TF + local + recipe without EOG</b>+0.007 κ in CV, below the bar.</li>
+      <li><b>Sequence decoders</b>The REM min-run decoder adds 0.0000 κ on the new model, and HMM added ≤ 0.002 on N4kd.</li>
+      <li><b>N1</b>Still the weakest stage at F1 50.7, mostly confused with N2 and W.</li>
+      <li><b>N3 in cross-validation</b>1–2 points lower in CV (not on test, +1.0). Keep watching it.</li>
+      <li><b>First theory of the bad ST nights</b>"Hypnogram-relative onsets" was wrong. The cause was the drop-then-trim bug.</li>
+      <li><b>Run-time estimates</b>The larger arms took 1.6–2.2× longer than estimated. The early runs were bound by data loading.</li>
+      <li><b>llama-server as the report runtime</b>It scored 20–23/31 on dev vs 30/31 for the evaluated llama-completion path. 8 of 31 outputs differ.</li>
+      <li><b>Report model on new test packets</b>27/29 instead of 29/29. It stays safe (one blocked), but is less complete.</li>
+      <li><b>Attribution (Gate 3a)</b>Not recomputed for the new model, so the packet block is empty.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section aria-labelledby="s-road">
+  <h2 id="s-road">Roadmap</h2>
+  <div class="road">
+    <div><span class="eyebrow">Now · 1–2 weeks</span><h3>Make it shippable</h3><ol>
+      <li>Retrain the report model on the new packets. The 123 + 14 examples are built; target dev ≥ 30/31, then one test run.</li>
+      <li>Move deployment to the evaluated <code>llama-completion</code> path, or find what differs in <code>llama-server</code>.</li>
+      <li>Freeze <code>frozen_v2.json</code> with the new model, tables and report-model hashes.</li>
+      <li>Optional: recompute attribution for the report footer.</li>
+    </ol></div>
+    <div><span class="eyebrow">Next · 1–2 months</span><h3>Improve, with fresh data</h3><ol>
+      <li>Validate externally on a new dataset. The CFS tensors in the repo are whole-night summaries, so CFS needs a fresh download and preprocessing. No more tuning on this test set.</li>
+      <li>Test the second EEG lead (Pz-Oz, already in the tensors), then chin EMG (a 1 Hz envelope in SC, raw in ST, so it needs harmonising). Both fit the 200K budget.</li>
+      <li>Train longer: the best epochs were 68–72 of 75.</li>
+      <li>Average or distil the three Stage 3 seeds.</li>
+      <li>Rebuild future datasets with the fixed preprocessing.</li>
+    </ol></div>
+    <div><span class="eyebrow">Later</span><h3>Edge device</h3><ol>
+      <li>Raspberry Pi 5: route EEG + EOG to Stage 3, and EEG-only to Stage 3 with EOG off.</li>
+      <li>Export the staging model to ONNX; it takes seconds per night on a CPU.</li>
+      <li>Agentic layer for QC, study-period detection, routing, fallback and audit around the frozen pipeline.</li>
+    </ol></div>
+  </div>
+  <div class="note">The test set has now been read for this model line, once for staging and once through the report pipeline, and both reads are logged. Using it to choose between further variants would make it a selection set, so new ideas should be judged on cross-validation and an external dataset.</div>
+</section>
+
+<section aria-labelledby="s-src">
+  <h2 id="s-src">Sources</h2>
+  <p class="cap">Every number comes from files in the project's <code>ADDING EOG VERSION*</code> folders, gathered by <code>ADDING EOG VERSION - FINAL SUMMARY/collect_numbers.py</code> into <code>numbers.json</code>. The full write-up, with all tables, is in <code>ADDING EOG VERSION - FINAL SUMMARY/README.md</code>.</p>
+</section>
+</div>
+
+<script>
+const D = {"models":{"ENSmc teacher":{"acc":0.8002397722163944,"kappa":0.7319493993252811,"mf1":0.7690758648403679,"pc":{"W":{"precision":0.9555583532670275,"recall":0.8574333483958427,"f1":0.9038404286990176,"support":8852},"N1":{"precision":0.42287402405570795,"recall":0.5728987993138936,"f1":0.4865849216947918,"support":3498},"N2":{"precision":0.833882769156549,"recall":0.8123922920256933,"f1":0.8229972622306868,"support":12766},"N3":{"precision":0.8224368499257058,"recall":0.8059701492537313,"f1":0.8141202426916713,"support":2747},"REM":{"precision":0.814007922218221,"recall":0.821701199563795,"f1":0.817836468885673,"support":5502}},"cm":[[7590,1134,61,5,62],[153,2004,895,28,418],[45,1392,10371,439,519],[37,3,459,2214,34],[118,206,651,6,4521]]},"N4kd (shipped)":{"acc":0.790019481492582,"kappa":0.7169117625731951,"mf1":0.7523474377302795,"pc":{"W":{"precision":0.9680851063829787,"recall":0.8532535020334387,"f1":0.9070493575117089,"support":8852},"N1":{"precision":0.4077757685352622,"recall":0.5157232704402516,"f1":0.4554405453168392,"support":3498},"N2":{"precision":0.8110205963725792,"recall":0.8266489111702962,"f1":0.8187601831018698,"support":12766},"N3":{"precision":0.7830650804758572,"recall":0.8147069530396797,"f1":0.7985727029438002,"support":2747},"REM":{"precision":0.7992028847978744,"recall":0.7653580516175936,"f1":0.7819143997771795,"support":5502}},"cm":[[7553,1091,79,9,120],[142,1804,1135,39,378],[25,1147,10553,520,521],[8,1,461,2238,39],[74,381,784,52,4211]]},"Stage 3 full":{"acc":0.819571407163195,"kappa":0.7556521227227397,"mf1":0.7820336883077512,"pc":{"W":{"precision":0.9592546583850932,"recall":0.8723452327157705,"f1":0.9137380191693291,"support":8852},"N1":{"precision":0.4762979683972912,"recall":0.5428816466552315,"f1":0.5074148296593186,"support":3498},"N2":{"precision":0.8269607105223543,"recall":0.8606454645151183,"f1":0.8434669123291878,"support":12766},"N3":{"precision":0.7943859649122808,"recall":0.8241718238077903,"f1":0.809004824012864,"support":2747},"REM":{"precision":0.861517719568567,"recall":0.8129770992366412,"f1":0.8365438563680568,"support":5502}},"cm":[[7722,1026,55,8,41],[166,1899,1072,59,302],[37,863,10987,510,369],[20,0,456,2264,7],[105,199,716,9,4473]]}},"params":{"temporal_encoder":28689,"spectral_encoder":2240,"fusion":8384,"eog_encoder":6768,"eog_proj":2112,"eog_gate":6208,"tf_encoder":7848,"tf_proj":2112,"tf_gate":6208,"loc_dw":512,"loc_pw":4160,"encoder":99968,"cls":325,"aux_transition":65},"hyp":"000000000000000000000000000000000000000000000000000000000111111111011111111110100011111000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111111111111111111111111111222222223233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333323331123333323333223332333333333333333333333333333333333333333333333333333333333333333333334444444444444444444444444444444444422444444422224442222222222222222011000000000000000000011122222222222222222222223333333333333333333333332233323333333333111122222222222222333333333333333333223333322233333333333333333333333333333332222222222222221222222222222222222222224444444444444444444444444444444444444444444442444444112222222222222222222222222222222222233333322223333333333333333333333333333333333333332310111222222222222222224444444444444444444444444444444111122222222222222222222222222222222222222222222222222222332222322322333333323333333333333333333333000000000000000000000000000000000000000000000000000000000000"};
+const S = ["W","N1","N2","N3","REM"];
+const order = ["ENSmc teacher","N4kd (shipped)","Stage 3 full"];
+const meta = {"ENSmc teacher":["412,311","EEG","--teacher"],"N4kd (shipped)":["139,606","EEG","--old"],"Stage 3 full":["175,599","EEG + EOG","--accent"]};
+const f1 = (x)=>(100*x).toFixed(1);
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+// headline table
+document.getElementById("headtbl").innerHTML = order.map(m=>{const v=D.models[m];const [p,inp,c]=meta[m];
+  return `<tr${m==="Stage 3 full"?' class="hl"':''}><td class="t"><i class="sw" style="background:var(${c})"></i>${m}</td><td>${p}</td><td class="t">${inp}</td><td>${(100*v.acc).toFixed(2)}%</td><td>${v.kappa.toFixed(4)}</td><td>${f1(v.mf1)}</td>${S.map(s=>`<td>${f1(v.pc[s].f1)}</td>`).join("")}</tr>`}).join("");
+
+// hypnogram: conventional levels W, REM, N1, N2, N3 top to bottom
+(function(){
+  const svg=document.getElementById("hyp"), h=D.hyp, n=h.length, x0=44, x1=992, y0=12, step=30;
+  const level={0:0,4:1,1:2,2:3,3:4}, names=["W","REM","N1","N2","N3"];
+  names.forEach((nm,i)=>{const y=y0+i*step;el("line",{x1:x0,x2:x1,y1:y,y2:y,stroke:"var(--line)","stroke-width":1},svg);
+    const t=el("text",{x:x0-8,y:y+4,"text-anchor":"end","font-size":11,"font-family":"var(--mono)",fill:"var(--muted)"},svg);t.textContent=nm;});
+  const X=i=>x0+(x1-x0)*i/n;
+  let d="";for(let i=0;i<n;i++){const y=y0+level[h[i]]*step;d+=(i===0?`M${X(i)},${y}`:`L${X(i)},${y}`)+`L${X(i+1)},${y}`;}
+  el("path",{d,fill:"none",stroke:"var(--fg)","stroke-width":1.2,"stroke-linejoin":"round"},svg);
+  for(let i=0;i<n;){if(h[i]==="4"){let j=i;while(j<n&&h[j]==="4")j++;el("rect",{x:X(i),y:y0+step-4,width:Math.max(1,X(j)-X(i)),height:8,fill:"var(--rem)"},svg);i=j;}else i++;}
+})();
+
+// per-stage F1 grouped bars, axis 0..100
+(function(){
+  const svg=document.getElementById("f1chart"), L=48, R=744, T=14, B=262, W=R-L, gw=W/5, bw=gw/5;
+  const y=v=>B-(B-T)*v/100;
+  [0,25,50,75,100].forEach(t=>{el("line",{x1:L,x2:R,y1:y(t),y2:y(t),stroke:"var(--line)","stroke-width":1},svg);
+    const tx=el("text",{x:L-8,y:y(t)+4,"text-anchor":"end","font-size":11,"font-family":"var(--mono)",fill:"var(--muted)"},svg);tx.textContent=t;});
+  S.forEach((s,i)=>{const gx=L+i*gw;
+    order.forEach((m,j)=>{const v=100*D.models[m].pc[s].f1, x=gx+bw*(j+1);
+      el("rect",{x,y:y(v),width:bw-4,height:B-y(v),fill:`var(${meta[m][2]})`,rx:2},svg);
+      if(j===2){const t=el("text",{x:x+(bw-4)/2,y:y(v)-5,"text-anchor":"middle","font-size":11,"font-family":"var(--mono)",fill:"var(--fg)"},svg);t.textContent=v.toFixed(1);}});
+    const lb=el("text",{x:gx+gw/2,y:B+20,"text-anchor":"middle","font-size":13,"font-weight":600,fill:"var(--fg)","font-family":"var(--body)"},svg);lb.textContent=s;});
+  const yl=el("text",{x:14,y:(T+B)/2,"text-anchor":"middle","font-size":11,fill:"var(--muted)","font-family":"var(--mono)",transform:`rotate(-90 14 ${(T+B)/2})`},svg);yl.textContent="F1 (%)";
+})();
+
+// parameter breakdown
+(function(){
+  const P=D.params, groups=[
+    ["Transformer",P.encoder,"var(--old)"],
+    ["Multi-scale encoder",P.temporal_encoder,"color-mix(in srgb,var(--old) 70%,var(--bg))"],
+    ["Spectral + fusion",P.spectral_encoder+P.fusion,"color-mix(in srgb,var(--old) 45%,var(--bg))"],
+    ["Head",P.cls,"color-mix(in srgb,var(--old) 25%,var(--bg))"],
+    ["EOG branch (new)",P.eog_encoder+P.eog_proj+P.eog_gate,"var(--accent)"],
+    ["TF branch (new)",P.tf_encoder+P.tf_proj+P.tf_gate,"color-mix(in srgb,var(--accent) 65%,var(--bg))"],
+    ["Local context (new)",P.loc_dw+P.loc_pw,"color-mix(in srgb,var(--accent) 40%,var(--bg))"],
+    ["Transition head (new)",P.aux_transition,"color-mix(in srgb,var(--accent) 25%,var(--bg))"]];
+  const tot=groups.reduce((a,g)=>a+g[1],0);
+  document.getElementById("stack").innerHTML=groups.map(g=>`<span title="${g[0]}: ${g[1].toLocaleString("en-US")}" style="width:${100*g[1]/tot}%;background:${g[2]}"></span>`).join("");
+  document.getElementById("ptbl").innerHTML=groups.map(g=>`<tr><td class="t"><i class="sw" style="background:${g[2]}"></i>${g[0]}</td><td>${g[1].toLocaleString("en-US")}</td><td>${(100*g[1]/tot).toFixed(1)}%</td></tr>`).join("")
+    +`<tr class="hl"><td class="t">Total</td><td>${tot.toLocaleString("en-US")}</td><td>100%</td></tr>`;
+})();
+
+// per-class + confusion, switchable
+function show(m){
+  const v=D.models[m];
+  document.getElementById("pctbl").innerHTML=S.map(s=>{const c=v.pc[s];return `<tr><td class="t">${s}</td><td>${f1(c.precision)}</td><td>${f1(c.recall)}</td><td>${f1(c.f1)}</td><td>${c.support.toLocaleString("en-US")}</td></tr>`}).join("")
+    +`<tr class="hl"><td class="t">Overall</td><td colspan="2">acc ${(100*v.acc).toFixed(2)}%</td><td>κ ${v.kappa.toFixed(3)}</td><td>${S.reduce((a,s)=>a+v.pc[s].support,0).toLocaleString("en-US")}</td></tr>`;
+  document.getElementById("cmtbl").innerHTML=v.cm.map((row,i)=>{const tot=row.reduce((a,b)=>a+b,0);
+    return `<tr><th class="rl">${S[i]}</th>`+row.map((c,j)=>{const p=c/tot, a=(0.08+0.82*p).toFixed(3), dark=p>0.45;
+      return `<td style="background:rgba(var(--heat),${a});${dark?"color:var(--bg);":""}${i===j?"font-weight:600;":""}">${c.toLocaleString("en-US")}<small>${(100*p).toFixed(1)}%</small></td>`}).join("")+`</tr>`}).join("");
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===m)));
+}
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.m)));
+show("Stage 3 full");
+</script>
