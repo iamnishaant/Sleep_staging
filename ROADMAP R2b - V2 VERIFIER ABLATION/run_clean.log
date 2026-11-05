@@ -1,0 +1,38 @@
+arm C: 0 cached, 31 to generate
+[ 1/31] SC4081E0-PSG: ok (84 s)
+[ 2/31] SC4082E0-PSG: ok (85 s)
+[ 3/31] SC4111E0-PSG: ok (87 s)
+[ 4/31] SC4112E0-PSG: ok (88 s)
+[ 5/31] SC4131E0-PSG: ok (89 s)
+[ 6/31] SC4171E0-PSG: ok (90 s)
+[ 7/31] SC4172E0-PSG: ok (91 s)
+[ 8/31] SC4321E0-PSG: ok (94 s)
+[ 9/31] SC4322E0-PSG: ok (96 s)
+[10/31] SC4341F0-PSG: ok (99 s)
+[11/31] SC4342F0-PSG: ok (97 s)
+[12/31] SC4351F0-PSG: ok (100 s)
+[13/31] SC4352F0-PSG: ok (108 s)
+[14/31] SC4441E0-PSG: ok (102 s)
+[15/31] SC4442E0-PSG: ok (108 s)
+[16/31] SC4461F0-PSG: ok (92 s)
+[17/31] SC4462F0-PSG: ok (91 s)
+[18/31] SC4561F0-PSG: ok (86 s)
+[19/31] SC4562F0-PSG: ok (87 s)
+[20/31] SC4581G0-PSG: ok (90 s)
+[21/31] SC4582G0-PSG: ok (92 s)
+[22/31] SC4671G0-PSG: ok (100 s)
+[23/31] SC4672G0-PSG: ok (88 s)
+[24/31] ST7081J0-PSG: ok (88 s)
+[25/31] ST7082J0-PSG: ok (91 s)
+[26/31] ST7131J0-PSG: ok (86 s)
+[27/31] ST7132J0-PSG: ok (76 s)
+[28/31] ST7151J0-PSG: ok (72 s)
+[29/31] ST7152J0-PSG: ok (73 s)
+[30/31] ST7201J0-PSG: ok (72 s)
+[31/31] ST7202J0-PSG: ok (72 s)
+| Arm | Released | Flawed released | Malformed | Claims | Wrong number | Wrong/missing evidence | Unreliable as fact | Reliable hedged | Other | Missing mandatory | Fidelity | Token cap |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A | 31/31 | 0 | 0 | 589 | 0 | 0 | 0 | 0 | 0 | 0 | 527/527 | 0 |
+| B | 31/31 | 0 | 0 | 589 | 0 | 0 | 0 | 0 | 0 | 0 | 527/527 | 0 |
+| C | 31/31 | 0 | 0 | 589 | 0 | 0 | 0 | 0 | 0 | 0 | 527/527 | 0 |
+EXIT 0

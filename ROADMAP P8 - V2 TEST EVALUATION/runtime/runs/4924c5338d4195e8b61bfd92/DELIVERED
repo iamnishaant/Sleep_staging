@@ -1,0 +1,13 @@
+{
+ "execution_manifest_sha256": "4973f498b099fd9f7be2b8a7a2b8eaf81f948821d7d52263b226c8a67f65c4e6",
+ "outcome": "FALLBACK_SUMMARY",
+ "packet_sha256": "ed6a56f420a96d2bab97f73644c62ef1bc406cac18f8be92872fb0c477ceee1f",
+ "page_sha256": "cee26728f6c331ab96a72355984f89fe21ad3ea65fc7c0917be85e17617ab46b",
+ "policy_sha256": "a6d5ed429f73f1a563c3af1afa554cf436579326297a273263894af38f2bbb5d",
+ "reasons": [
+  "F03"
+ ],
+ "recording_id": "SC4611E0-PSG",
+ "release": "v2",
+ "run_id": "4924c5338d4195e8b61bfd92"
+}

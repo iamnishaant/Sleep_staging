@@ -1,3 +1,5 @@
+> **Banner added 2 Nov 2026.** The current release is **v2** (`CURRENT_RELEASE.md`). Where this file calls `student_N4kd` the delivered model, or says the shipped model takes one electrode, it describes release v1. Corrected figures and what changed: `output_v2/README.md`. **F19's four TinySleepNet per-class values other than N1 had no source and were removed.** Nothing below this banner was changed.
+
 # FIGURE_GUIDE.md — How to Explain Each Figure
 
 Companion to `FIGURES.md` and `figures/make_figures.py`. Every figure below is generated (PNG in

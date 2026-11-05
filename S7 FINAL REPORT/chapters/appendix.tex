@@ -1,0 +1,116 @@
+\section{Repository layout}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Key paths in the project repository.}
+\begin{tabularx}{\textwidth}{p{0.36\textwidth}Y}
+\toprule
+Path & Contents \\
+\midrule
+\texttt{distillation/} & Splits, teacher and student trainers, KD loss, ensemble, calibration, decoder, night confidence, metric reliability, N1 flag, packet builder (v1) \\
+\texttt{ADDING EOG VERSION - *} & EOG and advanced-student experiments, label audit, v2 integration (v2 packet builder and tables) \\
+\texttt{ROADMAP B1 - BENCHMARK/} & Standard Sleep-EDF-78 benchmark \\
+\texttt{report/} & Claim schema, grammar \texttt{claims.gbnf}, two-layer verifier, renderer, serializer \\
+\texttt{reference/}, \texttt{student/} & Reference run, training-set builder, LoRA SFT, GGUF models \\
+\texttt{agentic/} & Agent: core runner, workflows (Path A, Path B), staging adapters, report backends, release files, tests \\
+\texttt{AGENTIC AND SIMULATION/} & Edge design, simulation ladder, Docker bundle and results \\
+\texttt{ROADMAP P8 - V2 TEST EVALUATION/} & The single pre-registered test evaluation of release v2 \\
+\texttt{PLAIN LANGUAGE REPORT/} & Reference ranges, lay metrics and the plain-language summary \\
+\texttt{ui/} & Local web console \\
+\texttt{CURRENT\_RELEASE.md} & Source of truth for the current release and the numbers to cite \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Reproduction (release v2)}
+
+\begin{lstlisting}[language=bash]
+python -m pytest agentic/tests -q                          # agent tests
+python -m agentic run-edf <night.edf> --release v2         # raw night -> one page
+python -m agentic run-packet <packet.json> --release v2    # evidence packet -> page
+python -m ui                                               # local console, http://127.0.0.1:8000
+python figures/make_figures_v2.py                          # result figures
+python "S7 FINAL REPORT/make_architecture_figures.py"      # architecture figures
+\end{lstlisting}
+
+\section{Core code}
+
+\textbf{Knowledge-distillation loss} (\texttt{distillation/kd\_loss.py}, abridged):
+\begin{lstlisting}
+def distillation_loss(student_logits, teacher_logits, targets,
+                      T=3.0, alpha=0.5, class_weights=None):
+    C = student_logits.size(-1)
+    s, t = student_logits.reshape(-1, C), teacher_logits.reshape(-1, C)
+    y = targets.reshape(-1)
+    mask = y != IGNORE_INDEX                       # padding epochs
+    s, t, y = s[mask], t[mask], y[mask]
+    hard = F.cross_entropy(s, y, weight=class_weights)
+    # float(): fp16 loses the small off-argmax probabilities the soft targets carry
+    s_log_p = F.log_softmax(s.float() / T, dim=-1)
+    t_p = F.softmax(t.float() / T, dim=-1)
+    soft = F.kl_div(s_log_p, t_p, reduction='batchmean') * (T ** 2)
+    return alpha * hard + (1.0 - alpha) * soft
+\end{lstlisting}
+
+\textbf{Gated fusion of the v2 student} (\texttt{AdvancedStudent.forward}, abridged):
+\begin{lstlisting}
+h = self.temporal_encoder(xe)                       # v1 multi-scale encoder
+if self.use_eog and xo is not None:
+    e = self.eog_encoder(xo, xf)
+    g = torch.sigmoid(self.eog_gate(torch.cat([h, e], -1)))
+    h = h + g * self.eog_proj(e)                    # eog_proj = 0 at init
+if self.use_tf:
+    e = self.tf_encoder(xe)
+    g = torch.sigmoid(self.tf_gate(torch.cat([h, e], -1)))
+    h = h + g * self.tf_proj(e)
+h = self.fusion(torch.cat([h, self.spectral_encoder(xs)], -1))
+if self.use_local:                                  # +/-3 epochs, zero-initialised
+    h = h + self.loc_pw(F.gelu(self.loc_dw(h.transpose(1, 2)).transpose(1, 2)))
+logits = self.cls(self.encoder(self.positional_encoding(h), src_key_padding_mask=mask))
+\end{lstlisting}
+
+\textbf{Release gate} (\texttt{report/\_\_init\_\_.py}, abridged):
+\begin{lstlisting}
+def verify_report(raw, packet):
+    claims, parse_v = parse(raw)                    # Layer 0: JSON
+    if claims is None:
+        return VerifyReport(parse_v, parse_v, None, None, [])
+    struct_v = verify_structure(claims)             # Layer 1: closed world
+    policy = verify_policy(claims, packet)          # Layer 2: values, hedging, coverage
+    failed = {v.claim_id for v in struct_v if v.claim_id is not None}
+    kept = [c for c in claims if isinstance(c, dict) and c.get('claim_id') not in failed]
+    if len(kept) != len(claims):                    # a structurally bad claim never counts
+        policy = verify_policy(kept, packet)
+    return VerifyReport(parse_v + struct_v + policy.violations, struct_v,
+                        policy, claims, policy.enriched)   # ok iff no violations
+\end{lstlisting}
+
+\textbf{Agent runner: resume and bounded walk} (\texttt{agentic/core/runner.py}, abridged):
+\begin{lstlisting}
+step_name, index = self.workflow.first, 1
+for _ in range(self.workflow.max_transitions):       # a run always ends
+    if step_name is None:
+        return self.store.delivered(run_id)           # exactly one delivery
+    step_dir = self.store.step_dir(run_id, index, step_name)
+    done = self.store.done(step_dir)
+    if done is not None:                              # finished earlier: replay its decision
+        step_name, index = done['next'], index + 1
+        continue
+    self.store.reset(step_dir)                        # interrupted: wipe and re-run
+    decision = self.workflow.steps[step_name](ctx)
+    self.store.mark_done(step_dir, {'step': step_name, 'next': decision.next,
+                                    'reasons': decision.reasons})
+    trace.log(step_name, 'done', next=decision.next, reasons=decision.reasons)
+    step_name, index = decision.next, index + 1
+raise RuntimeError('exceeded max transitions')
+\end{lstlisting}
+
+\section{Sources of every number}
+
+\texttt{CURRENT\_RELEASE.md}; \texttt{FOR JOURNAL/README.md}; \texttt{ADDING EOG VERSION - FINAL SUMMARY/README.md};
+\texttt{ROADMAP P8 - V2 TEST EVALUATION/RESULTS.md}; \texttt{ROADMAP R3 - V2 REPORT MODEL/RESULTS.md};
+\texttt{ROADMAP R2b - V2 VERIFIER ABLATION/RESULTS.md}; \texttt{ROADMAP B1 - BENCHMARK/VERIFICATION.md};
+\texttt{student/slm\_models/SLM\_FINDINGS\_REPORT.md}; \texttt{agentic/reports/}; \texttt{PLAIN LANGUAGE REPORT/README.md};
+\texttt{AGENTIC AND SIMULATION/03\_EDGE\_SIMULATION\_PI5.md}; \texttt{AGENTIC AND SIMULATION/sim/friend\_bundle/RESULTS\_RUN1.md};
+\texttt{COMPARISON WITH EXISTING SYSTEMS/SYSTEM\_ACCEPTANCE.md}; \texttt{PROJECT\_REPORT.md} (v1 distillation history,
+stored labels).

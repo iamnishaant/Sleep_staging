@@ -1,0 +1,11 @@
+{
+ "info": {
+  "kind": "fallback"
+ },
+ "next": "vhtml",
+ "outputs": {
+  "page.html": "cee26728f6c331ab96a72355984f89fe21ad3ea65fc7c0917be85e17617ab46b"
+ },
+ "reasons": [],
+ "step": "fallback"
+}

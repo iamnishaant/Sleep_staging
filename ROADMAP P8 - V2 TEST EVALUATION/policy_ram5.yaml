@@ -1,0 +1,73 @@
+# policy.yaml v0.1 (16 Oct 2026). Copied from AGENTIC AND SIMULATION/phase0/policy.yaml (the spec). Every threshold carries its own version, status and source.
+# Changing ANY value changes this file's sha256, which enters run_id and every trace entry (ACCEPTANCE.md §1).
+# status: provisional = engineering choice to be measured; to_calibrate = set from train/val data in P2;
+#         fixed = defined by the training data or the frozen evaluation.
+
+policy_version: 0.2                       # 0.2 (2026-10-24): line-noise check W10/Q03 (pending item V5)
+
+identity:
+  run_id: "sha256(input_sha256 + policy_sha256 + execution_manifest_sha256)"
+
+ingest:
+  min_duration_h:         {value: 3,    v: 1, status: provisional, why: "shorter nights cannot produce the training-rule span reliably"}
+  max_duration_h:         {value: 16,   v: 1, status: provisional, code: R05, why: "longer files are not a single night (Sleep-EDF SC files run ~20 h); added 2026-10-17"}
+  night_window_h:         {value: 12,   v: 1, status: provisional, why: "evaluation crop: lights-off + 12 h, device-like input; added 2026-10-17"}
+  required_channel:       {value: "EEG Fpz-Cz", v: 1, status: fixed, why: "only validated montage"}
+  other_eeg_lead:         {value: REVIEW_ONLY, code: W05, v: 1, status: fixed, why: "no model validated on other leads"}
+  target_sampling_hz:     {value: 100,  v: 1, status: fixed, why: "training data"}
+
+study_period:
+  estimator_version: "v0.3"              # frozen 2026-10-17, accepted with deviation (end p90 49 > 30); agentic/reports/P2_STATUS.md
+  pad_epochs:             {value: 60,  v: 1, status: fixed, why: "training rule: 30 min each side"}
+  sustained_run_epochs:   {value: 5,   v: 2, status: calibrated, source: "train crop, p2_calibration.json", why: "ignore brief sleep at lights-off"}
+  max_gap_epochs:         {value: 8,   v: 2, status: calibrated, source: "train crop, p2_calibration.json"}
+  merge_epochs:           {value: 240, v: 1, status: calibrated, source: "train crop, p2_calibration.json", why: "main sleep episode: merge runs <= 2 h apart, keep the largest"}
+  instability_epochs:     {value: 30,  v: 1, status: to_calibrate, code: W08}
+  not_found:              {value: REVIEW_ONLY, code: R04, v: 1, status: fixed, why: "never use the whole recording silently"}
+  coordinates:            "original-recording epochs; pass-2 indices mapped back before any comparison"
+
+quality:                                  # values set in P2 from train+val; profile-agnostic by default
+  per_channel: [EEG, EOG]
+  flat_std_uv:            {value: 1.0, v: 1, status: fixed, why: "same rule as the trainer's quality_mask"}
+  stuck_run_s:            {value: 1.0, v: 1, status: fixed, why: "same rule as the trainer's quality_mask"}
+  warn_fraction:          {value: 0.046, v: 2, status: calibrated, rule: "p95 of train nights (cropped reference spans)", code: W02}
+  review_fraction:        {value: 0.110, v: 2, status: calibrated, rule: "max of train nights + 0.05", code: Q01}
+  line_noise_warn_ratio:  {value: 0.081, v: 1, status: calibrated, code: W10, rule: "p95 of train nights: night median of Welch P(44-50 Hz)/P(0.5-30 Hz)", source: "ROADMAP V5 - LINE NOISE/NOTES.md", why: "added 2026-10-24"}
+  line_noise_review_ratio: {value: 1.0, v: 1, status: calibrated, code: Q03, rule: "above all train nights but one; injected noise at this level costs 0.15-0.43 kappa", source: "ROADMAP V5 - LINE NOISE/NOTES.md", why: "added 2026-10-24"}
+  warn_longest_run_min:   {value: 30,  v: 1, status: to_calibrate, code: W02}
+  review_longest_run_min: {value: 120, v: 1, status: to_calibrate, code: Q01, channel: EEG}
+  eog_unusable:           {value: "route EOG-off (v2 only)", code: Q02, v: 1, status: provisional}
+  acquisition_profiles:   {}              # only declared + validated device profiles may override
+
+routing:
+  v1: {eeg_fpz_cz: N4kd}
+  v2_enabled: false                       # v2 enters only via a new execution manifest after its own dev bar
+
+resources:
+  max_soc_temp_c:         {value: 70,   v: 1, status: provisional, why: "below Pi 5 throttle onset with margin"}
+  min_free_ram_gb:        {value: 5.0,    v: 1, status: provisional, why: "report model peak ~4.9 GB on x86 + margin"}
+  report_window:          {value: ["01:00", "07:30"], v: 1, status: provisional}
+  max_waits:              {value: 12,   v: 1, status: provisional}
+  wait_s:                 {value: 300,  v: 1, status: provisional}
+
+report:
+  runtime: llama-completion               # llama-server is NOT allowed (does not reproduce frozen outputs)
+  # invocation arguments belong to the RELEASE (config/releases/*.yaml), not to the policy
+  timeout_s:              {value: 1200, v: 1, status: provisional, why: "~2x estimated Pi report time"}
+  retries:                {value: 1,    v: 1, status: provisional, on: [crash, timeout, no_end_marker]}
+  retry_on_verifier_fail: false           # deterministic at temperature 0; retrying cannot help
+  repair_enabled: false                   # option E, only after its own preregistered dev experiment
+
+vhtml:
+  sources: [packet_field, quality_sidecar_field, registered_derivation, whitelisted_constant]
+  derivations:
+    - {id: fraction_percent, rule: "round(value*100, 1) + '%'", from: "evidence item with unit fraction"}
+    - {id: fraction_error_pp, rule: "round(error*100, 1) + ' percentage points'", from: "fraction item error"}
+    - {id: num_format, rule: "int as is; float to <=4 decimals, trailing zeros stripped", from: "any numeric field"}
+    - {id: minutes, rule: "num_format + ' minute(s)'", from: "evidence item with unit minutes"}
+  whitelisted_constants: [report_date, run_id, epoch_seconds_30, unit_words]
+  applies_to: [report_page, fallback_page]
+
+targets:                                  # provisional engineering targets, checked in P7
+  p95_night_min:          {value: 15, v: 1, status: provisional}
+  peak_memory_gb:         {value: 10, v: 1, status: provisional}

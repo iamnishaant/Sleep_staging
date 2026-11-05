@@ -1,0 +1,203 @@
+\label{chap.2}
+
+\section{Existing System Study}
+\subsection{Review of existing Research work}
+
+\textbf{Deep sleep staging.} DeepSleepNet~\cite{supratak2017deepsleepnet} introduced a two-scale CNN (fine and
+coarse filters) followed by a recurrent layer for epoch context. Later work replaced the recurrence with attention
+(AttnSleep~\cite{eldele2021attnsleep}, SleepTransformer~\cite{phan2022sleeptransformer}), with fully convolutional
+U-shaped networks (U-Time~\cite{perslev2019utime}), or with compact sequence models
+(SeqSleepNet~\cite{phan2019seqsleepnet}, TinySleepNet~\cite{supratak2020tinysleepnet}). Multi-channel models that add
+EOG or a second EEG lead (SalientSleepNet~\cite{salientsleepnet}, LMCSleepNet~\cite{lmcsleepnet},
+MultiChannelSleepNet~\cite{multichannelsleepnet}, LightSleepX~\cite{lightsleepx}) improve N1 and REM, the stages
+where eye movements are informative. Table~\ref{tab:published} lists published results on the common Sleep-EDF-78
+protocol.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Published sleep-staging models on Sleep-EDF-78 (SC, 153 nights, 78 subjects), as published.}
+\label{tab:published}
+\begin{tabular}{lllrrrr}
+\toprule
+Model & Inputs & Params & Acc \% & MF1 & $\kappa$ & N1 F1 \\
+\midrule
+DeepSleepNet~\cite{supratak2017deepsleepnet} & EEG & 21\,M & 78.5 & 75.3 & 0.73 & 47.0 \\
+SleepEEGNet~\cite{sleepeegnet} & EEG & 2.1\,M & 82.8 & 77.0 & 0.73 & 44.6 \\
+SleepTransformer~\cite{phan2022sleeptransformer} & EEG & 3.7\,M & 81.4 & 74.3 & 0.74 & -- \\
+AttnSleep~\cite{eldele2021attnsleep} & EEG & 0.5--5.2\,M & 81.3 & 75.1 & 0.74 & 42.0 \\
+U-Time~\cite{perslev2019utime} & EEG & 1.1\,M & 81.3 & 76.3 & 0.75 & 51.0 \\
+SeqSleepNet~\cite{phan2019seqsleepnet} & EEG & 0.16\,M & 82.6 & 76.3 & 0.76 & 46.0 \\
+TinySleepNet~\cite{supratak2020tinysleepnet} & EEG & 1.3\,M & 83.1 & 78.1 & 0.77 & 51.0 \\
+LightSleepX~\cite{lightsleepx} & EEG + EOG & 0.049\,M & 82.6 & 78.7 & 0.77 & 63.0$^{*}$ \\
+LMCSleepNet~\cite{lmcsleepnet} & 2 EEG + EOG & 1.49\,M & 84.1 & 77.7 & 0.77 & 48.5 \\
+SalientSleepNet~\cite{salientsleepnet} & 2 EEG + EOG & 0.9\,M & 84.1 & 79.5 & -- & 54.2 \\
+SleepSatelightFTC~\cite{sleepsatelightftc} & EEG & 0.47\,M & 84.8 & -- & 0.787 & -- \\
+MultiChannelSleepNet~\cite{multichannelsleepnet} & 2 EEG + EOG & 13\,M & 85.0 & 79.6 & 0.79 & 53.0 \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize $^{*}$ Far above every other model; treated as anomalous. Several rows were taken from secondary comparison tables.}
+\end{tabular}
+\end{table}
+
+\textbf{Knowledge distillation.} Hinton et al.~\cite{hinton2015distilling} train a student on the teacher's softmax
+at temperature $T$, mixed with the hard-label loss and scaled by $T^2$. Distillation is widely used to compress
+sleep models (e.g.\ SleepKD and Micro SleepNet~\cite{sleepkd,microsleepnet}), but published work rarely tests
+whether the teacher is actually better than an undistilled student of the same size, which turns out to decide
+whether distillation helps at all (Section~\ref{sec:res-kd}).
+
+\textbf{Calibration and confidence.} Modern networks are over-confident; temperature scaling~\cite{guo2017calibration}
+fits one scalar on validation data to fix this without changing decisions. Expected calibration error (ECE)
+measures the gap between confidence and accuracy.
+
+\textbf{Explainability.} Integrated Gradients~\cite{sundararajan2017axiomatic} attributes a prediction to its inputs
+and satisfies a completeness axiom, which makes it checkable.
+
+\textbf{LLM-based sleep and EEG reporting.} Table~\ref{tab:llm} summarises the closest systems. All of them evaluate
+or check their output after it is generated, by humans or by another LLM.
+
+\begin{table}[htbp]
+\centering\small
+\caption{LLM-based sleep and EEG reporting systems.}
+\label{tab:llm}
+\begin{tabularx}{\textwidth}{lYYY}
+\toprule
+System & What it does & How output is checked & Reported result \\
+\midrule
+ChatGPT-4o on PSG (2025)~\cite{chatgptpsg} & Interprets PSG reports & Compared with physicians afterwards & Diagnosis 7/10; therapy 22/50 \\
+Local LLMs on OSA~\cite{seifen2025} & Gemma2, Llama3, Mistral-Nemo on 30 cases & Compared with physicians afterwards & "Needs significant improvement" \\
+SleepVLM (2026)~\cite{sleepvlm} & Vision-language model: stage and rationale per epoch & AASM-feature audit and experts & $\kappa$ 0.767 MASS-SS1, 0.743 external \\
+SleepLM (2026)~\cite{sleeplm} & Sleep-language foundation model, 10,000+ people & No claim-level check described & Task breadth \\
+Wearable guidance SLMs (2026)~\cite{wearableslm} & LLM reasoning distilled into small models & Human evaluation & Human ratings \\
+Hybrid EEG report system~\cite{hybrideeg} & 512 EEG reports & Majority vote of three LLMs & LLM-checked \\
+NeuraDock (2026, not sleep)~\cite{neuradock} & Deterministic EEG engine, LLM with a context pack & Grounded input, deterministic runs & No per-claim verifier \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Review of Existing Tools/Products}
+
+\begin{itemize}
+  \item \textbf{YASA}~\cite{vallat2021yasa} (open source, offline) stages EEG with a pretrained gradient-boosting
+  model. It is the closest offline baseline and is compared on identical nights in Section~\ref{sec:comparative}.
+  \item \textbf{U-Sleep} is an online service; it was excluded because this project is offline by design.
+  \item \textbf{Cleared clinical products} --- Philips Somnolyzer/Sleepware G3 ($\kappa$ 0.78 against manual scoring
+  in children~\cite{somnolyzer}), Cerebra Sleep System ($\kappa$ 0.72, 138 studies~\cite{cerebra}), EnsoSleep and the
+  Dreem 3S headband~\cite{dreem} --- have regulatory clearance and score respiratory events, arousals and leg
+  movements, which this project does not. Their figures come from different datasets and populations and are
+  context only.
+  \item \textbf{The inherited system} at the start of the project: a 649,229-parameter checkpoint whose model class
+  existed only inside a notebook, an 80/20 recording-level split with no test set, confusion matrices computed on
+  train + validation, and a headline $\kappa$ of 0.6663.
+\end{itemize}
+
+\section{Research Gap/ Scope for improvement and innovation}
+
+\textbf{Gaps found in existing work and the inherited system:}
+\begin{enumerate}
+  \item Staging results are reported without checking for subject leakage, and labels are rebuilt with
+  preprocessing whose alignment is never audited.
+  \item Distillation is applied without testing whether the teacher carries information the student lacks.
+  \item Staging models output a hypnogram, not a statement of how far each derived quantity can be trusted.
+  \item LLM-based reporting checks output after generation; none blocks a report deterministically before release,
+  and none runs offline under a fixed grammar at temperature 0 with byte-identical reruns.
+  \item No end-to-end pipeline handles bad signals, missing channels, model crashes or power loss for unattended
+  overnight use.
+\end{enumerate}
+
+\begin{enumerate}
+  \item \textbf{Gaps addressed in Phase I:} gaps 1--5 on Sleep-EDFx on x86 hardware --- leak-free evaluation and
+  the label audit, a working distillation recipe, the evidence packet, the verified SLM, the agentic workflow with
+  fault testing, the edge design with its analytical budget, and the container-level edge simulation (no
+  network, no secrets, staging and report parity on Linux, ARM64 staging parity under emulation).
+  \item \textbf{Gaps planned for Phase II:} an external cohort (MESA, CFS), a blinded clinician rating of reports, a
+  re-run of the standard benchmark with an inner early-stopping split, ARM64 report-model and Telemetry-night
+  parity, overnight replay and measurements on a Raspberry Pi 5, and a reader study for the plain-language summary.
+\end{enumerate}
+
+\section{Problem Statement and Contributions}\label{sec:problem}
+
+\begin{enumerate}
+  \item \textbf{Problem statement.} Given one night of raw EEG + EOG, produce on a local device a written sleep
+  report whose staging is accurate on unseen people, whose every number is traceable to measured data with its
+  reliability stated, and which is released only after a deterministic check --- and handle every failure by
+  delivering a truthful alternative instead of a wrong report.
+  \item \textbf{Research contributions.}
+  \begin{enumerate}
+    \item \emph{A distillation recipe that works, and the reason it first did not.} Under leak-free evaluation,
+    single-teacher KD made the student worse; we show that the teacher must exceed the student's own undistilled
+    performance, and that an ensemble of comparable but diverse students satisfies this. The resulting
+    175,599-parameter EEG + EOG student reaches $\kappa$ 0.756 on held-out subjects and $\kappa$ 0.769--0.775 on the
+    standard Sleep-EDF-78 protocol, competitive with models 5--74$\times$ larger.
+    \item \emph{Measured, not assumed, trust in every derived value.} The evidence packet classes each of 24 derived
+    metrics by its measured error, and its night-confidence tier predicts agreement with the expert without ground
+    truth.
+    \item \emph{Verification before release.} A locally run, fine-tuned 3\,B model under a grammar writes
+    evidence-cited claims; a frozen 30-rule verifier blocks any report that disagrees with the packet. On the
+    locked test set the v2 system released 28/29 verified reports and 0 flawed reports.
+    \item \emph{A deterministic, fault-tolerant agent designed for the edge.} A hash-pinned state machine delivers
+    exactly one page per night, passed 14/14 fault scenarios with eight invariants holding, reproduced reports byte
+    for byte, and ran unchanged in an offline container limited like a Raspberry Pi 5.
+  \end{enumerate}
+  A further finding of independent value: a common drop-then-trim preprocessing pattern misaligns 5--7\% of
+  Sleep-EDF labels, worth about 3 accuracy points.
+\end{enumerate}
+
+\section{Novelty of the Proposed Work}
+
+The building blocks are established; the novelty lies in how they are joined and in what is guaranteed before a
+report reaches a reader. The assessment comes from targeted literature searches (October 2026), not a systematic
+review, so each claim is made "to our knowledge" (Table~\ref{tab:novelty}). Table~\ref{tab:features} compares
+features with related papers and tools.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Established techniques versus what is new in this work.}
+\label{tab:novelty}
+\begin{tabularx}{\textwidth}{p{0.27\textwidth}Y}
+\toprule
+Established (not claimed as new) & New in this work, to our knowledge \\
+\midrule
+Lightweight CNN + Transformer staging & \textbf{N1 --- A release gate on generated sleep text.} Every claim must cite an evidence-packet field and pass a frozen, deterministic 30-rule verifier \emph{before} release, with exact numeric matching. Other LLM sleep/EEG systems check output after generation. \\
+Multi-modal EEG + EOG fusion & \textbf{N2 --- Uncertainty carried end to end into the wording.} Calibration, per-stage reliability, night confidence and measured metric reliability go into the packet, and the verifier \emph{enforces} that unreliable values are hedged. \\
+Knowledge distillation & \textbf{N3 --- A mechanism for when distillation helps.} A teacher must exceed the student's own undistilled performance; an ensemble of comparable, diverse students provides one. \\
+Multi-scale CNN front end & \textbf{N4 --- Gated fusion that starts at the distilled function.} EOG and time-frequency branches join through gates initialised closed, so the model degrades gracefully without EOG ($\kappa$ 0.744, still above v1). \\
+Grammar-constrained decoding & \textbf{N5 --- A deterministic, offline, auditable agent for the whole chain}, with eight checked invariants, fault-injection tests and byte-identical reruns, designed for a single-board computer. \\
+Running LLMs locally & \textbf{N6 --- A data-quality finding.} A drop-then-trim preprocessing pattern misaligns 5--7\% of Sleep-EDF labels. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Feature comparison with related papers and tools (\yes\ reported; \no\ not part of the work; -- not described in the sources read).}
+\label{tab:features}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrcccccccc}
+\toprule
+Work & Params & EEG+EOG & KD & Calibrated uncertainty & Written report & Claims cite evidence & Check \emph{before} release & Offline & Fault-tolerant agent \\
+\midrule
+DeepSleepNet & 21\,M & \no & \no & \no & \no & \no & \no & \yes & \no \\
+TinySleepNet & 1.3\,M & \no & \no & \no & \no & \no & \no & \yes & \no \\
+SleepTransformer & 3.7\,M & \no & \no & \yes\ entropy & \no & \no & \no & \yes & \no \\
+LightSleepX & 0.049\,M & \yes & -- & -- & \no & \no & \no & \yes & \no \\
+MultiChannelSleepNet & 13\,M & \yes & \no & -- & \no & \no & \no & \yes & \no \\
+SleepKD / Micro SleepNet & 0.048\,M & -- & \yes & -- & \no & \no & \no & \yes & \no \\
+YASA & GBM & \yes\ optional & \no & \yes\ per epoch & \no & \no & \no & \yes & \no \\
+SleepFM~\cite{sleepfm} & foundation & \yes & \no & -- & \no & \no & \no & -- & \no \\
+SleepVLM & VLM & \yes & \no & -- & \yes & \yes\ AASM features & \no\ audit in evaluation & -- & \no \\
+SleepLM & foundation & \yes & \no & -- & \yes & -- & \no & -- & \no \\
+ChatGPT-4o on PSG & -- & \no & \no & \no & \yes & \no & \no\ physicians after & \no\ cloud & \no \\
+Local LLMs on OSA & -- & \no & \no & \no & \yes & \no & \no\ physicians after & \yes & \no \\
+Wearable guidance SLMs & -- & \no & \yes\ LLM$\rightarrow$SLM & \no & \yes & -- & \no\ human eval. & \yes & \no \\
+Hybrid EEG reports & -- & \no & \no & \no & \yes & -- & \no\ 3-LLM vote & -- & \no \\
+NeuraDock (not sleep) & -- & \no & \no & -- & \yes & \yes\ context pack & \no & \yes & \yes \\
+Cleared products & proprietary & \yes & -- & -- & \yes & -- & \no\ technologist & -- & -- \\
+\textbf{Ours (release v2)} & \textbf{0.176\,M} & \yes & \yes\ ensemble & \yes\ enforced & \yes & \yes\ every claim & \yes\ 30 rules & \yes & \yes\ 14/14 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+No single work combines a compact distilled staging model, measured uncertainty, an evidence-cited written report
+and a deterministic pre-release check in one offline pipeline. The closest designs are SleepVLM (explains each
+epoch, but checks during evaluation rather than before release, and is a large model) and NeuraDock (deterministic
+grounding, but no per-claim verifier, and not sleep). Where this work is \emph{behind} --- external validation,
+clinician evaluation, clinical scope, measured edge hardware --- is shown in Table~\ref{tab:scorecard}.

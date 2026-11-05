@@ -1,0 +1,13 @@
+{
+ "info": {
+  "free_ram_gb": 7.67,
+  "soc_temp_c": null,
+  "waits": 0
+ },
+ "next": "generate",
+ "outputs": {
+  "health.json": "49c66f58fc1fd9bc7c092ed8d3973f4a4b79120a305f7e592036df8ffc6c7321"
+ },
+ "reasons": [],
+ "step": "wait_resources"
+}

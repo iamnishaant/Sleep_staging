@@ -1,0 +1,11 @@
+{
+ "info": {
+  "prompt_sha256": "335ce1381632eed88546064040108014172c8a7ff1caae7f7fbb85ff936a0b98"
+ },
+ "next": "wait_resources",
+ "outputs": {
+  "prompt.txt": "335ce1381632eed88546064040108014172c8a7ff1caae7f7fbb85ff936a0b98"
+ },
+ "reasons": [],
+ "step": "build_prompt"
+}

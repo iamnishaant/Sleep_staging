@@ -1,0 +1,21 @@
+/repo/agentic/workflows/edf_report.py:51: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(ctx.run_dir / "input" / "recording.edf"), preload=False, verbose=False)
+/repo/agentic/workflows/edf_report.py:51: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(ctx.run_dir / "input" / "recording.edf"), preload=False, verbose=False)
+/repo/agentic/workflows/edf_report.py:51: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(ctx.run_dir / "input" / "recording.edf"), preload=False, verbose=False)
+/repo/agentic/signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+/repo/agentic/signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+/repo/agentic/signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+/repo/agentic/signals.py:20: RuntimeWarning: Channels contain different highpass filters. Highest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+/repo/agentic/signals.py:20: RuntimeWarning: Channels contain different lowpass filters. Lowest filter setting will be stored.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+/repo/agentic/signals.py:20: RuntimeWarning: Highpass cutoff frequency 16.0 is greater than lowpass cutoff frequency 0.7, setting values to 0 and Nyquist.
+  raw = mne.io.read_raw_edf(str(edf_path), preload=False, verbose=False)
+/repo/ADDING EOG VERSION - ADVANCED STUDENT/kaggle_train_student_advanced.py:496: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(l, layers)
+SC4171E0-PSG: VERIFIED_REPORT  -> outbox/bf6d7e0d4b7ca76ed9f81faa.html

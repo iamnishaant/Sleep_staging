@@ -1,6 +1,6 @@
 # System Acceptance: Every Pass/Fail Bar in One Place
 
-**Sleep-Staging · Team 40 · 24 October 2026**
+**Sleep-Staging · Team 40 · 24 October 2026 · updated 2 November 2026: release v2 is current (`CURRENT_RELEASE.md`)**
 
 This table gathers the measurable criteria for staging, reports, Path B reliability, the agent, privacy
 and the edge.
@@ -21,13 +21,13 @@ are historical (see README §3).
 
 | # | Criterion | Bar | Source | Status |
 |---|---|---|---|---|
-| S1 | v1 (N4kd) historical test | Reported, not a gate | `eval_students.json` | κ 0.6993 decoded, stored labels; 0.7169 corrected |
+| S1 | v1 (N4kd) historical test | Reported, not a gate | `eval_students.json` | κ 0.6993 decoded, stored labels; 0.7169 corrected. **v1 is the historical release** |
 | S2 | v2 (Stage 3) validation bar | κ ≥ 0.732, N1 F1 ≥ 0.538, REM F1 ≥ 0.802 | `STAGE3_REPORT.md` | **Met** (all 3 seeds) |
 | S3 | v2 degrades gracefully without EOG | EOG-off κ above v1 | `STAGE3_REPORT.md` | **Met** (historical test 0.744 vs 0.718) |
 | S4 | Staging parameter budget | ≤ 200,000 | `IMPROVEMENT ROADMAP/ROADMAP.md` | **Met** (175,599) |
 | S5 | Any R4B change | Channel / N1 / context bars, replicated with a second seed | `IMPROVEMENT ROADMAP/ROADMAP.md` §3 | **Not run** |
-| S6 | Standard-protocol benchmark (B1) | Reported once on the final configuration | `GPU_PLAN_AND_BENCHMARK.md` | **Not run** |
-| S7 | Same-night baselines (R1) | Three-way table on dev, identical nights and labels | ROADMAP R1 | **Not run** |
+| S6 | Standard-protocol benchmark (B1) | Reported once on the final configuration | `GPU_PLAN_AND_BENCHMARK.md` | **Met, 29 Oct (verified 1 Nov).** Sleep-EDF-78, 10-fold, v2 architecture from scratch: κ 0.761 per recording; 0.769 fold-pooled at the final epoch (0.775 at the best epoch is optimistic, FOR JOURNAL F1). `ROADMAP B1 - BENCHMARK/VERIFICATION.md` |
+| S7 | Same-night baselines (R1) | Three-way table on dev, identical nights and labels | ROADMAP R1 | **Met, 28 Oct** (see T6) |
 | S8 | External cohort (R7) | Reported under the R7 protocol; no tuning | ROADMAP R7 | **Not run** |
 
 ## 2. Reports
@@ -36,7 +36,7 @@ are historical (see README §3).
 |---|---|---|---|---|
 | T1 | v1 dev | ≥ 25/31 at 5/5 (the pre-registered gate) | `report/PHASE2_DISTILLATION.md` | **Met** (30/31) |
 | T2 | v1 historical test | Reported | `SLM_FINDINGS_REPORT.md` | 29/29, 0 violations, fidelity 1.000 |
-| T3 | v2 release parity (R3) | Verifier suite passes; dev ≥ 30/31 at 5/5; 0 violations; deterministic on `llama-completion`; full version manifest | ROADMAP R3 (**new**) | **Met, 25 Oct.** Report model retrained on v2 packets: dev **31/31 verified, 31/31 at 5/5, 0 violations, fidelity 527/527**. `agentic/config/releases/v2.yaml` written, pins checked, agent CLI run end to end on Path A and Path B. No test-set run |
+| T3 | v2 release parity (R3) | Verifier suite passes; dev ≥ 30/31 at 5/5; 0 violations; deterministic on `llama-completion`; full version manifest | ROADMAP R3 (**new**) | **Met, 25 Oct.** Report model retrained on v2 packets: dev **31/31 verified, 31/31 at 5/5, 0 violations, fidelity 527/527**. `agentic/config/releases/v2.yaml` written, pins checked, agent CLI run end to end on Path A and Path B. **Test (P8, 2 Nov): 28/29 verified, 0 flawed reports released, 1 blocked by the verifier; 95% lower bound 82.2%** (`ROADMAP P8 - V2 TEST EVALUATION/RESULTS.md`) |
 | T4 | Verifier ablation (R2) | Incorrect-release counts for arms A/B/C; definitions fixed before the run | ROADMAP R2 (**new**) | **Met, 24 Oct.** Gate: 0 flawed releases. Ungated Student: 1/31 (B), 2/31 (C), no wrong numbers. Ungated base: 31/31 (`ROADMAP R2 - VERIFIER ABLATION/RESULTS.md`) |
 | T5 | Runtime path | Evaluated outputs reproduced only on `llama-completion` | `PIPELINE INTEGRATION/README.md` | **Met in the agent**; `deploy/server.py` and `pipeline.py` don't meet it (20–23/31) |
 | T6 | Same-night comparison (R1) | All dev nights scored, 0 skipped, against the same estimated spans | ROADMAP R1 (**new**) | **Met, 28 Oct.** YASA on all 31/31 dev nights; v2 beats it on every metric (κ 0.701 vs 0.635, N1 F1 +0.243). `ROADMAP R1 - YASA COMPARISON/RESULTS.md` |
@@ -74,7 +74,7 @@ All new, ROADMAP P1.
 | P1 | No network use | Path A and B succeed with networking disabled; no outbound connection attempts seen | **Met in-process, 24 Oct** (`agentic/tests/test_privacy.py`). The llama-completion child process is checked at D5 |
 | P2 | Temporary files | None left after delivery, or after crash + resume | **Met** (privacy test + 15 crash points) |
 | P3 | Logs | No patient-identifying fields beyond hashed or pseudonymous recording IDs | **Met for clinical values** (trace fields allowlisted). Open: the recording ID comes from the file name (`agentic/PRIVACY.md`) |
-| P4 | Deployed image | No reference runner, no `.env`, no API keys | **Not run** |
+| P4 | Deployed image | No reference runner, no `.env`, no API keys | **Met, 2 Nov** (edge-sim container: no `.env`, no key pattern in /repo /sim /opt /root; `AGENTIC AND SIMULATION/sim/friend_bundle/RESULTS_RUN1.md`). P1 also confirmed there: `--network none`, TCP and DNS blocked |
 | P5 | Device storage | Outbox and review folders readable only by the service user | **Not run** |
 
 ## 6. Edge (Raspberry Pi 5 16 GB)
@@ -83,10 +83,10 @@ Provisional targets from `phase0/ACCEPTANCE.md` §7.
 
 | # | Criterion | Bar | Status |
 |---|---|---|---|
-| E1 | ARM64 staging parity | Probability max \|Δ\| ≤ 1e-4; identical hypnograms on dev | **Not run** |
-| E2 | Pi report parity | Dev 5/5 count ≥ the x86 golden set; every Pi failure blocked by the verifier | **Not run** |
-| E3 | Time per night | P95 ≤ 15 min (estimate: 6–9 min) | **Not run** |
-| E4 | Peak memory | ≤ 10 GB | **Not run** |
+| E1 | ARM64 staging parity | Probability max \|Δ\| ≤ 1e-4; identical hypnograms on dev | **Met under emulation, 3 Nov** (QEMU aarch64 container, 8 SC nights, 15/15 arrays identical hypnograms, max \|Δp\| 7.7e-7; no ST night; real silicon not yet checked). Also met for Linux x86 vs Windows on all 31 dev nights (max 1.8e-5). `friend_bundle/RESULTS_RUN2.md` |
+| E2 | Pi report parity | Dev 5/5 count ≥ the x86 golden set; every Pi failure blocked by the verifier | **Not run on a Pi.** Container (x86, 3 Nov): 31/31 dev reports verified and byte-identical to this PC's |
+| E3 | Time per night | P95 ≤ 15 min (estimate: 6–9 min) | **Not run on a Pi.** x86 container, 4 CPUs: median 151 s per report, p95 160 s (this PC native: 78 s). Not a Pi timing |
+| E4 | Peak memory | ≤ 10 GB | **Met in the x86 container, 3 Nov:** 5.16 GB peak report generation, 5.64 GB end to end (staging 0.8 GB). To be repeated on the Pi |
 | E5 | Thermal | No throttling at 25 °C with the Active Cooler | **Not run** |
 | E6 | Measurements recorded | Cold and warm start, prompt/generation split, energy per night | **Not run** |
 | E7 | Soak | Several full nights with injected faults; exactly one delivered artifact per recording | **Not run** |
@@ -103,13 +103,16 @@ Provisional targets from `phase0/ACCEPTANCE.md` §7.
 | # | Criterion | Bar | Status |
 |---|---|---|---|
 | G1 | Test set | No selection, tuning or retraining; every read logged | **Met to date** (logs in four `TEST_ACCESS_LOG.md` files) |
-| G2 | Final test evaluation (agent P8) | One logged run of the frozen release, reported as a further access | **Not run** |
+| G2 | Final test evaluation (agent P8) | One logged run of the frozen release, reported as a further access | **Met, 2 Nov.** Release v2, pre-registered, logged (`ROADMAP P8 - V2 TEST EVALUATION/`). The test set can't be reused for a later model |
 | G3 | Thresholds | Calibrated on train, frozen, evaluated on dev | **Met** for estimator v0.3 and quality; **new** for T1 and V5 |
 
 ---
 
-**Summary today.**
-- **Report-trust rows are met** for v1.
-- **Path B is met with one deviation, and has an open TIB-tail gap** (B5–B7).
-- **The agent is met except** the real-model crash tests and line-noise QC.
-- **Privacy and edge are entirely not run.**
+**Summary, 2 November 2026 (release v2 current).**
+- **Staging, met:** test κ 0.756 on corrected labels (v1 0.718); B1 benchmark run and verified.
+- **Reports, met, including the final test:** P8 delivered 28/29 verified and released 0 flawed reports;
+  the verifier blocked the 29th.
+- **Path B:** met, with the end-point deviation (B2) and the open time-in-bed tail (B6).
+- **Agent:** met, including the real-model crash tests (A3) and the line-noise check (A5).
+- **Not run:** P4–P5 (the deployed image and device storage), E1–E7 (all edge measurements, which need
+  the Pi), H1–H2 (no human ratings yet) and S8 (external cohort).

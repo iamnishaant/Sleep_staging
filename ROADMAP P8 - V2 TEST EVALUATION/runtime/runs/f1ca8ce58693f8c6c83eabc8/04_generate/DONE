@@ -1,0 +1,14 @@
+{
+ "info": {
+  "attempts": 1,
+  "raw_sha256": "cd333f884112a872093209a37d5a0a68e5d6d57ce65285b7c0bdec4c0e169522"
+ },
+ "next": "verify",
+ "outputs": {
+  "generation.json": "9427bbfe07e9c7dcde53058d2d82613e30aa8dea0ccee114eba37c18b8165d13",
+  "prompt_for_llm.txt": "60755774ec50302a14fe7ebd766b58e9244d32f52752158fdf5889763d068572",
+  "raw.txt": "cd333f884112a872093209a37d5a0a68e5d6d57ce65285b7c0bdec4c0e169522"
+ },
+ "reasons": [],
+ "step": "generate"
+}

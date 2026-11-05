@@ -1,0 +1,11 @@
+{
+ "info": {
+  "recording_id": "SC4212E0-PSG"
+ },
+ "next": "build_prompt",
+ "outputs": {
+  "packet_meta.json": "01a4e603a3c1fd187c5b816e508a0f5dae12a2e251bdee83d501d01e12145e67"
+ },
+ "reasons": [],
+ "step": "load_packet"
+}

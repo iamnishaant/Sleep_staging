@@ -1,14 +1,14 @@
 """Somnia console — FastAPI server.
 
-The console is a thin layer over the project's existing entry points:
+The console is a thin layer over the agent (``agentic/``), run with release v2
+(CURRENT_RELEASE.md):
 
-* ``deploy.server.run_pipeline`` for packet -> verified report (frozen
-  Llama-Student + grammar + verifier + renderer),
-* ``pipeline.py``'s four stage functions for raw EDF -> tensor -> probs ->
-  evidence packet -> verified report.
+* packet -> verified report: the agent's Path A workflow (llama-completion,
+  frozen grammar, verifier and renderer, one delivery record per night);
+* raw EDF -> verified report: the agent's Path B workflow (training feature code,
+  study-period estimator, quality checks, then Path A).
 
-It imports those modules read-only. Nothing in ``distillation/``, ``report/``,
-``deploy/`` or ``pipeline.py`` is modified.
+It imports those modules read-only and writes only under ``ui/runtime/``.
 
 Run with:
     python -m ui                       # http://127.0.0.1:8000
@@ -24,7 +24,7 @@ import sys
 import threading
 import traceback
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 
@@ -170,131 +170,110 @@ def _spawn(kind: str, title: str, steps: list[tuple[str, str]],
     return job
 
 
-def _require_llama(job: Job) -> None:
-    if not core.llama_reachable():
-        raise RuntimeError(
-            "llama-server is not reachable on 127.0.0.1:8080. Start it with: "
-            "llama-server -m student/slm_models/llama-3.2-3b-instruct-student-q4_k_m.gguf "
-            "--host 127.0.0.1 --port 8080 --ctx-size 12288"
-        )
-    job.log("llama-server reachable on 127.0.0.1:8080")
+# ── Release v2 through the agent ─────────────────────────────────────────────
+# Reports and new recordings run through agentic/ with release v2 (CURRENT_RELEASE.md): llama-completion,
+# the frozen verifier and renderer, quality checks and a delivery record per night. This replaces the old
+# route through deploy/server.py + pipeline.py (release v1; pipeline.py's raw-EDF path can't stage a new
+# recording, PENDING K2). Those files are unchanged; they remain the v1 legacy path.
+
+# V7: this PC has ~5.9 GB free against the policy's provisional 6 GB floor. Same one-line override, for the
+# same reason, as the v2 dev scorecard and the P8 test run; everything else is config/policy.yaml.
+POLICY = core.UI_DIR / "policy_ui.yaml"
+NIGHT_HOURS = 12.0          # device-like window after lights-off (agentic/tools/p2_scorecards.py NIGHT_EPOCHS)
 
 
-def _run_report(job: Job, packet: dict) -> dict:
-    from deploy.server import run_pipeline, verify_component_integrity
-
-    verify_component_integrity()
-    job.log("Component hashes match deploy/frozen.json")
-    job.step("run", "running")
-
-    result = run_pipeline(packet, verbose=False)
-    status = result.get("status")
-    report_text = result.get("report_html") or ""
-    violations = result.get("violations") or []
-
-    if status == "PASS":
-        rec = packet.get("recording_id", "night")
-        stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-        dest = core.UI_REPORT_DIR / f"{rec}_{stamp}.txt"
-        dest.write_text(report_text, encoding="utf-8")
-        job.step("run", "done")
-        job.step("save", "done")
-        job.log(f"Verifier PASS — report saved to {dest.relative_to(ROOT)}")
-        return {
-            "status": "PASS",
-            "report_text": report_text,
-            "report_path": str(result.get("report_path", "")),
-            "ui_report": dest.name,
-            "audit": _audit_summary(result.get("audit") or {}),
-        }
-
-    job.step("run", "failed")
-    for violation in violations:
-        job.log(str(violation), "error")
-    job.log("Verifier blocked the report; routed to human review", "error")
-    return {
-        "status": status or "FAIL",
-        "violations": violations,
-        "raw_output": (result.get("audit") or {}).get("raw_output", ""),
-        "audit": _audit_summary(result.get("audit") or {}),
-    }
+def _ensure_policy() -> Path:
+    if not POLICY.exists():
+        src = (ROOT / "agentic" / "config" / "policy.yaml").read_text(encoding="utf-8")
+        old = "min_free_ram_gb:        {value: 6,"
+        assert src.count(old) == 1, "policy.yaml changed; review the RAM override"
+        POLICY.write_text(src.replace(old, "min_free_ram_gb:        {value: 5.0,"), encoding="utf-8")
+    return POLICY
 
 
-def _audit_summary(audit: dict) -> dict:
-    keys = ("timestamp", "recording_id", "status", "llm_wall_s", "prompt_hash",
-            "packet_hash", "model_sha256", "verifier_sha256")
-    return {k: audit.get(k) for k in keys if k in audit}
+def _agent(job: Job, workflow, call) -> dict:
+    from agentic.cli import make_runner
+
+    from agentic.core.device import device_health
+
+    core.release().check_pins()          # refuse before starting, as the agent CLI's manifest check does
+    job.log(f"Release {core.RELEASE_NAME} pins match · manifest {core.release().manifest_sha256[:16]}")
+    runner = make_runner(core.RELEASE_NAME, str(_ensure_policy()), "llama", core.AGENT_RUNTIME, workflow)
+    free, floor = device_health()["free_ram_gb"], runner.policy.get("resources.min_free_ram_gb")
+    if free < floor:   # otherwise the job looks frozen while the agent waits
+        waits, wait_s = runner.policy.get("resources.max_waits"), runner.policy.get("resources.wait_s")
+        job.log(f"Only {free:.1f} GB RAM free; the report model needs {floor} GB. The agent will re-check every "
+                f"{wait_s // 60} min for up to {waits * wait_s // 60} min, then deliver a fallback summary (F01). "
+                f"Close other apps to free memory.", "error")
+    rec = call(runner)
+    job.log(f"{rec['recording_id']}: {rec['outcome']} {' '.join(rec['reasons'])}".rstrip(),
+            "info" if rec["outcome"] == "VERIFIED_REPORT" else "error")
+    return {"status": rec["outcome"], "reasons": rec["reasons"], "run_id": rec["run_id"],
+            "recording_id": rec["recording_id"],
+            "report_url": f"/api/reports/file/{rec['run_id']}.html?source=agent"}
+
+
+def sleep_edf_crop(edf_path: Path) -> dict | None:
+    """Sleep-EDF files run ~20 h, and the agent sends any file over 16 h to review (R05). For a recognised
+    Sleep-EDF recording, crop to lights-off + 12 h, as the v2 dev scorecard did (agentic/tools/p2_parity.py
+    lights_off_epoch). Any other file is treated as one night, the way a device records it."""
+    subjects = json.loads((ROOT / "PLAIN LANGUAGE REPORT" / "subjects.json").read_text(encoding="utf-8"))
+    subj = subjects.get(edf_path.stem[:6])
+    if not subj or not subj.get("lights_off"):
+        return None
+    with edf_path.open("rb") as fh:
+        header = fh.read(184)[168:184].decode("ascii")          # EDF start: dd.mm.yyhh.mm.ss
+    start = datetime.strptime(header, "%d.%m.%y%H.%M.%S")
+    off = datetime.combine(start.date(), datetime.strptime(subj["lights_off"], "%H:%M:%S").time())
+    if off < start - timedelta(hours=2):                       # lights-off after midnight -> next day
+        off += timedelta(days=1)
+    return {"start_s": max(0, int((off - start).total_seconds() // 30)) * 30, "hours": NIGHT_HOURS}
 
 
 def job_report(job: Job, payload: dict) -> dict:
-    split = payload.get("split", "dev")
-    rec_id = payload.get("recording_id", "")
+    from agentic.cli import run_packet
+    from agentic.workflows import packet_report
+
+    split, rec_id = payload.get("split", "dev"), payload.get("recording_id", "")
     job.step("load", "running")
-    packet = core.packet(split, rec_id)
-    if packet is None:
+    path = core.packet_path(split, rec_id)
+    if path is None:
         raise FileNotFoundError(f"No packet for {rec_id} in split '{split}'")
-    job.log(f"Loaded {rec_id} · {packet.get('n_epochs')} epochs · "
-            f"{len(packet.get('evidence_items') or [])} evidence items")
     job.step("load", "done")
-    _require_llama(job)
-    return _run_report(job, packet)
+    job.step("run", "running")
+    out = _agent(job, packet_report.WORKFLOW, lambda runner: run_packet(runner, path))
+    job.step("run", "done")
+    return out
 
 
 def job_edf(job: Job, payload: dict) -> dict:
+    from agentic.cli import run_edf
+    from agentic.workflows import edf_report
+
     upload = payload.get("upload_id", "")
     root = core.UPLOAD_DIR.resolve()
     edf_path = (core.UPLOAD_DIR / upload).resolve()
     if root not in edf_path.parents or not edf_path.is_file():
         raise FileNotFoundError(f"Upload not found: {upload}")
 
-    rec_id = edf_path.stem
-    work = core.WORK_DIR / job.id
-    work.mkdir(parents=True, exist_ok=True)
+    crop = sleep_edf_crop(edf_path)
+    job.log(f"Input: {edf_path.name} ({edf_path.stat().st_size / 1e6:.1f} MB)"
+            + (f" · Sleep-EDF file: lights-off + {crop['hours']:.0f} h (starts {crop['start_s'] / 3600:.2f} h in)"
+               if crop else " · treated as one night"))
+    job.step("ingest", "running")
+    out = _agent(job, edf_report.WORKFLOW, lambda runner: run_edf(runner, edf_path, crop))
 
-    import pipeline as pl
-
-    job.log(f"Input: {edf_path.name} ({edf_path.stat().st_size / 1e6:.1f} MB)")
-    job.step("preprocess", "running")
-    tensor_path, spectral_path = pl.preprocess_edf(edf_path, work)
-    job.step("preprocess", "done")
-
-    job.step("stage", "running")
-    npz_path = pl.infer(tensor_path, spectral_path, work)
-    job.step("stage", "done")
-
-    job.step("packet", "running")
-    packet_path = pl.build_packet(rec_id, npz_path, work)
-    packet = json.loads(packet_path.read_text(encoding="utf-8"))
-    copy = core.UI_PACKET_DIR / f"{rec_id}.json"
-    copy.write_text(json.dumps(packet, indent=2), encoding="utf-8")
-    job.step("packet", "done")
-    job.log(f"Packet built · tier={packet['night_confidence']['tier']} · "
-            f"{len(packet['evidence_items'])} evidence items")
-
-    payload_out: dict[str, Any] = {
-        "status": "PACKET_ONLY",
-        "recording_id": rec_id,
-        "packet": packet,
-        "packet_path": str(copy.relative_to(ROOT)),
-    }
-
-    if not payload.get("generate_report", True):
-        job.step("report", "skipped")
-        payload_out["report_note"] = "Report generation was disabled for this run."
-        job.log("Report step skipped (packet only)")
-        return payload_out
-
-    job.step("report", "running")
-    if not core.llama_reachable():
-        job.step("report", "skipped")
-        job.log("llama-server not reachable — report skipped, packet retained", "error")
-        payload_out["report_note"] = "llama-server not reachable on 127.0.0.1:8080"
-        return payload_out
-
-    report = _run_report(job, packet)
-    payload_out.update(report)
-    payload_out["status"] = report.get("status", "PACKET_ONLY")
-    return payload_out
+    run_dir = core.AGENT_RUNTIME / "runs" / out["run_id"]
+    for key, pattern in (("ingest", "*_ingest"), ("stage", "*_stage_pass2"),
+                         ("packet", "*_build_packet"), ("report", "*_deliver")):
+        job.step(key, "done" if any(run_dir.glob(pattern)) else "skipped")
+    packet_file = next(iter(sorted(run_dir.glob("*_build_packet/packet.json"))), None)
+    if packet_file:
+        packet = json.loads(packet_file.read_text(encoding="utf-8"))
+        copy = core.UI_PACKET_DIR / f"{packet['recording_id']}.json"
+        copy.write_text(json.dumps(packet, indent=2), encoding="utf-8")
+        out |= {"packet": packet, "packet_path": copy.relative_to(ROOT).as_posix()}
+    return out
 
 
 # ── API ──────────────────────────────────────────────────────────────────────
@@ -324,6 +303,22 @@ def api_packet(split: str, rec_id: str) -> dict:
     }
 
 
+@app.get("/api/plain/{split}/{rec_id}")
+def api_plain(split: str, rec_id: str) -> dict:
+    """Plain-language view: fixed templates over the same packet (PLAIN LANGUAGE REPORT/plain_text.py)."""
+    packet = core.packet(split, rec_id)
+    if packet is None:
+        raise HTTPException(404, f"Packet not found: {split}/{rec_id}")
+    plain_dir = str(ROOT / "PLAIN LANGUAGE REPORT")
+    if plain_dir not in sys.path:
+        sys.path.insert(0, plain_dir)
+    from plain_text import render
+
+    out = render(packet)
+    out.pop("_allowed_numbers", None)
+    return out
+
+
 @app.get("/api/packets/{split}/{rec_id}/download")
 def api_packet_download(split: str, rec_id: str) -> FileResponse:
     path = core.packet_download_path(split, rec_id)
@@ -338,26 +333,30 @@ def api_reports() -> dict:
 
 
 @app.get("/api/reports/file/{name}")
-def api_report_file(name: str, source: str = "deploy", download: bool = False) -> FileResponse:
+def api_report_file(name: str, source: str = "agent", download: bool = False) -> FileResponse:
     path = core.report_file(name, source)
     if path is None:
         raise HTTPException(404, "Report not found")
     return FileResponse(
         path,
-        media_type="text/plain; charset=utf-8",
+        media_type="text/html; charset=utf-8",
         filename=path.name if download else None,
-        headers={"Cache-Control": "no-store"},
+        # pages are shown in a sandboxed iframe; the CSP sandbox also covers opening one directly
+        headers={"Cache-Control": "no-store", "Content-Security-Policy": "sandbox"},
     )
 
 
 @app.get("/api/review/{name}")
-def api_review(name: str) -> JSONResponse:
-    if Path(name).name != name:
-        raise HTTPException(400, "Bad review name")
-    path = core.REVIEW_DIR / name
-    if not path.is_file():
+def api_review(name: str, source: str = "agent") -> JSONResponse:
+    path = core.review_file(name, source)
+    if path is None:
         raise HTTPException(404, "Review record not found")
     return JSONResponse(json.loads(path.read_text(encoding="utf-8")))
+
+
+@app.get("/api/evidence")
+def api_evidence() -> dict:
+    return {"evidence": core.evidence(), "figures": core.figures()}
 
 
 @app.post("/api/integrity")
@@ -397,8 +396,7 @@ def api_job_report(body: dict) -> dict:
     job = _spawn(
         "report",
         f"Verified report · {rec_id}",
-        [("load", "Load evidence packet"), ("run", "Generate · verify · render"),
-         ("save", "Save report")],
+        [("load", "Load evidence packet"), ("run", "Generate · verify · deliver (agent, release v2)")],
         job_report,
         {"split": split, "recording_id": rec_id},
     )
@@ -408,11 +406,9 @@ def api_job_report(body: dict) -> dict:
 @app.post("/api/jobs/edf")
 def api_job_edf(body: dict) -> dict:
     upload_id = body.get("upload_id", "")
-    make_report = bool(body.get("generate_report", True))
-    steps = [("preprocess", "Preprocess EDF"), ("stage", "Stage with student_N4kd"),
-             ("packet", "Build evidence packet"), ("report", "Generate verified report")]
-    job = _spawn("edf", f"New night · {Path(upload_id).name}", steps, job_edf,
-                 {"upload_id": upload_id, "generate_report": make_report})
+    steps = [("ingest", "Read the recording · find the night"), ("stage", "Stage with v2 (EEG + EOG)"),
+             ("packet", "Build evidence packet"), ("report", "Generate · verify · deliver")]
+    job = _spawn("edf", f"New night · {Path(upload_id).name}", steps, job_edf, {"upload_id": upload_id})
     return {"job_id": job.id}
 
 
@@ -441,3 +437,5 @@ def index() -> FileResponse:
 
 
 app.mount("/static", StaticFiles(directory=str(core.STATIC_DIR)), name="static")
+if core.FIGURES_DIR.exists():   # read-only: the v2 figure set (figures/make_figures_v2.py)
+    app.mount("/figures", StaticFiles(directory=str(core.FIGURES_DIR)), name="figures")

@@ -1,0 +1,48 @@
+This project built and evaluated, end to end, an offline system that turns one night of EEG + EOG into a written
+sleep report whose every claim is checked before release. In the order the work was done:
+
+\begin{enumerate}
+  \item \textbf{Knowledge distillation} worked only after the evaluation was made honest and the teacher was made
+  genuinely better than the student; an ensemble of diverse compact students provided that teacher, and
+  distillation's clearest gain was calibration.
+  \item \textbf{The staging student} (release v2, 175,599 parameters, EEG + EOG) reaches $\kappa$ 0.756 on held-out
+  subjects and $\kappa$ 0.769--0.775 on the standard Sleep-EDF-78 protocol, competitive with models 5--74$\times$
+  larger, and degrades gracefully without the eye channel.
+  \item \textbf{The evidence packet} turns predictions into a contract that carries measured trust: per-stage
+  reliability, a night-confidence tier that predicts expert agreement without ground truth, and the measured
+  reliability of each of 24 derived metrics.
+  \item \textbf{The fine-tuned SLM}, behind a frozen deterministic verifier, released 28/29 verified reports and
+  \textbf{no flawed report} on the locked test set; the one flawed generation was blocked.
+  \item \textbf{The agentic workflow} delivered the correct, truthful outcome in every fault scenario tested, with
+  eight safety invariants holding and byte-identical reruns.
+  \item \textbf{The edge design} fits a Raspberry Pi 5 on paper (about 6--9 minutes and 6--8\,GB per night), and the
+  first simulation levels hold: in an offline container with Pi-like limits (4 CPUs, 16\,GB), the network was off, no
+  secrets were visible, staging matched the reference on 31/31 nights, and the report model produced 31/31 verified
+  reports with text identical to the reference, at 151\,s and 5.2\,GB peak per report; staging gave identical hypnograms
+  under ARM64 emulation on 8 nights.
+\end{enumerate}
+
+The safe summary claim is: \emph{a 0.18\,M-parameter staging model competitive with far larger models, joined to a
+local 3\,B report model whose output is released only after a deterministic check, with no flawed report released
+on held-out data.} "Verified" here means consistent with the packet; clinical usefulness is not yet shown.
+
+\section*{Scope for further research (Phase II), in priority order}
+
+\begin{enumerate}
+  \item \textbf{Edge measurements:} extend the ARM64 check to Sleep Telemetry nights and to the report model, build the
+  overnight replay scheduler and the history store needed for multi-night trends (scenario S15), then measure latency,
+  temperature and power on a Raspberry Pi 5 with a 7-night soak, and freeze an edge release with one logged
+  evaluation.
+  \item \textbf{External validation} on MESA and CFS, which buys both statistical power and clinical credibility.
+  \item \textbf{A blinded clinician rating} of reports (even 2--3 raters on 20 reports), and a reader study of the
+  plain-language summary with non-experts.
+  \item \textbf{Benchmark hygiene:} re-run B1 with an inner early-stopping split and a pooled confusion matrix;
+  retrain the teacher on corrected labels or drop the "beats its teacher" claim; check every published row against
+  its original paper.
+  \item \textbf{Multi-scorer soft labels} (e.g.\ DOD-H/DOD-O, five scorers per epoch), so distillation targets
+  reflect real inter-scorer uncertainty rather than model disagreement.
+  \item \textbf{A smaller report model} (1--1.5\,B) trained to the 5/5 bar, roughly halving edge latency;
+  speculative decoding and prompt-prefix caching as lower-risk speed-ups.
+  \item \textbf{A new locked evaluation set}, since the current test set has been used for v2 and cannot evaluate
+  a later model.
+\end{enumerate}

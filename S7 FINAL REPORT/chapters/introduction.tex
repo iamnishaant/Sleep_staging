@@ -1,0 +1,85 @@
+\section{Background}
+
+Polysomnography (PSG) records EEG, EOG, EMG and other signals overnight. A trained technician divides the night
+into 30-second epochs and labels each as Wake, N1, N2, N3 or REM following the AASM manual~\cite{aasm}. The
+resulting hypnogram drives clinical quantities such as total sleep time (TST), sleep efficiency, wake after sleep
+onset (WASO) and REM latency, which a clinician then summarises in a written report.
+
+Manual scoring takes one to two hours per night, and two expert scorers agree on only about 80\% of epochs; on N1
+they agree on as few as 25--45\%. Deep networks now stage single-channel EEG at inter-scorer level (Cohen's
+$\kappa \approx 0.75$--$0.79$ on Sleep-EDF~\cite{supratak2017deepsleepnet,supratak2020tinysleepnet,phan2022sleeptransformer}),
+and recent work uses large language models to interpret sleep data~\cite{sleepvlm,sleeplm,chatgptpsg}. Three trends
+shape this project:
+
+\begin{itemize}
+  \item \textbf{Model compression.} Staging networks range from 21\,M parameters (DeepSleepNet) down to under
+  0.2\,M (SeqSleepNet, LightSleepX). \emph{Knowledge distillation} (KD)~\cite{hinton2015distilling} trains a small
+  \emph{student} to imitate the softened outputs of a larger \emph{teacher}.
+  \item \textbf{Language models for clinical text.} LLMs write fluent reports but can state numbers that are not in
+  the data (\emph{hallucination}). Small open models ($\le$3\,B parameters) can run locally, which matters for
+  privacy.
+  \item \textbf{Edge deployment.} A home device that records a night and produces a report the next morning without
+  sending data to the cloud must fit a few gigabytes of memory and a CPU-only power budget.
+\end{itemize}
+
+\section{Problem Addressed}
+
+No existing system goes from a raw overnight recording to a written sleep report that is (a) produced on a local
+device, (b) built on a staging model whose accuracy is honestly measured on unseen people, and (c) guaranteed to
+contain only statements supported by the measured data. The specific gaps met in this project were:
+
+\begin{enumerate}
+  \item The inherited staging model's reported accuracy was inflated by subject leakage, and its labels were
+  misaligned on 5--7\% of epochs.
+  \item The model was too large for comfortable free-tier training and edge inference, and naive distillation made
+  it worse rather than better.
+  \item A bare hypnogram says nothing about how far each derived value can be trusted.
+  \item Untrained small language models cannot write a compliant report (2/31 nights for the best candidate), and
+  existing LLM reporting systems check output only after release.
+  \item Nothing orchestrated these parts robustly enough for unattended overnight use on a small device.
+\end{enumerate}
+
+\section{Motivation}
+
+\textbf{Main objective.} Build an offline pipeline that turns one night of EEG + EOG into a sleep report in which
+every number comes from the measured data and every claim has passed a deterministic check before anyone reads it.
+
+\textbf{Specific objectives (milestones, in the order the work was done):}
+\begin{enumerate}
+  \item \emph{Knowledge distillation:} establish a leak-free evaluation and find a distillation recipe that
+  actually transfers useful information.
+  \item \emph{Student model:} deliver a staging model under 200\,K parameters that is at least as accurate as its
+  teacher on unseen subjects.
+  \item \emph{Evidence packet:} define a versioned contract that carries calibrated confidence and the measured
+  reliability of every derived value.
+  \item \emph{SLM:} fine-tune a locally runnable language model to write evidence-cited claims, gated by a frozen
+  verifier.
+  \item \emph{Agentic workflow:} run the whole chain from a raw EDF with quality control, fallbacks, crash recovery
+  and an audit trail, delivering exactly one page per night.
+  \item \emph{Edge simulation:} design and budget deployment on a Raspberry Pi 5, and validate it step by step in
+  emulation (container limits, ARM64) before hardware --- done for the container levels, pending for the device.
+\end{enumerate}
+
+\section{Scope of the Study/Project}
+
+\textbf{Included.} Sleep-EDF Expanded (Sleep-EDFx, PhysioNet)~\cite{kemp2000sleepedf,goldberger2000physionet}: 197
+recordings from 100 subjects across the Sleep Cassette (SC, healthy ageing) and Sleep Telemetry (ST, mild
+sleep-onset difficulty) cohorts; EEG Fpz-Cz and horizontal EOG; five-class AASM staging; report generation for
+sleep architecture and derived metrics; a plain-language summary layer for non-experts; an agent that runs on x86;
+a local web console; an analytical budget and a container simulation for a Raspberry Pi 5 (16\,GB).
+
+\textbf{Excluded.} Respiratory events, arousals and limb movements (scored by cleared clinical products); diagnosis
+of any disorder; an external cohort (MESA, CFS and DOD need separate access); a clinician rating of report quality;
+measurements on physical edge hardware. The system is a wellness and reporting prototype, not a diagnostic device.
+
+\textbf{Release v2.} Two releases of the system exist. Release v1 (EEG-only staging) is historical; release v2
+(EEG + EOG staging and a report model retrained on its packets) is the system this report presents. Where a v1
+number is shown it is labelled, and v1 staging numbers measured on the original \emph{stored} labels are never
+placed next to v2's, which use corrected labels.
+
+\textbf{Organisation of the report.} Chapter~2 reviews staging models, LLM-based reporting and existing tools, and
+identifies the gap. Chapter~3 describes the proposed system and its architecture stage by stage: distillation, the
+student, the evidence packet, the SLM and verifier, the agent and the edge plan. Chapter~4 presents the experiments
+and results in the same order, followed by a comparative analysis against published models, tools and LLM
+reporting systems. Chapter~5 concludes and lists further work. Appendix~A gives the code layout, core code and
+reproduction commands.

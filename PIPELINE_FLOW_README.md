@@ -1,3 +1,5 @@
+> **Historical document — banner added 2 Nov 2026.** This describes release v1 (staging model `student_N4kd`, EEG only) or an earlier state of the project. The current release is **v2** (`student_N6adv_full_s1`, EEG + EOG, with the v2 report model). Current numbers and status are in [`CURRENT_RELEASE.md`](CURRENT_RELEASE.md). Nothing below this banner was changed.
+
 # Pipeline Flow: Input → Process → Output, Phase by Phase
 
 **Sleep-Staging · Team 40 · written 20 October 2026**

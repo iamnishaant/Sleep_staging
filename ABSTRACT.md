@@ -1,3 +1,5 @@
+> **Historical document — banner added 2 Nov 2026.** This describes release v1 (staging model `student_N4kd`, EEG only) or an earlier state of the project. The current release is **v2** (`student_N6adv_full_s1`, EEG + EOG, with the v2 report model). Current numbers and status are in [`CURRENT_RELEASE.md`](CURRENT_RELEASE.md). Nothing below this banner was changed.
+
 # Compact Sleep Staging by Knowledge Distillation: A Leakage-Corrected Re-Evaluation
 
 **Author:** Nishant Shah · Project 48 — Explainable Deep Learning for Sleep Disorder Detection

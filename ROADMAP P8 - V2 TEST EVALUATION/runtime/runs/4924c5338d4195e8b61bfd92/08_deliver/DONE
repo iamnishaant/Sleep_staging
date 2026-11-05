@@ -1,0 +1,9 @@
+{
+ "info": {
+  "outcome": "FALLBACK_SUMMARY"
+ },
+ "next": null,
+ "outputs": {},
+ "reasons": [],
+ "step": "deliver"
+}

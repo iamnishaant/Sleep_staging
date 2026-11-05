@@ -1,3 +1,5 @@
+> **Release note — banner added 2 Nov 2026.** The current release is **v2**: run `python -m agentic run-edf <file> --release v2` (or `run-packet`). The CLI default is still `v1`, kept because the tests and replay cache are built on it. See [`CURRENT_RELEASE.md`](../CURRENT_RELEASE.md).
+
 # agentic: deterministic agent around the frozen sleep-report pipeline
 
 **Status (17 Oct 2026): Phases 1–2 built** (Path A: packet → report; Path B: raw EDF → report). The spec, reviews and acceptance criteria

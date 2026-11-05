@@ -1,0 +1,11 @@
+{
+ "info": {
+  "kind": "report"
+ },
+ "next": "vhtml",
+ "outputs": {
+  "page.html": "a4d725bacc8d23bf4a2e122404a6888d2cc138d8291e4c30ebdcd69e846e070a"
+ },
+ "reasons": [],
+ "step": "render"
+}

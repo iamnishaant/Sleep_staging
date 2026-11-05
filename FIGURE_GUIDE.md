@@ -1,3 +1,5 @@
+> **Draft still presents v1 — banner added 2 Nov 2026.** The current release is **v2** (`student_N6adv_full_s1`, EEG + EOG, with the v2 report model). Where this draft calls `student_N4kd` the delivered model, or cites κ 0.7001/0.699 or 29/29 as the current system, update it from [`CURRENT_RELEASE.md`](CURRENT_RELEASE.md) before using it. Nothing below this banner was changed.
+
 # FIGURE_GUIDE.md — How to Explain Each Figure
 
 Companion to `FIGURES.md` and `figures/make_figures.py`. Every figure below is generated (PNG in

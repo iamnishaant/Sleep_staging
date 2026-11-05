@@ -26,9 +26,9 @@ function esc(value) {
 }
 
 const num = (v, d = 2) => (v == null || Number.isNaN(Number(v)) ? '—' : Number(v).toFixed(d));
-const int = (v) => (v == null ? '—' : Math.round(v).toLocaleString());
+const int = (v) => (v == null ? '—' : Math.round(v).toLocaleString('en-US'));
 const pct = (v, d = 1) => (v == null ? '—' : (Number(v) * 100).toFixed(d) + '%');
-const big = (v) => (v == null ? '—' : Math.round(v).toLocaleString());
+const big = (v) => (v == null ? '—' : Math.round(v).toLocaleString('en-US'));
 
 function duration(minutes) {
   if (minutes == null) return '—';
@@ -161,12 +161,15 @@ function renderChips() {
   const host = document.getElementById('status-chips');
   const s = state.status;
   if (!s) { host.innerHTML = ''; return; }
-  const integrity = s.checks.find((c) => c.id === 'verifier');
   const llama = s.llama_alive;
+  document.getElementById('foot-release').textContent = `Release ${s.release}`;
+  document.getElementById('foot-model').textContent = `${s.metrics.student} · ${s.metrics.inputs}`;
+  document.getElementById('foot-pins-dot').className = `dot ${s.ok ? 'ok' : 'bad'}`;
+  document.getElementById('foot-detail').textContent = `packet schema ${s.packet_schema} · ${s.ok ? 'all pins match' : 'pin mismatch'}`;
   host.innerHTML = `
-    <span class="chip"><span class="dot accent"></span><b>student_N4kd</b></span>
-    <span class="chip"><span class="dot ${llama ? 'ok' : 'warn'}"></span>${llama ? 'Llama online' : 'Llama offline'}</span>
-    <span class="chip"><span class="dot ${integrity?.state === 'ok' ? 'ok' : 'warn'}"></span>${integrity?.state === 'ok' ? 'verifier frozen' : 'verify'}</span>
+    <span class="chip"><span class="dot accent"></span><b>release ${esc(s.release)}</b> · ${esc(s.metrics.student)}</span>
+    <span class="chip"><span class="dot ${llama ? 'ok' : 'bad'}"></span>${llama ? 'report model ready' : 'report model not ready'}</span>
+    <span class="chip"><span class="dot ${s.ok ? 'ok' : 'bad'}"></span>${s.ok ? 'all pins match' : 'pin mismatch'}</span>
   `;
 }
 
@@ -180,7 +183,7 @@ async function getRecs(split) {
 
 /* ── Router ─────────────────────────────────────────────────────────────── */
 
-const ROUTES = ['overview', 'recordings', 'recording', 'new', 'reports', 'system'];
+const ROUTES = ['overview', 'recordings', 'recording', 'new', 'reports', 'evidence', 'system'];
 
 async function route() {
   stopPolling();
@@ -194,6 +197,7 @@ async function route() {
     else if (page === 'recording') await pageRecording(parts[1] || 'dev', decodeURIComponent(parts[2] || ''));
     else if (page === 'new') await pageNew();
     else if (page === 'reports') await pageReports(parts[1] ? decodeURIComponent(parts[1]) : null, parts[2] || null);
+    else if (page === 'evidence') await pageEvidence();
     else if (page === 'system') await pageSystem();
     else await pageOverview();
   } catch (error) {
@@ -219,11 +223,11 @@ async function pageOverview() {
     </div>`;
 
   const pipeline = [
-    ['01', 'Preprocess', 'EDF → 30-second EEG epochs + 34 spectral features'],
-    ['02', 'Stage', 'student_N4kd · 139K params · calibrated 5-class probabilities'],
-    ['03', 'Packet', 'Clinic metrics, reliability tiers and 19 evidence items'],
-    ['04', 'Report', 'Llama-Student constrained by the frozen grammar'],
-    ['05', 'Verify', '30 deterministic rules — a passing report or human review'],
+    ['01', 'Preprocess', 'EDF → 30-second EEG + EOG epochs + 34 spectral features; night found and quality-checked'],
+    ['02', 'Stage', `${m.student} · ${Math.round((m.parameters || 0) / 1000)}K params · calibrated 5-class probabilities`],
+    ['03', 'Packet', `Clinic metrics, reliability tiers and ${evidence.items} evidence items`],
+    ['04', 'Report', 'Llama-Student v2 constrained by the frozen grammar'],
+    ['05', 'Verify', '30 deterministic rules — a verified report, a fallback summary or human review'],
   ].map(([n, name, desc]) => `
     <div class="pipe-step">
       <div class="pipe-num">${n}</div>
@@ -237,18 +241,37 @@ async function pageOverview() {
       <div class="bar-row">
         <div class="bar-label"><span class="stage-dot" style="background:${STAGE_HEX[row.stage]}"></span>${esc(row.stage)}</div>
         <div class="bar-track"><div class="bar-fill" style="width:${width}%;background:${STAGE_HEX[row.stage]}"></div></div>
-        <div class="bar-value">${num(row.f1, 3)}</div>
+        <div class="bar-value">${num(row.f1, 3)}<div class="faint">v1 ${num(row.f1_v1, 3)}</div></div>
       </div>`;
   }).join('');
 
   const modelRows = (m.students || []).map((row) => `
     <tr>
-      <td><div class="cell-title mono">${esc(row.name)}</div>${row.shipped ? '<div class="cell-sub">shipped model</div>' : ''}</td>
+      <td><div class="cell-title mono">${esc(row.name)}</div>${row.release ? `<div class="cell-sub">release ${esc(row.release)}</div>` : row.shipped ? '<div class="cell-sub">shipped model</div>' : ''}</td>
+      <td>${badge(row.labels, row.labels === 'corrected' ? 'ok' : 'outline')}</td>
       <td class="num">${int(row.parameters)}</td>
       <td class="num">${num(row.kappa, 4)}</td>
       <td class="num">${num(row.macro_f1, 4)}</td>
       <td class="num">${row.compression ? row.compression.toFixed(2) + '×' : '—'}</td>
     </tr>`).join('');
+
+  const c = m.comparison || {};
+  const rr = m.report_results || {};
+  const v2Card = `
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Release v2 against release v1</div>
+          <div class="card-sub">Held-out test · both models scored on the same corrected labels</div></div>
+          ${badge('v2 is current', 'accent')}
+        </div>
+        <div class="kpi-grid kpi-4">
+          ${kpi('v1 κ, same labels', num(c.v1_kappa_same_labels, 4), '', `v2: ${num(m.kappa, 4)}`)}
+          ${kpi('Subjects improved', `${int(c.subjects_better)}/${int(c.subjects)}`, '', `Δκ 95% CI ${num(c.dkappa_ci95?.[0], 3)} to ${num(c.dkappa_ci95?.[1], 3)}`)}
+          ${kpi('Without EOG', num(c.eog_off_kappa, 4), '', 'v2 κ if the eye channel is missing — still above v1')}
+          ${kpi('Test reports', esc(rr.test || '—'), '', `${int(rr.test_flawed_released)} flawed released · 95% lower bound ${pct(rr.test_cp95_lower, 1)}`)}
+        </div>
+        <div class="note mt-16">Older κ figures such as 0.7001 (v1 on the original stored labels) are not comparable: those labels carry a one-epoch alignment shift on about 5% of epochs. The model table below marks which labels each row used.</div>
+      </div>`;
 
   const checkRows = s.checks.map((c) => `
     <div class="check-row">
@@ -265,7 +288,7 @@ async function pageOverview() {
       <section class="card hero">
         <div>
           <div class="eyebrow">Explainable deep learning · Sleep-EDFx</div>
-          <h2>One night of EEG becomes a <em>verified</em> sleep report.</h2>
+          <h2>One night of EEG + EOG becomes a <em>verified</em> sleep report.</h2>
           <p class="hero-lede">
             A compact student model stages every 30 seconds, a calibrated evidence packet records
             how much each number can be trusted, and a deterministic verifier lets the language
@@ -280,19 +303,21 @@ async function pageOverview() {
         <div class="hero-side">
           <div class="hero-stat"><span class="k">Held-out test κ</span><span class="v">${num(m.kappa, 4)}</span></div>
           <div class="hero-stat"><span class="k">Macro F1</span><span class="v">${num(m.macro_f1, 4)}</span></div>
-          <div class="hero-stat"><span class="k">Report model</span><span class="v">${esc(m.report_model || 'Llama-Student')}</span></div>
-          <div class="hero-stat"><span class="k">Test reports</span><span class="v">${esc(m.frozen_test?.test_5_of_5 || '29/29')}</span></div>
+          <div class="hero-stat"><span class="k">Report model</span><span class="v">${esc(m.report_model_label || 'Llama-Student')}</span></div>
+          <div class="hero-stat"><span class="k">Test reports verified</span><span class="v">${esc(rr.test || '—')}</span></div>
         </div>
       </section>
 
       <div class="kpi-grid">
-        ${kpi('Parameters', int(m.parameters), '', `${num(m.compression, 2)}× smaller than the teacher`)}
-        ${kpi('Test κ', num(m.kappa, 4), '', `accuracy ${pct(m.accuracy, 2)}`, true)}
-        ${kpi('Macro F1', num(m.macro_f1, 4), '', `weighted ${num(m.weighted_f1, 4)}`)}
+        ${kpi('Parameters', int(m.parameters), '', `${num(m.compression, 2)}× smaller than the original teacher`)}
+        ${kpi('Test κ', num(m.kappa, 4), '', `accuracy ${pct(m.accuracy, 2)} · corrected labels`, true)}
+        ${kpi('Macro F1', num(m.macro_f1, 4), '', `${int(m.n_test_epochs)} test epochs`)}
         ${kpi('Evidence items', evidence.items, 'per night', `${evidence.safe} safe to assert`)}
         ${kpi('Recordings', int(counts.dev + counts.test + counts.train), '', `${counts.dev} dev · ${counts.test} test · ${counts.train} train`)}
         ${kpi('Verified reports', int(counts.reports), '', `${counts.review} in human review`)}
       </div>
+
+      ${v2Card}
 
       <div class="grid grid-2">
         <div class="card">
@@ -319,11 +344,11 @@ async function pageOverview() {
       <div class="grid grid-2">
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Model comparison</div><div class="card-sub">Raw outputs on the locked test subjects</div></div>
+            <div><div class="card-title">Model comparison</div><div class="card-sub">Raw outputs on the locked test subjects · compare only rows with the same labels</div></div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Model</th><th class="num">Params</th><th class="num">κ</th><th class="num">Macro F1</th><th class="num">Compression</th></tr></thead>
+              <thead><tr><th>Model</th><th>Labels</th><th class="num">Params</th><th class="num">κ</th><th class="num">Macro F1</th><th class="num">Compression</th></tr></thead>
               <tbody>${modelRows}</tbody>
             </table>
           </div>
@@ -498,16 +523,40 @@ async function pageRecording(split, recId) {
       </div>
 
       <div id="report-panel"></div>
-      ${packetSectionsHTML(packet)}
+      <div class="segmented">
+        <button class="seg active" data-view="clinical">Clinical view</button>
+        <button class="seg" data-view="simple">Simple view</button>
+      </div>
+      <div id="simple-view" hidden></div>
+      <div id="clinical-view" class="stack">${packetSectionsHTML(packet)}</div>
     </div>`;
 
   mountPacket(packet, view);
+
+  $$('.seg[data-view]').forEach((tab) => {
+    tab.addEventListener('click', async () => {
+      $$('.seg[data-view]').forEach((b) => b.classList.toggle('active', b === tab));
+      const simple = tab.dataset.view === 'simple';
+      $('#simple-view').hidden = !simple;
+      $('#clinical-view').hidden = simple;
+      if (!simple) { redrawCanvases(); return; }
+      const host = $('#simple-view');
+      if (host.dataset.loaded) return;
+      host.innerHTML = loadingCard('Writing the simple view…');
+      try {
+        host.innerHTML = plainViewHTML(await api(`/api/plain/${encodeURIComponent(split)}/${encodeURIComponent(recId)}`));
+        host.dataset.loaded = '1';
+      } catch (error) {
+        host.innerHTML = errorCard(error);
+      }
+    });
+  });
 
   const button = $('#gen-report');
   button.addEventListener('click', async () => {
     button.disabled = true;
     const panel = $('#report-panel');
-    panel.innerHTML = `<div class="card"><div class="row"><div class="spinner"></div><span class="muted">Starting the frozen report pipeline…</span></div></div>`;
+    panel.innerHTML = `<div class="card"><div class="row"><div class="spinner"></div><span class="muted">Starting the agent (release v2)… about 2 minutes</span></div></div>`;
     try {
       const { job_id } = await postJSON('/api/jobs/report', { split, recording_id: recId });
       panel.innerHTML = jobCardHTML({ id: job_id, title: `Verified report · ${recId}`, status: 'queued', steps: [], logs: [] });
@@ -515,13 +564,12 @@ async function pageRecording(split, recId) {
         update: (job, logs) => { panel.innerHTML = jobCardHTML(job, logs, { report: true }); },
         done: (job) => {
           button.disabled = false;
-          if (job.status === 'done' && job.result?.status === 'PASS') {
-            delete state.recs[split];
-            toast('Report verified', 'Every claim passed the frozen verifier.');
-            loadStatus(true);
-          } else {
-            toast('Verifier blocked the report', 'It was routed to human review.', 'bad');
-          }
+          delete state.recs[split];
+          loadStatus(true);
+          const outcome = job.result?.status;
+          if (outcome === 'VERIFIED_REPORT') toast('Report verified', 'Every claim passed the frozen verifier.');
+          else if (outcome) toast(OUTCOME_TEXT[outcome] || outcome, (job.result.reasons || []).join(' '), 'bad');
+          else toast('The job failed', job.error || '', 'bad');
         },
         error: (err) => {
           button.disabled = false;
@@ -533,6 +581,56 @@ async function pageRecording(split, recId) {
       panel.innerHTML = `<div class="card"><div class="note bad">${esc(error.message)}</div></div>`;
     }
   });
+}
+
+/* ── Simple view (PLAIN LANGUAGE REPORT/plain_text.py) ──────────────────── */
+
+const GRADE_BADGE = {
+  good: ['good', 'ok'], poor: ['poor', 'bad'], in_between: ['in between', 'warn'],
+  outside_good_range: ['outside good range', 'warn'], not_flagged: ['no concern', 'outline'],
+  no_rule: ['no guideline', 'outline'], not_graded: ['not compared', 'outline'],
+};
+
+function plainItems(items) {
+  return items.map((i) => {
+    const [label, kind] = GRADE_BADGE[i.grade] || [i.grade, 'outline'];
+    return `
+      <div class="check-row">
+        <div class="c-main"><div class="c-label">${esc(i.label)}</div><div class="c-detail" style="white-space:normal">${esc(i.text)}</div></div>
+        ${badge(label, kind)}
+      </div>`;
+  }).join('');
+}
+
+function plainViewHTML(p) {
+  const section = (title, sub, body) => `
+    <div class="card">
+      <div class="card-head"><div><div class="card-title">${esc(title)}</div>${sub ? `<div class="card-sub">${esc(sub)}</div>` : ''}</div></div>
+      ${body}
+    </div>`;
+  return `
+    <div class="stack">
+      <div class="card">
+        <div class="eyebrow">Your night in plain words</div>
+        <h2 style="font-size:20px;margin-top:8px">${esc(p.headline)}</h2>
+        ${p.context ? `<div class="note mt-12">${esc(p.context)}</div>` : ''}
+        ${p.window_note ? `<div class="note warn mt-12">${esc(p.window_note)}</div>` : ''}
+        <div class="note mt-12">${esc(p.confidence)}</div>
+      </div>
+      ${section('How you slept', 'Compared with published ranges for your age group', `<div class="check-list">${plainItems(p.main)}</div>`)}
+      ${section('Types of sleep', p.sleep_types_note, `<div class="check-list">${plainItems(p.sleep_types)}</div>`)}
+      <div class="card">
+        <div class="note warn"><strong>What this test cannot tell you.</strong> ${esc(p.cannot_detect)}</div>
+        <div class="note mt-12"><strong>When to talk to a doctor.</strong> ${esc(p.talk_to_doctor)}</div>
+      </div>
+      <details class="card">
+        <summary class="card-title" style="cursor:pointer">Details for your doctor</summary>
+        <div class="check-list mt-12">${plainItems(p.doctor_details)}</div>
+      </details>
+      <div class="faint" style="font-size:11.5px">
+        ${esc(p.disclaimer)}<br>Sources: ${p.sources.map(esc).join(' · ')}
+      </div>
+    </div>`;
 }
 
 /* ── Packet sections (shared by detail and new-night result) ────────────── */
@@ -547,7 +645,7 @@ function formatMetric(key, value, pm) {
   if (key === 'Segment_Duration_Variance') return { v: big(value), u: '' };
   if (key === 'Stage_Transition_Entropy') return { v: Number(value).toFixed(2), u: 'nats' };
   if (key === 'Light_Deep_Ratio') return { v: Number(value).toFixed(2), u: '' };
-  return { v: Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 }), u: '' };
+  return { v: Number(value).toLocaleString('en-US', { maximumFractionDigits: 2 }), u: '' };
 }
 
 function formatMetricError(key, pm) {
@@ -931,16 +1029,13 @@ function drawConfidence(canvas, packet) {
 
   const values = rows.map((row) => Math.max(...row));
 
-  /* fill */
-  const gradient = ctx.createLinearGradient(0, pad.t, 0, H - pad.b);
-  gradient.addColorStop(0, 'rgba(68, 87, 196, 0.18)');
-  gradient.addColorStop(1, 'rgba(68, 87, 196, 0.01)');
+  /* fill: one flat tint, no gradient */
   ctx.beginPath();
   ctx.moveTo(xFor(0), H - pad.b);
   values.forEach((v, index) => ctx.lineTo(xFor(index), yFor(v)));
   ctx.lineTo(xFor(n - 1), H - pad.b);
   ctx.closePath();
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = 'rgba(76, 91, 212, 0.12)';
   ctx.fill();
 
   /* line */
@@ -951,7 +1046,7 @@ function drawConfidence(canvas, packet) {
     if (index === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-  ctx.strokeStyle = '#4457c4';
+  ctx.strokeStyle = '#4c5bd4';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
@@ -1050,38 +1145,65 @@ function jobLogHTML(logs) {
     </div>`).join('');
 }
 
+const OUTCOME_TEXT = {
+  VERIFIED_REPORT: 'Verified report delivered',
+  FALLBACK_SUMMARY: 'Fallback summary delivered (the model\'s report was blocked)',
+  REVIEW_ONLY: 'Sent to human review',
+  REJECTED: 'Input rejected',
+};
+// Reason codes the agent writes (agentic/workflows); others are shown as the bare code.
+const REASON_TEXT = {
+  F01: 'not enough free memory or too hot to start the report model',
+  F02: 'the report model crashed or timed out',
+  F03: 'the verifier rejected the model\'s claims',
+  F04: 'the renderer refused the verified claims',
+  R03: 'recording too short to find a night',
+  R04: 'no sleep period could be found',
+  R05: 'file longer than one night',
+  R10: 'packet schema does not match the release',
+  R12: 'packet builder self-check failed',
+  Q01: 'too much unusable signal',
+  Q03: 'strong mains line noise in the EEG',
+  W02: 'some unusable signal',
+  W05: 'a required channel is missing',
+  W08: 'the night\'s start or end moved between staging passes',
+  W10: 'some mains line noise in the EEG',
+  V01: 'the page showed a number with no recorded source',
+  V02: 'the packet changed after it was checked',
+  I01: 'a pinned model or runtime file changed',
+};
+
+function deliveryHTML(result) {
+  const outcome = result.status;
+  const kind = outcome === 'VERIFIED_REPORT' ? 'ok' : outcome === 'FALLBACK_SUMMARY' ? 'warn' : 'bad';
+  const reasons = (result.reasons || []).map((r) => `<div class="violation"><span class="v-code">${esc(r)}</span><span>${esc(REASON_TEXT[r] || 'see agentic/workflows')}</span></div>`).join('');
+  return `
+    <div class="mt-16">
+      <div class="row-between mb-12 wrap">
+        <div class="row">${badge(OUTCOME_TEXT[outcome] || outcome, kind)}<span class="faint mono" style="font-size:11px">run ${esc(result.run_id || '')}</span></div>
+        <div class="row">
+          <a class="btn btn-sm" href="${result.report_url}" target="_blank" rel="noopener">Open page</a>
+          <a class="btn btn-sm" href="${result.report_url}&download=1">Download</a>
+          <a class="btn btn-sm btn-ghost" href="#/reports">All reports</a>
+        </div>
+      </div>
+      ${reasons}
+      <iframe class="report-frame mt-12" sandbox src="${result.report_url}" title="Delivered page"></iframe>
+    </div>`;
+}
+
 function jobCardHTML(job, logs = [], options = {}) {
   const status = job.status || 'queued';
-  const kind = status === 'done' ? (job.result?.status === 'PASS' ? 'ok' : 'warn')
+  const outcome = job.result?.status;
+  const kind = status === 'done' ? (outcome === 'VERIFIED_REPORT' ? 'ok' : 'warn')
     : status === 'failed' ? 'bad' : 'accent';
   let extra = '';
-  if (status === 'done' && options.report) {
-    const result = job.result || {};
-    if (result.status === 'PASS' && result.report_text) {
-      extra = `
-        <div class="row-between mt-16 mb-12 wrap">
-          <div class="row">${badge('verifier PASS', 'ok')}<span class="faint" style="font-size:11.5px">${esc(result.audit?.recording_id || '')} · ${esc(result.audit?.llm_wall_s || '—')} s generation</span></div>
-          <div class="row">
-            <a class="btn btn-sm" href="/api/reports/file/${encodeURIComponent(result.ui_report || '')}?source=ui&download=1">Download</a>
-            <a class="btn btn-sm" href="#/reports">All reports</a>
-          </div>
-        </div>
-        <div class="paper">${esc(result.report_text)}</div>`;
-    } else {
-      const violations = result.violations || [];
-      extra = `
-        <div class="mt-16">
-          <div class="row mb-12">${badge(`${violations.length} violation${violations.length === 1 ? '' : 's'}`, 'bad')}<span class="faint" style="font-size:11.5px">The renderer refused; the night is queued for human review.</span></div>
-          ${violations.map((v) => `<div class="violation"><span class="v-code">!</span><span>${esc(v)}</span></div>`).join('')}
-          ${result.raw_output ? `<details class="mt-12"><summary class="faint" style="cursor:pointer;font-size:12px">Model output</summary><div class="paper paper-dark mt-12">${esc(result.raw_output)}</div></details>` : ''}
-        </div>`;
-    }
-  }
+  if (status === 'done' && options.report && job.result) extra = deliveryHTML(job.result);
   if (status === 'failed') {
     extra = `<div class="note bad mt-16">${esc(job.error || 'The job failed.')}</div>`;
   }
   return `
-    <div class="card ${options.report ? (job.result?.status === 'PASS' ? 'report-card' : job.result?.status ? 'report-card fail' : '') : ''}">
+    <div class="card ${options.report && outcome ? (outcome === 'VERIFIED_REPORT' ? 'report-card' : 'report-card fail') : ''}">
       <div class="card-head">
         <div><div class="card-title">${esc(job.title || 'Job')}</div><div class="card-sub mono">${esc(job.id || '')}</div></div>
         ${badge(status, kind)}
@@ -1142,8 +1264,8 @@ async function pageNew() {
             <div class="eyebrow">Raw PSG</div>
             <h2 style="font-size:22px;letter-spacing:-.03em;margin-top:8px">Analyse a new night</h2>
             <p class="muted mt-8" style="font-size:13px">
-              The console calls the project's own pipeline. It reads the EDF the same way the
-              command-line deployment does and writes only to <span class="mono">ui/runtime/</span>.
+              The console runs the agent with release ${esc(s.release)} — the same path the evaluated
+              results came from — and writes only to <span class="mono">ui/runtime/</span>.
             </p>
           </div>
 
@@ -1152,29 +1274,24 @@ async function pageNew() {
               <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
             </div>
             <h3>Drop a PSG recording</h3>
-            <p>.edf or .rec from Sleep-EDFx. A companion hypnogram in the same folder is optional — the packet is built for reporting either way.</p>
+            <p>.edf or .rec with an EEG Fpz-Cz and a horizontal EOG channel. Sleep-EDF files (about 20 h) are cut to lights-off + 12 h automatically; any other file is treated as one night.</p>
             <span class="btn btn-sm">Choose file</span>
           </div>
           <input id="file-input" type="file" accept=".edf,.rec" hidden />
           <div id="file-pill"></div>
-
-          <label class="check">
-            <input type="checkbox" id="make-report" checked />
-            Generate the verified report (requires llama-server on port 8080)
-          </label>
 
           <div class="row-between">
             <button class="btn btn-primary" id="run-pipeline" disabled>
               <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>
               Run pipeline
             </button>
-            <span class="faint mono" style="font-size:11px">~115 s for the report step</span>
+            <span class="faint mono" style="font-size:11px">about 3–5 min per night</span>
           </div>
 
-          <div class="note ${s.llama_alive ? '' : 'warn'}">
+          <div class="note ${s.llama_alive ? '' : 'bad'}">
             ${s.llama_alive
-              ? `llama-server is online${s.checks.find((c) => c.id === 'llama')?.detail ? ` — ${esc(s.checks.find((c) => c.id === 'llama').detail)}` : ''}.`
-              : 'llama-server is offline. Preprocessing, staging and packet building still work; the report step will be skipped. Start the server to enable it.'}
+              ? `Report model ready: ${esc(s.checks.find((c) => c.id === 'llama')?.detail || 'llama-completion')}, every release pin matching.`
+              : 'The report model is not ready: llama-completion is missing or a release pin does not match. See System.'}
           </div>
         </div>
 
@@ -1185,7 +1302,7 @@ async function pageNew() {
           </div>
           <div id="job-panel">
             <div class="steps">
-              ${['Preprocess EDF', 'Stage with student_N4kd', 'Build evidence packet', 'Generate verified report']
+              ${['Read the recording · find the night', 'Stage with v2 (EEG + EOG)', 'Build evidence packet', 'Generate · verify · deliver']
                 .map((label, index) => `<div class="step"><span class="s-ind">${index + 1}</span><span>${esc(label)}</span><span class="s-state">pending</span></div>`).join('')}
             </div>
             <div class="console mt-16"><div class="empty">No run yet. Choose a recording and press Run pipeline.</div></div>
@@ -1228,7 +1345,6 @@ async function pageNew() {
   runButton.addEventListener('click', async () => {
     if (!file) return;
     runButton.disabled = true;
-    const makeReport = $('#make-report').checked;
     const panel = $('#job-panel');
     const resultHost = $('#edf-result');
     resultHost.innerHTML = '';
@@ -1243,10 +1359,7 @@ async function pageNew() {
       if (!response.ok) throw new Error(`Upload failed (${response.status})`);
       const upload = await response.json();
 
-      const { job_id } = await postJSON('/api/jobs/edf', {
-        upload_id: upload.upload_id,
-        generate_report: makeReport,
-      });
+      const { job_id } = await postJSON('/api/jobs/edf', { upload_id: upload.upload_id });
 
       $('#job-badge').innerHTML = badge('running', 'accent');
       pollJob(job_id, {
@@ -1259,13 +1372,12 @@ async function pageNew() {
         done: (job) => {
           runButton.disabled = false;
           const result = job.result || {};
-          if (result.packet) {
+          if (result.status) {
             renderEdfResult(result, resultHost);
             delete state.recs.new;
-            getRecs('new').catch(() => {});
             loadStatus(true).catch(() => {});
-            toast('Night processed', `Packet built for ${result.recording_id}.`,
-              result.status === 'FAIL' || result.status === 'RENDER_FAIL' ? 'bad' : 'ok');
+            toast(OUTCOME_TEXT[result.status] || result.status, (result.reasons || []).join(' '),
+              result.status === 'VERIFIED_REPORT' ? 'ok' : 'bad');
           } else if (job.status === 'failed') {
             toast('Pipeline failed', job.error || '', 'bad');
           }
@@ -1298,27 +1410,14 @@ function jobCardInner(job, logs) {
 
 function renderEdfResult(result, host) {
   const packet = result.packet;
-  const report = result.report_text ? `
-    <div class="card report-card">
-      <div class="card-head">
-        <div><div class="card-title">Verified report</div><div class="card-sub">${esc(packet.recording_id)} · verifier ${esc(result.status)}</div></div>
-        <div class="row">${badge('PASS', 'ok')}<a class="btn btn-sm" href="/api/reports/file/${encodeURIComponent(result.ui_report || '')}?source=ui&download=1">Download</a></div>
-      </div>
-      <div class="paper">${esc(result.report_text)}</div>
-    </div>` : '';
-
-  const note = result.report_note ? `<div class="note warn">${esc(result.report_note)}</div>` : '';
-
-  const blocked = (result.violations || []).length || result.status === 'RENDER_FAIL' ? `
-    <div class="card report-card fail">
-      <div class="card-head">
-        <div><div class="card-title">Report blocked</div><div class="card-sub">The verifier refused to render this report; the packet is still shown below.</div></div>
-        ${badge(result.status || 'FAIL', 'bad')}
-      </div>
-      ${(result.violations || []).map((v) => `<div class="violation"><span class="v-code">!</span><span>${esc(v)}</span></div>`).join('')}
-      ${result.raw_output ? `<details class="mt-12"><summary class="faint" style="cursor:pointer;font-size:12px">Model output</summary><div class="paper paper-dark mt-12">${esc(result.raw_output)}</div></details>` : ''}
-    </div>` : '';
-
+  const delivery = `<div class="card ${result.status === 'VERIFIED_REPORT' ? 'report-card' : 'report-card fail'}">
+      <div class="card-head"><div><div class="card-title">Delivered page</div><div class="card-sub">${esc(result.recording_id || '')} · release v2</div></div></div>
+      ${deliveryHTML(result)}
+    </div>`;
+  if (!packet) {            // the agent stopped before a packet (e.g. R04 no night, R05 too long)
+    host.innerHTML = `<div class="stack">${delivery}</div>`;
+    return;
+  }
   host.innerHTML = `
     <div class="stack">
       <div class="card detail-head">
@@ -1331,11 +1430,9 @@ function renderEdfResult(result, host) {
             <span>${esc(result.packet_path || '')}</span>
           </div>
         </div>
-        ${result.report_path ? `<div class="detail-actions"><span class="faint" style="font-size:11.5px">deploy report: ${esc(result.report_path)}</span></div>` : ''}
+        <div class="detail-actions"><a class="btn" href="#/recording/new/${encodeURIComponent(packet.recording_id)}">Open recording</a></div>
       </div>
-      ${note}
-      ${blocked}
-      ${report}
+      ${delivery}
       ${packetSectionsHTML(packet)}
     </div>`;
   mountPacket(packet, host);
@@ -1343,33 +1440,40 @@ function renderEdfResult(result, host) {
 
 /* ── Reports ────────────────────────────────────────────────────────────── */
 
+const OUTCOME_SHORT = { VERIFIED_REPORT: 'Verified report', FALLBACK_SUMMARY: 'Fallback summary', REVIEW_ONLY: 'Review only', REJECTED: 'Rejected' };
+const SOURCE_LABEL = { agent: ['v2 · console', 'accent'], p8: ['v2 · test run (P8)', 'ok'], 'v1-legacy': ['v1 legacy', 'outline'] };
+
 async function pageReports(selectedName = null, selectedSource = null) {
-  setHead('Reports', 'Verified reports and the human-review queue');
+  setHead('Reports', 'Delivered pages and the human-review queue');
   const data = await api('/api/reports');
   state.reports = data;
 
   const reports = data.reports || [];
   const review = data.review || [];
   const selected = reports.find((r) => r.name === selectedName && (!selectedSource || r.source === selectedSource)) || null;
+  const outcomeKind = (o) => (o === 'VERIFIED_REPORT' ? 'ok' : o === 'FALLBACK_SUMMARY' ? 'warn' : 'bad');
 
-  const listRows = reports.map((row) => `
+  const listRows = reports.map((row) => {
+    const [label, kind] = SOURCE_LABEL[row.source] || [row.source, 'outline'];
+    return `
     <button class="check-row" data-report="${esc(row.name)}" data-source="${esc(row.source)}" style="width:100%;text-align:left;cursor:pointer;background:${selected?.name === row.name ? 'var(--accent-soft)' : ''}">
-      <span class="dot ${row.source === 'deploy' ? 'ok' : 'accent'}"></span>
+      <span class="dot ${outcomeKind(row.outcome)}"></span>
       <div class="c-main">
         <div class="c-label mono">${esc(row.recording_id)}</div>
-        <div class="c-detail">${esc(row.date || '')} · ${bytes(row.size)} · ${ago(row.mtime)} · ${esc(row.source)}</div>
+        <div class="c-detail">${esc(OUTCOME_SHORT[row.outcome] || row.outcome || '')}${row.reasons?.length ? ` · ${esc(row.reasons.join(' '))}` : ''} · ${esc(row.date || '')} · ${ago(row.mtime)}</div>
       </div>
-      <span class="badge ${row.source === 'deploy' ? 'ok' : 'accent'}">${row.source === 'deploy' ? 'frozen' : 'this session'}</span>
-    </button>`).join('');
+      ${badge(label, kind)}
+    </button>`;
+  }).join('');
 
   const reviewRows = review.map((row) => `
     <div class="check-row">
       <span class="dot bad"></span>
       <div class="c-main">
         <div class="c-label mono">${esc(row.recording_id || row.name)}</div>
-        <div class="c-detail">${esc(row.timestamp || '')} · ${(row.violations || []).length} violation(s)</div>
+        <div class="c-detail">${esc(OUTCOME_SHORT[row.outcome] || row.outcome || '')} · ${esc((row.violations || []).join(' ') || 'no codes')} · ${esc((SOURCE_LABEL[row.source] || [row.source])[0])}</div>
       </div>
-      <button class="btn btn-ghost btn-sm" data-review="${esc(row.name)}">Inspect</button>
+      <button class="btn btn-ghost btn-sm" data-review="${esc(row.name)}" data-source="${esc(row.source)}">Inspect</button>
     </div>`).join('');
 
   view.innerHTML = `
@@ -1377,21 +1481,21 @@ async function pageReports(selectedName = null, selectedSource = null) {
       <div class="stack">
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Reports</div><div class="card-sub">${reports.length} file${reports.length === 1 ? '' : 's'} · deploy/reports and ui/runtime/reports</div></div>
+            <div><div class="card-title">Delivered pages</div><div class="card-sub">${reports.length} · release v2 (console and the P8 test run) and v1 legacy</div></div>
             <button class="btn btn-ghost btn-sm" id="refresh-reports">Refresh</button>
           </div>
           <div class="check-list">${listRows || emptyCard('No reports yet', 'Generate one from a recording.')}</div>
         </div>
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Human review</div><div class="card-sub">${review.length} blocked report${review.length === 1 ? '' : 's'}</div></div>
+            <div><div class="card-title">Human review</div><div class="card-sub">${review.length} night${review.length === 1 ? '' : 's'} needing a reviewer (blocked, or delivered with a warning)</div></div>
           </div>
-          <div class="check-list">${reviewRows || '<div class="faint" style="font-size:12px">Nothing blocked. Every generated report passed the verifier.</div>'}</div>
+          <div class="check-list">${reviewRows || '<div class="faint" style="font-size:12px">Nothing waiting for review.</div>'}</div>
         </div>
       </div>
 
       <div class="card" id="report-viewer">
-        ${selected ? '<div class="row"><div class="spinner"></div><span class="muted">Loading report…</span></div>' : emptyCard('Select a report', 'Any generated report opens here. The text is the renderer output, not the model output.')}
+        ${selected ? '' : emptyCard('Select a page', 'The delivered page opens here exactly as it left the system: the renderer output, not the model output.')}
       </div>
     </div>`;
 
@@ -1404,48 +1508,113 @@ async function pageReports(selectedName = null, selectedSource = null) {
 
   $$('[data-review]').forEach((button) => {
     button.addEventListener('click', async () => {
-      const record = await api(`/api/review/${encodeURIComponent(button.dataset.review)}`);
-      const viewer = $('#report-viewer');
-      viewer.innerHTML = `
+      const record = await api(`/api/review/${encodeURIComponent(button.dataset.review)}?source=${encodeURIComponent(button.dataset.source)}`);
+      const codes = record.violations || record.reasons || [];
+      $('#report-viewer').innerHTML = `
         <div class="card-head">
-          <div><div class="card-title">Human review · ${esc(record.recording_id || '')}</div><div class="card-sub">${esc(record.timestamp || '')}</div></div>
-          ${badge(`${(record.violations || []).length} violations`, 'bad')}
+          <div><div class="card-title">Human review · ${esc(record.recording_id || '')}</div><div class="card-sub">${esc(record.outcome || '')} ${esc(record.release ? `· release ${record.release}` : '')}</div></div>
+          ${badge(`${codes.length} code${codes.length === 1 ? '' : 's'}`, 'bad')}
         </div>
-        ${(record.violations || []).map((v) => `<div class="violation"><span class="v-code">!</span><span>${esc(v)}</span></div>`).join('')}
+        ${codes.map((v) => `<div class="violation"><span class="v-code">${REASON_TEXT[v] ? esc(v) : '!'}</span><span>${esc(REASON_TEXT[v] || v)}</span></div>`).join('')}
         ${record.raw_output ? `<details class="mt-12" open><summary class="faint" style="cursor:pointer;font-size:12px">Raw model output</summary><div class="paper paper-dark mt-12">${esc(record.raw_output)}</div></details>` : ''}`;
     });
   });
 
   if (selected) {
-    try {
-      const text = await api(`/api/reports/file/${encodeURIComponent(selected.name)}?source=${encodeURIComponent(selected.source)}`);
-      const viewer = $('#report-viewer');
-      viewer.innerHTML = `
-        <div class="card-head">
-          <div>
-            <div class="card-title mono">${esc(selected.recording_id)}</div>
-            <div class="card-sub">${esc(selected.date || '')} · ${bytes(selected.size)} · ${esc(selected.source)}</div>
-          </div>
-          <div class="row">
-            <a class="btn btn-sm" href="/api/reports/file/${encodeURIComponent(selected.name)}?source=${selected.source}&download=1">Download</a>
-            <a class="btn btn-sm btn-ghost" href="#/recordings">Recordings</a>
-          </div>
+    const url = `/api/reports/file/${encodeURIComponent(selected.name)}?source=${encodeURIComponent(selected.source)}`;
+    $('#report-viewer').innerHTML = `
+      <div class="card-head">
+        <div>
+          <div class="card-title mono">${esc(selected.recording_id)}</div>
+          <div class="card-sub">${esc(selected.outcome || '')} · ${esc((SOURCE_LABEL[selected.source] || [selected.source])[0])} · ${esc(selected.date || '')}</div>
         </div>
-        <div class="paper">${esc(text)}</div>`;
-    } catch (error) {
-      $('#report-viewer').innerHTML = `<div class="note bad">${esc(error.message)}</div>`;
-    }
+        <div class="row">
+          <a class="btn btn-sm" href="${url}" target="_blank" rel="noopener">Open page</a>
+          <a class="btn btn-sm" href="${url}&download=1">Download</a>
+        </div>
+      </div>
+      <iframe class="report-frame" sandbox src="${url}" title="Delivered page"></iframe>`;
   }
+}
+
+/* ── Evidence: the paper's results + figure gallery ─────────────────────── */
+
+async function pageEvidence() {
+  setHead('Evidence', 'The results behind release v2, read live from their result files');
+  view.innerHTML = loadingCard('Loading results…');
+  const { evidence: e, figures } = await api('/api/evidence');
+  const kpi = (label, value, foot, accent = false) => `
+    <div class="kpi ${accent ? 'accent' : ''}">
+      <div class="k-label">${esc(label)}</div>
+      <div class="k-value">${value}</div>
+      <div class="k-foot">${foot}</div>
+    </div>`;
+  const v = e.verifier, rr = v.report_results || {}, b1 = e.b1, cv = e.cv_ablation, y = e.yasa, pb = e.path_b;
+  const armRow = (name, d, note) => `<tr><td><div class="cell-title">${esc(name)}</div><div class="cell-sub">${esc(note)}</div></td>
+    ${['A', 'B', 'C'].map((a) => `<td class="num">${d?.[a] ?? '—'}<span class="faint">/31</span></td>`).join('')}</tr>`;
+
+  const gallery = (list) => list.map((f) => `
+    <a class="fig-card" href="${f.url}" target="_blank" rel="noopener" title="Open full size">
+      <img src="${f.url}" alt="${esc(f.id)} ${esc(f.title)}" loading="lazy" />
+      <div class="fig-meta">
+        <div class="row-between"><span class="card-title">${esc(f.id)} · ${esc(f.title)}</span>${f.new ? badge('new', 'accent') : badge('corrected', 'outline')}</div>
+        <div class="card-sub">${esc(f.description)}</div>
+      </div>
+    </a>`).join('');
+
+  view.innerHTML = `
+    <div class="stack">
+      <div class="kpi-grid kpi-4">
+        ${kpi('Benchmark κ (B1)', b1 ? num(b1.final.kappa, 3) : '—', b1 ? `Sleep-EDF-78, 10-fold, final epoch · acc ${pct(b1.final.accuracy, 1)} · selected epoch ${num(b1.selected.kappa, 3)} (optimistic)` : 'B1 files missing', true)}
+        ${kpi('EOG + new branches', cv.delta ? `+${num(cv.delta.mean, 4)}` : '—', cv.delta ? `κ over the v1 architecture, 5-fold CV, CI ${num(cv.delta.ci95[0], 3)} to ${num(cv.delta.ci95[1], 3)}, ${cv.delta.better}/5 folds` : '')}
+        ${kpi('Against YASA', y.kappa ? `${num(y.kappa.project, 3)} vs ${num(y.kappa.yasa, 3)}` : '—', `κ on the same ${int(y.nights)} nights · N1 F1 ${num(y.n1_f1?.project, 2)} vs ${num(y.n1_f1?.yasa, 2)}`)}
+        ${kpi('Raw recordings (Path B)', pb.v2_kappa ? `${num(pb.v2_kappa, 3)}` : '—', `κ, v1 ${num(pb.v1_kappa, 3)} · ${int(pb.verified)}/${int(pb.nights)} verified, ${int(pb.review)} to review · ${Math.round(pb.latency_s || 0)} s per report`)}
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Verifier ablation</div><div class="card-sub">Reports released with a flaw, 31 dev nights · A: grammar + gate · B: no gate · C: no grammar, no gate</div></div></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Report model</th><th class="num">A</th><th class="num">B</th><th class="num">C</th></tr></thead>
+            <tbody>
+              ${armRow('Llama-Student v2 (release v2)', v.v2, 'v2 packets · R2b, 2 Nov · arm C byte-identical to A')}
+              ${armRow('Llama-3.2-3B base, untrained', v.base_v1_packets, 'v1 packets · R2')}
+            </tbody>
+          </table></div>
+          <div class="note mt-16">Fine-tuning made v2 correct on dev with no safeguards. The verifier is the safety net: on held-out test it blocked the one flawed v2 report (${esc(rr.test || '—')} verified, ${int(rr.test_flawed_released)} flawed released).</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Report generation, release v2</div><div class="card-sub">Verified with all 5 mandatory items</div></div></div>
+          <dl class="kv">
+            <dt>Dev</dt><dd>${esc(rr.dev || '—')} · ${int(rr.dev_violations)} violations</dd>
+            <dt>Held-out test (P8)</dt><dd>${esc(rr.test || '—')} · 95% lower bound ${pct(rr.test_cp95_lower, 1)}</dd>
+            <dt>Flawed released (test)</dt><dd>${int(rr.test_flawed_released)}</dd>
+            <dt>Numeric fidelity (test)</dt><dd>${esc(rr.test_fidelity || '—')} (the inexact night was blocked)</dd>
+          </dl>
+          <div class="note mt-16">B1 numbers are shown at the final epoch. The selected-epoch figure chooses the epoch on the fold it reports, so it is optimistic (FOR JOURNAL F1).</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Figures for the paper</div><div class="card-sub">${figures.length} figures · figures/output_v2 · click to open full size</div></div></div>
+        <div class="fig-grid">${gallery(figures.filter((f) => f.new))}</div>
+        <div class="card-sub mt-24 mb-12">Corrected from the original set (v1-era figures updated for v2)</div>
+        <div class="fig-grid">${gallery(figures.filter((f) => !f.new))}</div>
+      </div>
+    </div>`;
 }
 
 /* ── System ─────────────────────────────────────────────────────────────── */
 
+const s0 = () => state.status?.release || 'v2';
+
 async function pageSystem() {
-  setHead('System', 'Frozen release, runtime checks and artifact paths');
+  setHead('System', `Release ${s0()} — pins, models and artifact paths`);
   const s = await loadStatus(true);
   const m = s.metrics;
   const gen = m.generation || {};
   const cfg = m.report_model;
+  const rr = m.report_results || {};
 
   const checks = s.checks.map((c) => `
     <div class="check-row">
@@ -1462,7 +1631,7 @@ async function pageSystem() {
       <div class="grid grid-2">
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Runtime checks</div><div class="card-sub">Read-only verification against the frozen manifest</div></div>
+            <div><div class="card-title">Release pins</div><div class="card-sub">Every pinned file hashed against <span class="mono">agentic/config/releases/${esc(s.release)}.yaml</span></div></div>
             <button class="btn btn-sm" id="recheck">Re-check</button>
           </div>
           <div class="check-list" id="check-list">${checks}</div>
@@ -1471,19 +1640,18 @@ async function pageSystem() {
 
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Frozen release</div><div class="card-sub">deploy/frozen.json · do not edit</div></div>
+            <div><div class="card-title">Report model · release ${esc(s.release)}</div><div class="card-sub">Evaluated results for this release</div></div>
           </div>
           <dl class="kv">
             <dt>Report model</dt><dd>${esc(cfg || '—')}</dd>
-            <dt>Quantisation</dt><dd>Q4_K_M</dd>
-            <dt>Temperature</dt><dd>${esc(gen.temperature ?? '—')}</dd>
-            <dt>Seed</dt><dd>${esc(gen.seed ?? '—')}</dd>
+            <dt>Runtime</dt><dd>${esc(gen.runtime || '—')}</dd>
+            <dt>Temperature · seed</dt><dd>${esc(gen.temperature ?? '—')} · ${esc(gen.seed ?? '—')}</dd>
             <dt>Context</dt><dd>${esc(gen.context_tokens ?? '—')} tokens</dd>
             <dt>Grammar</dt><dd>${esc(gen.grammar || '—')}</dd>
-            <dt>Dev 5/5</dt><dd>${esc(m.frozen_test?.dev_5_of_5 || '—')}</dd>
-            <dt>Test 5/5</dt><dd>${esc(m.frozen_test?.test_5_of_5 || '—')}</dd>
-            <dt>Test violations</dt><dd>${esc(m.frozen_test?.test_violations ?? '—')}</dd>
-            <dt>Numeric fidelity</dt><dd>${num(m.frozen_test?.test_numeric_fidelity, 1)}</dd>
+            <dt>Dev, verified at 5/5</dt><dd>${esc(rr.dev || '—')} · ${esc(rr.dev_violations ?? '—')} violations</dd>
+            <dt>Test, verified (P8)</dt><dd>${esc(rr.test || '—')} · 95% lower bound ${pct(rr.test_cp95_lower, 1)}</dd>
+            <dt>Test, flawed released</dt><dd>${esc(rr.test_flawed_released ?? '—')}</dd>
+            <dt>Test numeric fidelity</dt><dd>${esc(rr.test_fidelity || '—')}</dd>
           </dl>
         </div>
       </div>
@@ -1491,17 +1659,17 @@ async function pageSystem() {
       <div class="grid grid-2">
         <div class="card">
           <div class="card-head">
-            <div><div class="card-title">Staging model</div><div class="card-sub">student_N4kd · the model that ships</div></div>
-            ${badge('M0', 'accent')}
+            <div><div class="card-title">Staging model</div><div class="card-sub">${esc(m.student)} · ${esc(m.inputs)}</div></div>
+            ${badge(`release ${s.release}`, 'accent')}
           </div>
           <dl class="kv">
             <dt>Parameters</dt><dd>${int(m.parameters)}</dd>
-            <dt>Compression</dt><dd>${num(m.compression, 2)}× vs teacher</dd>
+            <dt>Compression</dt><dd>${num(m.compression, 2)}× vs the original teacher</dd>
             <dt>Temperature</dt><dd>${num(m.temperature, 4)}</dd>
             <dt>Test accuracy</dt><dd>${pct(m.accuracy, 2)}</dd>
             <dt>Test κ</dt><dd>${num(m.kappa, 4)}</dd>
             <dt>Macro F1</dt><dd>${num(m.macro_f1, 4)}</dd>
-            <dt>Epochs scored</dt><dd>${int(m.n_test_epochs)}</dd>
+            <dt>Epochs scored</dt><dd>${int(m.n_test_epochs)} · ${esc(m.labels)}</dd>
           </dl>
           <div class="divider"></div>
           <div class="row wrap">
@@ -1518,29 +1686,29 @@ async function pageSystem() {
             <dt>Test packets</dt><dd>${esc(s.packet_dirs.test)}</dd>
             <dt>Train packets</dt><dd>${esc(s.packet_dirs.train)}</dd>
             <dt>UI nights</dt><dd>${esc(s.packet_dirs.new)}</dd>
-            <dt>Reports</dt><dd>deploy/reports</dd>
-            <dt>Review queue</dt><dd>deploy/human_review</dd>
-            <dt>Audit log</dt><dd>deploy/audit_log.jsonl</dd>
-            <dt>UI runtime</dt><dd>${esc(s.runtime_dir)}</dd>
+            <dt>Agent runtime</dt><dd>${esc(s.runtime_dir)}</dd>
+            <dt>v2 test run</dt><dd>ROADMAP P8 - V2 TEST EVALUATION/runtime</dd>
+            <dt>v1 legacy</dt><dd>deploy/reports · deploy/human_review</dd>
           </dl>
           <div class="note mt-16">
-            The console adds no model, no table and no rule. It imports the frozen report tier and
-            the existing pipeline; the only new writes are under <span class="mono">ui/runtime/</span>
-            plus the deployment's normal report and audit outputs.
+            The console adds no model, table or rule. It runs the agent with release ${esc(s.release)}
+            and writes only under <span class="mono">ui/runtime/</span>. Release v1 and its
+            <span class="mono">deploy/</span> path are kept for history (CURRENT_RELEASE.md).
           </div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-head">
-          <div><div class="card-title">Model comparison</div><div class="card-sub">Held-out test subjects · raw outputs</div></div>
+          <div><div class="card-title">Model comparison</div><div class="card-sub">Held-out test subjects · compare only rows with the same labels</div></div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Model</th><th class="num">Params</th><th class="num">κ</th><th class="num">Macro F1</th><th class="num">Accuracy</th><th class="num">Compression</th></tr></thead>
+            <thead><tr><th>Model</th><th>Labels</th><th class="num">Params</th><th class="num">κ</th><th class="num">Macro F1</th><th class="num">Accuracy</th><th class="num">Compression</th></tr></thead>
             <tbody>${(m.students || []).map((row) => `
               <tr>
-                <td><div class="cell-title mono">${esc(row.name)}</div>${row.shipped ? '<div class="cell-sub">shipped</div>' : ''}</td>
+                <td><div class="cell-title mono">${esc(row.name)}</div>${row.release ? `<div class="cell-sub">release ${esc(row.release)}</div>` : row.shipped ? '<div class="cell-sub">shipped</div>' : ''}</td>
+                <td>${badge(row.labels, row.labels === 'corrected' ? 'ok' : 'outline')}</td>
                 <td class="num">${int(row.parameters)}</td>
                 <td class="num">${num(row.kappa, 4)}</td>
                 <td class="num">${num(row.macro_f1, 4)}</td>
@@ -1559,9 +1727,9 @@ async function pageSystem() {
     try {
       const result = await api('/api/integrity', { method: 'POST' });
       note.innerHTML = result.ok
-        ? '<div class="note">All frozen components match <span class="mono">deploy/frozen.json</span>. The verifier, grammar and serializer are unchanged.</div>'
+        ? `<div class="note">Every file pinned by release ${esc(s.release)} was re-hashed and matches: report model, grammar, template, verifier, renderer, serializer and staging checkpoint.</div>`
         : `<div class="note bad">${result.checks.filter((c) => c.state !== 'ok').map((c) => esc(`${c.label}: ${c.detail}`)).join('<br>')}</div>`;
-      toast(result.ok ? 'Integrity verified' : 'Integrity mismatch', result.ok ? 'Frozen components match.' : 'Check deploy/frozen.json.', result.ok ? 'ok' : 'bad');
+      toast(result.ok ? 'Integrity verified' : 'Integrity mismatch', result.ok ? 'All release pins match.' : 'A pinned file changed — see the list.', result.ok ? 'ok' : 'bad');
       loadStatus(true);
     } catch (error) {
       note.innerHTML = `<div class="note bad">${esc(error.message)}</div>`;

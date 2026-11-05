@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
-  <div class="bg-glow" aria-hidden="true"></div>
-
   <div class="app">
     <aside class="sidebar">
       <a class="brand" href="#/overview">
@@ -42,16 +40,22 @@
           <svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7zM14 3v6h5"/><path d="M10 13h6M10 17h6"/></svg>
           <span>Reports</span>
         </a>
+        <a class="nav-item" href="#/evidence" data-page="evidence">
+          <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+          <span>Evidence</span>
+        </a>
         <a class="nav-item" href="#/system" data-page="system">
           <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
           <span>System</span>
         </a>
       </nav>
 
+      <!-- filled from /api/status, so it always shows the release the server actually runs -->
       <div class="sidebar-foot">
-        <div class="foot-line"><span class="dot ok"></span> schema 1.3</div>
-        <div class="foot-line"><span class="dot accent"></span> student_N4kd</div>
-        <div class="foot-note">Team 40 · Project 48</div>
+        <div class="foot-title">Current release</div>
+        <div class="foot-release" id="foot-release">—</div>
+        <div class="foot-line"><span class="dot accent"></span><span class="mono" id="foot-model">loading…</span></div>
+        <div class="foot-line"><span class="dot" id="foot-pins-dot"></span><span id="foot-detail"></span></div>
       </div>
     </aside>
 

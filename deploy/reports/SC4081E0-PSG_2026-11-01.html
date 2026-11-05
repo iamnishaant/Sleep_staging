@@ -1,0 +1,21 @@
+Light-to-deep sleep ratio: 0.713, mean absolute error 50.0428 on the validation split. Caveat: mean relative error 138% on validation.
+REM latency: 227.5 minutes, mean absolute error 48.2097 minutes on the validation split. Caveat: depends on a single epoch. Even on the decoded hypnogram it produced a false sleep-onset-REM reading - a narcolepsy red flag - on 2 of 31 validation nights (mean relative error 30%).
+REM latency to first sustained REM period: 227.5 minutes, mean absolute error 53.05 minutes on the validation split. Caveat: The decoder already enforces a minimum REM run, so this resolves to the same epoch as arch.rem_latency and is not an independent check. Its error (53.05 min) is measured against the expert's first SUSTAINED REM period while arch.rem_latency's (48.2097 min) is measured against the expert's first REM epoch - different references, so the two numbers must not be differenced. Both remain large against clinical thresholds.
+REM periods: 6, mean absolute error 4.2258 on the validation split. Caveat: counts contiguous runs, so it tracks prediction fragmentation as well as physiology. Decoding moved it from 1.20x to 0.62x of the expert count; mean relative error 45%.
+Sleep efficiency: 76.3%.
+Sleep onset latency: 28.5 minutes, mean absolute error 21.5806 minutes on the validation split. Caveat: mean relative error 85% on validation.
+Stage transitions: 99, mean absolute error 30.8387 on the validation split. Caveat: derived from run structure, which inherits per-epoch noise; mean relative error 25% on validation.
+Time in bed: 537 minutes.
+Total sleep time: 410 minutes.
+Transition rate: 10.476 per hour, mean absolute error 3.344 per hour on the validation split. Caveat: derived from run structure, which inherits per-epoch noise; mean relative error 24% on validation.
+Wake interruptions: 1.756 per hour, mean absolute error 1.1469 per hour on the validation split. Caveat: derived from run structure, which inherits per-epoch noise; mean relative error 45% on validation.
+Wake after sleep onset: 98.5 minutes, mean absolute error 30.1935 minutes on the validation split. Caveat: mean relative error 35% on validation.
+N1 is low-reliability in this model.
+Night-level confidence is in the high tier.
+N1 as a fraction of the night: 6.3%, mean absolute error 5.9 percentage points on the validation split. N1 is a low-reliability stage for this model. Caveat: mean relative error 38% on validation.
+N2 as a fraction of the night: 19.2%, mean absolute error 11.4 percentage points on the validation split. N2 is a high-reliability stage for this model. Caveat: mean relative error 21% on validation.
+N3 as a fraction of the night: 35.9%, mean absolute error 6.5 percentage points on the validation split. N3 is a high-reliability stage for this model. Caveat: mean relative error 54% on validation.
+REM as a fraction of the night: 10.8%, mean absolute error 4.5 percentage points on the validation split. REM is a high-reliability stage for this model. Caveat: mean relative error 25% on validation.
+W as a fraction of the night: 27.7%, mean absolute error 5.5 percentage points on the validation split. Wake is a high-reliability stage for this model. Caveat: mean relative error 17% on validation.
+
+Explainability check (gate 3a): PASS, 3 of 5 pre-registered predictions met, across 31 validation recordings. It describes the model across that cohort, not this recording.

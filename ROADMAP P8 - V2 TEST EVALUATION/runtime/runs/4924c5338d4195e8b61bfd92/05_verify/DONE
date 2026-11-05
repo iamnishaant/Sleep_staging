@@ -1,0 +1,16 @@
+{
+ "info": {
+  "violations": [
+   "L2.value_mismatch",
+   "L2.uncited_quantity"
+  ]
+ },
+ "next": "fallback",
+ "outputs": {
+  "verify.json": "02960dad2f13ab7f995ca39352787efd027049491bbabafb15413f5c478c9ca1"
+ },
+ "reasons": [
+  "F03"
+ ],
+ "step": "verify"
+}

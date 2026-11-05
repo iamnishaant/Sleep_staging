@@ -1,0 +1,182 @@
+%AMRITA UNIVERSITY PH.D latex template...Created by Chungath, CYS-CBE%
+% S7 final report, release v2. Compile: pdflatex -> bibtex -> pdflatex -> pdflatex (or upload the folder to Overleaf).
+
+\documentclass[a4paper, 12pt]{report}
+\usepackage[T1]{fontenc}             % encodings first: csquotes must load after inputenc
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{bold-extra}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+\usepackage{setspace}
+\onehalfspacing
+\graphicspath{{images/}}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{cite}
+\usepackage{longtable}
+\usepackage{fancyhdr}
+\usepackage{titletoc}
+% added for this report
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{url}
+\captionsetup{font=small, labelfont=bf}
+\usepackage[maxfloats=64]{morefloats}        % chapter 4 has ~50 floats
+\usepackage[section]{placeins}               % keep floats inside their section
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{5}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\kap}{$\kappa$}
+\newcommand{\yes}{\checkmark}
+\newcommand{\no}{$\times$}
+\lstset{basicstyle=\ttfamily\footnotesize, breaklines=true, frame=single, columns=fullflexible,
+        keywordstyle=\bfseries, language=Python, showstringspaces=false}
+\theoremstyle{definition}
+\newtheorem{Definition}{Definition}[section]
+
+%-------------------------------------------------------------
+% title page
+\begin{document}
+	\pagenumbering{gobble}
+	\thispagestyle{empty}
+	\begin{large}
+		\begin{center}
+			{\Large\bfseries{VERIFIED ON-DEVICE SLEEP REPORTING: KNOWLEDGE-DISTILLED SLEEP STAGING, EVIDENCE PACKETS, A FINE-TUNED SMALL LANGUAGE MODEL AND AN AGENTIC EDGE PIPELINE}}\\
+			\vspace{1.3cm}
+			A PROJECT REPORT \\
+			\vspace{.1cm}
+			Submitted in partial fulfillment for the Degree of\\
+			\vspace{.1cm}
+			Bachelor of Technology under the\\
+			\vspace{.1cm}
+			School of Computing\\
+			\vspace{1cm}
+
+			\normalsize Submitted by \\
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}\hline \\
+Register No & Names of Students \\ \\ \hline
+\\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\ \\ \hline
+\end{tabular}
+\end{table}
+
+\vfill
+			\includegraphics[scale=0.7]{univA.jpg}\\
+			DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING\\
+			\Large{\textbf{AMRITA VISHWA VIDYAPEETHAM}}\\
+			{\large Amritapuri Campus (INDIA)}\\
+			\vspace*{.3cm}
+			November 2026
+		\end{center}
+	\end{large}
+	%------------------------------------------------------------------------------------
+	% bonafide certificate
+	\newpage
+	\begin{center}
+		{\large Department of Computer Science and Engineering}\\
+		\Large{ \textbf{AMRITA VISHWA VIDYAPEETHAM}}\\
+			{\large AMRITAPURI CAMPUS}\\
+		\vspace*{2.2cm}
+		\includegraphics[scale=0.5]{univA.jpg}\\
+		\vspace*{1.5cm}
+		{\Large \textbf{BONAFIDE CERTIFICATE}}
+	\end{center}
+	\vspace*{.8cm}
+	This is to certify that this is a bonafide record of the project presented by the students whose names are given below during Project Phase I (22AIE498) in partial fulfilment of the requirements of the degree of Bachelor of Technology in Computer Science and Engineering (Artificial Intelligence).\\[1.0cm]
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+Roll No & Names of Students \\ \\ \hline
+\\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\
+\texttt{<}Roll no here\texttt{>} & \texttt{<}Name here\texttt{>} \\
+\end{tabular}
+\end{table}
+
+% Bottom of the page
+\begin{flushleft}
+  \texttt{<} Guide's Name\texttt{>}\\
+(Project Guide)\\  [1cm]
+
+ \texttt{<}Coordinator name here\texttt{>}\\
+(Project Coordinator)\\
+Designation\\
+\end{flushleft}
+\begin{flushright}
+\texttt{<}Reviewer's Name\texttt{>}\\
+(Reviewer)\\
+Designation
+\end{flushright}
+
+\newpage
+	%-----------------------------------------------------------------------------
+	\clearpage
+	\pagenumbering{roman}
+	\tableofcontents
+
+	\chapter*{Acknowledgements}
+	\addcontentsline{toc}{chapter}{Acknowledgements}
+	Write your acknowledgments in this page.\\
+	\vspace{1cm}
+	\begin{flushright}
+		(your name in CAPS)
+	\end{flushright}
+	\listoffigures
+	\addcontentsline{toc}{chapter}{List of figures}
+	\listoftables
+	\addcontentsline{toc}{chapter}{List of tables}
+	\newpage
+\input{chapters/abbreviations}
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\input{chapters/abstract}
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\chapter{Introduction}
+\input{chapters/introduction}
+\chapter{Literature Review/ Existing System}
+\input{chapters/chapter2}
+\chapter{Proposed Work}
+\input{chapters/chapter3}
+\chapter{Experimentation and Result Analysis}
+\input{chapters/chapter4}
+\chapter{Conclusion and Scope for further Research}
+\input{chapters/conclusion}
+\appendix
+\chapter{Code, Configuration and Reproduction}
+\input{chapters/appendix}
+
+\newpage
+\renewcommand{\bibname}{References}
+\bibliographystyle{ieeetr}
+\addcontentsline{toc}{chapter}{References}
+\bibliography{mybib}
+
+\end{document}

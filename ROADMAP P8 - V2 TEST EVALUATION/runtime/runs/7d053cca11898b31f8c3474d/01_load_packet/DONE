@@ -1,0 +1,11 @@
+{
+ "info": {
+  "recording_id": "ST7162J0-PSG"
+ },
+ "next": "build_prompt",
+ "outputs": {
+  "packet_meta.json": "99fc1357a8a9a48570a6f346d0d127ead3637b8147559ff95af19f50d9486a13"
+ },
+ "reasons": [],
+ "step": "load_packet"
+}

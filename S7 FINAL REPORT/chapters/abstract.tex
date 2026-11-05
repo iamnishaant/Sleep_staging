@@ -1,0 +1,46 @@
+Overnight sleep staging is the basis of every sleep report, yet the two halves of automated reporting are
+rarely built together: compact staging models stop at a hypnogram, and language-model reporting systems check
+their output, if at all, only after it has been written. This project builds and evaluates the full chain,
+offline, in six stages: knowledge distillation, a compact staging student, a structured evidence packet, a
+fine-tuned small language model (SLM), an agentic workflow and an edge-device simulation.
+
+\textbf{Knowledge distillation.} Auditing the inherited 649,229-parameter model showed that its reported Cohen's
+$\kappa$ of 0.6663 came from a recording-level split that leaked subjects; on an unseen subject it scored 0.5066
+and never identified N3. Under subject-level splits, distillation from single teachers \emph{hurt} the student,
+which exposed the mechanism: a teacher must exceed the student's own undistilled performance before its soft
+targets help. Widening the encoder's receptive field from 0.25\,s to 8.75\,s and distilling from a three-model
+ensemble (412,311 parameters) fixed both problems. A label-alignment bug affecting 5--7\% of Sleep-EDF epochs was
+then found and corrected.
+
+\textbf{Student model.} The released student (release v2) is a 175,599-parameter EEG + EOG network distilled
+from that ensemble, with gated EOG and time-frequency branches that start closed. On 15 held-out subjects it
+reaches 81.96\% accuracy, $\kappa$ 0.756 and macro-F1 0.782, above the EEG-only v1 student on identical labels
+($\kappa$ 0.718; $\Delta\kappa$ 95\% CI +0.019 to +0.057) and above its own teacher with 43\% of its parameters.
+On the standard Sleep-EDF-78 protocol (10-fold subject-wise CV, trained from scratch) it reaches $\kappa$
+0.769--0.775, competitive with published models 5--74$\times$ larger.
+
+\textbf{Evidence packet.} Each night becomes a versioned JSON packet (schema 1.3) carrying calibrated
+probabilities, per-stage reliability, 24 derived metrics each classed as robust, fragile or unreliable from their
+measured error, a night-confidence tier that predicts agreement with the expert without ground truth (test
+Pearson $r=-0.64$), and 19 citable evidence items.
+
+\textbf{SLM.} Llama-3.2-3B-Instruct, LoRA-tuned on 123 verifier-passing reference reports and run locally under a
+GBNF grammar at temperature 0, writes claims that must cite packet fields. A frozen deterministic verifier with
+30 rules gates release. On the locked 29-night test set the v2 system released \textbf{28/29 verified reports and
+0 flawed reports}; the one flawed generation (an invented REM-latency value) was blocked and replaced by a
+fallback summary. The untrained base model passed 2/31 and, without the gate, released 31/31 flawed reports.
+
+\textbf{Agentic workflow and edge simulation.} A deterministic, hash-pinned state machine turns a raw EDF into
+exactly one delivered page, with signal-quality checks, automatic night detection, retries, fallbacks and
+crash-safe resume. It passed 14/14 fault scenarios with all eight safety invariants holding, reproduced 31/31
+reports byte for byte, and staged real recordings end to end at mean $\kappa$ 0.701. In an offline Docker container
+limited like a Raspberry Pi 5 (4 CPUs, 16\,GB, no network) on a second PC, the network was verifiably off, no secrets
+were visible, staging matched the reference PC on 31/31 nights (maximum probability difference $1.8\times10^{-5}$),
+and the report model produced 31/31 verified reports identical to the reference text, at a median of 151\,s and a peak
+of 5.2\,GB each. Staging under ARM64 emulation gave identical hypnograms on 8 nights (maximum difference
+$7.7\times10^{-7}$). The Pi 5 itself is budgeted analytically at about 6--9 minutes and 6--8\,GB per night; timing, heat
+and power on the device are future work.
+
+\vspace{0.3cm}
+\noindent\textbf{Keywords:} sleep staging, knowledge distillation, EEG, EOG, evidence packet, small language model,
+constrained decoding, deterministic verification, agentic workflow, edge AI, Sleep-EDF.

@@ -41,12 +41,13 @@ architecture to chase a benchmark number.
 
 | Release | Staging model | Report model | Status |
 |---|---|---|---|
-| **v1 (stable)** | N4kd, EEG only, 139,606 params | Llama-3.2-3B-Student, trained on v1 packets | Frozen (`deploy/frozen.json`, `agentic/config/releases/v1.yaml`) |
+| **v1 (historical)** | N4kd, EEG only, 139,606 params | Llama-3.2-3B-Student, trained on v1 packets | Frozen (`deploy/frozen.json`, `agentic/config/releases/v1.yaml`). Test 29/29 |
 | **v1.1 (24 Oct)** | as v1 | as v1, with its chat template **pinned to the training date** | Fixes the date-dependent output (`ROADMAP D1 - DETERMINISM PROBE/FINDINGS.md`). Dev 31/31 at 5/5; **later-day parity passed 25 Oct (31/31 byte-identical)** |
-| **v2 (25 Oct)** | Stage 3 EEG + EOG (`n6adv_full` adapter), 175,599 params | Llama-3.2-3B-Student **retrained on v2 packets** | Dev: 31/31 verified, 31/31 at 5/5, 0 violations, fidelity 527/527. `agentic/config/releases/v2.yaml`. No test-set run |
+| **v2 (25 Oct)** | Stage 3 EEG + EOG (`n6adv_full` adapter), 175,599 params | Llama-3.2-3B-Student **retrained on v2 packets** | **Current release since 2 Nov.** Dev: 31/31 verified, 31/31 at 5/5, 0 violations, fidelity 527/527. **Test (P8, 2 Nov): 28/29 verified, 0 flawed released.** `agentic/config/releases/v2.yaml` |
 
-v2 never silently replaces v1. Any reliability change, such as the time-in-bed work in §5, is also
-its own versioned release.
+v2 never silently replaces v1. v2 became the current release on 2 Nov by an explicit decision, after its
+own dev bar and one pre-registered test run (`CURRENT_RELEASE.md`). v1 stays frozen and runnable. Any
+further reliability change, such as the time-in-bed work in §5, is also its own versioned release.
 
 ---
 
